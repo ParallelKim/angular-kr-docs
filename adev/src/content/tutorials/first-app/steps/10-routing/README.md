@@ -1,87 +1,87 @@
-# Add routes to the application
+# 애플리케이션에 라우트를 추가하세요
 
-This tutorial lesson demonstrates how to add routes to your app.
+이 튜토리얼 레슨에서는 앱에 라우트를 추가하는 방법을 보여줍니다.
 
 <docs-video src="https://www.youtube.com/embed/r5DEBMuStPw?si=H6Bx6nLJoMLaMxkx" />
 
-IMPORTANT: We recommend using your local environment to learn routing.
+중요: 라우팅을 배우기 위해 로컬 환경을 사용하는 것이 좋습니다.
 
-## What you'll learn
+## 배울 내용
 
-At the end of this lesson your application will have support for routing.
+이 레슨이 끝나면 애플리케이션에서 라우팅을 지원하게 됩니다.
 
-## Conceptual preview of routing
+## 라우팅 개념 미리보기
 
-This tutorial introduces routing in Angular. Routing is the ability to navigate from one component in the application to another. In [Single Page Applications (SPA)](guide/routing), only parts of the page are updated to represent the requested view for the user.
+이 튜토리얼은 Angular에서의 라우팅을 소개합니다. 라우팅은 애플리케이션의 한 구성 요소에서 다른 구성 요소로 이동할 수 있는 기능입니다. [Single Page Applications (SPA)](guide/routing)에서는 요청된 사용자 뷰를 나타내기 위해 페이지의 일부만 업데이트됩니다.
 
-The [Angular Router](guide/routing) enables users to declare routes and specify which component should be displayed on the screen if that route is requested by the application.
+[Angular Router](guide/routing)를 사용하면 사용자가 라우트를 선언하고 애플리케이션에서 해당 라우트가 요청될 경우 어떤 구성 요소를 화면에 표시해야 할지를 지정할 수 있습니다.
 
-In this lesson, you will enable routing in your application to navigate to the details page.
+이번 레슨에서는 애플리케이션에서 라우팅을 활성화하여 세부 정보 페이지로 이동할 수 있도록 합니다.
 
 <docs-workflow>
 
-<docs-step title="Create a default details component ">
-1. From the terminal, enter the following command to create the `DetailsComponent`:
+<docs-step title="기본 세부정보 구성 요소 만들기">
+1. 터미널에서 다음 명령어를 입력하여 `DetailsComponent`를 생성합니다:
 
     <docs-code language="shell">
     ng generate component details
     </docs-code>
 
-    This component will represent the details page that provides more information on a given housing location.
+    이 구성 요소는 주어진 주거 위치에 대한 추가 정보를 제공하는 세부 정보 페이지를 나타냅니다.
 </docs-step>
 
-<docs-step title="Add routing to the application">
-1.  In the `src/app` directory, create a file called `routes.ts`. This file is where we will define the routes in the application.
+<docs-step title="애플리케이션에 라우팅 추가하기">
+1. `src/app` 디렉토리에서 `routes.ts`라는 파일을 만듭니다. 이 파일에서 애플리케이션의 라우트를 정의할 것입니다.
 
-1. In `main.ts`, make the following updates to enable routing in the application:
-    1. Import the routes file and the `provideRouter` function:
+1. `main.ts`에서 애플리케이션에서 라우팅을 활성화하기 위해 다음 업데이트를 수행합니다:
+    1. 라우트 파일과 `provideRouter` 함수를 가져옵니다:
 
-        <docs-code header="Import routing details in src/main.ts" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/main.ts" visibleLines="[7,8]"/>
+        <docs-code header="src/main.ts에서 라우팅 세부정보 가져오기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/main.ts" visibleLines="[7,8]"/>
 
-    1. Update the call to `bootstrapApplication` to include the routing configuration:
+    1. 라우팅 구성을 포함하도록 `bootstrapApplication` 호출을 업데이트합니다:
 
-        <docs-code header="Add router configuration in src/main.ts" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/main.ts" visibleLines="[10,17]"/>
+        <docs-code header="src/main.ts에 라우터 구성 추가하기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/main.ts" visibleLines="[10,17]"/>
 
-1. In `src/app/app.component.ts`, update the component to use routing:
-    1. Add a file level import for `RoutingModule`:
+1. `src/app/app.component.ts`에서 라우팅을 사용하도록 구성 요소를 업데이트합니다:
+    1. `RoutingModule`에 대한 파일 수준 가져오기를 추가합니다:
 
-        <docs-code header="Import RouterModule in src/app/app.component.ts" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[3]"/>
+        <docs-code header="src/app/app.component.ts에서 RouterModule 가져오기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[3]"/>
 
-    1. Add `RouterModule` to the `@Component` metadata imports
+    1. `@Component` 메타데이터 가져오기에 `RouterModule`을 추가합니다:
 
-        <docs-code header="Import RouterModule in src/app/app.component.ts" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[7]"/>
+        <docs-code header="src/app/app.component.ts에서 RouterModule 가져오기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[7]"/>
 
-    1. In the `template` property, replace the `<app-home></app-home>` tag with the `<router-outlet>` directive and add a link back to the home page. Your code should match this code:
+    1. `template` 속성에서 `<app-home></app-home>` 태그를 `<router-outlet>` 지시문으로 교체하고 홈페이지로 돌아가는 링크를 추가합니다. 귀하의 코드는 다음 코드와 일치해야 합니다:
 
-        <docs-code header="Add router-outlet in src/app/app.component.ts" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[8,18]"/>
+        <docs-code header="src/app/app.component.ts에 router-outlet 추가하기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/app.component.ts" visibleLines="[8,18]"/>
 
 </docs-step>
 
-<docs-step title="Add route to new component">
-In the previous step you removed the reference to the `<app-home>` component in the template. In this step, you will add a new route to that component.
+<docs-step title="새 구성 요소에 라우트 추가하기">
+이전 단계에서는 템플릿에서 `<app-home>` 구성 요소에 대한 참조를 제거했습니다. 이번 단계에서는 해당 구성 요소에 새 라우트를 추가합니다.
 
-1. In `routes.ts`, perform the following updates to create a route.
-    1. Add a file level imports for the `HomeComponent`, `DetailsComponent` and the `Routes` type that you'll use in the route definitions.
+1. `routes.ts`에서 라우트를 생성하기 위해 다음 업데이트를 수행합니다.
+    1. 라우트 정의에 사용할 `HomeComponent`, `DetailsComponent` 및 `Routes` 유형에 대한 파일 수준 가져오기를 추가합니다.
 
-        <docs-code header="Import components and Routes" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/routes.ts" visibleLines="[1,3]"/>
+        <docs-code header="구성 요소 및 Routes 가져오기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/routes.ts" visibleLines="[1,3]"/>
 
-    1. Define a variable called `routeConfig` of type `Routes` and define two  routes for the app:
-        <docs-code header="Add routes to the app" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/routes.ts" visibleLines="[5,18]"/>
+    1. `Routes` 유형의 `routeConfig`라는 변수를 정의하고 앱을 위한 두 개의 라우트를 정의합니다:
+        <docs-code header="앱에 라우트 추가하기" path="adev/src/content/tutorials/first-app/steps/11-details-page/src/app/routes.ts" visibleLines="[5,18]"/>
 
-        The entries in the `routeConfig` array represent the routes in the application. The first entry navigates to the `HomeComponent` whenever the url matches `''`. The second entry uses some special formatting that will be revisited in a future lesson.
+        `routeConfig` 배열의 항목은 애플리케이션의 라우트를 나타냅니다. 첫 번째 항목은 URL이 `''`에 일치할 때마다 `HomeComponent`로 이동합니다. 두 번째 항목은 향후 레슨에서 다시 다룰 특별한 형식을 사용합니다.
 
-1. Save all changes and confirm that the application works in the browser. The application should still display the list of housing locations.
+1. 모든 변경 사항을 저장하고 애플리케이션이 브라우저에서 작동하는지 확인합니다. 애플리케이션은 여전히 주거 위치 목록을 표시해야 합니다.
 </docs-step>
 
 </docs-workflow>
 
-Summary: In this lesson, you enabled routing in your app as well as defined new routes. Now your app can support navigation between views. In the next lesson, you will learn to navigate to the "details" page for a given housing location.
+요약: 이번 레슨에서는 애플리케이션에서 라우팅을 활성화하고 새로운 라우트를 정의했습니다. 이제 귀하의 앱은 뷰 간 탐색을 지원할 수 있습니다. 다음 레슨에서는 주어진 주거 위치에 대한 "세부정보" 페이지로 이동하는 방법을 배웁니다.
 
-You are making great progress with your app, well done.
+귀하의 앱에서 큰 진전을 이루고 있습니다. 잘하고 계십니다.
 
-For more information about the topics covered in this lesson, visit:
+이번 레슨에서 다룬 주제에 대한 자세한 정보를 보려면 방문하세요:
 
 <docs-pill-row>
-  <docs-pill href="guide/routing" title="Routing in Angular Overview"/>
-  <docs-pill href="guide/routing/common-router-tasks" title="Common Routing Tasks"/>
+  <docs-pill href="guide/routing" title="Angular에서의 라우팅 개요"/>
+  <docs-pill href="guide/routing/common-router-tasks" title="일반 라우팅 작업"/>
 </docs-pill-row>

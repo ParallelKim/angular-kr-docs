@@ -1,8 +1,8 @@
-# Deferred loading with `@defer`
+# 지연 로딩과 `@defer`
 
-Deferrable views, also known as `@defer` blocks, reduce the initial bundle size of your application by deferring the loading of code that is not strictly necessary for the initial rendering of a page. This often results in a faster initial load and improvement in Core Web Vitals (CWV), primarily Largest Contentful Paint (LCP) and Time to First Byte (TTFB).
+지연 가능한 뷰, 즉 `@defer` 블록은 페이지의 초기 렌더링에 필수적이지 않은 코드의 로딩을 지연시켜 애플리케이션의 초기 번들 크기를 줄입니다. 이로 인해 초기 로드 속도가 빨라지고 Core Web Vitals(CWV), 주로 Largest Contentful Paint(LCP)와 Time to First Byte(TTFB)가 개선되는 경향이 있습니다.
 
-To use this feature, you can declaratively wrap a section of your template in a @defer block:
+이 기능을 사용하려면 템플릿의 섹션을 @defer 블록으로 선언적으로 감쌀 수 있습니다:
 
 ```angular-html
 @defer {
@@ -10,32 +10,32 @@ To use this feature, you can declaratively wrap a section of your template in a 
 }
 ```
 
-The code for any components, directives, and pipes inside the `@defer` block is split into a separate JavaScript file and loaded only when necessary, after the rest of the template has been rendered.
+`@defer` 블록 내부의 모든 컴포넌트, 지시문 및 파이프의 코드는 별도의 JavaScript 파일로 분할되어 필요할 때만 로딩되며, 나머지 템플릿이 렌더링된 후 로드됩니다.
 
-Deferrable views support a variety of triggers, prefetching options, and sub-blocks for placeholder, loading, and error state management.
+지연 가능한 뷰는 다양한 트리거, 미리 불러오기 옵션 및 자리 표시자, 로딩 및 오류 상태 관리를 위한 하위 블록을 지원합니다.
 
-## Which dependencies are deferred?
+## 어떤 종속성이 지연됩니까?
 
-Components, directives, pipes, and any component CSS styles can be deferred when loading an application.
+애플리케이션을 로드할 때 컴포넌트, 지시문, 파이프 및 모든 컴포넌트 CSS 스타일을 지연시킬 수 있습니다.
 
-In order for the dependencies within a `@defer` block to be deferred, they need to meet two conditions:
+`@defer` 블록 내의 종속성이 지연되기 위해서는 두 가지 조건을 충족해야 합니다:
 
-1. **They must be standalone.** Non-standalone dependencies cannot be deferred and are still eagerly loaded, even if they are inside of `@defer` blocks.
-1. **They cannot be referenced outside of `@defer` blocks within the same file.** If they are referenced outside the `@defer` block or referenced within ViewChild queries, the dependencies will be eagerly loaded.
+1. **독립적이어야 합니다.** 비독립적인 종속성은 지연될 수 없으며 `@defer` 블록 내부에 있더라도 여전히 즉시 로드됩니다.
+1. **같은 파일 내의 `@defer` 블록 외부에서 참조할 수 없습니다.** `@defer` 블록 외부에서 참조되거나 ViewChild 쿼리 내에서 참조되면 종속성이 즉시 로드됩니다.
 
-The _transitive_ dependencies of the components, directives and pipes used in the `@defer` block do not strictly need to be standalone; transitive dependencies can still be declared in an `NgModule` and participate in deferred loading.
+`@defer` 블록에서 사용되는 컴포넌트, 지시문 및 파이프의 _전이_ 종속성은 엄격하게 독립적일 필요는 없으며, 전이 종속성은 여전히 `NgModule`에 선언되고 지연 로딩에 참여할 수 있습니다.
 
-Angular's compiler produces a [dynamic import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) statement for each component, directive, and pipe used in the `@defer` block. The main content of the block renders after all the imports resolve. Angular does not guarantee any particular order for these imports.
+Angular의 컴파일러는 `@defer` 블록에서 사용되는 각 컴포넌트, 지시문 및 파이프에 대해 [동적 import](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/import) 문을 생성합니다. 블록의 주요 내용은 모든 import가 해결된 후 렌더링됩니다. Angular는 이러한 import의 특정 순서를 보장하지 않습니다.
 
-## How to manage different stages of deferred loading
+## 지연 로딩의 다양한 단계를 관리하는 방법
 
-`@defer` blocks have several sub blocks to allow you to gracefully handle different stages in the deferred loading process.
+`@defer` 블록은 지연 로딩 과정의 다양한 단계를 우아하게 처리할 수 있도록 여러 하위 블록을 가지고 있습니다.
 
 ### `@defer`
 
-This is the primary block that defines the section of content that is lazily loaded. It is not rendered initially– deferred content loads and renders once the specified [trigger](/guide/defer#triggers) occurs or the `when` condition is met.
+이 블록은 지연 로드되는 콘텐츠 섹션을 정의하는 기본 블록입니다. 처음에는 렌더링되지 않으며, 지연된 콘텐츠는 지정된 [트리거](/guide/defer#triggers)가 발생하거나 `when` 조건이 충족되면 로드되고 렌더링됩니다.
 
-By default, a @defer block is triggered when the browser state becomes [idle](/guide/defer#idle).
+기본적으로, @defer 블록은 브라우저의 상태가 [idle](/guide/defer#idle) 상태에 있을 때 트리거됩니다.
 
 ```angular-html
 @defer {
@@ -43,11 +43,11 @@ By default, a @defer block is triggered when the browser state becomes [idle](/g
 }
 ```
 
-### Show placeholder content with `@placeholder`
+### `@placeholder`로 자리 표시자 콘텐츠 표시
 
-By default, defer blocks do not render any content before they are triggered.
+기본적으로 지연 블록은 트리거되기 전까지 어떤 콘텐츠도 렌더링하지 않습니다.
 
-The `@placeholder` is an optional block that declares what content to show before the `@defer` block is triggered.
+`@placeholder`는 `@defer` 블록이 트리거되기 전에 표시할 콘텐츠를 선언하는 선택적 블록입니다.
 
 ```angular-html
 @defer {
@@ -57,11 +57,11 @@ The `@placeholder` is an optional block that declares what content to show befor
 }
 ```
 
-While optional, certain triggers may require the presence of either a `@placeholder` or a [template reference variable](/guide/templates/variables#template-reference-variables) to function. See the [Triggers](/guide/defer#triggers) section for more details.
+선택적이지만, 특정 트리거는 기능을 위해 `@placeholder` 또는 [템플릿 참조 변수](/guide/templates/variables#template-reference-variables)의 존재를 요구할 수 있습니다. 자세한 내용은 [Triggers](/guide/defer#triggers) 섹션을 참조하세요.
 
-Angular replaces placeholder content with the main content once loading is complete. You can use any content in the placeholder section including plain HTML, components, directives, and pipes. Keep in mind the _dependencies of the placeholder block are eagerly loaded_.
+Angular는 로딩이 완료되면 자리 표시자 콘텐츠를 주요 콘텐츠로 교체합니다. 자리 표시자 섹션에는 일반 HTML, 컴포넌트, 지시문 및 파이프를 포함한 모든 콘텐츠를 사용할 수 있습니다. 자리 표시자 블록의 _종속성은 즉시 로드됩니다_.
 
-The `@placeholder` block accepts an optional parameter to specify the `minimum` amount of time that this placeholder should be shown after the placeholder content initially renders.
+`@placeholder` 블록은 자리 표시자 콘텐츠가 처음 렌더링된 후 이 자리 표시자가 표시되어야 하는 `minimum` 시간을 지정하는 선택적 매개변수를 허용합니다.
 
 ```angular-html
 @defer {
@@ -71,11 +71,11 @@ The `@placeholder` block accepts an optional parameter to specify the `minimum` 
 }
 ```
 
-This `minimum` parameter is specified in time increments of milliseconds (ms) or seconds (s). You can use this parameter to prevent fast flickering of placeholder content in the case that the deferred dependencies are fetched quickly.
+이 `minimum` 매개변수는 밀리초(ms) 또는 초(s) 단위로 지정됩니다. 이 매개변수를 사용하여 지연 종속성이 빠르게 가져오기 될 경우 자리 표시자 콘텐츠가 너무 빠르게 깜박이는 것을 방지할 수 있습니다.
 
-### Show loading content with `@loading`
+### `@loading`으로 로딩 콘텐츠 표시
 
-The `@loading` block is an optional block that allows you to declare content that is shown while deferred dependencies are loading. It replaces the `@placeholder` block once loading is triggered.
+`@loading` 블록은 지연 종속성이 로드되는 동안 표시할 콘텐츠를 선언할 수 있는 선택적 블록입니다. 로딩이 트리거되면 `@placeholder` 블록을 교체합니다.
 
 ```angular-html
 @defer {
@@ -87,12 +87,12 @@ The `@loading` block is an optional block that allows you to declare content tha
 }
 ```
 
-Its dependencies are eagerly loaded (similar to `@placeholder`).
+그 종속성은 즉시 로드됩니다(`@placeholder`와 유사).
 
-The `@loading` block accepts two optional parameters to help prevent fast flickering of content that may occur when deferred dependencies are fetched quickly,:
+`@loading` 블록은 지연 종속성이 빠르게 가져오기 될 때 발생할 수 있는 콘텐츠의 빠른 깜박임을 방지하기 위해 두 개의 선택적 매개변수를 허용합니다:
 
-- `minimum` - the minimum amount of time that this placeholder should be shown
-- `after` - the amount of time to wait after loading begins before showing the loading template
+- `minimum` - 이 자리 표시자가 표시되어야 하는 최소 시간
+- `after` - 로딩 시작 후 로딩 템플릿을 표시하기 전 대기할 시간
 
 ```angular-html
 @defer {
@@ -102,11 +102,11 @@ The `@loading` block accepts two optional parameters to help prevent fast flicke
 }
 ```
 
-Both parameters are specified in time increments of milliseconds (ms) or seconds (s). In addition, the timers for both parameters begin immediately after the loading has been triggered.
+두 매개변수는 밀리초(ms) 또는 초(s) 단위로 지정됩니다. 또한 두 매개변수의 타이머는 로딩이 트리거된 직후에 시작됩니다.
 
-### Show error state when deferred loading fails with `@error`
+### `@error`로 지연 로딩 실패 시 오류 상태 표시
 
-The `@error` block is an optional block that displays if deferred loading fails. Similar to `@placeholder` and `@loading`, the dependencies of the @error block are eagerly loaded.
+`@error` 블록은 지연 로딩이 실패할 경우 표시되는 선택적 블록입니다. `@placeholder` 및 `@loading`과 유사하게, `@error` 블록의 종속성은 즉시 로드됩니다.
 
 ```angular-html
 @defer {
@@ -116,34 +116,34 @@ The `@error` block is an optional block that displays if deferred loading fails.
 }
 ```
 
-## Controlling deferred content loading with triggers
+## 트리거로 지연 콘텐츠 로딩 제어하기
 
-You can specify **triggers** that control when Angular loads and displays deferred content.
+**트리거**를 지정하여 Angular가 지연 콘텐츠를 로드하고 표시하는 시점을 제어할 수 있습니다.
 
-When a `@defer` block is triggered, it replaces placeholder content with lazily loaded content.
+`@defer` 블록이 트리거되면 자리 표시자 콘텐츠가 지연 로드된 콘텐츠로 교체됩니다.
 
-Multiple event triggers can be defined by separating them with a semicolon, `;` and will be evaluated as OR conditions.
+여러 이벤트 트리거는 세미콜론 `;`으로 구분하여 정의할 수 있으며, OR 조건으로 평가됩니다.
 
-There are two types of triggers: `on` and `when`.
+트리거에는 두 가지 유형이 있습니다: `on` 및 `when`.
 
 ### `on`
 
-`on` specifies a condition for when the `@defer` block is triggered.
+`on`은 `@defer` 블록이 트리거되는 조건을 지정합니다.
 
-The available triggers are as follows:
+사용 가능한 트리거는 다음과 같습니다:
 
-| Trigger                       | Description                                                            |
-| ----------------------------- | ---------------------------------------------------------------------- |
-| [`idle`](#idle)               | Triggers when the browser is idle.                                     |
-| [`viewport`](#viewport)       | Triggers when specified content enters the viewport                    |
-| [`interaction`](#interaction) | Triggers when the user interacts with specified element                |
-| [`hover`](#hover)             | Triggers when the mouse hovers over specified area                     |
-| [`immediate`](#immediate)     | Triggers immediately after non-deferred content has finished rendering |
-| [`timer`](#timer)             | Triggers after a specific duration                                     |
+| 트리거                        | 설명                                                               |
+| ----------------------------- | ------------------------------------------------------------------ |
+| [`idle`](#idle)              | 브라우저가 idle 상태일 때 트리거됩니다.                           |
+| [`viewport`](#viewport)      | 지정된 콘텐츠가 뷰포트에 들어올 때 트리거됩니다.                  |
+| [`interaction`](#interaction)| 사용자가 지정된 요소와 상호 작용할 때 트리거됩니다.             |
+| [`hover`](#hover)            | 마우스가 지정된 영역 위에 있을 때 트리거됩니다.                   |
+| [`immediate`](#immediate)    | 비지연 콘텐츠가 렌더링을 완료한 직후에 트리거됩니다.               |
+| [`timer`](#timer)            | 특정 기간이 지난 후 트리거됩니다.                                 |
 
 #### `idle`
 
-The `idle` trigger loads the deferred content once the browser has reached an idle state, based on requestIdleCallback. This is the default behavior with a defer block.
+`idle` 트리거는 브라우저가 idle 상태에 도달했을 때 지연 콘텐츠를 로드합니다. 이는 지연 블록의 기본 동작입니다.
 
 ```angular-html
 <!-- @defer (on idle) -->
@@ -156,9 +156,9 @@ The `idle` trigger loads the deferred content once the browser has reached an id
 
 #### `viewport`
 
-The `viewport` trigger loads the deferred content when the specified content enters the viewport using the [Intersection Observer API](https://developer.mozilla.org/docs/Web/API/Intersection_Observer_API). Observed content may be `@placeholder` content or an explicit element reference.
+`viewport` 트리거는 지정된 콘텐츠가 뷰포트에 들어올 때 지연 콘텐츠를 로드합니다. 이는 [Intersection Observer API](https://developer.mozilla.org/docs/Web/API/Intersection_Observer_API)를 사용합니다. 관찰된 콘텐츠는 `@placeholder` 콘텐츠 또는 명시적인 요소 참조일 수 있습니다.
 
-By default, the `@defer` watches for the placeholder entering the viewport. Placeholders used this way must have a single root element.
+기본적으로는 `@defer`가 자리 표시자가 뷰포트에 들어오는 것을 감시합니다. 이렇게 사용된 자리 표시자는 단일 루트 요소가 있어야 합니다.
 
 ```angular-html
 @defer (on viewport) {
@@ -168,7 +168,7 @@ By default, the `@defer` watches for the placeholder entering the viewport. Plac
 }
 ```
 
-Alternatively, you can specify a [template reference variable](/guide/templates/variables) in the same template as the `@defer` block as the element that is watched to enter the viewport. This variable is passed in as a parameter on the viewport trigger.
+또는 `@defer` 블록과 같은 템플릿에서 [템플릿 참조 변수](/guide/templates/variables)를 지정하여 뷰포트에 들어오는 요소로 사용할 수 있습니다. 이 변수는 뷰포트 트리거에서 매개변수로 전달됩니다.
 
 ```angular-html
 <div #greeting>Hello!</div>
@@ -179,9 +179,9 @@ Alternatively, you can specify a [template reference variable](/guide/templates/
 
 #### `interaction`
 
-The `interaction` trigger loads the deferred content when the user interacts with the specified element through `click` or `keydown` events.
+`interaction` 트리거는 사용자가 `click` 또는 `keydown` 이벤트를 통해 지정된 요소와 상호 작용할 때 지연 콘텐츠를 로드합니다.
 
-By default, the placeholder acts as the interaction element. Placeholders used this way must have a single root element.
+기본적으로 자리 표시자는 상호 작용 요소로 작용합니다. 이렇게 사용된 자리 표시자는 단일 루트 요소가 있어야 합니다.
 
 ```angular-html
 @defer (on interaction) {
@@ -191,7 +191,7 @@ By default, the placeholder acts as the interaction element. Placeholders used t
 }
 ```
 
-Alternatively, you can specify a [template reference variable](/guide/templates/variables) in the same template as the `@defer` block as the element that is watched to enter the viewport. This variable is passed in as a parameter on the viewport trigger.
+또는 `@defer` 블록과 같은 템플릿에서 [템플릿 참조 변수](/guide/templates/variables)를 지정하여 상호 작용할 요소로 사용할 수 있습니다. 이 변수는 뷰포트 트리거에서 매개변수로 전달됩니다.
 
 ```angular-html
 <div #greeting>Hello!</div>
@@ -202,9 +202,9 @@ Alternatively, you can specify a [template reference variable](/guide/templates/
 
 #### `hover`
 
-The `hover` trigger loads the deferred content when the mouse has hovered over the triggered area through the `mouseover` and `focusin` events.
+`hover` 트리거는 마우스가 트리거된 영역 위에 있을 때 (`mouseover` 및 `focusin` 이벤트)를 통해 지연 콘텐츠를 로드합니다.
 
-By default, the placeholder acts as the interaction element. Placeholders used this way must have a single root element.
+기본적으로 자리 표시자는 상호 작용 요소로 작용합니다. 이렇게 사용된 자리 표시자는 단일 루트 요소가 있어야 합니다.
 
 ```angular-html
 @defer (on hover) {
@@ -214,7 +214,7 @@ By default, the placeholder acts as the interaction element. Placeholders used t
 }
 ```
 
-Alternatively, you can specify a [template reference variable](/guide/templates/variables) in the same template as the `@defer` block as the element that is watched to enter the viewport. This variable is passed in as a parameter on the viewport trigger.
+또는 `@defer` 블록과 같은 템플릿에서 [템플릿 참조 변수](/guide/templates/variables)를 지정하여 뷰포트에 들어오는 요소로 사용할 수 있습니다. 이 변수는 뷰포트 트리거에서 매개변수로 전달됩니다.
 
 ```angular-html
 <div #greeting>Hello!</div>
@@ -225,7 +225,7 @@ Alternatively, you can specify a [template reference variable](/guide/templates/
 
 #### `immediate`
 
-The `immediate` trigger loads the deferred content immediately. This means that the deferred block loads as soon as all other non-deferred content has finished rendering.
+`immediate` 트리거는 지연 콘텐츠를 즉시 로드합니다. 즉, 비지연 블록이 모든 다른 비지연 콘텐츠의 렌더링을 완료한 직후에 지연 블록이 로드됩니다.
 
 ```angular-html
 @defer (on immediate) {
@@ -237,7 +237,7 @@ The `immediate` trigger loads the deferred content immediately. This means that 
 
 #### `timer`
 
-The `timer` trigger loads the deferred content after a specified duration.
+`timer` 트리거는 지정된 기간 후에 지연 콘텐츠를 로드합니다.
 
 ```angular-html
 @defer (on timer(500ms)) {
@@ -247,11 +247,11 @@ The `timer` trigger loads the deferred content after a specified duration.
 }
 ```
 
-The duration parameter must be specified in milliseconds (`ms`) or seconds (`s`).
+기간 매개변수는 밀리초(`ms`) 또는 초(`s`) 단위로 지정해야 합니다.
 
 ### `when`
 
-The `when` trigger accepts a custom conditional expression and loads the deferred content when the condition becomes truthy.
+`when` 트리거는 사용자 정의 조건 표현식을 허용하고 조건이 참으로 바뀔 때 지연 콘텐츠를 로드합니다.
 
 ```angular-html
 @defer (when condition) {
@@ -261,17 +261,17 @@ The `when` trigger accepts a custom conditional expression and loads the deferre
 }
 ```
 
-This is a one-time operation– the `@defer` block does not revert back to the placeholder if the condition changes to a falsy value after becoming truthy.
+이것은 일회성 작업입니다. `@defer` 블록은 조건이 참에서 거짓으로 바뀌어도 자리 표시자로 되돌아가지 않습니다.
 
-## Prefetching data with `prefetch`
+## 미리 데이터 불러오기와 `prefetch`
 
-In addition to specifying a condition that determines when deferred content is shown, you can optionally specify a **prefetch trigger**. This trigger lets you load the JavaScript associated with the `@defer` block before the deferred content is shown.
+지연 콘텐츠가 표시되는 시점을 결정하는 조건을 지정하는 것 외에도, 선택적으로 **prefetch 트리거**를 지정할 수 있습니다. 이 트리거를 통해 `@defer` 블록과 관련된 JavaScript를 지연 콘텐츠가 표시되기 전에 로드할 수 있습니다.
 
-Prefetching enables more advanced behaviors, such as letting you start to prefetch resources before a user has actually seen or interacted with a defer block, but might interact with it soon, making the resources available faster.
+미리 불러오기는 사용자가 실제로 지연 블록을 보거나 상호 작용하기 전에 리소스를 미리 불러오기 시작할 수 있게 해주므로, 리소스를 더 빨리 사용할 수 있도록 합니다.
 
-You can specify a prefetch trigger similarly to the block's main trigger, but prefixed with the `prefetch` keyword. The block's main trigger and prefetch trigger are separated with a semi-colon character (`;`).
+`prefetch` 키워드로 구분하여 블록의 메인 트리거와 미리 불러오기 트리거를 지정할 수 있습니다. 블록의 메인 트리거와 미리 불러오기 트리거는 세미콜론(`;`) 문자로 구분됩니다.
 
-In the example below, the prefetching starts when a browser becomes idle and the contents of the block is rendered only once the user interacts with the placeholder.
+아래 예제에서는 브라우저가 idle이 될 때 미리 불러오기가 시작되고, 사용자가 자리 표시자와 상호 작용할 때만 블록의 내용이 렌더링됩니다.
 
 ```angular-html
 @defer (on interaction; prefetch on idle) {
@@ -281,13 +281,13 @@ In the example below, the prefetching starts when a browser becomes idle and the
 }
 ```
 
-## Testing `@defer` blocks
+## `@defer` 블록 테스트하기
 
-Angular provides TestBed APIs to simplify the process of testing `@defer` blocks and triggering different states during testing. By default, `@defer` blocks in tests play through like a defer block would behave in a real application. If you want to manually step through states, you can switch the defer block behavior to `Manual` in the TestBed configuration.
+Angular는 `@defer` 블록을 테스트하고 테스트 중 다양한 상태를 트리거하는 과정을 간소화하기 위해 TestBed API를 제공합니다. 기본적으로 테스트에서 `@defer` 블록은 실제 애플리케이션에서 동작하는 것처럼 작동합니다. 상태를 수동으로 단계별로 진행하고 싶으면 TestBed 구성에서 지연 블록 동작을 `Manual`로 전환할 수 있습니다.
 
 ```angular-ts
 it('should render a defer block in different states', async () => {
-  // configures the defer block behavior to start in "paused" state for manual control.
+  // 수동 제어를 위해 "paused" 상태에서 시작하도록 지연 블록 동작을 구성합니다.
   TestBed.configureTestingModule({deferBlockBehavior: DeferBlockBehavior.Manual});
   @Component({
     // ...
@@ -302,39 +302,39 @@ it('should render a defer block in different states', async () => {
     `
   })
   class ComponentA {}
-  // Create component fixture.
+  // 컴포넌트 픽스처 생성.
   const componentFixture = TestBed.createComponent(ComponentA);
-  // Retrieve the list of all defer block fixtures and get the first block.
+  // 모든 지연 블록 픽스처 목록을 가져오고 첫 번째 블록을 가져옵니다.
   const deferBlockFixture = (await componentFixture.getDeferBlocks())[0];
-  // Renders placeholder state by default.
+  // 기본적으로 자리 표시자 상태를 렌더링합니다.
   expect(componentFixture.nativeElement.innerHTML).toContain('Placeholder');
-  // Render loading state and verify rendered output.
+  // 로딩 상태를 렌더링하고 렌더링된 출력을 확인합니다.
   await deferBlockFixture.render(DeferBlockState.Loading);
   expect(componentFixture.nativeElement.innerHTML).toContain('Loading');
-  // Render final state and verify the output.
+  // 최종 상태를 렌더링하고 출력을 확인합니다.
   await deferBlockFixture.render(DeferBlockState.Complete);
   expect(componentFixture.nativeElement.innerHTML).toContain('large works!');
 });
 ```
 
-## Does `@defer` work with `NgModule`?
+## `@defer`는 `NgModule`와 함께 작동합니까?
 
-`@defer` blocks are compatible with both standalone and NgModule-based components, directives and pipes. However, **only standalone components, directives and pipes can be deferred**. NgModule-based dependencies are not deferred and are included in the eagerly loaded bundle.
+`@defer` 블록은 독립형 및 NgModule 기반의 컴포넌트, 지시문 및 파이프 모두와 호환됩니다. 그러나 **독립형 컴포넌트, 지시문 및 파이프만 지연될 수 있습니다**. NgModule 기반의 종속성은 지연되지 않으며 즉시 로딩되는 번들에 포함됩니다.
 
-## How does `@defer` work with server-side rendering (SSR) and static-site generation (SSG)?
+## `@defer`는 서버 측 렌더링(SSR) 및 정적 사이트 생성(SSG)과 함께 어떻게 작동합니까?
 
-By default, when rendering an application on the server (either using SSR or SSG), defer blocks always render their `@placeholder` (or nothing if a placeholder is not specified) and triggers are not invoked. On the client, the content of the `@placeholder` is hydrated and triggers are activated.
+기본적으로 서버에서 애플리케이션을 렌더링할 때(SSR 또는 SSG 사용 시) 지연 블록은 항상 `@placeholder`(또는 자리 표시자가 지정되지 않은 경우 아무것도 렌더링하지 않음)를 렌더링하며 트리거는 호출되지 않습니다. 클라이언트에서는 `@placeholder`의 내용이 수화되고 트리거가 활성화됩니다.
 
-To render the main content of `@defer` blocks on the server (both SSR and SSG), you can enable [the Incremental Hydration feature](/guide/incremental-hydration) and configure `hydrate` triggers for the necessary blocks.
+서버에서 `@defer` 블록의 주요 콘텐츠를 렌더링하려면(SSR 및 SSG 모두) [증분 수화 기능](/guide/incremental-hydration)을 활성화하고 필요한 블록에 대해 `hydrate` 트리거를 구성할 수 있습니다.
 
-## Best practices for deferring views
+## 뷰 지연을 위한 모범 사례
 
-### Avoid cascading loads with nested `@defer` blocks
+### 중첩 된 `@defer` 블록으로 인한 연쇄 로드를 피하십시오
 
-When you have nested `@defer` blocks, they should have different triggers in order to avoid loading simultaneously, which causes cascading requests and may negatively impact page load performance.
+중첩된 `@defer` 블록이 있는 경우 동시에 로드되지 않도록 서로 다른 트리거를 가져야 합니다. 그렇지 않으면 연쇄 요청이 발생하고 페이지 로드 성능에 부정적인 영향을 줄 수 있습니다.
 
-### Avoid layout shifts
+### 레이아웃Shift 피하기
 
-Avoid deferring components that are visible in the user’s viewport on initial load. Doing this may negatively affect Core Web Vitals by causing an increase in cumulative layout shift (CLS).
+초기 로드에서 사용자의 뷰포트에 보이는 컴포넌트를 지연 로딩하는 것을 피하십시오. 이렇게 하면 누적 레이아웃 이동(CLS)이 증가하여 Core Web Vitals에 부정적인 영향을 미칠 수 있습니다.
 
-In the event this is necessary, avoid `immediate`, `timer`, `viewport`, and custom `when` triggers that cause the content to load during the initial page render.
+이것이 필요하다면 초기 페이지 렌더링 동안 콘텐츠가 로드되도록 하는 `immediate`, `timer`, `viewport` 및 사용자 정의 `when` 트리거를 피하십시오.

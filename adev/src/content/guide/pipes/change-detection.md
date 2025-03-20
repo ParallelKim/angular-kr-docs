@@ -1,7 +1,7 @@
-# Change detection with pipes
+# 파이프를 사용한 변경 감지
 
-Pipes are often used with data-bound values that might change based on user actions.
-If the data is a primitive input value, such as `String` or `Number`, or an object reference as input, such as `Date` or `Array`, Angular executes the pipe whenever it detects a change for the value.
+파이프는 사용자 행동에 따라 변경될 수 있는 데이터 바인딩 값과 함께 자주 사용됩니다.
+데이터가 `String`이나 `Number`와 같은 기본 입력 값이거나 `Date`나 `Array`와 같은 객체 참조일 경우, Angular는 값의 변화를 감지할 때마다 파이프를 실행합니다.
 
 <docs-code-multifile path="adev/src/content/examples/pipes/src/app/power-booster.component.ts">
   <docs-code header="src/app/exponential-strength.pipe.ts" path="adev/src/content/examples/pipes/src/app/exponential-strength.pipe.ts"
@@ -9,106 +9,106 @@ If the data is a primitive input value, such as `String` or `Number`, or an obje
   <docs-code header="src/app/power-booster.component.ts" path="adev/src/content/examples/pipes/src/app/power-booster.component.ts"/>
 </docs-code-multifile>
 
-The `exponentialStrength` pipe executes every time the user changes the value or the exponent. See the highlighted line above.
+`exponentialStrength` 파이프는 사용자가 값을 변경하거나 지수를 변경할 때마다 실행됩니다. 위의 강조 표시된 줄을 참조하세요.
 
-Angular detects each change and immediately runs the pipe.
-This is fine for primitive input values.
-However, if you change something *inside* a composite object (such as the month of a date, an element of an array, or an object property), you need to understand how change detection works, and how to use an `impure` pipe.
+Angular는 각 변화를 감지하고 즉시 파이프를 실행합니다.
+이는 기본 입력 값에 대해서는 괜찮습니다.
+하지만 복합 객체(예: 날짜의 월, 배열의 요소 또는 객체 속성) 내부의 무언가를 변경하면, 변경 감지가 어떻게 작동하는지와 `impure` 파이프를 사용하는 방법을 이해해야 합니다.
 
-## How change detection works
+## 변경 감지가 작동하는 방식
 
-Angular looks for changes to data-bound values in a change detection process that runs after every DOM event: every keystroke, mouse move, timer tick, and server response.
-The following example, which doesn't use a pipe, demonstrates how Angular uses its default change detection strategy to monitor and update its display of every hero in the `heroes` array.
-The example tabs show the following:
+Angular는 DOM 이벤트 후에 실행되는 변경 감지 프로세스에서 데이터 바인딩 값의 변화를 찾습니다: 각 키 입력, 마우스 이동, 타이머 틱 및 서버 응답.
+다음 예제는 파이프를 사용하지 않고 Angular가 기본 변경 감지 전략을 사용하여 `heroes` 배열의 모든 영웅을 모니터링하고 업데이트하는 방법을 보여줍니다.
+예제 탭은 다음과 같습니다:
 
-| Files                               | Details |
+| 파일                                | 세부사항 |
 |:---                                 |:---     |
-| `flying-heroes.component.html (v1)` | The `*ngFor` repeater displays the hero names.                     |
-| `flying-heroes.component.ts (v1)`   | Provides heroes, adds heroes into the array, and resets the array. |
+| `flying-heroes.component.html (v1)` | `*ngFor` 반복기가 영웅 이름을 표시합니다.                     |
+| `flying-heroes.component.ts (v1)`   | 영웅을 제공하고, 배열에 영웅을 추가하고, 배열을 재설정합니다. |
 
 <docs-code-multifile>
     <docs-code header="src/app/flying-heroes.component.html (v1)" path="adev/src/content/examples/pipes/src/app/flying-heroes.component.html" visibleRegion="template-1"/>
     <docs-code header="src/app/flying-heroes.component.ts (v1)" path="adev/src/content/examples/pipes/src/app/flying-heroes.component.ts" visibleRegion="v1"/>
 </docs-code-multifile>
 
-Angular updates the display every time the user adds a hero.
-If the user clicks the **Reset** button, Angular replaces `heroes` with a new array of the original heroes and updates the display.
-If you add the ability to remove or change a hero, Angular would detect those changes and update the display as well.
+Angular는 사용자가 영웅을 추가할 때마다 디스플레이를 업데이트합니다.
+사용자가 **Reset** 버튼을 클릭하면 Angular는 `heroes`를 원래 영웅의 새로운 배열로 교체하고 디스플레이를 업데이트합니다.
+영웅을 제거하거나 변경할 능력을 추가하면, Angular는 이러한 변화를 감지하고 디스플레이를 업데이트합니다.
 
-However, executing a pipe to update the display with every change would slow down your application's performance.
-So Angular uses a faster change-detection algorithm for executing a pipe, as described in the next section.
+하지만 매번 변경할 때마다 디스플레이를 업데이트하기 위해 파이프를 실행하면 애플리케이션 성능이 저하됩니다.
+따라서 Angular는 다음 섹션에서 설명한 대로 파이프를 실행하는 데 더 빠른 변경 감지 알고리즘을 사용합니다.
 
-## Detecting pure changes to primitives and object references
+## 원시 값과 객체 참조에 대한 순수 변경 감지
 
-By default, pipes are defined as *pure* so that Angular executes the pipe only when it detects a *pure change* to the input value or parameters.
-A pure change is either a change to a primitive input value \(such as `String`, `Number`, `Boolean`, or `Symbol`\), or a changed object reference \(such as `Date`, `Array`, `Function`, or `Object`\).
+기본적으로, 파이프는 *순수*로 정의되어 있으며, Angular는 입력 값이나 매개변수에 대한 *순수 변경*을 감지할 때만 파이프를 실행합니다.
+순수 변경이란 기본 입력 값(예: `String`, `Number`, `Boolean` 또는 `Symbol`)의 변경이거나 변경된 객체 참조(예: `Date`, `Array`, `Function` 또는 `Object`)입니다.
 
-A pure pipe must use a pure function, which is one that processes inputs and returns values without side effects.
-In other words, given the same input, a pure function should always return the same output.
+순수 파이프는 부작용 없이 입력을 처리하고 값을 반환하는 순수 함수를 사용해야 합니다.
+즉, 동일한 입력이 주어졌을 때, 순수 함수는 항상 동일한 출력을 반환해야 합니다.
 
-With a pure pipe, Angular ignores changes within objects and arrays because checking a primitive value or object reference is much faster than performing a deep check for differences within objects.
-Angular can quickly determine if it can skip executing the pipe and updating the view.
+순수 파이프를 사용하면 Angular는 객체와 배열 내의 변경 사항을 무시합니다. 왜냐하면 기본 값이나 객체 참조를 확인하는 것이 객체 내의 차이를 깊이 검사하는 것보다 훨씬 빠르기 때문입니다.
+Angular는 파이프를 실행하고 뷰를 업데이트하는 것을 건너뛸 수 있는지를 빠르게 결정할 수 있습니다.
 
-However, a pure pipe with an array as input might not work the way you want.
-To demonstrate this issue, change the previous example to filter the list of heroes to just those heroes who can fly.
+그러나 배열을 입력으로 가진 순수 파이프는 원하는 방식으로 작동하지 않을 수 있습니다.
+이 문제를 보여주기 위해, 이전 예제를 변경하여 비행할 수 있는 영웅 목록으로 필터링합니다.
 
-For this, consider we use the `FlyingHeroesPipe` in the `*ngFor` repeater as shown in the following code.
-The tabs for the example show the following:
+이를 위해 다음 코드에서 `*ngFor` 반복기에 `FlyingHeroesPipe`를 사용한다고 가정해보겠습니다.
+예제 탭은 다음과 같습니다:
 
-| Files                          | Details |
-|:---                            |:---     |
-| flying-heroes.component.html   | Template with the new pipe used. |
-| flying-heroes.pipe.ts          | File with custom pipe that filters flying heroes. |
+| 파일                             | 세부사항 |
+|:---                              |:---     |
+| flying-heroes.component.html      | 새 파이프가 사용된 템플릿. |
+| flying-heroes.pipe.ts             | 비행 영웅을 필터링하는 사용자 정의 파이프가 있는 파일. |
 
 <docs-code-multifile>
     <docs-code header="src/app/flying-heroes.component.html" path="adev/src/content/examples/pipes/src/app/flying-heroes.component.html" visibleRegion="template-flying-heroes"/>
     <docs-code header="src/app/flying-heroes.pipe.ts" path="adev/src/content/examples/pipes/src/app/flying-heroes.pipe.ts" visibleRegion="pure"/>
 </docs-code-multifile>
 
-The application now shows unexpected behavior: When the user adds flying heroes, none of them appear under "Heroes who fly."
-This happens because the code that adds a hero does so by pushing it onto the `heroes` array that is used as input for the `flyingHeroes` pipe.
+이제 애플리케이션은 예상치 못한 동작을 보여줍니다: 사용자가 비행 영웅을 추가할 때 "비행하는 영웅들" 아래에 아무것도 나타나지 않습니다.
+이는 영웅을 추가하는 코드가 영웅을 `flyingHeroes` 파이프의 입력으로 사용되는 `heroes` 배열에 푸시하기 때문입니다.
 
 <docs-code header="src/app/flying-heroes.component.ts" path="adev/src/content/examples/pipes/src/app/flying-heroes.component.ts" visibleRegion="push"/>
 
-The change detector ignores changes within elements of an array, so the pipe doesn't run.
-The reason Angular ignores the changed array element is that the *reference* to the array hasn't changed.
-Because the array is the same, Angular does not update the display.
+변경 감지기는 배열의 요소 내의 변경을 무시하므로 파이프가 실행되지 않습니다.
+Angular가 변경된 배열 요소를 무시하는 이유는 배열에 대한 *참조*가 변경되지 않았기 때문입니다.
+배열이 동일하기 때문에 Angular는 디스플레이를 업데이트하지 않습니다.
 
-One way to get the behavior you want is to change the object reference itself.
-Replace the array with a new array containing the newly changed elements, and then input the new array to the pipe.
-In the preceding example, create an array with the new hero appended, and assign that to `heroes`.
-Angular detects the change in the array reference and executes the pipe.
+원하는 동작을 얻는 한 가지 방법은 객체 참조 자체를 변경하는 것입니다.
+배열을 새로 변경된 요소가 포함된 새로운 배열로 교체한 다음, 새 배열을 파이프에 입력합니다.
+이전 예제에서는 새 영웅이 추가된 배열을 만들고 이를 `heroes`에 할당합니다.
+Angular는 배열 참조의 변화를 감지하고 파이프를 실행합니다.
 
-To summarize, if you mutate the input array, the pure pipe doesn't execute.
-If you *replace* the input array, the pipe executes and the display is updated.
-As an alternative, use an *impure* pipe to detect changes within composite objects such as arrays, as described in the next section.
+요약하자면, 입력 배열을 변형하면 순수 파이프가 실행되지 않습니다.
+입력 배열을 *교체*하면, 파이프가 실행되고 디스플레이가 업데이트됩니다.
+대안으로, 다음 섹션에서 설명할 배열과 같은 복합 객체 내의 변경을 감지하려면 *impure* 파이프를 사용하십시오.
 
-## Detecting impure changes within composite objects
+## 복합 객체 내의 불순한 변경 감지
 
-To execute a custom pipe after a change *within* a composite object, such as a change to an element of an array, you need to define your pipe as `impure` to detect impure changes.
-Angular executes an impure pipe every time it detects a change (e.g. every keystroke or mouse event).
+복합 객체 내부의 요소에 대한 변경, 예를 들어 배열의 요소에 대한 변경 후에 사용자 정의 파이프를 실행하려면 불순한 변경을 감지하기 위해 파이프를 `impure`로 정의해야 합니다.
+Angular는 변경이 감지될 때마다 모든 비순수 파이프를 실행합니다(예: 각 키 입력이나 마우스 이벤트).
 
-IMPORTANT: While an impure pipe can be useful, be careful using one.
-A long-running impure pipe could dramatically slow down your application.
+중요: 불순한 파이프는 유용할 수 있지만 주의해서 사용해야 합니다.
+장시간 실행되는 불순한 파이프는 애플리케이션을 극적으로 느리게 할 수 있습니다.
 
-Make a pipe impure by setting its `pure` flag to `false`:
+파이프의 `pure` 플래그를 `false`로 설정하여 파이프를 불순하게 만듭니다:
 
 <docs-code header="src/app/flying-heroes.pipe.ts" path="adev/src/content/examples/pipes/src/app/flying-heroes.pipe.ts"
            visibleRegion="pipe-decorator" highlight="[19]"/>
 
-The following code shows the complete implementation of `FlyingHeroesImpurePipe`, which extends `FlyingHeroesPipe` to inherit its characteristics.
-The example shows that you don't have to change anything else—the only difference is setting the `pure` flag as `false` in the pipe metadata.
+다음 코드는 `FlyingHeroesPipe`의 특성을 상속하는 `FlyingHeroesImpurePipe`의 전체 구현을 보여줍니다.
+예제는 다른 것을 변경할 필요가 없음을 보여줍니다. 유일한 차이는 파이프 메타데이터에서 `pure` 플래그를 `false`로 설정하는 것입니다.
 
 <docs-code-multifile>
     <docs-code header="src/app/flying-heroes.pipe.ts (FlyingHeroesImpurePipe)" path="adev/src/content/examples/pipes/src/app/flying-heroes.pipe.ts" visibleRegion="impure"/>
     <docs-code header="src/app/flying-heroes.pipe.ts (FlyingHeroesPipe)" path="adev/src/content/examples/pipes/src/app/flying-heroes.pipe.ts" visibleRegion="pure"/>
 </docs-code-multifile>
 
-`FlyingHeroesImpurePipe` is a reasonable candidate for an impure pipe because the `transform` function is trivial and fast:
+`FlyingHeroesImpurePipe`는 `transform` 함수가 사소하고 빠르기 때문에 불순한 파이프의 적절한 후보입니다:
 
 <docs-code header="src/app/flying-heroes.pipe.ts (filter)" path="adev/src/content/examples/pipes/src/app/flying-heroes.pipe.ts" visibleRegion="filter"/>
 
-You can derive a `FlyingHeroesImpureComponent` from `FlyingHeroesComponent`.
-As shown in the following code, only the pipe in the template changes.
+`FlyingHeroesComponent`에서 `FlyingHeroesImpureComponent`를 파생할 수 있습니다.
+다음 코드에서 보여주듯이, 템플릿에서 파이프만 변경됩니다.
 
 <docs-code header="src/app/flying-heroes-impure.component.html (excerpt)" path="adev/src/content/examples/pipes/src/app/flying-heroes-impure.component.html" visibleRegion="template-flying-heroes"/>

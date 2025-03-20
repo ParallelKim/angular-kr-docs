@@ -1,19 +1,19 @@
-# Routing Overview
+# 라우팅 개요
 
-For most apps, there comes a point where the app requires more than a single page. When that time inevitably comes, routing becomes a big part of the performance story for users.
+대부분의 애플리케이션에서는 앱이 단일 페이지 이상이 필요해지는 시점이 있습니다. 그 시점이 불가피하게 오면, 라우팅은 사용자에게 성능 이야기의 큰 부분이 됩니다.
 
-In this activity, you'll learn how to set up and configure your app to use Angular Router.
+이 활동에서는 Angular Router를 사용하도록 앱을 설정하고 구성하는 방법을 배웁니다.
 
 <hr>
 
 <docs-workflow>
 
-<docs-step title="Create an app.routes.ts file">
+<docs-step title="app.routes.ts 파일 만들기">
 
-Inside `app.routes.ts`, make the following changes:
+`app.routes.ts` 안에서 다음 변경 사항을 수행합니다:
 
-1. Import `Routes` from the `@angular/router` package.
-1. Export a constant called `routes` of type `Routes`, assign it `[]` as the value.
+1. `@angular/router` 패키지에서 `Routes`를 임포트합니다.
+1. `Routes` 타입의 `routes`라는 상수를 내보내고 값으로 `[]`를 할당합니다.
 
 ```ts
 import {Routes} from '@angular/router';
@@ -23,13 +23,13 @@ export const routes: Routes = [];
 
 </docs-step>
 
-<docs-step title="Add routing to provider">
+<docs-step title="공급자에 라우팅 추가">
 
-In `app.config.ts`, configure the app to Angular Router with the following steps:
+`app.config.ts`에서 Angular Router로 앱을 구성하는 다음 단계를 수행합니다:
 
-1. Import the `provideRouter` function from `@angular/router`.
-1. Import `routes` from the `./app.routes.ts`.
-1. Call the `provideRouter` function with `routes` passed in as an argument in the `providers` array.
+1. `@angular/router`에서 `provideRouter` 함수를 임포트합니다.
+1. `./app.routes.ts`에서 `routes`를 임포트합니다.
+1. `providers` 배열에서 매개변수로 `routes`를 전달하여 `provideRouter` 함수를 호출합니다.
 
 <docs-code language="ts" highlight="[2,3,6]">
 import {ApplicationConfig} from '@angular/core';
@@ -43,11 +43,11 @@ export const appConfig: ApplicationConfig = {
 
 </docs-step>
 
-<docs-step title="Import `RouterOutlet` in the component">
+<docs-step title="컴포넌트에 `RouterOutlet` 임포트">
 
-Finally, to make sure your app is ready to use the Angular Router, you need to tell the app where you expect the router to display the desired content. Accomplish that by using the `RouterOutlet` directive from `@angular/router`.
+마지막으로, Angular Router를 사용하려면 앱에 라우터가 원하는 콘텐츠를 표시할 위치를 알려야 합니다. 이를 위해 `@angular/router`에서 제공하는 `RouterOutlet` 지시문을 사용합니다.
 
-Update the template for `AppComponent` by adding `<router-outlet />`
+`AppComponent`의 템플릿을 업데이트하여 `<router-outlet />`를 추가합니다.
 
 <docs-code language="angular-ts" highlight="[11]">
 import {RouterOutlet} from '@angular/router';
@@ -56,9 +56,9 @@ import {RouterOutlet} from '@angular/router';
   ...
   template: `
     <nav>
-      <a href="/">Home</a>
+      <a href="/">홈</a>
       |
-      <a href="/user">User</a>
+      <a href="/user">사용자</a>
     </nav>
     <router-outlet />
   `,
@@ -71,6 +71,6 @@ export class AppComponent {}
 
 </docs-workflow>
 
-Your app is now set up to use Angular Router. Nice work! 🙌
+이제 앱이 Angular Router를 사용하도록 설정되었습니다. 잘 했어요! 🙌
 
-Keep the momentum going to learn the next step of defining the routes for our app.
+다음 단계로 나아가 앱의 라우트를 정의하는 방법을 배워보세요.

@@ -1,111 +1,83 @@
-# Security
+# 보안
 
-This topic describes Angular's built-in protections against common web application vulnerabilities and attacks such as cross-site scripting attacks.
-It doesn't cover application-level security, such as authentication and authorization.
+이 주제에서는 Angular의 웹 애플리케이션에서 발생할 수 있는 일반적인 취약성과 공격, 예를 들어 크로스 사이트 스크립팅 공격에 대한 내장 보호 기능을 설명합니다. 인증 및 권한 부여와 같은 애플리케이션 수준의 보안은 다루지 않습니다.
 
-For more information about the attacks and mitigations described below, see the [Open Web Application Security Project (OWASP) Guide](https://www.owasp.org/index.php/Category:OWASP_Guide_Project).
+아래 설명된 공격 및 완화 조치에 대한 자세한 내용은 [Open Web Application Security Project (OWASP) 가이드](https://www.owasp.org/index.php/Category:OWASP_Guide_Project)를 참조하세요.
 
 <a id="report-issues"></a>
 
-<docs-callout title="Reporting vulnerabilities">
+<docs-callout title="취약점 신고">
 
-Angular is part of Google [Open Source Software Vulnerability Reward Program](https://bughunters.google.com/about/rules/6521337925468160/google-open-source-software-vulnerability-reward-program-rules). For vulnerabilities in Angular, please submit your report at [https://bughunters.google.com](https://bughunters.google.com/report).
+Angular는 Google의 [오픈 소스 소프트웨어 취약점 보상 프로그램](https://bughunters.google.com/about/rules/6521337925468160/google-open-source-software-vulnerability-reward-program-rules)의 일환입니다. Angular의 취약점에 대해서는 [https://bughunters.google.com](https://bughunters.google.com/report)에서 신고해 주세요.
 
-For more information about how Google handles security issues, see [Google's security philosophy](https://www.google.com/about/appsecurity).
+Google이 보안 문제를 처리하는 방법에 대한 자세한 내용은 [Google의 보안 철학](https://www.google.com/about/appsecurity)을 참조하세요.
 
 </docs-callout>
 
-## Best practices
+## 모범 사례
 
-These are some best practices to ensure that your Angular application is secure.
+Angular 애플리케이션이 안전하도록 하기 위해 기억해야 할 몇 가지 모범 사례입니다.
 
-1. **Keep current with the latest Angular library releases** - The Angular libraries get regular updates, and these updates might fix security defects discovered in previous versions. Check the Angular [change log](https://github.com/angular/angular/blob/main/CHANGELOG.md) for security-related updates.
-2. **Don't alter your copy of Angular** - Private, customized versions of Angular tend to fall behind the current version and might not include important security fixes and enhancements. Instead, share your Angular improvements with the community and make a pull request.
-3. **Avoid Angular APIs marked in the documentation as "_Security Risk_"** - For more information, see the [Trusting safe values](#trusting-safe-values) section of this page.
+1. **최신 Angular 라이브러리 릴리스에 유지하기** - Angular 라이브러리는 정기적으로 업데이트되며, 이러한 업데이트는 이전 버전에서 발견된 보안 결함을 수정할 수 있습니다. 보안 관련 업데이트는 Angular [변경 로그](https://github.com/angular/angular/blob/main/CHANGELOG.md)를 확인하세요.
+2. **Angular 사본을 수정하지 않기** - 비공식적인 맞춤형 Angular 버전은 최신 버전에서 뒤처질 수 있으며, 중요한 보안 수정 및 향상이 포함되지 않을 수 있습니다. 대신, 커뮤니티와 Angular 개선 사항을 공유하고 풀 리퀘스트를 작성하세요.
+3. **문서에서 “_보안 위험_”으로 표시된 Angular API를 피하기** - 자세한 내용은 이 페이지의 [안전한 값 신뢰하기](#trusting-safe-values) 섹션을 참조하세요.
 
-## Preventing cross-site scripting (XSS)
+## 크로스 사이트 스크립팅(XSS) 방지
 
-[Cross-site scripting (XSS)](https://en.wikipedia.org/wiki/Cross-site_scripting) enables attackers to inject malicious code into web pages.
-Such code can then, for example, steal user and login data, or perform actions that impersonate the user.
-This is one of the most common attacks on the web.
+[크로스 사이트 스크립팅(XSS)](https://en.wikipedia.org/wiki/Cross-site_scripting) 공격자는 웹 페이지에 악성 코드를 주입할 수 있습니다. 그런 코드는 사용자 및 로그인 데이터를 훔치거나 사용자를 가장한 작업을 수행할 수 있습니다. 이는 웹에서 가장 일반적인 공격 중 하나입니다.
 
-To block XSS attacks, you must prevent malicious code from entering the Document Object Model (DOM).
-For example, if attackers can trick you into inserting a `<script>` tag in the DOM, they can run arbitrary code on your website.
-The attack isn't limited to `<script>` tags —many elements and properties in the DOM allow code execution, for example, `<img alt="" onerror="...">` and `<a href="javascript:...">`.
-If attacker-controlled data enters the DOM, expect security vulnerabilities.
+XSS 공격을 차단하려면 악성 코드가 문서 객체 모델(DOM)에 들어오는 것을 방지해야 합니다. 예를 들어, 공격자가 DOM에 `<script>` 태그를 삽입하도록 속일 수 있다면, 그들은 귀하의 웹사이트에서 임의의 코드를 실행할 수 있습니다. 이 공격은 `<script>` 태그에 국한되지 않으며, DOM 내에서 코드를 실행할 수 있는 많은 요소 및 속성이 존재합니다. 예를 들어 `<img alt="" onerror="...">` 및 `<a href="javascript:...">`와 같습니다. 공격자가 제어하는 데이터가 DOM에 들어오면 보안 취약점이 발생할 수 있습니다.
 
-### Angular's cross-site scripting security model
+### Angular의 크로스 사이트 스크립팅 보안 모델
 
-To systematically block XSS bugs, Angular treats all values as untrusted by default.
-When a value is inserted into the DOM from a template binding, or interpolation, Angular sanitizes and escapes untrusted values.
-If a value was already sanitized outside of Angular and is considered safe, communicate this to Angular by marking the [value as trusted](#trusting-safe-values).
+Angular는 XSS 버그를 체계적으로 차단하기 위해 기본적으로 모든 값을 신뢰할 수 없는 것으로 간주합니다. 템플릿 바인딩 또는 보간에서 DOM에 값이 삽입될 때 Angular는 신뢰할 수 없는 값을 청소하고 이스케이프합니다. 만약 값이 Angular 외부에서 이미 청소되고 안전한 것으로 간주된다면, [신뢰된 값으로 마킹](#trusting-safe-values)하여 Angular에 이를 알려주세요.
 
-Unlike values to be used for rendering, Angular templates are considered trusted by default, and should be treated as executable code.
-Never create templates by concatenating user input and template syntax.
-Doing this would enable attackers to [inject arbitrary code](https://en.wikipedia.org/wiki/Code_injection) into your application.
-To prevent these vulnerabilities, always use the default [Ahead-Of-Time (AOT) template compiler](#use-the-aot-template-compiler) in production deployments.
+렌더링에 사용될 값과는 달리 Angular 템플릿은 기본적으로 신뢰할 수 있는 것으로 간주되며 실행 가능한 코드로 처리되어야 합니다. 사용자 입력과 템플릿 구문을 연결하여 템플릿을 만들지 마세요. 이렇게 하면 공격자가 귀하의 애플리케이션에 [임의의 코드](https://en.wikipedia.org/wiki/Code_injection)를 주입할 수 있습니다. 이러한 취약점을 방지하기 위해 항상 프로덕션 배포에서 기본 [사전 컴파일 시간(AOT) 템플릿 컴파일러](#use-the-aot-template-compiler)를 사용하세요.
 
-An extra layer of protection can be provided through the use of Content security policy and Trusted Types.
-These web platform features operate at the DOM level which is the most effective place to prevent XSS issues. Here they can't be bypassed using other, lower-level APIs.
-For this reason, it is strongly encouraged to take advantage of these features. To do this, configure the [content security policy](#content-security-policy) for the application and enable [trusted types enforcement](#enforcing-trusted-types).
+추가적인 보호 레이어는 콘텐츠 보안 정책 및 신뢰할 수 있는 타입을 사용하여 제공될 수 있습니다. 이러한 웹 플랫폼 기능은 DOM 레벨에서 작동하여 XSS 문제를 예방하는 가장 효과적인 장소입니다. 여기서는 다른 낮은 수준의 API를 사용하여 우회할 수 없습니다. 이러한 이유로 이러한 기능을 활용하는 것이 강력히 권장됩니다. 이를 위해 애플리케이션에 대한 [콘텐츠 보안 정책](#content-security-policy)을 구성하고 [신뢰된 타입 시행](#enforcing-trusted-types)을 활성화하세요.
 
-### Sanitization and security contexts
+### 청소 및 보안 컨텍스트
 
-*Sanitization* is the inspection of an untrusted value, turning it into a value that's safe to insert into the DOM.
-In many cases, sanitization doesn't change a value at all.
-Sanitization depends on a context.
-For example, a value that's harmless in CSS is potentially dangerous in a URL.
+*청소*는 신뢰할 수 없는 값을 검사하여 DOM에 삽입할 수 있게 안전한 값으로 바꾸는 것입니다. 많은 경우에 청소는 값을 전혀 변경하지 않습니다. 청소는 컨텍스트에 따라 다릅니다. 예를 들어, CSS에서는 해롭지 않은 값이 URL에서는 잠재적으로 위험할 수 있습니다.
 
-Angular defines the following security contexts:
+Angular는 다음과 같은 보안 컨텍스트를 정의합니다:
 
-| Security contexts | Details                                                                           |
-| :---------------- | :-------------------------------------------------------------------------------- |
-| HTML              | Used when interpreting a value as HTML, for example, when binding to `innerHtml`. |
-| Style             | Used when binding CSS into the `style` property.                                  |
-| URL               | Used for URL properties, such as `<a href>`.                                      |
-| Resource URL      | A URL that is loaded and executed as code, for example, in `<script src>`.        |
+| 보안 컨텍스트      | 세부 사항                                                                          |
+| :----------------- | :--------------------------------------------------------------------------------- |
+| HTML               | 값을 HTML로 해석할 때 사용됩니다. 예를 들어, `innerHtml`에 바인딩할 때입니다.   |
+| 스타일            | `style` 속성에 CSS를 바인딩할 때 사용됩니다.                                     |
+| URL                | `<a href>`와 같은 URL 속성에 사용됩니다.                                        |
+| 리소스 URL         | 코드로 실행되도록 로드되는 URL 예를 들어, `<script src>`에 사용됩니다.          |
 
-Angular sanitizes untrusted values for HTML and URLs. Sanitizing resource URLs isn't possible because they contain arbitrary code.
-In development mode, Angular prints a console warning when it has to change a value during sanitization.
+Angular는 HTML 및 URL에 대한 신뢰할 수 없는 값을 청소합니다. 리소스 URL을 청소하는 것은 불가능합니다. 이에 따라 임의의 코드가 포함될 수 있습니다. 개발 모드에서는 Angular가 청소 중 값을 변경해야 할 때 콘솔 경고를 인쇄합니다.
 
-### Sanitization example
+### 청소 예시
 
-The following template binds the value of `htmlSnippet`. Once by interpolating it into an element's content, and once by binding it to the `innerHTML` property of an element:
+다음 템플릿은 `htmlSnippet`의 값을 바인딩합니다. 한 번은 요소의 콘텐츠에 보간하여, 또 한 번은 요소의 `innerHTML` 속성에 바인딩하여 사용합니다:
 
 <docs-code header="src/app/inner-html-binding.component.html" path="adev/src/content/examples/security/src/app/inner-html-binding.component.html"/>
 
-Interpolated content is always escaped —the HTML isn't interpreted and the browser displays angle brackets in the element's text content.
+보간된 콘텐츠는 항상 이스케이프됩니다 — HTML은 해석되지 않고 브라우저는 요소의 텍스트 콘텐츠에 각괄호(<>)를 표시합니다.
 
-For the HTML to be interpreted, bind it to an HTML property such as `innerHTML`.
-Be aware that binding a value that an attacker might control into `innerHTML` normally causes an XSS vulnerability.
-For example, one could run JavaScript in a following way:
+HTML을 해석하려면 `innerHTML`과 같은 HTML 속성에 바인딩하세요. 공격자가 제어할 수 있는 값을 `innerHTML`에 바인딩하는 것은 일반적으로 XSS 취약점을 초래합니다. 예를 들어, JavaScript를 다음과 같이 실행할 수 있습니다:
 
 <docs-code header="src/app/inner-html-binding.component.ts (class)" path="adev/src/content/examples/security/src/app/inner-html-binding.component.ts" visibleRegion="class"/>
 
-Angular recognizes the value as unsafe and automatically sanitizes it, which removes the `script` element but keeps safe content such as the `<b>` element.
+Angular는 값을 안전하지 않은 것으로 인식하고 자동으로 청소하여 `script` 요소를 제거하고 `<b>` 요소와 같은 안전한 콘텐츠는 유지합니다.
 
-<img alt="A screenshot showing interpolated and bound HTML values" src="assets/images/guide/security/binding-inner-html.png#small">
+<img alt="Interpolated and bound HTML values" src="assets/images/guide/security/binding-inner-html.png#small">
 
-### Direct use of the DOM APIs and explicit sanitization calls
+### DOM API의 직접 사용 및 명시적 청소 호출
 
-Unless you enforce Trusted Types, the built-in browser DOM APIs don't automatically protect you from security vulnerabilities.
-For example, `document`, the node available through `ElementRef`, and many third-party APIs contain unsafe methods.
-Likewise, if you interact with other libraries that manipulate the DOM, you likely won't have the same automatic sanitization as with Angular interpolations.
-Avoid directly interacting with the DOM and instead use Angular templates where possible.
+신뢰할 수 있는 타입을 시행하지 않는 한, 기본 제공 브라우저 DOM API는 보안 취약점으로부터 자동으로 보호해 주지 않습니다. 예를 들어, `document`, `ElementRef`를 통해 사용할 수 있는 노드 및 많은 서드파티 API는 안전하지 않은 메서드를 포함합니다. 마찬가지로 DOM을 조작하는 다른 라이브러리와 상호작용할 경우 Angular 보간과 같은 자동 청소가 없을 수 있습니다. DOM과 직접 상호작용하는 것을 피하고 가능한 경우 Angular 템플릿을 사용하세요.
 
-For cases where this is unavoidable, use the built-in Angular sanitization functions.
-Sanitize untrusted values with the [DomSanitizer.sanitize](api/platform-browser/DomSanitizer#sanitize) method and the appropriate `SecurityContext`.
-That function also accepts values that were marked as trusted using the `bypassSecurityTrust` functions, and does not sanitize them, as [described below](#trusting-safe-values).
+이것이 불가피한 경우, Angular의 내장 청소 함수를 사용하세요. [DomSanitizer.sanitize](api/platform-browser/DomSanitizer#sanitize) 메서드와 적절한 `SecurityContext`를 사용하여 신뢰할 수 없는 값을 청소합니다. 이 함수는 `bypassSecurityTrust` 함수로 신뢰된 것으로 마킹된 값도 수락하며, 이에 대해서는 [신뢰된 값으로 마킹하기](#trusting-safe-values)에서 설명하고 있습니다.
 
-### Trusting safe values
+### 안전한 값 신뢰하기
 
-Sometimes applications genuinely need to include executable code, display an `<iframe>` from some URL, or construct potentially dangerous URLs.
-To prevent automatic sanitization in these situations, tell Angular that you inspected a value, checked how it was created, and made sure it is secure.
-Do _be careful_.
-If you trust a value that might be malicious, you are introducing a security vulnerability into your application.
-If in doubt, find a professional security reviewer.
+때때로 애플리케이션은 실행 가능한 코드를 포함하거나, 특정 URL에서 `<iframe>`을 표시하거나, 잠재적으로 위험한 URL을 구성해야 할 필요가 있습니다. 이러한 상황에서 자동 청소를 방지하려면 Angular에 값을 검사했고, 생성 방법을 확인했으며 안전하다는 것을 알리세요. _주의하세요_. 악성 코드일 수 있는 값을 신뢰하면 애플리케이션에 보안 취약점을 도입하게 됩니다. 의심스러운 경우 경험이 풍부한 보안 검토자를 찾으세요.
 
-To mark a value as trusted, inject `DomSanitizer` and call one of the following methods:
+값을 신뢰된 것으로 마킹하기 위해 `DomSanitizer`를 주입하고 다음 메서드 중 하나를 호출하세요:
 
 * `bypassSecurityTrustHtml`
 * `bypassSecurityTrustScript`
@@ -113,34 +85,27 @@ To mark a value as trusted, inject `DomSanitizer` and call one of the following 
 * `bypassSecurityTrustUrl`
 * `bypassSecurityTrustResourceUrl`
 
-Remember, whether a value is safe depends on context, so choose the right context for your intended use of the value.
-Imagine that the following template needs to bind a URL to a `javascript:alert(...)` call:
+값의 안전 여부는 컨텍스트에 따라 다르므로, 의도한 사용에 맞는 올바른 컨텍스트를 선택하세요. 다음 템플릿이 `javascript:alert(...)` 호출에 URL을 바인딩해야 한다고 가정해 보겠습니다:
 
 <docs-code header="src/app/bypass-security.component.html (URL)" path="adev/src/content/examples/security/src/app/bypass-security.component.html" visibleRegion="URL"/>
 
-Normally, Angular automatically sanitizes the URL, disables the dangerous code, and in development mode, logs this action to the console.
-To prevent this, mark the URL value as a trusted URL using the `bypassSecurityTrustUrl` call:
+보통 Angular는 URL을 자동으로 청소하고 위험한 코드를 비활성화하며, 개발 모드에서는 이 작업을 콘솔에 기록합니다. 이를 방지하려면 `bypassSecurityTrustUrl` 호출을 사용하여 URL 값을 신뢰된 URL로 표시하세요:
 
 <docs-code header="src/app/bypass-security.component.ts (trust-url)" path="adev/src/content/examples/security/src/app/bypass-security.component.ts" visibleRegion="trust-url"/>
 
-<img alt="A screenshot showing an alert box created from a trusted URL" src="assets/images/guide/security/bypass-security-component.png#medium">
+<img alt="신뢰된 URL에서 생성된 알림 상자의 스크린샷" src="assets/images/guide/security/bypass-security-component.png#medium">
 
-If you need to convert user input into a trusted value, use a component method.
-The following template lets users enter a YouTube video ID and load the corresponding video in an `<iframe>`.
-The `<iframe src>` attribute is a resource URL security context, because an untrusted source can, for example, smuggle in file downloads that unsuspecting users could run.
-To prevent this, call a method on the component to construct a trusted video URL, which causes Angular to let binding into `<iframe src>`:
+사용자 입력을 신뢰된 값으로 변환해야 할 경우 컴포넌트 메서드를 사용하세요. 다음 템플릿은 사용자가 YouTube 비디오 ID를 입력하고 해당 비디오를 `<iframe>`에서 로드하도록 허용합니다. `<iframe src>` 속성은 리소스 URL 보안 컨텍스트입니다. 신뢰할 수 없는 소스가 예를 들어, 사용자들이 실행할 수 있는 파일 다운로드를 몰래 숨길 수 있기 때문입니다. 이를 방지하기 위해, 신뢰된 비디오 URL을 구성하는 컴포넌트의 메서드를 호출하여 Angular가 `<iframe src>`에 바인딩할 수 있도록 합니다:
 
 <docs-code header="src/app/bypass-security.component.html (iframe)" path="adev/src/content/examples/security/src/app/bypass-security.component.html" visibleRegion="iframe"/>
 
 <docs-code header="src/app/bypass-security.component.ts (trust-video-url)" path="adev/src/content/examples/security/src/app/bypass-security.component.ts" visibleRegion="trust-video-url"/>
 
-### Content security policy
+### 콘텐츠 보안 정책
 
-Content Security Policy \(CSP\) is a defense-in-depth technique to prevent XSS.
-To enable CSP, configure your web server to return an appropriate `Content-Security-Policy` HTTP header.
-Read more about content security policy at the [Web Fundamentals guide](https://developers.google.com/web/fundamentals/security/csp) on the Google Developers website.
+콘텐츠 보안 정책(CSP)은 XSS를 방지하기 위한 심층 방어 기술입니다. CSP를 활성화하려면 웹 서버를 구성하여 적절한 `Content-Security-Policy` HTTP 헤더를 반환하도록 합니다. Google 개발자 웹사이트의 [웹 기초 가이드](https://developers.google.com/web/fundamentals/security/csp)에서 콘텐츠 보안 정책에 대한 자세한 내용을 읽어보세요.
 
-The minimal policy required for a brand-new Angular application is:
+새로운 Angular 애플리케이션에 필요한 최소 정책은 다음과 같습니다:
 
 <docs-code language="text">
 
@@ -148,12 +113,10 @@ default-src 'self'; style-src 'self' 'nonce-randomNonceGoesHere'; script-src 'se
 
 </docs-code>
 
-When serving your Angular application, the server should include a  randomly-generated nonce in the HTTP header for each request.
-You must provide this nonce to Angular so that the framework can render `<style>` elements.
-You can set the nonce for Angular in one of two ways:
+Angular 애플리케이션을 제공할 때 서버는 각 요청에 대해 무작위로 생성된 nonce를 HTTP 헤더에 포함해야 합니다. 이 nonce를 Angular에 제공해야 `<style>` 요소를 렌더링할 수 있습니다. Angular의 nonce를 설정하는 방법은 두 가지입니다:
 
-1. Set the `ngCspNonce` attribute on the root application element as `<app ngCspNonce="randomNonceGoesHere"></app>`. Use this approach if you have access to server-side templating that can add the nonce both to the header and the `index.html` when constructing the response.
-2. Provide the nonce using the `CSP_NONCE` injection token. Use this approach if you have access to the nonce at runtime and you want to be able to cache the `index.html`.
+1. 루트 애플리케이션 요소에 `ngCspNonce` 속성을 설정합니다: `<app ngCspNonce="randomNonceGoesHere"></app>`. 서버 측 템플릿을 사용하여 응답을 구성할 때 헤더와 `index.html` 모두에 nonce를 추가할 수 있는 경우 이 방법을 사용하세요.
+2. 런타임에 nonce에 접근할 수 있고 `index.html`을 캐시할 수 있게 하려면 `CSP_NONCE` 주입 토큰을 사용하여 nonce를 제공하세요.
 
 <docs-code language="typescript">
 
@@ -169,55 +132,49 @@ bootstrapApplication(AppComponent, {
 
 </docs-code>
 
-<docs-callout title="Unique nonces">
+<docs-callout title="고유 nonce">
 
-Always ensure that the nonces you provide are <strong>unique per request</strong> and that they are not predictable or guessable.
-If an attacker can predict future nonces, they can circumvent the protections offered by CSP.
-
-</docs-callout>
-
-If you cannot generate nonces in your project, you can allow inline styles by adding `'unsafe-inline'` to the `style-src` section of the CSP header.
-
-| Sections                                         | Details                                                                                                                                                                                                         |
-| :----------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `default-src 'self';`                            | Allows the page to load all its required resources from the same origin.                                                                                                                                        |
-| `style-src 'self' 'nonce-randomNonceGoesHere';`  | Allows the page to load global styles from the same origin \(`'self'`\) and styles inserted by Angular with the `nonce-randomNonceGoesHere`.                                                                    |
-| `script-src 'self' 'nonce-randomNonceGoesHere';` | Allows the page to load JavaScript from the same origin \(`'self'`\) and scripts inserted by the Angular CLI with the `nonce-randomNonceGoesHere`. This is only required if you're using critical CSS inlining. |
-
-Angular itself requires only these settings to function correctly.
-As your project grows, you may need to expand your CSP settings to accommodate extra features specific to your application.
-
-### Enforcing Trusted Types
-
-It is recommended that you use [Trusted Types](https://w3c.github.io/trusted-types/dist/spec/) as a way to help secure your applications from cross-site scripting attacks.
-Trusted Types is a [web platform](https://en.wikipedia.org/wiki/Web_platform) feature that can help you prevent cross-site scripting attacks by enforcing safer coding practices.
-Trusted Types can also help simplify the auditing of application code.
-
-<docs-callout title="Trusted types">
-
-Trusted Types might not yet be available in all browsers your application targets.
-In the case your Trusted-Types-enabled application runs in a browser that doesn't support Trusted Types, the features of the application are preserved. Your application is guarded against XSS by way of Angular's DomSanitizer.
-See [caniuse.com/trusted-types](https://caniuse.com/trusted-types) for the current browser support.
+제공하는 nonce가 <strong>각 요청마다 고유한지</strong> 확인하고 예측 가능하거나 추측할 수 없도록 하세요. 공격자가 미래의 nonce를 예측할 수 있다면 CSP로 제공되는 보호를 우회할 수 있습니다.
 
 </docs-callout>
 
-To enforce Trusted Types for your application, you must configure your application's web server to emit HTTP headers with one of the following Angular policies:
+프로젝트에서 nonce를 생성할 수 없는 경우 CSP 헤더의 `style-src` 섹션에 `'unsafe-inline'`을 추가하여 인라인 스타일을 허용할 수 있습니다.
 
-| Policies                 | Detail                                                                                                                                                                                                                                                                                     |
-| :----------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `angular`                | This policy is used in security-reviewed code that is internal to Angular, and is required for Angular to function when Trusted Types are enforced. Any inline template values or content sanitized by Angular is treated as safe by this policy.                                          |
-| `angular#bundler`        | This policy is used by the Angular CLI bundler when creating lazy chunk files.                                                                                                                                                                                                             |
-| `angular#unsafe-bypass`  | This policy is used for applications that use any of the methods in Angular's [DomSanitizer](api/platform-browser/DomSanitizer) that bypass security, such as `bypassSecurityTrustHtml`. Any application that uses these methods must enable this policy.                                  |
-| `angular#unsafe-jit`     | This policy is used by the [Just-In-Time (JIT) compiler](api/core/Compiler). You must enable this policy if your application interacts directly with the JIT compiler or is running in JIT mode using the [platform browser dynamic](api/platform-browser-dynamic/platformBrowserDynamic). |
-| `angular#unsafe-upgrade` | This policy is used by the [@angular/upgrade](api/upgrade/static/UpgradeModule) package. You must enable this policy if your application is an AngularJS hybrid. |
+| 섹션                                         | 세부 사항                                                                                                                                                                                                          |
+| :------------------------------------------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `default-src 'self';`                        | 페이지가 필요한 모든 리소스를 같은 출처에서 로드할 수 있도록 허용합니다.                                                                                                                                      |
+| `style-src 'self' 'nonce-randomNonceGoesHere';` | 페이지가 같은 출처(`'self'`)의 글로벌 스타일 및 Angular에서 삽입한 스타일을 사용할 수 있도록 허용합니다.                                                                                                          |
+| `script-src 'self' 'nonce-randomNonceGoesHere';` | 페이지가 같은 출처(`'self'`)의 JavaScript와 Angular CLI에서 삽입한 스크립트를 사용할 수 있도록 허용합니다. 이는 크리티컬 CSS 인라인을 사용하는 경우에만 필요합니다.                                |
 
-You should configure the HTTP headers for Trusted Types in the following locations:
+Angular 자체는 올바르게 작동하는 데 필요한 이러한 설정만 요구합니다. 프로젝트가 커짐에 따라 애플리케이션에 특정한 추가 기능을 수용하기 위해 CSP 설정을 확장해야 할 수 있습니다.
 
-* Production serving infrastructure
-* Angular CLI \(`ng serve`\), using the `headers` property in the `angular.json` file, for local development and end-to-end testing
-* Karma \(`ng test`\), using the `customHeaders` property in the `karma.config.js` file, for unit testing
+### 신뢰된 타입 시행
 
-The following is an example of a header specifically configured for Trusted Types and Angular:
+앱이 크로스 사이트 스크립팅 공격으로부터 보호되는 데 도움을 주기 위해 [신뢰된 타입](https://w3c.github.io/trusted-types/dist/spec/)을 사용하는 것이 좋습니다. 신뢰된 타입은 보다 안전한 코딩 관행을 시행하여 XSS 공격을 방지할 수 있는 [웹 플랫폼](https://en.wikipedia.org/wiki/Web_platform) 기능입니다. 신뢰된 타입은 애플리케이션 코드의 감사 작업을 단순화하는 데 도움이 될 수도 있습니다.
+
+<docs-callout title="신뢰된 타입">
+
+신뢰된 타입은 귀하의 애플리케이션이 대상하는 모든 브라우저에서 사용할 수 없을 수도 있습니다. 신뢰된 타입을 지원하지 않는 브라우저에서 신뢰된 타입 사용이 가능한 애플리케이션이 실행될 경우 애플리케이션의 기능은 유지됩니다. Angular의 DomSanitizer를 통해 XSS로부터 보호됩니다. 현재 브라우저 지원 상태는 [caniuse.com/trusted-types](https://caniuse.com/trusted-types)를 참조하세요.
+
+</docs-callout>
+
+애플리케이션에 대해 신뢰된 타입을 시행하려면 애플리케이션의 웹 서버를 구성하여 다음 Angular 정책 중 하나를 방출하는 HTTP 헤더를 설정해야 합니다:
+
+| 정책                     | 세부 사항                                                                                                                                                                                                                                                      |
+| :----------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `angular`                | 신뢰된 타입이 시행될 때 Angular가 작동하기 위해 필요한 보안 검토 코드에 사용되는 정책입니다. Angular로 청소된 인라인 템플릿 값이나 콘텐츠는 이 정책에 의해 안전한 것으로 간주됩니다.                                                                                                      |
+| `angular#bundler`        | 이 정책은 Angular CLI 번들러가 지연 청크 파일을 생성할 때 사용됩니다.                                                                                                                                                                                                 |
+| `angular#unsafe-bypass`  | 이 정책은 `bypassSecurityTrustHtml` 등의 Angular의 보안을 우회하는 메서드를 사용하는 애플리케이션에 사용됩니다. 이러한 메서드를 사용하는 애플리케이션은 이 정책을 활성화해야 합니다.                                                                                |
+| `angular#unsafe-jit`     | 이 정책은 [즉시 컴파일(JIT) 컴파일러](api/core/Compiler)에서 사용됩니다. JIT 컴파일러와 직접 상호작용하거나 [플랫폼 브라우저 동적](api/platform-browser-dynamic/platformBrowserDynamic) 사용 중인 경우 이 정책을 활성화해야 합니다.                           |
+| `angular#unsafe-upgrade` | 이 정책은 [@angular/upgrade](api/upgrade/static/UpgradeModule) 패키지에서 사용됩니다. 응용 프로그램이 AngularJS 하이브리드일 경우 이 정책을 활성화해야 합니다.                                                                                                |
+
+신뢰된 타입에 대한 HTTP 헤더를 다음 위치에서 구성해야 합니다:
+
+* 생산 제공 인프라
+* Angular CLI(`ng serve`), `angular.json` 파일의 `headers` 속성을 사용하여 로컬 개발 및 종단 간 테스트
+* Karma(`ng test`), `karma.config.js` 파일의 `customHeaders` 속성을 사용하여 단위 테스트
+
+다음은 신뢰된 타입 및 Angular에 대해 특별히 구성된 헤더의 예입니다:
 
 <docs-code language="html">
 
@@ -225,7 +182,7 @@ Content-Security-Policy: trusted-types angular; require-trusted-types-for 'scrip
 
 </docs-code>
 
-An example of a header specifically configured for Trusted Types and Angular applications that use any of Angular's methods in [DomSanitizer](api/platform-browser/DomSanitizer) that bypasses security:
+다음은 신뢰된 타입 및 Angular의 보안 우회를 우회하는 Angular의 메서드를 사용하는 애플리케이션에 대해 특별히 구성된 헤더의 예입니다:
 
 <docs-code language="html">
 
@@ -233,7 +190,7 @@ Content-Security-Policy: trusted-types angular angular#unsafe-bypass; require-tr
 
 </docs-code>
 
-The following is an example of a header specifically configured for Trusted Types and Angular applications using JIT:
+다음은 JIT를 사용하는 신뢰된 타입 및 Angular 애플리케이션에 대해 특별히 구성된 헤더의 예입니다:
 
 <docs-code language="html">
 
@@ -241,7 +198,7 @@ Content-Security-Policy: trusted-types angular angular#unsafe-jit; require-trust
 
 </docs-code>
 
-The following is an example of a header specifically configured for Trusted Types and Angular applications that use lazy loading of modules:
+다음은 지연 로딩 모듈을 사용하는 신뢰된 타입 및 Angular 애플리케이션에 대해 특별히 구성된 헤더의 예입니다:
 
 <docs-code language="html">
 
@@ -249,84 +206,67 @@ Content-Security-Policy: trusted-types angular angular#bundler; require-trusted-
 
 </docs-code>
 
-<docs-callout title="Community contributions">
+<docs-callout title="커뮤니티 기여">
 
-To learn more about troubleshooting Trusted Type configurations, the following resource might be helpful:
+신뢰된 타입 구성 문제를 해결하는 방법에 대해 더 알고 싶다면 다음 자원이 유용할 수 있습니다:
 
-[Prevent DOM-based cross-site scripting vulnerabilities with Trusted Types](https://web.dev/trusted-types/#how-to-use-trusted-types)
+[신뢰된 타입으로 DOM 기반 크로스 사이트 스크립팅 취약점 방지](https://web.dev/trusted-types/#how-to-use-trusted-types)
 
 </docs-callout>
 
-### Use the AOT template compiler
+### AOT 템플릿 컴파일러 사용하기
 
-The AOT template compiler prevents a whole class of vulnerabilities called template injection, and greatly improves application performance.
-The AOT template compiler is the default compiler used by Angular CLI applications, and you should use it in all production deployments.
+AOT 템플릿 컴파일러는 템플릿 주입이라는 전반적인 유형의 취약점을 방지하고 애플리케이션 성능을 크게 개선합니다. AOT 템플릿 컴파일러는 Angular CLI 애플리케이션에서 사용되는 기본 컴파일러이며 모든 프로덕션 배포에서 사용해야 합니다.
 
-An alternative to the AOT compiler is the JIT compiler which compiles templates to executable template code within the browser at runtime.
-Angular trusts template code, so dynamically generating templates and compiling them, in particular templates containing user data, circumvents Angular's built-in protections. This is a security anti-pattern.
-For information about dynamically constructing forms in a safe way, see the [Dynamic Forms](guide/forms/dynamic-forms) guide.
+AOT 컴파일러의 대안은 JIT 컴파일러로, 런타임 시 브라우저 내에서 실행 가능한 템플릿 코드로 템플릿을 컴파일합니다. Angular는 템플릿 코드를 신뢰하므로, 특히 사용자 데이터를 포함한 템플릿을 동적으로 생성하고 컴파일하는 것은 Angular의 내장 방어를 우회하는 보안 안티 패턴입니다. 안전하게 동적으로 폼을 구성하는 방법에 대한 정보는 [동적 폼](guide/forms/dynamic-forms) 가이드를 참고하세요.
 
-### Server-side XSS protection
+### 서버 측 XSS 보호
 
-HTML constructed on the server is vulnerable to injection attacks.
-Injecting template code into an Angular application is the same as injecting executable code into the application:
-It gives the attacker full control over the application.
-To prevent this, use a templating language that automatically escapes values to prevent XSS vulnerabilities on the server.
-Don't create Angular templates on the server side using a templating language. This carries a high risk of introducing template-injection vulnerabilities.
+서버에서 생성된 HTML은 주입 공격에 취약합니다. Angular 애플리케이션에 템플릿 코드를 주입하는 것은 실행 가능한 코드를 애플리케이션에 주입하는 것과 같습니다. 이는 공격자에게 애플리케이션에 대한 완전한 제어권을 부여합니다. 이를 방지하려면 XSS 취약점을 방지하기 위해 값을 자동으로 이스케이프하는 템플릿 언어를 사용하세요. 서버 측에서 템플릿 언어를 사용하여 Angular 템플릿을 생성하지 마세요. 이는 템플릿 주입 취약점이 발생할 가능성이 매우 높습니다.
 
-## HTTP-level vulnerabilities
+## HTTP 수준 취약점
 
-Angular has built-in support to help prevent two common HTTP vulnerabilities, cross-site request forgery \(CSRF or XSRF\) and cross-site script inclusion \(XSSI\).
-Both of these must be mitigated primarily on the server side, but Angular provides helpers to make integration on the client side easier.
+Angular는 크로스 사이트 요청 위조(CSRF 또는 XSRF) 및 크로스 사이트 스크립트 포함(XSSI)이라는 두 가지 일반적인 HTTP 취약점을 방지하기 위한 기본 제공 지원을 제공합니다. 이 두 가지는 주로 서버 측에서 완화해야 하지만, Angular는 클라이언트 측 통합을 쉽게 하도록 도와주는 도우미를 제공합니다.
 
-### Cross-site request forgery
+### 크로스 사이트 요청 위조
 
-In a cross-site request forgery \(CSRF or XSRF\), an attacker tricks the user into visiting a different web page \(such as `evil.com`\) with malignant code. This web page secretly sends a malicious request to the application's web server \(such as `example-bank.com`\).
+크로스 사이트 요청 위조(CSRF 또는 XSRF)에서 공격자는 사용자가 악성 코드가 있는 다른 웹 페이지(예: `evil.com`)를 방문하도록 속입니다. 이 웹 페이지는 애플리케이션의 웹 서버(예: `example-bank.com`)에 악의적인 요청을 비밀리에 전송합니다.
 
-Assume the user is logged into the application at `example-bank.com`.
-The user opens an email and clicks a link to `evil.com`, which opens in a new tab.
+사용자가 `example-bank.com`에 로그인했다고 가정합니다. 사용자는 이메일을 열고 `evil.com` 링크를 클릭하여 새 탭에서 엽니다.
 
-The `evil.com` page immediately sends a malicious request to `example-bank.com`.
-Perhaps it's a request to transfer money from the user's account to the attacker's account.
-The browser automatically sends the `example-bank.com` cookies, including the authentication cookie, with this request.
+`evil.com` 페이지는 즉시 `example-bank.com`에 악의적인 요청을 보냅니다. 아마도 사용자의 계좌에서 공격자의 계좌로 돈을 이체하는 요청일 것입니다. 브라우저는 이러한 요청과 함께 인증 쿠키를 포함하여 `example-bank.com` 쿠키를 자동으로 전송합니다.
 
-If the `example-bank.com` server lacks XSRF protection, it can't tell the difference between a legitimate request from the application and the forged request from `evil.com`.
+`example-bank.com` 서버가 XSRF 보호 기능이 없다면 합법적인 애플리케이션 요청과 `evil.com`의 위조 요청을 구분할 수 없습니다.
 
-To prevent this, the application must ensure that a user request originates from the real application, not from a different site.
-The server and client must cooperate to thwart this attack.
+이를 방지하려면 애플리케이션은 사용자의 요청이 다른 사이트가 아닌 실제 애플리케이션에서 발생했음을 확인해야 합니다. 서버와 클라이언트는 이 공격을 저지하기 위해 협력해야 합니다.
 
-In a common anti-XSRF technique, the application server sends a randomly created authentication token in a cookie.
-The client code reads the cookie and adds a custom request header with the token in all following requests.
-The server compares the received cookie value to the request header value and rejects the request if the values are missing or don't match.
+일반적인 XSRF 방어 기술에서는 애플리케이션 서버가 쿠키에 임의로 생성된 인증 토큰을 전송합니다. 클라이언트 코드는 쿠키를 읽고 모든 후속 요청에 토큰을 담은 커스텀 요청 헤더를 추가합니다. 서버는 수신된 쿠키 값과 요청 헤더 값을 비교하고 값이 누락되었거나 일치하지 않으면 요청을 거부합니다.
 
-This technique is effective because all browsers implement the _same origin policy_.
-Only code from the website on which cookies are set can read the cookies from that site and set custom headers on requests to that site.
-That means only your application can read this cookie token and set the custom header.
-The malicious code on `evil.com` can't.
+이 기술은 모든 브라우저가 _같은 출처 정책_을 구현하기 때문에 효과적입니다. 쿠키가 설정된 사이트의 코드만 해당 사이트에서 쿠키를 읽고 그 사이트에 요청을 보내는 커스텀 헤더를 설정할 수 있습니다. 이는 귀하의 애플리케이션만이 이 쿠키 토큰을 읽고 커스텀 헤더를 설정할 수 있다는 것을 의미합니다. `evil.com`의 악성 코드 것은 할 수 없습니다.
 
-### `HttpClient` XSRF/CSRF security
+### `HttpClient` XSRF/CSRF 보안
 
-`HttpClient` supports a [common mechanism](https://en.wikipedia.org/wiki/Cross-site_request_forgery#Cookie-to-header_token) used to prevent XSRF attacks. When performing HTTP requests, an interceptor reads a token from a cookie, by default `XSRF-TOKEN`, and sets it as an HTTP header, `X-XSRF-TOKEN`. Because only code that runs on your domain could read the cookie, the backend can be certain that the HTTP request came from your client application and not an attacker.
+`HttpClient`는 XSRF 공격을 방지하는 데 사용되는 [일반적인 메커니즘](https://en.wikipedia.org/wiki/Cross-site_request_forgery#Cookie-to-header_token)을 지원합니다. HTTP 요청을 실행할 때 인터셉터는 기본적으로 `XSRF-TOKEN`이라는 쿠키에서 토큰을 읽고 이를 HTTP 헤더 `X-XSRF-TOKEN`으로 설정합니다. 본인의 도메인에서 실행되는 코드만이 쿠키를 읽을 수 있으므로, 백엔드는 HTTP 요청이 귀하의 클라이언트 애플리케이션에서 발생했음을 확신할 수 있습니다.
 
-By default, an interceptor sends this header on all mutating requests (such as `POST`) to relative URLs, but not on GET/HEAD requests or on requests with an absolute URL.
+기본적으로 인터셉터는 상대 URL에 대한 모든 변경 요청(예: `POST`)에서 이 헤더를 전송하지만 GET/HEAD 요청이나 절대 URL 요청에서는 전송하지 않습니다.
 
-<docs-callout helpful title="Why not protect GET requests?">
-CSRF protection is only needed for requests that can change state on the backend. By their nature, CSRF attacks cross domain boundaries, and the web's [same-origin policy](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy) will prevent an attacking page from retrieving the results of authenticated GET requests.
+<docs-callout helpful title="GET 요청을 보호하지 않는 이유?">
+CSRF 방지는 백엔드에서 상태를 변경할 수 있는 요청에만 필요합니다. 본질적으로 CSRF 공격은 도메인 경계를 초과하며 웹의 [같은 출처 정책](https://developer.mozilla.org/docs/Web/Security/Same-origin_policy)은 공격 페이지가 인증된 GET 요청의 결과를 검색하는 것을 방지합니다.
 </docs-callout>
 
-To take advantage of this, your server needs to set a token in a JavaScript readable session cookie called `XSRF-TOKEN` on either the page load or the first GET request. On subsequent requests the server can verify that the cookie matches the `X-XSRF-TOKEN` HTTP header, and therefore be sure that only code running on your domain could have sent the request. The token must be unique for each user and must be verifiable by the server; this prevents the client from making up its own tokens. Set the token to a digest of your site's authentication cookie with a salt for added security.
+이를 활용하기 위해서는 서버가 페이지 로드 또는 첫 번째 GET 요청 시 `XSRF-TOKEN`이라는 JavaScript에서 읽을 수 있는 세션 쿠키에 토큰을 설정해야 합니다. 후속 요청에서 서버는 쿠키가 `X-XSRF-TOKEN` HTTP 헤더와 일치하는지 확인할 수 있으며, 따라서 귀하의 도메인에서 실행되는 코드만 요청을 보낼 수 있었던 것임을 확인합니다. 이 토큰은 각 사용자마다 고유해야 하며, 서버에서 확인 가능해야 합니다. 이렇게 하면 클라이언트가 자체 토큰을 만들지 못하도록 방지합니다. 추가 보안을 위해 사이트의 인증 쿠키를 해시한 값을 salt와 함께 설정하세요.
 
-To prevent collisions in environments where multiple Angular apps share the same domain or subdomain, give each application a unique cookie name.
+여러 Angular 애플리케이션이 같은 도메인이나 하위 도메인을 공유하는 환경에서 충돌을 방지하려면 각 애플리케이션에 고유한 쿠키 이름을 부여하세요.
 
-<docs-callout important title="HttpClient supports only the client half of the XSRF protection scheme">
-  Your backend service must be configured to set the cookie for your page, and to verify that the header is present on all eligible requests. Failing to do so renders Angular's default protection ineffective.
+<docs-callout important title="HttpClient는 XSRF 보호 계획의 클라이언트 절반만 지원합니다.">
+백엔드 서비스는 페이지에 대한 쿠키를 설정하고 모든 적합한 요청에 대해 헤더가 존재하는지 확인하도록 구성되어야 합니다. 그렇지 않으면 Angular의 기본 보호 기능이 효과적이지 않습니다.
 </docs-callout>
 
-### Configure custom cookie/header names
+### 사용자 정의 쿠키/헤더 이름 구성
 
-If your backend service uses different names for the XSRF token cookie or header, use `withXsrfConfiguration` to override the defaults.
+백엔드 서비스에서 XSRF 토큰 쿠키나 헤더의 이름이 다른 경우 `withXsrfConfiguration`을 사용하여 기본값을 재정의하세요.
 
-Add it to the `provideHttpClient` call as follows:
+다음과 같이 `provideHttpClient` 호출에 추가하세요:
 
 <docs-code language="ts">
 export const appConfig: ApplicationConfig = {
@@ -341,9 +281,9 @@ export const appConfig: ApplicationConfig = {
 };
 </docs-code>
 
-### Disabling XSRF protection
+### XSRF 보호 비활성화
 
-If the built-in XSRF protection mechanism doesn't work for your application, you can disable it using the `withNoXsrfProtection` feature:
+내장 XSRF 보호 메커니즘이 애플리케이션에 작동하지 않는 경우 `withNoXsrfProtection` 기능을 사용하여 비활성화할 수 있습니다:
 
 <docs-code language="ts">
 export const appConfig: ApplicationConfig = {
@@ -355,24 +295,20 @@ export const appConfig: ApplicationConfig = {
 };
 </docs-code>
 
-For information about CSRF at the Open Web Application Security Project \(OWASP\), see [Cross-Site Request Forgery (CSRF)](https://owasp.org/www-community/attacks/csrf) and [Cross-Site Request Forgery (CSRF) Prevention Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html).
-The Stanford University paper [Robust Defenses for Cross-Site Request Forgery](https://seclab.stanford.edu/websec/csrf/csrf.pdf) is a rich source of detail.
+OWASP에서 CSRF에 대한 정보는 [크로스 사이트 요청 위조(CSRF)](https://owasp.org/www-community/attacks/csrf)와 [크로스 사이트 요청 위조(CSRF) 방지 요약](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html)을 참조하세요. 스탠포드 대학교 논문인 [크로스 사이트 요청 위조에 대한 강력한 방어](https://seclab.stanford.edu/websec/csrf/csrf.pdf)는 자세한 정보를 제공하는 출처입니다.
 
-See also Dave Smith's [talk on XSRF at AngularConnect 2016](https://www.youtube.com/watch?v=9inczw6qtpY "Cross Site Request Funkery Securing Your Angular Apps From Evil Doers").
+또한 Dave Smith의 [AngularConnect 2016에서 XSRF에 대한 발표](https://www.youtube.com/watch?v=9inczw6qtpY "Cross Site Request Funkery Securing Your Angular Apps From Evil Doers")도 확인하세요.
 
-### Cross-site script inclusion (XSSI)
+### 크로스 사이트 스크립트 포함(XSSI)
 
-Cross-site script inclusion, also known as JSON vulnerability, can allow an attacker's website to read data from a JSON API.
-The attack works on older browsers by overriding built-in JavaScript object constructors, and then including an API URL using a `<script>` tag.
+크로스 사이트 스크립트 포함은 JSON 취약점이라고도 하며, 공격자의 웹사이트가 JSON API의 데이터를 읽을 수 있게 할 수 있습니다. 이 공격은 내장 JavaScript 객체 생성자를 오버라이드하고 `<script>` 태그를 사용하여 API URL을 포함하여 오래된 브라우저에서 작동합니다.
 
-This attack is only successful if the returned JSON is executable as JavaScript.
-Servers can prevent an attack by prefixing all JSON responses to make them non-executable, by convention, using the well-known string `")]}',\n"`.
+이 공격은 반환된 JSON이 자바스크립트로 실행 가능할 경우에만 성공합니다. 서버는 모든 JSON 응답에 비실행 가능한 접두사를 추가하여 공격을 방지할 수 있으며, 일반적으로 잘 알려진 문자열 `")]}',\n"`을 사용합니다.
 
-Angular's `HttpClient` library recognizes this convention and automatically strips the string `")]}',\n"` from all responses before further parsing.
+Angular의 `HttpClient` 라이브러리는 이러한 규칙을 인식하고 모든 응답에서 문자열 `")]}',\n"`을 자동으로 제거하여 추가 파싱 전에 처리합니다.
 
-For more information, see the XSSI section of this [Google web security blog post](https://security.googleblog.com/2011/05/website-security-for-webmasters.html).
+더 많은 정보는 [Google 웹 보안 블로그 게시물](https://security.googleblog.com/2011/05/website-security-for-webmasters.html)의 XSSI 섹션을 참고하세요.
 
-## Auditing Angular applications
+## Angular 애플리케이션 감사
 
-Angular applications must follow the same security principles as regular web applications, and must be audited as such.
-Angular-specific APIs that should be audited in a security review, such as the [_bypassSecurityTrust_](#trusting-safe-values) methods, are marked in the documentation as security sensitive.
+Angular 애플리케이션은 일반 웹 애플리케이션과 동일한 보안 원칙을 따라야 하며, 따라서 감사 대상이 되어야 합니다. 보안 검토에서 감사해야 하는 Angular 특정 API는 [_bypassSecurityTrust_](#trusting-safe-values) 메서드와 같이 문서에 보안 민감도로 표시되어 있습니다.

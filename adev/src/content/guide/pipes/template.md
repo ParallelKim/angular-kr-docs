@@ -1,13 +1,13 @@
-# Using a pipe in a template
+# 템플릿에서 파이프 사용하기
 
-To apply a pipe, use the pipe operator (`|`) within a template expression as shown in the following code example.
+파이프를 적용하려면, 다음 코드 예제와 같이 템플릿 표현식 내에서 파이프 연산자(`|`)를 사용합니다.
 
 <docs-code language="angular-html" header="app.component.html">
-<p>The hero's birthday is {{ birthday | date }}</p>
+<p>영웅의 생일은 {{ birthday | date }}</p>
 </docs-code>
 
-The component's `birthday` value flows through the pipe operator (`|`) to the [`DatePipe`](api/common/DatePipe) whose pipe name is `date`.
-The pipe renders the date in the default format like **Apr 07, 2023**.
+컴포넌트의 `birthday` 값은 파이프 연산자(`|`)를 통해 [`DatePipe`](api/common/DatePipe)로 전달되며, 그 파이프 이름은 `date`입니다.
+파이프는 날짜를 기본 형식으로 **2023년 4월 07일**과 같이 렌더링합니다.
 
 <docs-code header="app.component.ts" preview>
 import { Component } from '@angular/core';
@@ -22,33 +22,33 @@ export class AppComponent {
 }
 </docs-code>
 
-## Additional parameters for pipes
+## 파이프에 대한 추가 매개변수
 
-Pipes can take additional parameters that configure the transformation. Parameters can be optional or required.
+파이프는 변환을 구성하는 추가 매개변수를 받을 수 있습니다. 매개변수는 선택적일 수도 있고 필수일 수도 있습니다.
 
-For example, the `date` pipe takes optional parameters that control the date's display format.
-To specify the parameter, follow the pipe name with a colon (`:`) and the parameter value (the format).
+예를 들어, `date` 파이프는 날짜의 표시 형식을 제어하는 선택적 매개변수를 받습니다.
+매개변수를 지정하려면, 파이프 이름 뒤에 콜론(`:`)과 매개변수 값(형식)을 따릅니다.
 
 <docs-code language="angular-html" header="app.component.html">
-<p>The hero's birthday is in {{ birthday | date:'yyyy' }}</p>
+<p>영웅의 생일은 {{ birthday | date:'yyyy' }}</p>
 </docs-code>
 
-Pipes can also take multiple parameters. You can pass multiple parameters by separating these via colons (`:`).
-For example, the `date` pipe accepts a second optional parameter for controlling the timezone.
+파이프는 또한 여러 매개변수를 받을 수 있습니다. 매개변수를 콜론(`:`)으로 구분하여 여러 매개변수를 전달할 수 있습니다.
+예를 들어, `date` 파이프는 시간대를 제어하기 위한 두 번째 선택적 매개변수를 허용합니다.
 
 <docs-code header="app.component.html">
-<p>The current time is: {{ currentTime | date:'hh:mm':'UTC' }}</p>
+<p>현재 시간은: {{ currentTime | date:'hh:mm':'UTC' }}</p>
 </docs-code>
 
-This will display the current time (like `10:53`) in the `UTC` timezone.
+이 코드는 `UTC` 시간대에서 현재 시간(예: `10:53`)을 표시합니다.
 
-## Chaining pipes
+## 파이프 연결하기
 
-You can connect multiple pipes so that the output of one pipe becomes the input to the next.
+여러 파이프를 연결하여 한 파이프의 출력이 다음 파이프의 입력이 되도록 할 수 있습니다.
 
-The following example passes a date to the `DatePipe` and then forwards the result to the [`UpperCasePipe`](api/common/UpperCasePipe 'API reference') pipe.
+다음 예제는 날짜를 `DatePipe`로 전달하고 결과를 [`UpperCasePipe`](api/common/UpperCasePipe 'API reference') 파이프로 전달합니다.
 
 <docs-code language="angular-html" header="app.component.html">
-<p>The hero's birthday is {{ birthday | date }}</p>
-<p>The hero's birthday is in {{ birthday | date:'yyyy' | uppercase }}</p>
+<p>영웅의 생일은 {{ birthday | date }}</p>
+<p>영웅의 생일은 {{ birthday | date:'yyyy' | uppercase }}</p>
 </docs-code>

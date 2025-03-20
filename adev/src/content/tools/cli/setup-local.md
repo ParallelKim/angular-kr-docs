@@ -1,19 +1,19 @@
-# Setting up the local environment and workspace
+# 로컬 환경 및 작업 공간 설정
 
-This guide explains how to set up your environment for Angular development using the [Angular CLI](cli "CLI command reference").
-It includes information about installing the CLI, creating an initial workspace and starter app, and running that app locally to verify your setup.
+이 가이드는 [Angular CLI](cli "CLI 명령어 참조")를 사용하여 Angular 개발을 위한 환경을 설정하는 방법을 설명합니다.
+이 가이드는 CLI 설치, 초기 작업 공간 및 시작 앱 생성, 앱을 로컬에서 실행하여 설정을 확인하는 방법에 대한 정보를 포함합니다.
 
-<docs-callout title="Try Angular without local setup">
+<docs-callout title="로컬 설정 없이 Angular 사용해 보기">
 
-If you are new to Angular, you might want to start with [Try it now!](tutorials/learn-angular), which introduces the essentials of Angular in your browser.
-This standalone tutorial takes advantage of the interactive [StackBlitz](https://stackblitz.com) environment for online development.
-You don't need to set up your local environment until you're ready.
+Angular가 처음이라면, 브라우저에서 Angular의 필수 요소를 소개하는 [지금 시도해 보기!](tutorials/learn-angular)로 시작하는 것이 좋습니다.
+이 독립형 튜토리얼은 온라인 개발을 위한 대화형 [StackBlitz](https://stackblitz.com) 환경을 활용합니다.
+준비가 될 때까지 로컬 환경을 설정할 필요가 없습니다.
 
 </docs-callout>
 
-## Before you start
+## 시작하기 전에
 
-To use Angular CLI, you should be familiar with the following:
+Angular CLI를 사용하려면 다음 사항에 익숙해야 합니다:
 
 <docs-pill-row>
   <docs-pill href="https://developer.mozilla.org/docs/Web/JavaScript/A_re-introduction_to_JavaScript" title="JavaScript"/>
@@ -21,21 +21,21 @@ To use Angular CLI, you should be familiar with the following:
   <docs-pill href="https://developer.mozilla.org/docs/Learn/CSS/First_steps" title="CSS"/>
 </docs-pill-row>
 
-You should also be familiar with usage of command line interface (CLI) tools and have a general understanding of command shells.
-Knowledge of [TypeScript](https://www.typescriptlang.org) is helpful, but not required.
+또한 명령줄 인터페이스(CLI) 도구의 사용에 익숙하고 명령 셸에 대한 일반적인 이해가 있어야 합니다.
+[TypeScript](https://www.typescriptlang.org)에 대한 지식이 있으면 도움이 되지만 필수는 아닙니다.
 
-## Dependencies
+## 의존성
 
-To install Angular CLI on your local system, you need to install [Node.js](https://nodejs.org/).
-Angular CLI uses Node and its associated package manager, npm, to install and run JavaScript tools outside the browser.
+로컬 시스템에 Angular CLI를 설치하려면 [Node.js](https://nodejs.org/)를 설치해야 합니다.
+Angular CLI는 Node와 그에 연결된 패키지 관리자 npm을 사용하여 브라우저 외부에서 JavaScript 도구를 설치하고 실행합니다.
 
-[Download and install Node.js](https://nodejs.org/en/download), which will include the `npm` CLI as well.
-Angular requires an [active LTS or maintenance LTS](https://nodejs.org/en/about/previous-releases) version of Node.js.
-See [Angular's version compatibility](reference/versions) guide for more information.
+[Node.js 다운로드 및 설치](https://nodejs.org/en/download)하면 `npm` CLI도 포함됩니다.
+Angular는 [활성 LTS 또는 유지 관리 LTS](https://nodejs.org/en/about/previous-releases) 버전의 Node.js를 요구합니다.
+자세한 내용은 [Angular 버전 호환성](reference/versions) 가이드를 참조하세요.
 
-## Install the Angular CLI
+## Angular CLI 설치
 
-To install the Angular CLI, open a terminal window and run the following command:
+Angular CLI를 설치하려면 터미널 창을 열고 다음 명령어를 실행하세요:
 
 <docs-code-multifile>
    <docs-code
@@ -61,10 +61,10 @@ To install the Angular CLI, open a terminal window and run the following command
 
  </docs-code-multifile>
 
-### Powershell execution policy
+### PowerShell 실행 정책
 
-On Windows client computers, the execution of PowerShell scripts is disabled by default, so the above command may fail with an error.
-To allow the execution of PowerShell scripts, which is needed for npm global binaries, you must set the following <a href="https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_execution_policies">execution policy</a>:
+Windows 클라이언트 컴퓨터에서는 기본적으로 PowerShell 스크립트 실행이 비활성화되어 있으므로 위 명령어가 오류와 함께 실패할 수 있습니다.
+npm 글로벌 바이너리 실행에 필요한 PowerShell 스크립트 실행을 허용하려면 다음 <a href="https://docs.microsoft.com/powershell/module/microsoft.powershell.core/about/about_execution_policies">실행 정책</a>을 설정해야 합니다:
 
 <docs-code language="sh">
 
@@ -72,12 +72,12 @@ Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy RemoteSigned
 
 </docs-code>
 
-Carefully read the message displayed after executing the command and follow the instructions. Make sure you understand the implications of setting an execution policy.
+명령어 실행 후 표시된 메시지를 주의 깊게 읽고 지시에 따르세요. 실행 정책 설정의 의미를 이해하는 것이 중요합니다.
 
-### Unix permissions
+### Unix 권한
 
-On some Unix-like setups, global  scripts may be owned by the root user, so to the above command may fail with a permission error.
-Run with `sudo` to execute the command as the root user and enter your password when prompted:
+일부 유닉스와 유사한 설정에서는 글로벌 스크립스가 루트 사용자에 의해 소유될 수 있으므로 위 명령어가 권한 오류로 실패할 수 있습니다.
+`sudo`를 사용하여 루트 사용자로 명령어를 실행하고 요청 시 비밀번호를 입력하세요:
 
 <docs-code-multifile>
    <docs-code
@@ -103,13 +103,13 @@ Run with `sudo` to execute the command as the root user and enter your password 
 
  </docs-code-multifile>
 
-Make sure you understand the implications of running commands as root.
+루트 사용자로 명령을 실행하는 것의 의미를 이해하는 것이 중요합니다.
 
-## Create a workspace and initial application
+## 작업 공간 및 초기 애플리케이션 생성
 
-You develop apps in the context of an Angular **workspace**.
+Angular **작업 공간**의 맥락에서 앱을 개발합니다.
 
-To create a new workspace and initial starter app, run the CLI command `ng new` and provide the name `my-app`, as shown here, then answer prompts about features to include:
+새 작업 공간과 초기 시작 앱을 만들려면 CLI 명령 `ng new`를 실행하고 `my-app`이라는 이름을 제공하면 됩니다. 다음과 같이 입력한 후 포함할 기능에 대한 프롬프트에 답하세요:
 
 <docs-code language="shell">
 
@@ -117,11 +117,11 @@ ng new my-app
 
 </docs-code>
 
-The Angular CLI installs the necessary Angular npm packages and other dependencies.
-This can take a few minutes.
+Angular CLI는 필요한 Angular npm 패키지 및 기타 의존성을 설치합니다.
+이 작업은 몇 분 정도 걸릴 수 있습니다.
 
-The CLI creates a new workspace and a small welcome app in a new directory with the same name as the workspace, ready to run.
-Navigate to the new directory so subsequent commands use this workspace.
+CLI는 새 작업 공간을 만들고 동일한 이름의 새 디렉토리에 소규모 환영 앱을 생성하여 실행할 준비를 합니다.
+새 디렉토리로 이동하여 이후 명령이 이 작업 공간을 사용하도록 합니다.
 
 <docs-code language="shell">
 
@@ -129,9 +129,9 @@ cd my-app
 
 </docs-code>
 
-## Run the application
+## 애플리케이션 실행
 
-The Angular CLI includes a development server, for you to build and serve your app locally. Run the following command:
+Angular CLI에는 애플리케이션을 로컬에서 빌드하고 제공하기 위한 개발 서버가 포함되어 있습니다. 다음 명령어를 실행하세요:
 
 <docs-code language="shell">
 
@@ -139,33 +139,32 @@ ng serve --open
 
 </docs-code>
 
-The `ng serve` command launches the server, watches your files, as well as rebuilds the app and reloads the browser as you make changes to those files.
+`ng serve` 명령어는 서버를 시작하고 파일을 감시하며, 파일에 변경 사항이 있을 때 앱을 다시 빌드하고 브라우저를 다시 로드합니다.
 
-The `--open` (or just `-o`) option automatically opens your browser to `http://localhost:4200/` to view the generated application.
+`--open` (또는 `-o`) 옵션은 브라우저를 `http://localhost:4200/`로 자동으로 열어 생성된 애플리케이션을 볼 수 있게 합니다.
 
-## Workspaces and project files
+## 작업 공간 및 프로젝트 파일
 
-The [`ng new`](cli/new) command creates an [Angular workspace](reference/configs/workspace-config) folder and generates a new application inside it.
-A workspace can contain multiple applications and libraries.
-The initial application created by the [`ng new`](cli/new) command is at the root directory of the workspace.
-When you generate an additional application or library in an existing workspace, it goes into a `projects/` subfolder by default.
+[`ng new`](cli/new) 명령어는 [Angular 작업 공간](reference/configs/workspace-config) 폴더를 생성하고 그 안에 새로운 애플리케이션을 생성합니다.
+작업 공간은 여러 개의 애플리케이션과 라이브러리를 포함할 수 있습니다.
+[`ng new`](cli/new) 명령어로 생성된 초기 애플리케이션은 작업 공간의 루트 디렉토리에 있습니다.
+기존 작업 공간에서 추가 애플리케이션이나 라이브러리를 생성하면 기본적으로 `projects/` 하위 폴더에 들어갑니다.
 
-A newly generated application contains the source files for a root component and template.
-Each application has a `src` folder that contains its components, data, and assets.
+새로 생성된 애플리케이션에는 루트 컴포넌트와 템플릿의 소스 파일이 포함됩니다.
+각 애플리케이션에는 구성 요소, 데이터 및 자산이 포함된 `src` 폴더가 있습니다.
 
-You can edit the generated files directly, or add to and modify them using CLI commands.
-Use the [`ng generate`](cli/generate) command to add new files for additional components, directives, pipes, services, and more.
-Commands such as [`ng add`](cli/add) and [`ng generate`](cli/generate), which create or operate on applications and libraries, must be executed
-from within a workspace. By contrast, commands such as `ng new` must be executed *outside* a workspace because they will create a new one.
+생성된 파일을 직접 수정하거나 CLI 명령어를 사용하여 추가 및 수정할 수 있습니다.
+[`ng generate`](cli/generate) 명령어를 사용하여 추가 구성 요소, 지시자, 파이프, 서비스 등을 위한 새로운 파일을 추가하세요.
+[`ng add`](cli/add) 및 [`ng generate`](cli/generate)와 같은 명령어는 애플리케이션과 라이브러리를 생성하거나 조작하며, 작업 공간 내에서 실행되어야 합니다. 반대로, `ng new`와 같은 명령어는 새로운 작업 공간을 생성하므로 작업 공간 외부에서 실행되어야 합니다.
 
-## Next steps
+## 다음 단계
 
-* Learn more about the [file structure](reference/configs/file-structure) and [configuration](reference/configs/workspace-config) of the generated workspace.
+* 생성된 작업 공간의 [파일 구조](reference/configs/file-structure) 및 [구성](reference/configs/workspace-config)에 대해 자세히 알아보세요.
 
-* Test your new application with [`ng test`](cli/test).
+* [`ng test`](cli/test)로 새로운 애플리케이션을 테스트하세요.
 
-* Generate boilerplate like components, directives, and pipes with [`ng generate`](cli/generate).
+* [`ng generate`](cli/generate)로 구성 요소, 지시자, 파이프와 같은 보일러플레이트를 생성하세요.
 
-* Deploy your new application and make it available to real users with [`ng deploy`](cli/deploy).
+* [`ng deploy`](cli/deploy)로 새로운 애플리케이션을 배포하고 실제 사용자에게 제공하세요.
 
-* Set up and run end-to-end tests of your application with [`ng e2e`](cli/e2e).
+* [`ng e2e`](cli/e2e)로 애플리케이션의 엔드투엔드 테스트를 설정하고 실행하세요.

@@ -1,5 +1,5 @@
-| Sports           | Season |
+| 스포츠           | 시즌   |
 | ---------------- | ------ |
-| Skiing           | Winter |
-| Baseball | Summer |
-| Running |  Year Round |
+| 스키             | 겨울   |
+| 야구             | 여름   |
+| 러닝             | 연중   |

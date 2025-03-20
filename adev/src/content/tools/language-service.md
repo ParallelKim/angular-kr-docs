@@ -1,11 +1,11 @@
-# Angular Language Service
+# Angular 언어 서비스
 
-The Angular Language Service provides code editors with a way to get completions, errors, hints, and navigation inside Angular templates.
-It works with external templates in separate HTML files, and also with in-line templates.
+Angular 언어 서비스는 코드 편집기가 Angular 템플릿 내에서 완성, 오류, 힌트 및 탐색을 얻는 방법을 제공합니다. 
+이는 별도의 HTML 파일로 된 외부 템플릿과 인라인 템플릿 모두에서 작동합니다.
 
-## Configuring compiler options for the Angular Language Service
+## Angular 언어 서비스의 컴파일러 옵션 구성
 
-To enable the latest Language Service features, set the `strictTemplates` option in `tsconfig.json` by setting `strictTemplates` to `true`, as shown in the following example:
+최신 언어 서비스 기능을 활성화하려면 `tsconfig.json`에서 `strictTemplates` 옵션을 `true`로 설정하여 다음 예와 같이 설정하십시오:
 
 <docs-code language="json">
 
@@ -15,81 +15,81 @@ To enable the latest Language Service features, set the `strictTemplates` option
 
 </docs-code>
 
-For more information, see the [Angular compiler options](reference/configs/angular-compiler-options) guide.
+자세한 내용은 [Angular 컴파일러 옵션](reference/configs/angular-compiler-options) 가이드를 참조하십시오.
 
-## Features
+## 기능
 
-Your editor autodetects that you are opening an Angular file.
-It then uses the Angular Language Service to read your `tsconfig.json` file, find all the templates you have in your application, and then provide language services for any templates that you open.
+편집기는 Angular 파일을 열고 있는 것을 자동으로 인식합니다.
+그 후 Angular 언어 서비스를 사용하여 `tsconfig.json` 파일을 읽고, 애플리케이션에 있는 모든 템플릿을 찾고, 열어본 모든 템플릿에 대해 언어 서비스를 제공합니다.
 
-Language services include:
+언어 서비스에는 다음이 포함됩니다:
 
-* Completions lists
-* AOT Diagnostic messages
-* Quick info
-* Go to definition
+* 완성 목록
+* AOT 진단 메시지
+* 빠른 정보
+* 정의로 이동
 
-### Autocompletion
+### 자동 완성
 
-Autocompletion can speed up your development time by providing you with contextual possibilities and hints as you type.
-This example shows autocomplete in an interpolation.
-As you type it out, you can press tab to complete.
+자동 완성은 입력하는 동안 상황에 맞는 가능성과 힌트를 제공하여 개발 시간을 단축할 수 있습니다.
+이 예제는 보간에서 자동 완성을 보여줍니다.
+이것을 입력하면서 탭을 눌러 완료할 수 있습니다.
 
-<img alt="autocompletion" src="assets/images/guide/language-service/language-completion.gif">
+<img alt="자동 완성" src="assets/images/guide/language-service/language-completion.gif">
 
-There are also completions within elements.
-Any elements you have as a component selector will show up in the completion list.
+요소 내에서도 완성이 가능합니다.
+컴포넌트 선택기로 가지고 있는 모든 요소가 완성 목록에 표시됩니다.
 
-### Error checking
+### 오류 검사
 
-The Angular Language Service can forewarn you of mistakes in your code.
-In this example, Angular doesn't know what `orders` is or where it comes from.
+Angular 언어 서비스는 코드의 오류를 미리 경고할 수 있습니다.
+이 예제에서 Angular는 `orders`가 무엇인지 또는 어디에서 왔는지 모릅니다.
 
-<img alt="error checking" src="assets/images/guide/language-service/language-error.gif">
+<img alt="오류 검사" src="assets/images/guide/language-service/language-error.gif">
 
-### Quick info and navigation
+### 빠른 정보 및 탐색
 
-The quick-info feature lets you hover to see where components, directives, and modules come from.
-You can then click "Go to definition" or press F12 to go directly to the definition.
+빠른 정보 기능을 통해 컴포넌트, 지시자, 모듈의 출처를 확인할 수 있도록 마우스를 올릴 수 있습니다.
+그런 다음 "정의로 이동"을 클릭하거나 F12를 눌러 정의로 직접 이동할 수 있습니다.
 
-<img alt="navigation" src="assets/images/guide/language-service/language-navigation.gif">
+<img alt="탐색" src="assets/images/guide/language-service/language-navigation.gif">
 
-## Angular Language Service in your editor
+## 편집기에서 Angular 언어 서비스 사용하기
 
-Angular Language Service is currently available as an extension for [Visual Studio Code](https://code.visualstudio.com), [WebStorm](https://www.jetbrains.com/webstorm), [Sublime Text](https://www.sublimetext.com) and [Eclipse IDE](https://www.eclipse.org/eclipseide).
+Angular 언어 서비스는 현재 [Visual Studio Code](https://code.visualstudio.com), [WebStorm](https://www.jetbrains.com/webstorm), [Sublime Text](https://www.sublimetext.com) 및 [Eclipse IDE](https://www.eclipse.org/eclipseide)의 확장으로 제공됩니다.
 
 ### Visual Studio Code
 
-In [Visual Studio Code](https://code.visualstudio.com), install the extension from the [Extensions: Marketplace](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template).
-Open the marketplace from the editor using the Extensions icon on the left menu pane, or use VS Quick Open \(⌘+P on Mac, CTRL+P on Windows\) and type "? ext".
-In the marketplace, search for Angular Language Service extension, and click the **Install** button.
+[Visual Studio Code](https://code.visualstudio.com)에서 [Extensions: Marketplace](https://marketplace.visualstudio.com/items?itemName=Angular.ng-template)에서 확장을 설치하십시오.
+편집기에서 왼쪽 메뉴 창의 Extensions 아이콘을 사용하여 마켓플레이스를 열거나 VS Quick Open \(⌘+P on Mac, CTRL+P on Windows\)를 사용하고 "? ext"를 입력하십시오.
+마켓플레이스에서 Angular 언어 서비스 확장을 검색하고 **설치** 버튼을 클릭하십시오.
 
-The Visual Studio Code integration with the Angular language service is maintained and distributed by the Angular team.
+Visual Studio Code와 Angular 언어 서비스 간의 통합은 Angular 팀에 의해 유지 관리되고 배포됩니다.
 
 ### Visual Studio
 
-In [Visual Studio](https://visualstudio.microsoft.com), install the extension from the [Extensions: Marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.AngularLanguageService).
-Open the marketplace from the editor selecting Extensions on the top menu pane, and then selecting Manage Extensions.
-In the marketplace, search for Angular Language Service extension, and click the **Install** button.
+[Visual Studio](https://visualstudio.microsoft.com)에서 [Extensions: Marketplace](https://marketplace.visualstudio.com/items?itemName=TypeScriptTeam.AngularLanguageService)에서 확장을 설치하십시오.
+편집기에서 상단 메뉴 창의 Extensions를 선택한 후 Manage Extensions를 선택하여 마켓플레이스를 엽니다.
+마켓플레이스에서 Angular 언어 서비스 확장을 검색하고 **설치** 버튼을 클릭하십시오.
 
-The Visual Studio integration with the Angular language service is maintained and distributed by Microsoft with help from the Angular team.
-Check out the project [here](https://github.com/microsoft/vs-ng-language-service).
+Visual Studio와 Angular 언어 서비스의 통합은 Microsoft가 Angular 팀의 도움을 받아 유지 관리하고 배포합니다.
+프로젝트를 [여기](https://github.com/microsoft/vs-ng-language-service)에서 확인하십시오.
 
 ### WebStorm
 
-In [WebStorm](https://www.jetbrains.com/webstorm), enable the plugin [Angular and AngularJS](https://plugins.jetbrains.com/plugin/6971-angular-and-angularjs).
+[WebStorm](https://www.jetbrains.com/webstorm)에서 [Angular 및 AngularJS](https://plugins.jetbrains.com/plugin/6971-angular-and-angularjs) 플러그인을 활성화하십시오.
 
-Since WebStorm 2019.1, the `@angular/language-service` is not required anymore and should be removed from your `package.json`.
+WebStorm 2019.1 이후로 `@angular/language-service`는 더 이상 필요하지 않으며 `package.json`에서 제거해야 합니다.
 
 ### Sublime Text
 
-In [Sublime Text](https://www.sublimetext.com), the Language Service supports only in-line templates when installed as a plug-in.
-You need a custom Sublime plug-in \(or modifications to the current plug-in\) for completions in HTML files.
+[Sublime Text](https://www.sublimetext.com)에서 언어 서비스는 플러그인으로 설치된 경우에만 인라인 템플릿을 지원합니다.
+HTML 파일의 완성을 위해서는 사용자 지정 Sublime 플러그인 \(또는 현재 플러그인 수정\)이 필요합니다.
 
-To use the Language Service for in-line templates, you must first add an extension to allow TypeScript, then install the Angular Language Service plug-in.
-Starting with TypeScript 2.3, TypeScript has a plug-in model that the language service can use.
+인라인 템플릿에 대해 언어 서비스를 사용하려면 먼저 TypeScript를 허용하는 확장을 추가한 후 Angular 언어 서비스 플러그인을 설치해야 합니다.
+TypeScript 2.3부터 TypeScript는 언어 서비스에서 사용할 수 있는 플러그인 모델을 가지고 있습니다.
 
-1. Install the latest version of TypeScript in a local `node_modules` directory:
+1. 로컬 `node_modules` 디렉터리에 TypeScript의 최신 버전을 설치합니다:
 
     <docs-code language="shell">
 
@@ -97,7 +97,7 @@ Starting with TypeScript 2.3, TypeScript has a plug-in model that the language s
 
     </docs-code>
 
-1. Install the Angular Language Service package in the same location:
+2. 같은 위치에 Angular 언어 서비스 패키지를 설치합니다:
 
     <docs-code language="shell">
 
@@ -105,7 +105,7 @@ Starting with TypeScript 2.3, TypeScript has a plug-in model that the language s
 
     </docs-code>
 
-1. Once the package is installed,  add the following to the `"compilerOptions"` section of your project's `tsconfig.json`.
+3. 패키지가 설치되면 프로젝트의 `tsconfig.json`의 `"compilerOptions"` 섹션에 다음을 추가합니다.
 
     <docs-code header="tsconfig.json" language="json">
 
@@ -115,44 +115,44 @@ Starting with TypeScript 2.3, TypeScript has a plug-in model that the language s
 
     </docs-code>
 
-1. In your editor's user preferences \(`Cmd+,` or `Ctrl+,`\), add the following:
+4. 편집기의 사용자 기본 설정 \(`Cmd+,` 또는 `Ctrl+,`\)에서 다음을 추가합니다:
 
-    <docs-code header="Sublime Text user preferences" language="json">
+    <docs-code header="Sublime Text 사용자 기본 설정" language="json">
 
     "typescript-tsdk": "<path to your folder>/node_modules/typescript/lib"
 
     </docs-code>
 
-This lets the Angular Language Service provide diagnostics and completions in `.ts` files.
+이렇게 하면 Angular 언어 서비스가 `.ts` 파일에서 진단 및 완성을 제공합니다.
 
 ### Eclipse IDE
 
-Either directly install the "Eclipse IDE for Web and JavaScript developers" package which comes with the Angular Language Server included, or from other Eclipse IDE packages, use Help > Eclipse Marketplace to find and install [Eclipse Wild Web Developer](https://marketplace.eclipse.org/content/wild-web-developer-html-css-javascript-typescript-nodejs-angular-json-yaml-kubernetes-xml).
+"웹 및 자바스크립트 개발자를 위한 Eclipse IDE" 패키지를 직접 설치하거나 다른 Eclipse IDE 패키지에서 도움 > Eclipse Marketplace를 사용하여 [Eclipse Wild Web Developer](https://marketplace.eclipse.org/content/wild-web-developer-html-css-javascript-typescript-nodejs-angular-json-yaml-kubernetes-xml)를 찾아 설치합니다.
 
 ### Neovim
 
-Angular language service can be used with Neovim by using the [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin.
+Angular 언어 서비스는 [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) 플러그인을 사용하여 Neovim과 함께 사용할 수 있습니다.
 
-1. [Install nvim-lspconfig](https://github.com/neovim/nvim-lspconfig?tab=readme-ov-file#install)
+1. [nvim-lspconfig 설치하기](https://github.com/neovim/nvim-lspconfig?tab=readme-ov-file#install)
 
-2. [Configure angularls for nvim-lspconfig](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#angularls)
+2. [nvim-lspconfig에 angularls 구성하기](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#angularls)
 
-## How the Language Service works
+## 언어 서비스 작동 방식
 
-When you use an editor with a language service, the editor starts a separate language-service process and communicates with it through an [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call), using the [Language Server Protocol](https://microsoft.github.io/language-server-protocol).
-When you type into the editor, the editor sends information to the language-service process to track the state of your project.
+언어 서비스가 있는 편집기를 사용할 때, 편집기는 별도의 언어 서비스 프로세스를 시작하고 [RPC](https://en.wikipedia.org/wiki/Remote_procedure_call)를 통해 [언어 서버 프로토콜](https://microsoft.github.io/language-server-protocol)을 사용하여 통신합니다. 
+편집기에 입력할 때, 편집기는 프로젝트의 상태를 추적하기 위해 언어 서비스 프로세스에 정보를 보냅니다.
 
-When you trigger a completion list within a template, the editor first parses the template into an HTML [abstract syntax tree (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree).
-The Angular compiler interprets that tree to determine the context: which module the template is part of, the current scope, the component selector, and where your cursor is in the template AST.
-It can then determine the symbols that could potentially be at that position.
+템플릿 내에서 완성 목록을 트리거하면, 편집기는 먼저 템플릿을 HTML [추상 구문 트리 (AST)](https://en.wikipedia.org/wiki/Abstract_syntax_tree)로 구문 분석합니다. 
+Angular 컴파일러는 해당 트리를 해석하여 컨텍스트를 결정합니다: 템플릿이 어떤 모듈의 일부인지, 현재 범위, 컴포넌트 선택기, 그리고 템플릿 AST에서 커서가 있는 위치를 결정합니다. 
+그런 다음 해당 위치에 있을 수 있는 기호를 결정할 수 있습니다.
 
-It's a little more involved if you are in an interpolation.
-If you have an interpolation of `{{data.---}}` inside a `div` and need the completion list after `data.---`, the compiler can't use the HTML AST to find the answer.
-The HTML AST can only tell the compiler that there is some text with the characters "`{{data.---}}`".
-That's when the template parser produces an expression AST, which resides within the template AST.
-The Angular Language Services then looks at `data.---` within its context, asks the TypeScript Language Service what the members of `data` are, and returns the list of possibilities.
+보간에 있는 경우는 조금 더 복잡합니다.
+`div` 내부에 `{{data.---}}`의 보간이 있고 `data.---` 다음에 완성 목록이 필요하면, 컴파일러는 HTML AST를 사용하여 답변을 찾을 수 없습니다. 
+HTML AST는 컴파일러에게 "`{{data.---}}`"라는 문자가 있는 일부 텍스트가 있다는 것만 알릴 수 있습니다. 
+이때 템플릿 파서는 표현식 AST를 생성하여 템플릿 AST 내에 위치시킵니다. 
+그 후 Angular 언어 서비스는 컨텍스트 내에서 `data.---`를 살펴보고 TypeScript 언어 서비스에 `data`의 구성원이 무엇인지 물어본 후 가능성 목록을 반환합니다.
 
-## More information
+## 추가 정보
 
-* For more in-depth information on the implementation, see the [Angular Language Service source](https://github.com/angular/angular/blob/main/packages/language-service/src)
-* For more on the design considerations and intentions, see [design documentation here](https://github.com/angular/vscode-ng-language-service/wiki/Design)
+* 구현에 대한 더 심도 있는 정보는 [Angular 언어 서비스 소스](https://github.com/angular/angular/blob/main/packages/language-service/src)를 참조하십시오.
+* 디자인 고려 사항 및 의도에 대한 자세한 내용은 [여기 디자인 문서](https://github.com/angular/vscode-ng-language-service/wiki/Design)를 참조하십시오.

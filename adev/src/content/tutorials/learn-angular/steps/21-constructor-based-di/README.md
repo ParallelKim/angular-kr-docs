@@ -1,14 +1,14 @@
-# Constructor-based dependency injection
+# 생성자 기반 의존성 주입
 
-In previous activities you used the `inject()` function to make resources available, "providing" them to your components. The `inject()` function is one pattern and it is useful to know that there is another pattern for injecting resources called constructor-based dependency injection.
+이전 활동에서는 `inject()` 함수를 사용하여 리소스를 사용할 수 있도록 하여 그것들을 구성요소에 "제공"했습니다. `inject()` 함수는 하나의 패턴이며, 생성자 기반 의존성 주입이라는 리소스를 주입하는 다른 패턴이 있다는 것을 아는 것이 유용합니다.
 
-You specify the resources as parameters to the `constructor` function of a component. Angular will make those resources available to your component.
+구성 요소의 `constructor` 함수에 리소스를 매개변수로 지정합니다. Angular는 이 리소스를 구성 요소에서 사용할 수 있도록 만듭니다.
 <br><br>
-In this activity, you will learn how to use constructor-based dependency injection.
+이번 활동에서는 생성자 기반 의존성 주입을 사용하는 방법을 배웁니다.
 
 <hr>
 
-To inject a service or some other injectable resource into your component use the following syntax:
+서비스나 기타 주입 가능한 리소스를 구성 요소에 주입하려면 다음 구문을 사용하세요:
 
 <docs-code language="ts" highlight="[3]">
 @Component({...})
@@ -19,21 +19,21 @@ class PetCarDashboardComponent {
 }
 </docs-code>
 
-There are a few things to notice here:
+여기서 주목할 몇 가지 사항이 있습니다:
 
-- Use the `private` keyword
-- The `petCareService` becomes a property you can use in your class
-- The `PetCareService` class is the injected class
+- `private` 키워드를 사용합니다.
+- `petCareService`는 클래스에서 사용할 수 있는 속성이 됩니다.
+- `PetCareService` 클래스는 주입된 클래스입니다.
 
-Alright, now you give this a try:
+좋습니다, 이제 이걸 시도해 보세요:
 
 <docs-workflow>
 
-<docs-step title="Update the code to use constructor-based DI">
+<docs-step title="코드를 생성자 기반 DI를 사용하도록 업데이트하기">
 
-In `app.component.ts`, update the constructor code to match the code below:
+`app.component.ts`에서 생성자 코드를 아래 코드를 맞추도록 업데이트하세요:
 
-Tip: Remember, if you get stuck refer to the example on this activity page.
+팁: 막히면 이 활동 페이지의 예제를 참조하세요.
 
 ```ts
 constructor(private carService: CarService) {
@@ -45,8 +45,8 @@ constructor(private carService: CarService) {
 
 </docs-workflow>
 
-Congratulations on completing this activity. The example code works the same as with using the `inject` function. While these two approaches are largely the same, there are some small differences that are beyond the scope of this tutorial.
+이 활동을 완료한 것을 축하합니다. 예제 코드는 `inject` 함수를 사용할 때와 동일하게 작동합니다. 이 두 접근 방식은 대체로 비슷하지만 이 튜토리얼의 범위를 넘는 몇 가지 작은 차이점이 있습니다.
 
 <br>
 
-You can find out more information about dependency injection in the [Angular Documentation](guide/di).
+의존성 주입에 대한 더 많은 정보는 [Angular 문서](guide/di)에서 확인할 수 있습니다.

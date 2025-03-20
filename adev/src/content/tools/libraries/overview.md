@@ -1,34 +1,34 @@
-# Overview of Angular libraries
+# Angular 라이브러리 개요
 
-Many applications need to solve the same general problems, such as presenting a unified user interface, presenting data, and allowing data entry.
-Developers can create general solutions for particular domains that can be adapted for re-use in different applications.
-Such a solution can be built as Angular *libraries* and these libraries can be published and shared as *npm packages*.
+많은 애플리케이션은 통합된 사용자 인터페이스 제공, 데이터 표시 및 데이터 입력 허용과 같은 같은 일반적인 문제를 해결해야 합니다.
+개발자는 특정 도메인에 대한 일반적인 솔루션을 만들어 다양한 애플리케이션에서 재사용할 수 있도록 조정할 수 있습니다.
+이러한 솔루션은 Angular *라이브러리*로 구축할 수 있으며, 이러한 라이브러리는 *npm 패키지*로 게시되고 공유될 수 있습니다.
 
-An Angular library is an Angular project that differs from an application in that it cannot run on its own.
-A library must be imported and used in an application.
+Angular 라이브러리는 애플리케이션과 다른 Angular 프로젝트로, 독립적으로 실행될 수 없습니다.
+라이브러리는 애플리케이션에서 가져와 사용해야 합니다.
 
-Libraries extend Angular's base features.
-For example, to add [reactive forms](guide/forms/reactive-forms) to an application, add the library package using `ng add @angular/forms`, then import the `ReactiveFormsModule` from the `@angular/forms` library in your application code.
-Similarly, adding the [service worker](ecosystem/service-workers) library to an Angular application is one of the steps for turning an application into a [Progressive Web App](https://developers.google.com/web/progressive-web-apps) \(PWA\).
-[Angular Material](https://material.angular.io) is an example of a large, general-purpose library that provides sophisticated, reusable, and adaptable UI components.
+라이브러리는 Angular의 기본 기능을 확장합니다.
+예를 들어, 애플리케이션에 [반응형 양식](guide/forms/reactive-forms)을 추가하려면 `ng add @angular/forms` 명령어를 사용하여 라이브러리 패키지를 추가한 다음, 애플리케이션 코드에서 `@angular/forms` 라이브러리의 `ReactiveFormsModule`을 가져옵니다.
+마찬가지로, Angular 애플리케이션에 [서비스 워커](ecosystem/service-workers) 라이브러리를 추가하는 것은 애플리케이션을 [진보된 웹 애플리케이션](https://developers.google.com/web/progressive-web-apps) (PWA)으로 전환하기 위한 단계 중 하나입니다.
+[Angular Material](https://material.angular.io)은 정교하고 재사용 가능하며 적응 가능한 UI 구성 요소를 제공하는 대규모 일반 목적 라이브러리의 예입니다.
 
-Any application developer can use these and other libraries that have been published as npm packages by the Angular team or by third parties.
-See [Using Published Libraries](tools/libraries/using-libraries).
+모든 애플리케이션 개발자는 Angular 팀 또는 제3자가 npm 패키지로 게시한 이러한 라이브러리 및 기타 라이브러리를 사용할 수 있습니다.
+[게시된 라이브러리 사용하기](tools/libraries/using-libraries)를 참조하세요.
 
-HELPFUL: Libraries are intended to be used by Angular applications. To add Angular features to non-Angular web applications, use [Angular custom elements](guide/elements).
+도움말: 라이브러리는 Angular 애플리케이션에서 사용되도록 설계되었습니다. 비-Angular 웹 애플리케이션에 Angular 기능을 추가하려면 [Angular 사용자 정의 요소](guide/elements)를 사용하세요.
 
-## Creating libraries
+## 라이브러리 생성
 
-If you have developed features that are suitable for reuse, you can create your own libraries.
-These libraries can be used locally in your workspace, or you can publish them as [npm packages](reference/configs/npm-packages) to share with other projects or other Angular developers.
-These packages can be published to the npm registry, a private npm Enterprise registry, or a private package management system that supports npm packages.
-See [Creating Libraries](tools/libraries/creating-libraries).
+재사용에 적합한 기능을 개발했다면, 자체 라이브러리를 생성할 수 있습니다.
+이러한 라이브러리는 작업공간에서 로컬로 사용할 수 있으며, 다른 프로젝트나 다른 Angular 개발자들과 공유하기 위해 [npm 패키지](reference/configs/npm-packages)로 게시할 수 있습니다.
+이러한 패키지는 npm 레지스트리, 개인 npm 엔터프라이즈 레지스트리 또는 npm 패키지를 지원하는 개인 패키지 관리 시스템에 게시될 수 있습니다.
+[라이브러리 생성하기](tools/libraries/creating-libraries)를 참조하세요.
 
-Deciding to package features as a library is an architectural decision. It is comparable to deciding whether a feature is a component or a service, or deciding on the scope of a component.
+기능을 라이브러리로 패키징하기로 결정하는 것은 아키텍처적 결정입니다. 이는 기능이 구성 요소인지 서비스인지를 결정하거나 구성 요소의 범위를 결정하는 것과 비교할 수 있습니다.
 
-Packaging features as a library forces the artifacts in the library to be decoupled from the application's business logic.
-This can help to avoid various bad practices or architecture mistakes that can make it difficult to decouple and reuse code in the future.
+기능을 라이브러리로 패키징하면 라이브러리의 아티팩트가 애플리케이션의 비즈니스 로직과 분리되도록 강요합니다.
+이는 미래에 코드를 분리하고 재사용하기 어렵게 만드는 다양한 나쁜 관행이나 아키텍처 실수를 피하는 데 도움이 될 수 있습니다.
 
-Putting code into a separate library is more complex than simply putting everything in one application.
-It requires more of an investment in time and thought for managing, maintaining, and updating the library.
-This complexity can pay off when the library is being used in multiple applications.
+코드를 별도의 라이브러리에 넣는 것은 모든 것을 하나의 애플리케이션에 넣는 것보다 더 복잡합니다.
+이는 라이브러리를 관리, 유지 및 업데이트하는 데 더 많은 시간과 사유의 투자가 필요합니다.
+이러한 복잡성은 라이브러리가 여러 애플리케이션에서 사용될 때 보상을 받을 수 있습니다.

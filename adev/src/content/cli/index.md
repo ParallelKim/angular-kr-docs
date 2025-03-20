@@ -1,26 +1,26 @@
-# CLI Overview and Command Reference
+# CLI 개요 및 명령어 참조
 
-The Angular CLI is a command-line interface tool that you use to initialize, develop, scaffold, and maintain Angular applications directly from a command shell.
+Angular CLI는 명령 셸에서 Angular 애플리케이션을 초기화, 개발, 스캐폴드 및 유지 관리하는 데 사용하는 명령 줄 인터페이스 도구입니다.
 
-## Installing Angular CLI
+## Angular CLI 설치
 
-Major versions of Angular CLI follow the supported major version of Angular, but minor versions can be released separately.
+Angular CLI의 주요 버전은 지원되는 Angular의 주요 버전을 따르지만, 부버전은 별도로 출시될 수 있습니다.
 
-Install the CLI using the `npm` package manager:
+`npm` 패키지 관리자를 사용하여 CLI를 설치합니다:
 
 <code-example format="shell" language="shell">
 
-npm install -g &commat;angular/cli<aio-angular-dist-tag class="pln"></aio-angular-dist-tag>
+npm install -g @angular/cli<aio-angular-dist-tag class="pln"></aio-angular-dist-tag>
 
 </code-example>
 
-For details about changes between versions, and information about updating from previous releases, see the Releases tab on GitHub: https://github.com/angular/angular-cli/releases
+버전 간 변경 사항에 대한 자세한 내용과 이전 릴리스에서 업데이트하는 방법에 대한 정보는 GitHub의 릴리스 탭을 참조하십시오: https://github.com/angular/angular-cli/releases
 
-## Basic workflow
+## 기본 워크플로우
 
-Invoke the tool on the command line through the `ng` executable.
-Online help is available on the command line.
-Enter the following to list commands or options for a given command \(such as [new](cli/new)\) with a short description.
+`ng` 실행 파일을 통해 명령 줄에서 도구를 호출합니다.
+온라인 도움말은 명령 줄에서 사용할 수 있습니다.
+다음 명령을 입력하여 주어진 명령(예: [new](cli/new))에 대한 명령 또는 옵션을 짧은 설명과 함께 나열합니다.
 
 <code-example format="shell" language="shell">
 
@@ -29,7 +29,7 @@ ng new --help
 
 </code-example>
 
-To create, build, and serve a new, basic Angular project on a development server, go to the parent directory of your new workspace use the following commands:
+새롭고 기본 Angular 프로젝트를 개발 서버에서 생성, 빌드 및 제공하려면 새 작업공간의 상위 디렉토리로 가서 다음 명령을 사용하세요:
 
 <code-example format="shell" language="shell">
 
@@ -39,63 +39,63 @@ ng serve
 
 </code-example>
 
-In your browser, open http://localhost:4200/ to see the new application run.
-When you use the [ng serve](cli/serve) command to build an application and serve it locally, the server automatically rebuilds the application and reloads the page when you change any of the source files.
+브라우저에서 http://localhost:4200/을 열어 새 애플리케이션이 실행되는 것을 확인하세요.
+[ng serve](cli/serve) 명령을 사용하여 애플리케이션을 빌드하고 로컬로 제공하면, 서버는 소스 파일 중 하나를 변경할 때마다 애플리케이션을 자동으로 재구축하고 페이지를 새로 고칩니다.
 
 <div class="docs-alert docs-alert-helpful">
 
-When you run `ng new my-first-project` a new folder, named `my-first-project`, will be created in the current working directory.
-Since you want to be able to create files inside that folder, make sure you have sufficient rights in the current working directory before running the command.
+`ng new my-first-project`를 실행하면 현재 작업 디렉토리에 `my-first-project`라는 새 폴더가 생성됩니다.
+그 폴더 안에 파일을 생성할 수 있도록, 명령을 실행하기 전에 현재 작업 디렉토리에서 충분한 권한이 있는지 확인하세요.
 
-If the current working directory is not the right place for your project, you can change to a more appropriate directory by running `cd <path-to-other-directory>`.
+현재 작업 디렉토리가 프로젝트에 적합하지 않은 경우, `cd <path-to-other-directory>`를 실행하여 보다 적절한 디렉토리로 변경할 수 있습니다.
 
 </div>
 
-## Workspaces and project files
+## 작업공간 및 프로젝트 파일
 
-The [ng new](cli/new) command creates an *Angular workspace* folder and generates a new application skeleton.
-A workspace can contain multiple applications and libraries.
-The initial application created by the [ng new](cli/new) command is at the top level of the workspace.
-When you generate an additional application or library in a workspace, it goes into a `projects/` subfolder.
+[ng new](cli/new) 명령은 *Angular 작업공간* 폴더를 생성하고 새 애플리케이션 스켈레톤을 만듭니다.
+작업공간에는 여러 애플리케이션과 라이브러리를 포함할 수 있습니다.
+[ng new](cli/new) 명령으로 생성된 초기 애플리케이션은 작업공간의 최상위 수준에 있습니다.
+작업공간에서 추가 애플리케이션이나 라이브러리를 생성하면 `projects/` 하위 폴더에 들어갑니다.
 
-A newly generated application contains the source files for a root module, with a root component and template.
-Each application has a `src` folder that contains the logic, data, and assets.
+새로 생성된 애플리케이션에는 루트 모듈에 대한 소스 파일, 루트 컴포넌트 및 템플릿이 포함됩니다.
+각 애플리케이션은 로직, 데이터 및 자산을 포함하는 `src` 폴더가 있습니다.
 
-You can edit the generated files directly, or add to and modify them using CLI commands.
-Use the [ng generate](cli/generate) command to add new files for additional components and services, and code for new pipes, directives, and so on.
-Commands such as [add](cli/add) and [generate](cli/generate), which create or operate on applications and libraries, must be executed from within a workspace or project folder.
+생성된 파일을 직접 편집하거나 CLI 명령을 사용하여 추가 및 수정할 수 있습니다.
+[ng generate](cli/generate) 명령을 사용하여 추가 컴포넌트 및 서비스에 대한 새로운 파일을 추가하고 새로운 파이프, 지시자 등을 위한 코드를 생성합니다.
+애플리케이션 및 라이브러리를 생성하거나 운영하는 [add](cli/add) 및 [generate](cli/generate)와 같은 명령은 작업공간 또는 프로젝트 폴더 내에서 실행되어야 합니다.
 
-*   See more about the [Workspace file structure](guide/file-structure).
+*   [작업공간 파일 구조](guide/file-structure)에 대한 자세한 내용을 확인하세요.
 
-### Workspace and project configuration
+### 작업공간 및 프로젝트 구성
 
-A single workspace configuration file, `angular.json`, is created at the top level of the workspace.
-This is where you can set per-project defaults for CLI command options, and specify configurations to use when the CLI builds a project for different targets.
+작업공간의 최상위 수준에 단일 작업공간 구성 파일 `angular.json`이 생성됩니다.
+여기에서 CLI 명령 옵션에 대한 프로젝트별 기본값을 설정하고, CLI가 서로 다른 대상을 위해 프로젝트를 빌드할 때 사용할 구성을 지정할 수 있습니다.
 
-The [ng config](cli/config) command lets you set and retrieve configuration values from the command line, or you can edit the `angular.json` file directly.
+[ng config](cli/config) 명령을 사용하여 명령 줄에서 구성 값을 설정하고 검색할 수 있으며, 또는 `angular.json` 파일을 직접 편집할 수 있습니다.
 
 <div class="alert is-helpful">
 
-**NOTE**: <br />
-Option names in the configuration file must use [camelCase](guide/glossary#case-types), while option names supplied to commands must be dash-case.
+**참고**: <br />
+구성 파일의 옵션 이름은 [camelCase](guide/glossary#case-types)를 사용해야 하며, 명령에 제공되는 옵션 이름은 대시 형태여야 합니다.
 
 </div>
 
-*   See more about [Workspace Configuration](guide/workspace-config).
+*   [작업공간 구성](guide/workspace-config)에 대한 자세한 내용을 확인하세요.
 
-## CLI command-language syntax
+## CLI 명령어 언어 구문
 
-Command syntax is shown as follows:
+명령 구문은 다음과 같이 표시됩니다:
 
 `ng` *<command-name>* *<required-arg>* [*optional-arg*] `[options]`
 
-*   Most commands, and some options, have aliases.
-    Aliases are shown in the syntax statement for each command.
+*   대부분의 명령 및 일부 옵션은 별칭을 가집니다.
+    별칭은 각 명령의 구문에서 보여집니다.
 
-*   Option names are prefixed with a double dash \(`--`\) characters.
-    Option aliases are prefixed with a single dash \(`-`\) character.
-    Arguments are not prefixed.
-    For example:
+*   옵션 이름은 두 개의 대시 \(`--`\) 문자로 시작합니다.
+    옵션 별칭은 하나의 대시 \(`-`\) 문자로 시작합니다.
+    인수에는 접두사가 없습니다.
+    예를 들면:
 
     <code-example format="shell" language="shell">
 
@@ -103,29 +103,29 @@ Command syntax is shown as follows:
 
     </code-example>
 
-*   Typically, the name of a generated artifact can be given as an argument to the command or specified with the `--name` option.
+*   일반적으로 생성된 아티팩트의 이름은 명령에 대한 인수로 지정하거나 `--name` 옵션으로 지정할 수 있습니다.
 
-*   Arguments and option names must be given in [dash-case](guide/glossary#case-types).
-    For example: `--my-option-name`
+*   인수 및 옵션 이름은 [대시 케이스](guide/glossary#case-types)로 제공되어야 합니다.
+    예: `--my-option-name`
 
-### Boolean options
+### 부울 옵션
 
-Boolean options have two forms: `--this-option` sets the flag to `true`, `--no-this-option` sets it to `false`.
-If neither option is supplied, the flag remains in its default state, as listed in the reference documentation.
+부울 옵션에는 두 가지 형태가 있습니다: `--this-option`은 플래그를 `true`로 설정하고, `--no-this-option`은 `false`로 설정합니다.
+두 옵션이 제공되지 않으면, 플래그는 참조 문서에 나열된 기본 상태로 유지됩니다.
 
-### Array options
+### 배열 옵션
 
-Array options can be provided in two forms: `--option value1 value2` or `--option value1 --option value2`.
+배열 옵션은 두 가지 형식으로 제공될 수 있습니다: `--option value1 value2` 또는 `--option value1 --option value2`.
 
-### Relative paths
+### 상대 경로
 
-Options that specify files can be given as absolute paths, or as paths relative to the current working directory, which is generally either the workspace or project root.
+파일을 지정하는 옵션은 절대 경로 또는 현재 작업 디렉토리에 대한 경로(일반적으로 작업공간 또는 프로젝트 루트)를 상대적으로 지정할 수 있습니다.
 
-### Schematics
+### 스키매틱
 
-The [ng generate](cli/generate) and [ng add](cli/add) commands take, as an argument, the artifact or library to be generated or added to the current project.
-In addition to any general options, each artifact or library defines its own options in a *schematic*.
-Schematic options are supplied to the command in the same format as immediate command options.
+[ng generate](cli/generate) 및 [ng add](cli/add) 명령은 현재 프로젝트에 생성되거나 추가될 아티팩트 또는 라이브러리를 인수로 사용합니다.
+일반 옵션 외에도, 각 아티팩트 또는 라이브러리는 *스키매틱*에서 자신의 옵션을 정의합니다.
+스키매틱 옵션은 즉각적인 명령 옵션과 동일한 형식으로 명령에 제공됩니다.
 
 <!-- links -->
 

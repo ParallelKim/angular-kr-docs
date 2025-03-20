@@ -1,19 +1,18 @@
-# Content projection with ng-content
+# 콘텐츠 투영 ng-content 사용하기
 
-Tip: This guide assumes you've already read the [Essentials Guide](essentials). Read that first if you're new to Angular.
+팁: 이 가이드는 여러분이 [필수 가이드](essentials)를 이미 읽었다고 가정합니다. Angular에 처음이라면 먼저 그것을 읽어보세요.
 
-You often need to create components that act as containers for different types of content. For
-example, you may want to create a custom card component:
+여러분은 종종 다양한 유형의 콘텐츠를 위한 컨테이너 역할을 하는 컴포넌트를 만들어야 합니다. 예를 들어, 사용자 지정 카드 컴포넌트를 만들고 싶을 수 있습니다:
 
 ```angular-ts
 @Component({
   selector: 'custom-card',
-  template: '<div class="card-shadow"> <!-- card content goes here --> </div>',
+  template: '<div class="card-shadow"> <!-- 카드 내용은 여기로 --> </div>',
 })
 export class CustomCard {/* ... */}
 ```
 
-**You can use the `<ng-content>` element as a placeholder to mark where content should go**:
+**`<ng-content>` 요소를 자리 표시자로 사용하여 콘텐츠가 들어갈 위치를 표시할 수 있습니다**:
 
 ```angular-ts
 @Component({
@@ -23,15 +22,12 @@ export class CustomCard {/* ... */}
 export class CustomCard {/* ... */}
 ```
 
-Tip: `<ng-content>` works similarly
-to [the native `<slot>` element](https://developer.mozilla.org/docs/Web/HTML/Element/slot),
-but with some Angular-specific functionality.
+팁: `<ng-content>`는 [네이티브 `<slot>` 요소](https://developer.mozilla.org/docs/Web/HTML/Element/slot)와 유사하게 작동하지만, Angular 특정 기능이 있습니다.
 
-When you use a component with `<ng-content>`, any children of the component host element are
-rendered, or **projected**, at the location of that `<ng-content>`:
+`<ng-content>`와 함께 컴포넌트를 사용할 때, 컴포넌트 호스트 요소의 자식들은 그 `<ng-content>` 위치에 **렌더링**되거나 **투영**됩니다:
 
 ```angular-ts
-// Component source
+// 컴포넌트 소스
 @Component({
   selector: 'custom-card',
   template: `
@@ -44,43 +40,33 @@ export class CustomCard {/* ... */}
 ```
 
 ```angular-html
-<!-- Using the component -->
+<!-- 컴포넌트 사용하기 -->
 <custom-card>
-  <p>This is the projected content</p>
+  <p>이것은 투영된 콘텐츠입니다</p>
 </custom-card>
 ```
 
 ```angular-html
-<!-- The rendered DOM -->
+<!-- 렌더링된 DOM -->
 <custom-card>
   <div class="card-shadow">
-    <p>This is the projected content</p>
+    <p>이것은 투영된 콘텐츠입니다</p>
   </div>
 </custom-card>
 ```
 
-Angular refers to any children of a component passed this way as that component's **content**. This
-is distinct from the component's **view**, which refers to the elements defined in the component's
-template.
+Angular는 이러한 방식으로 전달된 컴포넌트의 모든 자식을 **콘텐츠**라고 부릅니다. 이는 컴포넌트의 **뷰**와 구별됩니다. 뷰는 컴포넌트 템플릿에 정의된 요소를 가리킵니다.
 
-**The `<ng-content>` element is neither a component nor DOM element**. Instead, it is a special
-placeholder that tells Angular where to render content. Angular's compiler processes
-all `<ng-content>` elements at build-time. You cannot insert, remove, or modify `<ng-content>` at
-run time. You cannot add directives, styles, or arbitrary attributes to `<ng-content>`.
+**`<ng-content>` 요소는 컴포넌트도 아니고 DOM 요소도 아닙니다**. 대신, Angular에 콘텐츠를 렌더링할 위치를 표시하는 특별한 자리 표시자입니다. Angular의 컴파일러는 빌드 타임에 모든 `<ng-content>` 요소를 처리합니다. 런타임에 `<ng-content>`를 삽입, 제거 또는 수정할 수 없습니다. `<ng-content>`에 지시문, 스타일 또는 임의의 속성을 추가할 수 없습니다.
 
-You should not conditionally include `<ng-content>` with `@if`, `@for`, or `@switch`. Angular always
-instantiates and creates DOM nodes for content rendered to a `<ng-content>` placeholder, even if
-that `<ng-content>` placeholder is hidden. For conditional rendering of component content,
-see [Template fragments](api/core/ng-template).
+`@if`, `@for` 또는 `@switch`로 `<ng-content>`를 조건부로 포함해서는 안 됩니다. Angular는 콘텐츠를 `<ng-content>` 자리 표시자로 렌더링할 때 항상 인스턴스화하고 DOM 노드를 생성합니다. 콘텐츠가 hidden 상태인 경우에도 마찬가지입니다. 컴포넌트 콘텐츠의 조건부 렌더링에 대한 내용은 [템플릿 조각](api/core/ng-template)을 참조하세요.
 
-## Multiple content placeholders
+## 여러 콘텐츠 자리 표시자
 
-Angular supports projecting multiple different elements into different `<ng-content>` placeholders
-based on CSS selector. Expanding the card example from above, you could create two placeholders for
-a card title and a card body by using the `select` attribute:
+Angular는 CSS 선택자에 따라 서로 다른 `<ng-content>` 자리 표시자에 여러 서로 다른 요소를 투영하는 것을 지원합니다. 위의 카드 예제를 확장하여 카드 제목과 카드 본문에 대한 두 개의 자리 표시자를 `select` 속성을 사용하여 만들 수 있습니다:
 
 ```angular-html
-<!-- Component template -->
+<!-- 컴포넌트 템플릿 -->
 <div class="card-shadow">
   <ng-content select="card-title"></ng-content>
   <div class="card-divider"></div>
@@ -89,105 +75,99 @@ a card title and a card body by using the `select` attribute:
 ```
 
 ```angular-html
-<!-- Using the component -->
+<!-- 컴포넌트 사용하기 -->
 <custom-card>
-  <card-title>Hello</card-title>
-  <card-body>Welcome to the example</card-body>
+  <card-title>안녕하세요</card-title>
+  <card-body>예제에 오신 것을 환영합니다</card-body>
 </custom-card>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
+<!-- 렌더링된 DOM -->
 <custom-card>
   <div class="card-shadow">
-    <card-title>Hello</card-title>
+    <card-title>안녕하세요</card-title>
     <div class="card-divider"></div>
-    <card-body>Welcome to the example</card-body>
+    <card-body>예제에 오신 것을 환영합니다</card-body>
   </div>
 </custom-card>
 ```
 
-The `<ng-content>` placeholder supports the same CSS selectors
-as [component selectors](guide/components/selectors).
+`<ng-content>` 자리 표시자는 [컴포넌트 선택자](guide/components/selectors)와 동일한 CSS 선택자를 지원합니다.
 
-If you include one or more `<ng-content>` placeholders with a `select` attribute and
-one `<ng-content>` placeholder without a `select` attribute, the latter captures all elements that
-did not match a `select` attribute:
+하나 이상의 `select` 속성을 가진 `<ng-content>` 자리 표시자와 `select` 속성이 없는 `<ng-content>` 자리를 포함하면, 후자는 `select` 속성과 일치하지 않는 모든 요소를 캡처합니다:
 
 ```angular-html
-<!-- Component template -->
+<!-- 컴포넌트 템플릿 -->
 <div class="card-shadow">
   <ng-content select="card-title"></ng-content>
   <div class="card-divider"></div>
-  <!-- capture anything except "card-title" -->
+  <!-- "card-title"를 제외한 모든 것을 캡처 -->
   <ng-content></ng-content>
 </div>
 ```
 
 ```angular-html
-<!-- Using the component -->
+<!-- 컴포넌트 사용하기 -->
 <custom-card>
-  <card-title>Hello</card-title>
+  <card-title>안녕하세요</card-title>
   <img src="..." />
-  <p>Welcome to the example</p>
+  <p>예제에 오신 것을 환영합니다</p>
 </custom-card>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
+<!-- 렌더링된 DOM -->
 <custom-card>
   <div class="card-shadow">
-    <card-title>Hello</card-title>
+    <card-title>안녕하세요</card-title>
     <div class="card-divider"></div>
     <img src="..." />
-    <p>Welcome to the example></p>
+    <p>예제에 오신 것을 환영합니다></p>
   </div>
 </custom-card>
 ```
 
-If a component does not include an `<ng-content>` placeholder without a `select` attribute, any
-elements that don't match one of the component's placeholders do not render into the DOM.
+컴포넌트가 `select` 속성이 없는 `<ng-content>` 자리 표시자를 포함하지 않으면, 컴포넌트의 자리 표시자와 일치하지 않는 요소는 DOM에 렌더링되지 않습니다.
 
-## Fallback content
+## 기본 콘텐츠
 
-Angular can show *fallback content* for a component's `<ng-content>` placeholder if that component doesn't have any matching child content. You can specify fallback content by adding child content to the `<ng-content>` element itself.
+Angular는 컴포넌트의 `<ng-content>` 자리 표시자에 대한 *기본 콘텐츠*를 표시할 수 있습니다. 이 경우 컴포넌트에 일치하는 자식 콘텐츠가 없으면 기본 콘텐츠를 사용할 수 있습니다. 기본 콘텐츠는 `<ng-content>` 요소 자체에 자식 콘텐츠를 추가하여 지정할 수 있습니다.
 
 ```angular-html
-<!-- Component template -->
+<!-- 컴포넌트 템플릿 -->
 <div class="card-shadow">
-  <ng-content select="card-title">Default Title</ng-content>
+  <ng-content select="card-title">기본 제목</ng-content>
   <div class="card-divider"></div>
-  <ng-content select="card-body">Default Body</ng-content>
+  <ng-content select="card-body">기본 본문</ng-content>
 </div>
 ```
 
 ```angular-html
-<!-- Using the component -->
+<!-- 컴포넌트 사용하기 -->
 <custom-card>
-  <card-title>Hello</card-title>
-  <!-- No card-body provided -->
+  <card-title>안녕하세요</card-title>
+  <!-- 카드 본문 제공하지 않음 -->
 </custom-card>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
+<!-- 렌더링된 DOM -->
 <custom-card>
   <div class="card-shadow">
-    Hello
+    안녕하세요
     <div class="card-divider"></div>
-    Default Body
+    기본 본문
   </div>
 </custom-card>
 ```
 
-## Aliasing content for projection
+## 투영을 위한 콘텐츠 별칭 만들기
 
-Angular supports a special attribute, `ngProjectAs`, that allows you to specify a CSS selector on
-any element. Whenever an element with `ngProjectAs` is checked against an `<ng-content>`
-placeholder, Angular compares against the `ngProjectAs` value instead of the element's identity:
+Angular는 `ngProjectAs`라는 특별한 속성을 지원합니다. 이 속성을 사용하여 임의의 요소에 대한 CSS 선택자를 지정할 수 있습니다. `ngProjectAs`가 있는 요소가 `<ng-content>` 자리 표시자와 비교될 때마다 Angular는 요소의 정체성 대신 `ngProjectAs` 값을 비교합니다:
 
 ```angular-html
-<!-- Component template -->
+<!-- 컴포넌트 템플릿 -->
 <div class="card-shadow">
   <ng-content select="card-title"></ng-content>
   <div class="card-divider"></div>
@@ -196,23 +176,23 @@ placeholder, Angular compares against the `ngProjectAs` value instead of the ele
 ```
 
 ```angular-html
-<!-- Using the component -->
+<!-- 컴포넌트 사용하기 -->
 <custom-card>
-  <h3 ngProjectAs="card-title">Hello</h3>
+  <h3 ngProjectAs="card-title">안녕하세요</h3>
 
-  <p>Welcome to the example</p>
+  <p>예제에 오신 것을 환영합니다</p>
 </custom-card>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
+<!-- 렌더링된 DOM -->
 <custom-card>
   <div class="card-shadow">
-    <h3>Hello</h3>
+    <h3>안녕하세요</h3>
     <div class="card-divider"></div>
-    <p>Welcome to the example></p>
+    <p>예제에 오신 것을 환영합니다></p>
   </div>
 </custom-card>
 ```
 
-`ngProjectAs` supports only static values and cannot be bound to dynamic expressions.
+`ngProjectAs`는 정적 값만 지원하며 동적 표현식에 바인딩할 수 없습니다.

@@ -1,108 +1,108 @@
 # Angular CLI builders
 
-A number of Angular CLI commands run a complex process on your code, such as building, testing, or serving your application.
-The commands use an internal tool called Architect to run *CLI builders*, which invoke another tool (bundler, test runner, server) to accomplish the desired task.
-Custom builders can perform an entirely new task, or to change which third-party tool is used by an existing command.
+다수의 Angular CLI 명령어는 애플리케이션을 빌드, 테스트 또는 제공하는 것과 같은 복잡한 프로세스를 코드에서 실행합니다.
+이 명령어는 *CLI builders*를 실행하기 위해 Architect라는 내부 도구를 사용하며, 이 도구는 원하는 작업을 수행하기 위해 다른 도구(번들러, 테스트 실행기, 서버)를 호출합니다.
+사용자 정의 빌더는 전혀 새로운 작업을 수행하거나 기존 명령어에서 사용되는 서드파티 도구를 변경할 수 있습니다.
 
-This document explains how CLI builders integrate with the workspace configuration file, and shows how you can create your own builder.
+이 문서는 CLI 빌더가 작업 공간 구성 파일과 통합되는 방법을 설명하고, 사용자 빌더를 만들어 보는 방법을 보여줍니다.
 
-HELPFUL: Find the code from the examples used here in this [GitHub repository](https://github.com/mgechev/cli-builders-demo).
+도움이 되는 정보: 여기서 사용된 예제의 코드는 이 [GitHub 리포지토리](https://github.com/mgechev/cli-builders-demo)에서 확인할 수 있습니다.
 
 ## CLI builders
 
-The internal Architect tool delegates work to handler functions called *builders*.
-A builder handler function receives two arguments:
+내부 Architect 도구는 *builders*라고 불리는 핸들러 함수에 작업을 위임합니다.
+빌더 핸들러 함수는 두 개의 인수를 받습니다:
 
-| Argument  | Type             |
-|:---       |:---              |
-| `options` | `JSONObject`     |
-| `context` | `BuilderContext` |
+| 인수      | 타입               |
+|:---       |:---                |
+| `options` | `JSONObject`       |
+| `context` | `BuilderContext`   |
 
-The separation of concerns here is the same as with [schematics](tools/cli/schematics-authoring), which are used for other CLI commands that touch your code (such as `ng generate`).
+여기서 관심사의 분리는 코드에 접근하는 다른 CLI 명령어에 사용되는 [schematics](tools/cli/schematics-authoring)와 동일합니다 (예: `ng generate`).
 
-* The `options` object is provided by the CLI user's options and configuration, while the `context` object is provided by the CLI Builder API automatically.
-* In addition to the contextual information, the `context` object also provides access to a scheduling method, `context.scheduleTarget()`.
-    The scheduler executes the builder handler function with a given target configuration.
+* `options` 객체는 CLI 사용자의 옵션 및 구성에 의해 제공되며, `context` 객체는 CLI Builder API에 의해 자동으로 제공됩니다.
+* 문맥 정보 외에도 `context` 객체는 `context.scheduleTarget()`라는 스케줄링 메소드에 대한 접근을 제공합니다.
+    스케줄러는 주어진 대상 구성으로 빌더 핸들러 함수를 실행합니다.
 
-The builder handler function can be synchronous (return a value), asynchronous (return a `Promise`), or watch and return multiple values (return an `Observable`).
-The return values must always be of type `BuilderOutput`.
-This object contains a Boolean `success` field and an optional `error` field that can contain an error message.
+빌더 핸들러 함수는 동기적(값을 반환), 비동기적(‘Promise’를 반환) 또는 여러 값을 반환하는 감시 가능(‘Observable’을 반환)일 수 있습니다.
+반환값은 항상 `BuilderOutput` 타입이어야 합니다.
+이 객체는 Boolean `success` 필드와 선택적인 `error` 필드를 포함하여 에러 메시지를 담을 수 있습니다.
 
-Angular provides some builders that are used by the CLI for commands such as `ng build` and `ng test`.
-Default target configurations for these and other built-in CLI builders can be found and configured in the "architect" section of the [workspace configuration file](reference/configs/workspace-config), `angular.json`.
-Also, extend and customize Angular by creating your own builders, which you can run directly using the [`ng run` CLI command](cli/run).
+Angular는 `ng build` 및 `ng test`와 같은 명령어에 의해 사용되는 빌더를 제공합니다.
+이들 및 다른 내장 CLI 빌더에 대한 기본 대상 구성은 [워크스페이스 구성 파일](reference/configs/workspace-config)인 `angular.json`의 "architect" 섹션에서 찾고 구성할 수 있습니다.
+또한, [`ng run` CLI 명령어](cli/run)를 사용하여 직접 실행할 수 있는 사용자 빌더를 만들어 Angular를 확장하고 사용자 정의할 수 있습니다.
 
 ### Builder project structure
 
-A builder resides in a "project" folder that is similar in structure to an Angular workspace, with global configuration files at the top level, and more specific configuration in a source folder with the code files that define the behavior.
-For example, your `myBuilder` folder could contain the following files.
+빌더는 Angular 작업 공간과 유사한 구조를 가진 "project" 폴더에 위치하며, 상위 수준에는 전역 구성 파일이 있고, 코드 파일이 있는 소스 폴더에 보다 구체적인 구성이 있습니다.
+예를 들어, `myBuilder` 폴더에는 다음 파일이 포함될 수 있습니다.
 
-| Files                    | Purpose                                                                                                   |
+| 파일                     | 용도                                                                                                   |
 |:---                      | :---                                                                                                      |
-| `src/my-builder.ts`      | Main source file for the builder definition.                                                              |
-| `src/my-builder.spec.ts` | Source file for tests.                                                                                    |
-| `src/schema.json`        | Definition of builder input options.                                                                      |
-| `builders.json`          | Builders definition.                                                                                      |
-| `package.json`           | Dependencies. See [https://docs.npmjs.com/files/package.json](https://docs.npmjs.com/files/package.json). |
-| `tsconfig.json`          | [TypeScript configuration](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).              |
+| `src/my-builder.ts`      | 빌더 정의를 위한 주요 소스 파일.                                                              |
+| `src/my-builder.spec.ts` | 테스트를 위한 소스 파일.                                                                                    |
+| `src/schema.json`        | 빌더 입력 옵션의 정의.                                                                      |
+| `builders.json`          | 빌더 정의.                                                                                      |
+| `package.json`           | 의존성. [https://docs.npmjs.com/files/package.json](https://docs.npmjs.com/files/package.json)을 참조하세요. |
+| `tsconfig.json`          | [TypeScript 구성](https://www.typescriptlang.org/docs/handbook/tsconfig-json.html).              |
 
-Builders can be published to `npm`, see [Publishing your Library](tools/libraries/creating-libraries).
+빌더는 `npm`에 게시될 수 있으며, [라이브러리 게시](tools/libraries/creating-libraries) 참조.
 
 ## Creating a builder
 
-As an example, create a builder that copies a file to a new location.
-To create a builder, use the `createBuilder()` CLI Builder function, and return a `Promise<BuilderOutput>` object.
+예를 들어, 파일을 새 위치로 복사하는 빌더를 생성하겠습니다.
+빌더를 생성하려면 `createBuilder()` CLI Builder 함수를 사용하고, `Promise<BuilderOutput>` 객체를 반환합니다.
 
 <docs-code header="src/my-builder.ts (builder skeleton)" path="adev/src/content/examples/cli-builder/src/my-builder.ts" visibleRegion="builder-skeleton"/>
 
-Now let's add some logic to it.
-The following code retrieves the source and destination file paths from user options and copies the file from the source to the destination \(using the [Promise version of the built-in NodeJS `copyFile()` function](https://nodejs.org/api/fs.html#fs_fspromises_copyfile_src_dest_mode)\).
-If the copy operation fails, it returns an error with a message about the underlying problem.
+이제 여기에 일부 로직을 추가합시다.
+다음 코드는 사용자 옵션에서 소스 및 대상 파일 경로를 가져오고 소스에서 대상으로 파일을 복사합니다 \(내장 NodeJS `copyFile()` 함수의 [Promise 버전](https://nodejs.org/api/fs.html#fs_fspromises_copyfile_src_dest_mode)을 사용\).
+복사 작업에 실패하면 기저 문제에 대한 메시지와 함께 오류를 반환합니다.
 
 <docs-code header="src/my-builder.ts (builder)" path="adev/src/content/examples/cli-builder/src/my-builder.ts" visibleRegion="builder"/>
 
 ### Handling output
 
-By default, `copyFile()` does not print anything to the process standard output or error.
-If an error occurs, it might be difficult to understand exactly what the builder was trying to do when the problem occurred.
-Add some additional context by logging additional information using the `Logger` API.
-This also lets the builder itself be executed in a separate process, even if the standard output and error are deactivated.
+기본적으로 `copyFile()`은 프로세스의 표준 출력 또는 오류에 아무것도 출력하지 않습니다.
+오류가 발생하면 문제가 발생했을 때 빌더가 정확히 무엇을 하려고 했는지 이해하기 어려울 수 있습니다.
+`Logger` API를 사용하여 추가 정보를 로깅함으로써 추가 문맥을 추가합니다.
+이렇게 하면 표준 출력 및 오류가 비활성화되어도 빌더 자체가 별도의 프로세스에서 실행될 수 있습니다.
 
-You can retrieve a `Logger` instance from the context.
+`context`에서 `Logger` 인스턴스를 검색할 수 있습니다.
 
 <docs-code header="src/my-builder.ts (handling output)" path="adev/src/content/examples/cli-builder/src/my-builder.ts" visibleRegion="handling-output"/>
 
 ### Progress and status reporting
 
-The CLI Builder API includes progress and status reporting tools, which can provide hints for certain functions and interfaces.
+CLI Builder API는 특정 함수 및 인터페이스에 대한 힌트를 제공할 수 있는 진행 상황 및 상태 보고 도구를 포함합니다.
 
-To report progress, use the `context.reportProgress()` method, which takes a current value, optional total, and status string as arguments.
-The total can be any number. For example, if you know how many files you have to process, the total could be the number of files, and current should be the number processed so far.
-The status string is unmodified unless you pass in a new string value.
+진행 상황을 보고하려면 현재 값, 선택적 총계 및 상태 문자열을 인수로 사용하는 `context.reportProgress()` 메소드를 사용하십시오.
+총계는 어떤 숫자일 수 있습니다. 예를 들어 처리해야 할 파일 수를 알고 있다면, 총계는 파일 수일 수 있으며 현재 처리된 파일 수는 현재 값으로 전달합니다.
+상태 문자열은 새 문자열 값을 전달하지 않는 한 수정되지 않습니다.
 
-In our example, the copy operation either finishes or is still executing, so there's no need for a progress report, but you can report status so that a parent builder that called our builder would know what's going on.
-Use the `context.reportStatus()` method to generate a status string of any length.
+우리의 예에서 복사 작업은 완료되거나 여전히 실행 중이므로 진행 보고가 필요하지 않지만, 부모 빌더가 우리 빌더를 호출했을 때 어떤 일이 진행되고 있는지 알 수 있도록 상태를 보고할 수 있습니다.
+어떤 길이의 상태 문자열을 생성하기 위해 `context.reportStatus()` 메소드를 사용하십시오.
 
-HELPFUL: There's no guarantee that a long string will be shown entirely; it could be cut to fit the UI that displays it.
+도움이 되는 정보: 긴 문자열이 전체적으로 표시된다는 보장은 없으며; UI에 맞게 잘릴 수 있습니다.
 
-Pass an empty string to remove the status.
+상태를 제거하려면 빈 문자열을 전달하십시오.
 
 <docs-code header="src/my-builder.ts (progress reporting)" path="adev/src/content/examples/cli-builder/src/my-builder.ts" visibleRegion="progress-reporting"/>
 
 ## Builder input
 
-You can invoke a builder indirectly through a CLI command such as `ng build`, or directly with the Angular CLI `ng run` command.
-In either case, you must provide required inputs, but can let other inputs default to values that are pre-configured for a specific *target*, specified by a [configuration](tools/cli/environments), or set on the command line.
+빌더는 `ng build`와 같은 CLI 명령어를 통해 간접적으로 호출하거나, Angular CLI `ng run` 명령어로 직접 호출할 수 있습니다.
+어느 쪽이든 필수 입력을 제공해야 하지만 특정 *대상*에 대해 미리 구성된 값으로 기본값을 설정할 수 있습니다. 이는 [구성](tools/cli/environments) 또는 명령줄에서 설정할 수 있습니다.
 
 ### Input validation
 
-You define builder inputs in a JSON schema associated with that builder.
-Similar to schematics, the Architect tool collects the resolved input values into an `options` object, and validates their types against the schema before passing them to the builder function.
+빌더 입력은 해당 빌더와 연결된 JSON 스키마에서 정의됩니다.
+Schematics와 유사하게 Architect 도구는 해결된 입력 값을 `options` 객체에 수집하고, 이를 빌더 함수에 전달하기 전에 스키마에 대해 유형을 검증합니다.
 
-For our example builder, `options` should be a `JsonObject` with two keys:
-a `source` and a `destination`, each of which are a string.
+우리 예제 빌더의 경우 `options`는 두 개의 키를 가진 `JsonObject`여야 합니다:
+`source`와 `destination`, 각각 문자열이어야 합니다.
 
-You can provide the following schema for type validation of these values.
+다음 스키마를 제공하여 이러한 값의 유형 검증을 할 수 있습니다.
 
 <docs-code header="src/schema.json" language="json">
 
@@ -121,12 +121,12 @@ You can provide the following schema for type validation of these values.
 
 </docs-code>
 
-HELPFUL: This is a minimal example, but the use of a schema for validation can be very powerful.
-For more information, see the [JSON schemas website](http://json-schema.org).
+도움이 되는 정보: 이것은 최소한의 예제이지만, 검증을 위한 스키마 사용은 매우 강력할 수 있습니다.
+자세한 정보는 [JSON 스키마 웹사이트](http://json-schema.org)를 참조하십시오.
 
-To link our builder implementation with its schema and name, you need to create a *builder definition* file, which you can point to in `package.json`.
+빌더 구현을 스키마와 이름에 연결하려면 `package.json`에서 참조할 수 있는 *빌더 정의* 파일을 생성해야 합니다.
 
-Create a file named `builders.json` that looks like this:
+`builders.json`이라는 파일을 다음과 같이 만드십시오:
 
 <docs-code header="builders.json" language="json">
 
@@ -142,7 +142,7 @@ Create a file named `builders.json` that looks like this:
 
 </docs-code>
 
-In the `package.json` file, add a `builders` key that tells the Architect tool where to find our builder definition file.
+`package.json` 파일에 다음과 같이 우리 빌더 정의 파일을 찾는 `builders` 키를 추가합니다.
 
 <docs-code header="package.json" language="json">
 
@@ -159,23 +159,23 @@ In the `package.json` file, add a `builders` key that tells the Architect tool w
 
 </docs-code>
 
-The official name of our builder is now `@example/copy-file:copy`.
-The first part of this is the package name and the second part is the builder name as specified in the `builders.json` file.
+우리 빌더의 공식 이름은 이제 `@example/copy-file:copy`입니다.
+이의 첫 번째 부분은 패키지 이름이며, 두 번째 부분은 `builders.json` 파일에 지정된 빌더 이름입니다.
 
-These values are accessed on `options.source` and `options.destination`.
+이 값들은 `options.source` 및 `options.destination`에서 접근할 수 있습니다.
 
 <docs-code header="src/my-builder.ts (report status)" path="adev/src/content/examples/cli-builder/src/my-builder.ts" visibleRegion="report-status"/>
 
 ### Target configuration
 
-A builder must have a defined target that associates it with a specific input configuration and project.
+빌더는 특정 입력 구성 및 프로젝트와 연결되는 정의된 대상을 가져야 합니다.
 
-Targets are defined in the `angular.json` [CLI configuration file](reference/configs/workspace-config).
-A target specifies the builder to use, its default options configuration, and named alternative configurations.
-Architect in the Angular CLI uses the target definition to resolve input options for a given run.
+대상은 `angular.json` [CLI 구성 파일](reference/configs/workspace-config)에서 정의됩니다.
+대상은 사용할 빌더, 기본 옵션 구성 및 이름이 지정된 대체 구성을 지정합니다.
+Angular CLI의 Architect는 주어진 실행에 대한 입력 옵션을 해결하기 위해 대상 정의를 사용합니다.
 
-The `angular.json` file has a section for each project, and the "architect" section of each project configures targets for builders used by CLI commands such as 'build', 'test', and 'serve'.
-By default, for example, the `ng build` command runs the builder `@angular-devkit/build-angular:browser` to perform the build task, and passes in default option values as specified for the `build` target in `angular.json`.
+`angular.json` 파일은 각 프로젝트에 대한 섹션이 있으며 각 프로젝트의 "architect" 섹션은 'build', 'test' 및 'serve'와 같이 CLI 명령어에 의해 사용되는 빌더의 대상을 구성합니다.
+예를 들어 `ng build` 명령어는 빌더 `@angular-devkit/build-angular:browser`를 실행하여 빌드 작업을 수행하고, `angular.json`에서 `build` 대상에 대해 지정된 기본 옵션 값을 전달합니다.
 
 <docs-code header="angular.json" language="json">
 
@@ -213,13 +213,13 @@ By default, for example, the `ng build` command runs the builder `@angular-devki
 
 </docs-code>
 
-The command passes the builder the set of default options specified in the "options" section.
-If you pass the `--configuration=production` flag, it uses the override values specified in the `production` configuration.
-Specify further option overrides individually on the command line.
+명령어는 "options" 섹션에 지정된 기본 옵션 집합을 빌더에 전달합니다.
+`--configuration=production` 플래그를 전달하면 `production` 구성에 지정된 재정의 값을 사용합니다.
+추가 옵션 재정의를 명령줄에서 개별적으로 지정합니다.
 
 #### Target strings
 
-The generic `ng run` CLI command takes as its first argument a target string of the following form.
+일반적인 `ng run` CLI 명령어는 다음 형식의 대상 문자열을 첫 번째 인수로 사용합니다.
 
 <docs-code language="shell">
 
@@ -227,41 +227,41 @@ project:target[:configuration]
 
 </docs-code>
 
-|               | Details |
+|               | 세부정보 |
 |:---           |:---     |
-| project       | The name of the Angular CLI project that the target is associated with.                                               |
-| target        | A named builder configuration from the `architect` section of the `angular.json` file.                                |
-| configuration | (optional) The name of a specific configuration override for the given target, as defined in the `angular.json` file. |
+| project       | 대상과 연결된 Angular CLI 프로젝트의 이름입니다.                                               |
+| target        | `angular.json` 파일의 `architect` 섹션에서 지정된 이름 있는 빌더 구성입니다.                                |
+| configuration | (선택 사항) 주어진 대상에 대한 특정 구성 재정의의 이름으로, `angular.json` 파일에서 정의됩니다. |
 
-If your builder calls another builder, it might need to read a passed target string.
-Parse this string into an object by using the `targetFromTargetString()` utility function from `@angular-devkit/architect`.
+빌더가 또 다른 빌더를 호출하면 전달된 대상 문자열을 읽어야 할 수도 있습니다.
+이 문자열을 객체로 구문 분석하려면 `@angular-devkit/architect`의 `targetFromTargetString()` 유틸리티 함수를 사용하십시오.
 
 ## Schedule and run
 
-Architect runs builders asynchronously.
-To invoke a builder, you schedule a task to be run when all configuration resolution is complete.
+Architect는 빌더를 비동기적으로 실행합니다.
+빌더를 호출하려면 모든 구성 해결이 완료될 때 실행될 작업을 예약해야 합니다.
 
-The builder function is not executed until the scheduler returns a `BuilderRun` control object.
-The CLI typically schedules tasks by calling the `context.scheduleTarget()` function, and then resolves input options using the target definition in the `angular.json` file.
+빌더 함수는 스케줄러가 `BuilderRun` 제어 객체를 반환할 때까지 실행되지 않습니다.
+CLI는 일반적으로 `context.scheduleTarget()` 함수를 호출하여 작업을 예약하고, 그런 다음 `angular.json` 파일의 대상 정의를 사용하여 입력 옵션을 해결합니다.
 
-Architect resolves input options for a given target by taking the default options object, then overwriting values from the configuration, then further overwriting values from the overrides object passed to `context.scheduleTarget()`.
-For the Angular CLI, the overrides object is built from command line arguments.
+Architect는 기본 옵션 객체를 가져온 다음 구성에서 값들을 덮어쓰고, 그 다음 `context.scheduleTarget()`에 전달된 재정의 객체에서 추가로 값을 덮어쓰기하여 주어진 대상에 대한 입력 옵션을 해결합니다.
+Angular CLI의 경우, 재정의 객체는 명령줄 인수에서 빌드됩니다.
 
-Architect validates the resulting options values against the schema of the builder.
-If inputs are valid, Architect creates the context and executes the builder.
+Architect는 결과 옵션 값이 빌더의 스키마에 대해 유효한지 검증합니다.
+입력이 유효하면 Architect는 컨텍스트를 생성하고 빌더를 실행합니다.
 
-For more information see [Workspace Configuration](reference/configs/workspace-config).
+자세한 정보는 [워크스페이스 구성](reference/configs/workspace-config)을 참조하십시오.
 
-HELPFUL: You can also invoke a builder directly from another builder or test by calling `context.scheduleBuilder()`.
-You pass an `options` object directly to the method, and those option values are validated against the schema of the builder without further adjustment.
+도움이 되는 정보: 다른 빌더나 테스트에서 `context.scheduleBuilder()`를 호출하여 빌더를 직접 호출할 수도 있습니다.
+인수를 메소드를 통해 직접 전달하며, 이러한 옵션 값은 추가 조정 없이 빌더의 스키마에 대해 검증됩니다.
 
-Only the  `context.scheduleTarget()` method resolves the configuration and overrides through the `angular.json` file.
+오직 `context.scheduleTarget()` 메소드만이 `angular.json` 파일을 통해 구성을 해결하고 재정의를 적용합니다.
 
 ### Default architect configuration
 
-Let's create a simple `angular.json` file that puts target configurations into context.
+대상 구성을 컨텍스트에 넣는 간단한 `angular.json` 파일을 생성합시다.
 
-You can publish the builder to npm (see [Publishing your Library](tools/libraries/creating-libraries#publishing-your-library)), and install it using the following command:
+빌더를 npm에 게시할 수 있습니다 (자세한 정보는 [라이브러리 게시](tools/libraries/creating-libraries#publishing-your-library)를 참조) 및 다음 명령어를 사용하여 설치할 수 있습니다:
 
 <docs-code language="shell">
 
@@ -269,7 +269,7 @@ npm install @example/copy-file
 
 </docs-code>
 
-If you create a new project with `ng new builder-test`, the generated `angular.json` file looks something like this, with only default builder configurations.
+`ng new builder-test`로 새 프로젝트를 생성하면 생성된 `angular.json` 파일은 다음과 같이 기본 빌더 구성만 포함됩니다.
 
 <docs-code header="angular.json" language="json">
 
@@ -280,7 +280,7 @@ If you create a new project with `ng new builder-test`, the generated `angular.j
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            // more options...
+            // 더 많은 옵션...
             "outputPath": "dist/builder-test",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -289,7 +289,7 @@ If you create a new project with `ng new builder-test`, the generated `angular.j
           },
           "configurations": {
             "production": {
-              // more options...
+              // 더 많은 옵션...
               "optimization": true,
               "aot": true,
               "buildOptimizer": true
@@ -305,14 +305,14 @@ If you create a new project with `ng new builder-test`, the generated `angular.j
 
 ### Adding a target
 
-Add a new target that will run our builder to copy a file.
-This target tells the builder to copy the `package.json` file.
+파일을 복사하기 위해 우리의 빌더를 실행할 새 대상을 추가합니다.
+이 대상은 빌더에게 `package.json` 파일을 복사하도록 지시합니다.
 
-* We will add a new target section to the `architect` object for our project
-* The target named `copy-package` uses our builder, which you published to `@example/copy-file`.
-* The options object provides default values for the two inputs that you defined.
-  * `source` - The existing file you are copying.
-  * `destination` - The path you want to copy to.
+* 프로젝트의 `architect` 객체에 새로운 대상 섹션을 추가합니다.
+* `copy-package`라는 이름의 대상은 `@example/copy-file`로 게시된 우리 빌더를 사용합니다.
+* 옵션 객체는 정의한 두 개의 입력에 대한 기본값을 제공합니다.
+  * `source` - 복사할 기존 파일입니다.
+  * `destination` - 복사할 경로입니다.
 
 <docs-code header="angular.json" language="json">
 
@@ -328,7 +328,7 @@ This target tells the builder to copy the `package.json` file.
           }
         },
 
-        // Existing targets...
+        // 기존 대targets...
       }
     }
   }
@@ -338,7 +338,7 @@ This target tells the builder to copy the `package.json` file.
 
 ### Running the builder
 
-To run our builder with the new target's default configuration, use the following CLI command.
+새 대상의 기본 구성을 가진 빌더를 실행하려면 다음 CLI 명령어를 사용하십시오.
 
 <docs-code language="shell">
 
@@ -346,10 +346,10 @@ ng run builder-test:copy-package
 
 </docs-code>
 
-This copies the `package.json` file to `package-copy.json`.
+이 명령어는 `package.json` 파일을 `package-copy.json`으로 복사합니다.
 
-Use command-line arguments to override the configured defaults.
-For example, to run with a different `destination` value, use the following CLI command.
+명령줄 인수를 사용하여 구성된 기본값을 재정의할 수 있습니다.
+예를 들어, 다른 `destination` 값을 사용하려면 다음 CLI 명령어를 사용하십시오.
 
 <docs-code language="shell">
 
@@ -357,51 +357,50 @@ ng run builder-test:copy-package --destination=package-other.json
 
 </docs-code>
 
-This copies the file to `package-other.json` instead of `package-copy.json`.
-Because you did not override the *source* option, it will still copy from the default `package.json` file.
+이 명령어는 파일을 `package-other.json`으로 복사하며, 기본 `package.json` 파일에서 복사할 것입니다.
 
 ## Testing a builder
 
-Use integration testing for your builder, so that you can use the Architect scheduler to create a context, as in this [example](https://github.com/mgechev/cli-builders-demo).
-In the builder source directory, create a new test file `my-builder.spec.ts`. The test creates new instances of `JsonSchemaRegistry` (for schema validation), `TestingArchitectHost` (an in-memory implementation of `ArchitectHost`), and `Architect`.
+빌더에 대한 통합 테스트를 사용하여 Architect 스케줄러를 사용하여 컨텍스트를 생성할 수 있습니다. 이는 이 [예제](https://github.com/mgechev/cli-builders-demo)에서 볼 수 있습니다.
+빌더 소스 디렉토리에서 새로운 테스트 파일 `my-builder.spec.ts`을 생성합니다. 테스트는 `JsonSchemaRegistry`(스키마 검증용), `TestingArchitectHost`(인메모리 구현체 `ArchitectHost`), 및 `Architect`의 새로운 인스턴스를 생성합니다.
 
-Here's an example of a test that runs the copy file builder.
-The test uses the builder to copy the `package.json` file and validates that the copied file's contents are the same as the source.
+다음은 복사 파일 빌더를 실행하는 테스트의 예입니다.
+이 테스트는 빌더를 사용하여 `package.json` 파일을 복사하고 복사된 파일의 내용이 원본과 같음을 검증합니다.
 
 <docs-code header="src/my-builder.spec.ts" path="adev/src/content/examples/cli-builder/src/my-builder.spec.ts"/>
 
-HELPFUL: When running this test in your repo, you need the [`ts-node`](https://github.com/TypeStrong/ts-node) package.
-You can avoid this by renaming `my-builder.spec.ts` to `my-builder.spec.js`.
+도움이 되는 정보: 리포지토리에서 이 테스트를 실행할 때는 [`ts-node`](https://github.com/TypeStrong/ts-node) 패키지가 필요합니다.
+`my-builder.spec.ts`를 `my-builder.spec.js`로 이름을 변경하면 이 패키지를 피할 수 있습니다.
 
 ### Watch mode
 
-Most builders to run once and return. However, this behavior is not entirely compatible with a builder that watches for changes (like a devserver, for example).
-Architect can support watch mode, but there are some things to look out for.
+대부분의 빌더는 한 번 실행되고 반환되지만, 이러한 동작은 변경 사항을 감시하는 빌더와 완전히 호환되지는 않습니다(예: 개발 서버).
+Architect는 감시 모드를 지원할 수 있지만 몇 가지 주의할 사항이 있습니다.
 
-* To be used with watch mode, a builder handler function should return an `Observable`.
-    Architect subscribes to the `Observable` until it completes and might reuse it if the builder is scheduled again with the same arguments.
+* 감시 모드에서 사용하려면 빌더 핸들러 함수가 `Observable`을 반환해야 합니다.
+    Architect는 `Observable`이 완료될 때까지 구독하며, 동일한 인수로 빌더가 다시 스케줄될 경우 재사용할 수 있습니다.
 
-* The builder should always emit a `BuilderOutput` object after each execution.
-    Once it's been executed, it can enter a watch mode, to be triggered by an external event.
-    If an event triggers it to restart, the builder should execute the `context.reportRunning()` function to tell Architect that it is running again.
-    This prevents Architect from stopping the builder if another run is scheduled.
+* 빌더는 각 실행 후 항상 `BuilderOutput` 객체를 방출해야 합니다.
+    실행된 후 외부 이벤트로 트리거될 때 감시 모드에 들어갈 수 있습니다.
+    외부 이벤트가 이를 다시 시작하도록 트리거하면 빌더는 `context.reportRunning()` 함수를 실행하여 Architect에 다시 실행 중임을 알려야 합니다.
+    이렇게 하면 다른 실행이 예약된 경우 Architect가 빌더를 останов하지 않게 됩니다.
 
-When your builder calls `BuilderRun.stop()` to exit watch mode, Architect unsubscribes from the builder's `Observable` and calls the builder's teardown logic to clean up.
-This behavior also allows for long-running builds to be stopped and cleaned up.
+빌더가 감시 모드에서 종료하려고 `BuilderRun.stop()`을 호출하면 Architect는 빌더의 `Observable`에서 구독을 취소하고 빌더의 테어다운 로직을 호출하여 정리합니다.
+이 동작은 장시간 실행되는 빌드를 중단하고 정리할 수 있도록 허용합니다.
 
-In general, if your builder is watching an external event, you should separate your run into three phases.
+일반적으로 빌더가 외부 이벤트를 감시하고 있다면 실행을 세 가지 단계로 나누어야 합니다.
 
-| Phases     | Details |
-|:---        |:---     |
-| Running    | The task being performed, such as invoking a compiler. This ends when the compiler finishes and your builder emits a `BuilderOutput` object.                                                                                                  |
-| Watching   | Between two runs, watch an external event stream. For example, watch the file system for any changes. This ends when the compiler restarts, and `context.reportRunning()` is called.                                                          |
-| Completion | Either the task is fully completed, such as a compiler which needs to run a number of times, or the builder run was stopped (using `BuilderRun.stop()`). Architect executes teardown logic and unsubscribes from your builder's `Observable`. |
+| 단계      | 세부정보 |
+|:---       |:---     |
+| 실행      | 수행 중인 작업, 예를 들어 컴파일러를 호출하는 것입니다. 이는 컴파일러가 완료되고 빌더가 `BuilderOutput` 객체를 방출할 때 종료됩니다.                                                                                                  |
+| 감시      | 두 실행 사이에 외부 이벤트 스트림을 감시합니다. 예를 들어 파일 시스템에서 변경 사항을 감시하는 것입니다. 이는 컴파일러가 다시 시작될 때 종료되며, `context.reportRunning()`이 호출됩니다.                                                          |
+| 완료      | 작업이 완전히 완료되었거나 컴파일러가 여러 번 실행해야 하는 상황이거나 빌더 실행이 중단된 경우( `BuilderRun.stop()` 사용)입니다. Architect는 테어다운 로직을 실행하고 빌더의 `Observable`에서 구독을 취소합니다. |
 
 ## Summary
 
-The CLI Builder API provides a means of changing the behavior of the Angular CLI by using builders to execute custom logic.
+CLI 빌더 API는 빌더를 사용하여 Angular CLI의 동작을 변경하는 수단을 제공합니다.
 
-* Builders can be synchronous or asynchronous, execute once or watch for external events, and can schedule other builders or targets.
-* Builders have option defaults specified in the `angular.json` configuration file, which can be overwritten by an alternate configuration for the target, and further overwritten by command line flags
-* The Angular team recommends that you use integration tests to test Architect builders. Use unit tests to validate the logic that the builder executes.
-* If your builder returns an `Observable`, it should clean up the builder in the teardown logic of that `Observable`.
+* 빌더는 동기적 또는 비동기적일 수 있으며 한 번 실행하거나 외부 이벤트를 감시할 수 있으며 다른 빌더나 대상을 예약할 수 있습니다.
+* 빌더는 `angular.json` 구성 파일에 지정된 옵션 기본값을 가지며, 대체 구성에 대한 값을 덮어쓸 수 있고, 명령줄 플래그로 추가로 재정의할 수 있습니다.
+* Angular 팀은 Architect 빌더를 테스트하기 위해 통합 테스트를 사용하도록 권장합니다. 유닛 테스트는 빌더가 실행하는 로직을 검증하는 데 사용하십시오.
+* 빌더가 `Observable`을 반환하는 경우 해당 `Observable`의 테어다운 로직에서 빌더를 정리해야 합니다.

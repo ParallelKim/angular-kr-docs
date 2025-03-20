@@ -1,14 +1,14 @@
-# Inject-based dependency injection
+# 주입 기반 의존성 주입
 
-Creating an injectable service is the first part of the dependency injection (DI) system in Angular. How do you inject a service into a component? Angular has a convenient function called `inject()` that can be used in the proper context.
+주입 가능한 서비스를 만드는 것은 Angular의 의존성 주입(DI) 시스템의 첫 번째 부분입니다. 서비스를 구성 요소에 어떻게 주입합니까? Angular에는 적절한 컨텍스트에서 사용할 수 있는 `inject()`라는 편리한 기능이 있습니다.
 
-Note: Injection contexts are beyond the scope of this tutorial, but you can find more information in the [Angular Docs](guide/di/dependency-injection-context) if you would like to learn more.
+참고: 주입 컨텍스트는 이 튜토리얼의 범위를 넘어가지만, 더 알고 싶으시면 [Angular Docs](guide/di/dependency-injection-context)에서 추가 정보를 찾을 수 있습니다.
 
-In this activity, you'll learn how to inject a service and use it in a component.
+이 활동에서는 서비스를 주입하고 구성 요소에서 사용하는 방법을 배웁니다.
 
 <hr>
 
-It is often helpful to initialize class properties with values provided by the DI system. Here's an example:
+DI 시스템에서 제공하는 값으로 클래스 속성을 초기화하는 것이 종종 유용합니다. 예를 들어:
 
 <docs-code language="ts" highlight="[3]">
 @Component({...})
@@ -19,19 +19,19 @@ class PetCareDashboardComponent {
 
 <docs-workflow>
 
-<docs-step title="Inject the `CarService`">
+<docs-step title="`CarService` 주입하기">
 
-In `app.component.ts`, using the `inject()` function inject the `CarService` and assign it to a property called `carService`
+`app.component.ts`에서 `inject()` 함수를 사용하여 `CarService`를 주입하고 이를 `carService`라는 속성에 할당하세요.
 
-Note: Notice the difference between the property `carService` and the class `CarService`.
+참고: `carService` 속성과 `CarService` 클래스 간의 차이를 주목하세요.
 
 </docs-step>
 
-<docs-step title="Use the `carService` instance">
+<docs-step title="`carService` 인스턴스 사용하기">
 
-Calling `inject(CarService)` gave you an instance of the `CarService` that you can use in your application, stored in the `carService` property.
+`inject(CarService)`를 호출하면 애플리케이션에서 사용할 수 있는 `CarService` 인스턴스가 `carService` 속성에 저장됩니다.
 
-In the `constructor` function of the `AppComponent`, add the following implementation:
+`AppComponent`의 `constructor` 함수에 다음 구현을 추가하세요:
 
 ```ts
 constructor() {
@@ -41,9 +41,9 @@ constructor() {
 
 </docs-step>
 
-<docs-step title="Update the `AppComponent` template">
+<docs-step title="`AppComponent` 템플릿 업데이트">
 
-Update the component template in `app.component.ts` with the following code:
+`app.component.ts`에서 구성 요소 템플릿을 다음 코드로 업데이트하세요:
 
 ```ts
 template: `<p>Car Listing: {{ display }}</p>`,
@@ -53,4 +53,4 @@ template: `<p>Car Listing: {{ display }}</p>`,
 
 </docs-workflow>
 
-You've just injected your first service into a component - fantastic effort. Before you finish this section on DI, you'll learn an alternative syntax to inject resources into your components.
+여러분은 방금 구성 요소에 첫 번째 서비스를 주입했습니다 - 멋진 노력입니다. DI에 대한 이 섹션을 마치기 전에, 구성 요소에 리소스를 주입하는 대체 구문에 대해 배울 것입니다.

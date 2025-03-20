@@ -1,11 +1,11 @@
-# Deferrable views tutorial
+# 지연 가능한 뷰 튜토리얼
 
-This interactive tutorial consists of lessons that introduce the Angular deferrable views concepts.
+이 대화형 튜토리얼은 Angular 지연 가능한 뷰 개념을 소개하는 강의로 구성되어 있습니다.
 
-## How to use this tutorial
+## 이 튜토리얼을 사용하는 방법
 
-Each step represents a concept in Angular deferrable views. You can do one, or all of them.
+각 단계는 Angular 지연 가능한 뷰의 개념을 나타냅니다. 하나 또는 모두 수행할 수 있습니다.
 
-If you get stuck, click "Reveal answer" at the top.
+문제가 발생하면 상단의 "정답 보기"를 클릭하세요.
 
-Alright, let's [get started](/tutorials/deferrable-views/1-what-are-deferrable-views).
+좋습니다, [시작해 보겠습니다](/tutorials/deferrable-views/1-what-are-deferrable-views).

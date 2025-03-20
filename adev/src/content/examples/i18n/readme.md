@@ -1,22 +1,22 @@
-# Angular i18n Internationalization Example
+# Angular i18n 국제화 예제
 
-This sample comes from the Angular documentation's "[Example Angular Internationalization application](https://angular.dev/guide/i18n/example)" page.
+이 샘플은 Angular 문서의 "[예제 Angular 국제화 애플리케이션](https://angular.dev/guide/i18n/example)" 페이지에서 가져온 것입니다.
 
-## Install and Run the Download
+## 다운로드 및 실행
 
-1. `npm install` the node_module packages
-2. `npm start` to see it run in English
-3. `npm run start:fr` to see it run with French translation.
+1. `npm install`로 node_module 패키지를 설치합니다.
+2. `npm start`로 영어로 실행되는 것을 확인합니다.
+3. `npm run start:fr`로 프랑스어 번역으로 실행되는 것을 확인합니다.
 
->See the scripts in `package.json` for an explanation of these commands.
+>이 명령어들에 대한 설명은 `package.json` 스크립트를 참고하세요.
 
-## Run in Stackblitz
+## Stackblitz에서 실행
 
-Stackblitz compiles and runs the English version by default.
+Stackblitz는 기본적으로 영어 버전을 컴파일하고 실행합니다.
 
-To see the example translate to French with Angular i18n:
+Angular i18n을 사용하여 예제를 프랑스어로 번역하려면:
 
-1. Open the `project.json` file and add the following to the bottom:
+1. `project.json` 파일을 열고 아래와 같이 추가하세요:
 
 ```json
   "stackblitz": {
@@ -24,4 +24,4 @@ To see the example translate to French with Angular i18n:
   }
 ```
 
-1. Click the "Fork" button in the stackblitz header. That makes a new copy for you with this change and re-runs the example in French.
+2. Stackblitz 헤더의 "Fork" 버튼을 클릭하세요. 그러면 이 변경 사항으로 새로운 복사본이 생성되고 예제가 프랑스어로 다시 실행됩니다.

@@ -1,10 +1,10 @@
-# Adding event listeners
+# 이벤트 리스너 추가하기
 
-Angular supports defining event listeners on an element in your template by specifying the event name inside parentheses along with a statement that runs every time the event occurs.
+Angular는 템플릿의 요소에 이벤트 리스너를 정의하도록 지원하며, 이벤트 이름을 괄호 안에 지정하고 이벤트가 발생할 때마다 실행되는 문장을 함께 명시합니다.
 
-## Listening to native events
+## 네이티브 이벤트 듣기
 
-When you want to add event listeners to an HTML element, you wrap the event with parentheses, `()`, which allows you to specify a listener statement.
+HTML 요소에 이벤트 리스너를 추가하려면 이벤트를 괄호 `()`로 감싸서 리스너 문장을 지정할 수 있습니다.
 
 ```angular-ts
 @Component({
@@ -15,18 +15,18 @@ When you want to add event listeners to an HTML element, you wrap the event with
 })
 export class AppComponent{
   updateField(): void {
-    console.log('Field is updated!');
+    console.log('필드가 업데이트되었습니다!');
   }
 }
 ```
 
-In this example, Angular calls `updateField` every time the `<input>` element emits a `keyup` event.
+이 예제에서 Angular는 `<input>` 요소가 `keyup` 이벤트를 발생시킬 때마다 `updateField`를 호출합니다.
 
-You can add listeners for any native events, such as: `click`, `keydown`, `mouseover`, etc. To learn more, check out the [all available events on elements on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Element#events).
+`click`, `keydown`, `mouseover` 등과 같은 모든 네이티브 이벤트에 대한 리스너를 추가할 수 있습니다. 더 알아보려면 [MDN의 요소에서 사용할 수 있는 모든 이벤트](https://developer.mozilla.org/en-US/docs/Web/API/Element#events)를 확인하세요.
 
-## Accessing the event argument
+## 이벤트 인수 접근하기
 
-In every template event listener, Angular provides a variable named `$event` that contains a reference to the event object.
+모든 템플릿 이벤트 리스너에서 Angular는 이벤트 객체를 참조하는 `$event`라는 변수를 제공합니다.
 
 ```angular-ts
 @Component({
@@ -37,14 +37,14 @@ In every template event listener, Angular provides a variable named `$event` tha
 })
 export class AppComponent {
   updateField(event: KeyboardEvent): void {
-    console.log(`The user pressed: ${event.key}`);
+    console.log(`사용자가 입력한 키: ${event.key}`);
   }
 }
 ```
 
-## Using key modifiers
+## 키 수정자 사용하기
 
-When you want to capture specific keyboard events for a specific key, you might write some code like the following:
+특정 키에 대한 특정 키보드 이벤트를 캡처하고 싶을 때, 다음과 같은 코드를 작성할 수 있습니다.
 
 ```angular-ts
 @Component({
@@ -56,13 +56,13 @@ When you want to capture specific keyboard events for a specific key, you might 
 export class AppComponent {
   updateField(event: KeyboardEvent): void {
     if (event.key === 'Enter') {
-      console.log('The user pressed enter in the text field.');
+      console.log('사용자가 텍스트 필드에서 Enter 키를 눌렀습니다.');
     }
   }
 }
 ```
 
-However, since this is a common scenario, Angular lets you filter the events by specifying a specific key using the period (`.`) character. By doing so, code can be simplified to:
+하지만 이는 일반적인 시나리오이기 때문에, Angular는 점(`.`) 문자를 사용하여 특정 키로 이벤트를 필터링할 수 있게 해줍니다. 이렇게 하면 코드를 다음과 같이 간소화할 수 있습니다:
 
 ```angular-ts
 @Component({
@@ -73,27 +73,27 @@ However, since this is a common scenario, Angular lets you filter the events by 
 })
 export class AppComponent{
   updateField(event: KeyboardEvent): void {
-    console.log('The user pressed enter in the text field.');
+    console.log('사용자가 텍스트 필드에서 Enter 키를 눌렀습니다.');
   }
 }
 ```
 
-You can also add additional key modifiers:
+추가적인 키 수정자도 추가할 수 있습니다:
 
 ```angular-html
-<!-- Matches shift and enter -->
+<!-- Shift와 Enter에 해당 -->
 <input type="text" (keyup.shift.enter)="updateField($event)" />
 ```
 
-Angular supports the modifiers `alt`, `control`, `meta`, and `shift`.
+Angular는 `alt`, `control`, `meta` 및 `shift` 수정자를 지원합니다.
 
-You can specify the key or code that you would like to bind to keyboard events. The key and code fields are a native part of the browser keyboard event object. By default, event binding assumes you want to use the [Key values for keyboard events](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_key_values).
+키보드 이벤트에 바인딩할 키 또는 코드를 지정할 수 있습니다. 키와 코드 필드는 브라우저 키보드 이벤트 객체의 기본적인 부분입니다. 기본적으로 이벤트 바인딩은 [키보드 이벤트에 대한 키 값](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_key_values)을 사용하려고 한다고 가정합니다.
 
-Angular also allows you to specify [Code values for keyboard events](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values) by providing a built-in `code` suffix.
+Angular는 또한 [키보드 이벤트에 대한 코드 값](https://developer.mozilla.org/docs/Web/API/UI_Events/Keyboard_event_code_values)을 제공하여 내장된 `code` 접미사를 사용할 수 있도록 허용합니다.
 
 ```angular-html
-<!-- Matches alt and left shift -->
+<!-- Alt와 왼쪽 Shift에 해당 -->
 <input type="text" (keydown.code.alt.shiftleft)="updateField($event)" />
 ```
 
-This can be useful for handling keyboard events consistently across different operating systems. For example, when using the Alt key on MacOS devices, the `key` property reports the key based on the character already modified by the Alt key. This means that a combination like Alt + S reports a `key` value of `'ß'`. The `code` property, however, corresponds to the physical or virtual button pressed rather than the character produced.
+이는 다양한 운영 체제에서 키보드 이벤트를 일관되게 처리하는 데 유용할 수 있습니다. 예를 들어, MacOS 장치에서 Alt 키를 사용할 때 `key` 속성은 Alt 키로 이미 수정된 문자를 기반으로 키를 보고합니다. 즉, Alt + S 조합은 `key` 값으로 `'ß'`를 보고합니다. 하지만 `code` 속성은 물리적 또는 가상 버튼이 눌린 것에 해당하며 생성된 문자와는 무관합니다.

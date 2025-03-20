@@ -1,14 +1,14 @@
-# Route transition animations
+# 경로 전환 애니메이션
 
-When a user navigates from one route to another, the Angular Router maps the URL path to the relevant component and displays its view. Animating this route transition can greatly enhance the user experience. The Router has support for the View Transitions API when navigating between routes in Chrome/Chromium browsers.
+사용자가 하나의 경로에서 다른 경로로 이동할 때 Angular 라우터는 URL 경로를 관련 구성 요소에 매핑하여 해당 보기를 표시합니다. 이러한 경로 전환에 애니메이션을 적용하면 사용자 경험을 크게 향상시킬 수 있습니다. 라우터는 Chrome/Chromium 브라우저에서 경로 간 이동 시 View Transitions API를 지원합니다.
 
-HELPFUL: The Router's native View Transitions integration is currently in [developer preview](/reference/releases#developer-preview). Native View Transitions are also a relatively new feature so there may be limited support in some browsers.
+유용한 정보: 라우터의 기본 View Transitions 통합은 현재 [개발자 미리보기](/reference/releases#developer-preview)에 있습니다. 기본 View Transitions는 비교적 새로운 기능이기도 하므로 일부 브라우저에서 지원이 제한될 수 있습니다.
 
-## How View Transitions work
+## View Transitions의 작동 원리
 
-The native browser method that’s used for view transitions is `document.startViewTransition`. When `startViewTransition()` is called, the browser captures the current state of the page which includes taking a screenshot. The method takes a callback that updates the DOM and this function can be asynchronous. The new state is captured and the transition begins in the next animation frame when the promise returned by the callback resolves.
+뷰 전환에 사용되는 기본 브라우저 방법은 `document.startViewTransition`입니다. `startViewTransition()`가 호출되면 브라우저는 스크린샷을 포함하여 페이지의 현재 상태를 캡처합니다. 이 메서드는 DOM을 업데이트하는 콜백을 받으며, 이 함수는 비동기적일 수 있습니다. 새로운 상태가 캡처되고, 콜백이 반환하는 프로미스가 해결될 때 다음 애니메이션 프레임에서 전환이 시작됩니다.
 
-Here’s an example of the startViewTransition api:
+다음은 startViewTransition API의 예입니다:
 
 ```ts
 document.startViewTransition(async () => {
@@ -16,45 +16,45 @@ document.startViewTransition(async () => {
 });
 ```
 
-If you’re curious to read more about the details of the browser API, the [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions) is an invaluable resource.
+브라우저 API의 세부 사항에 대한 더 많은 정보를 읽고 싶다면, [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions)는 귀중한 자료입니다.
 
-## How the Router uses view transitions
+## 라우터가 뷰 전환을 사용하는 방법
 
-Several things happen after navigation starts in the router: route matching, loading lazy routes and components, executing guards and resolvers to name a few. Once these have completed successfully, the new routes are ready to be activated. This route activation is the DOM update that we want to perform as part of the view transition.
+라우터에서 탐색이 시작된 후 여러 가지 일이 발생합니다: 경로 매칭, 지연 로딩 경로 및 구성 요소, 가드 및 리졸버 실행 등의 작업이 있습니다. 이러한 작업이 모두 성공적으로 완료되면 새로운 경로가 활성화될 준비가 됩니다. 이 경로 활성화는 뷰 전환의 일환으로 수행하고자 하는 DOM 업데이트입니다.
 
-When the view transition feature is enabled, navigation “pauses” and a call is made to the browser’s `startViewTransition` method. Once the `startViewTransition` callback executes (this happens asynchronously, as outlined in the spec here), navigation “resumes”. The remaining steps for the router navigation include updating the browser URL and activating or deactivating the matched routes (the DOM update).
+뷰 전환 기능이 활성화되면 탐색이 "일시 중지"되고 브라우저의 `startViewTransition` 메서드가 호출됩니다. `startViewTransition` 콜백이 실행되면(이는 사양에 설명된 대로 비동기적으로 발생합니다) 탐색이 "재개"됩니다. 라우터 탐색을 위한 나머지 단계에는 브라우저 URL 업데이트 및 매칭된 경로를 활성화하거나 비활성화하는 것이 포함됩니다 (DOM 업데이트).
 
-Finally, the callback passed to `startViewTransition` returns a Promise that resolves once Angular has finished rendering. As described above, this indicates to the browser that the new DOM state should be captured and the transition should begin.
+마지막으로, `startViewTransition`에 전달된 콜백은 Angular가 렌더링을 완료한 후 해결되는 프로미스를 반환합니다. 위에서 설명한 바와 같이, 이는 브라우저에 새로운 DOM 상태를 캡처하고 전환이 시작되어야 한다고 알립니다.
 
-View transitions are a [progressive enhancement](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement). If the browser does not support the API, the Router will perform the DOM updates without calling `startViewTransition` and the navigation will not be animated.
+뷰 전환은 [점진적 향상](https://developer.mozilla.org/en-US/docs/Glossary/Progressive_Enhancement)입니다. 브라우저가 API를 지원하지 않는 경우, 라우터는 `startViewTransition`을 호출하지 않고 DOM 업데이트를 수행하며 탐색은 애니메이션되지 않습니다.
 
-## Enabling View Transitions in the Router
+## 라우터에서 View Transitions 활성화
 
-To enable this feature, simply add `withViewTransitions` to the `provideRouter` or set `enableViewTransitions: true` in `RouterModule.forRoot`:
+이 기능을 활성화하려면, `provideRouter`에 `withViewTransitions`를 추가하거나 `RouterModule.forRoot`에서 `enableViewTransitions: true`로 설정하기만 하면 됩니다:
 
 ```ts
-// Standalone bootstrap
+// 독립형 부트스트랩
 bootstrapApplication(MyApp, {providers: [
   provideRouter(ROUTES, withViewTransitions()),
 ]});
 
-// NgModule bootstrap
+// NgModule 부트스트랩
 @NgModule({
   imports: [RouterModule.forRoot(routes, {enableViewTransitions: true})]
 })
 export class AppRouting {}
 ```
 
-[Try the “count” example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-2dnvtm?file=src%2Fmain.ts)
+[StackBlitz에서 “카운트” 예시를 시도해보세요](https://stackblitz.com/edit/stackblitz-starters-2dnvtm?file=src%2Fmain.ts)
 
-This example uses the counter application from the Chrome explainer and replaces the direct call to startViewTransition when the counter increments with a router navigation.
+이 예시는 Chrome 설명서에서 제공되는 카운터 애플리케이션을 사용하며 카운터가 증가할 때 `startViewTransition`에 대한 직접 호출을 라우터 탐색으로 대체합니다.
 
-## Using CSS to customize transitions
+## CSS를 사용해 전환 사용자 정의하기
 
-View transitions can be customized with CSS. We can also instruct the browser to create separate elements for the transition by setting a view-transition-name. We can expand the first example by adding view-transition-name: count to the .count style in the Counter component. Then, in the global styles, we can define a custom animation for this view transition:
+뷰 전환은 CSS로 사용자 정의할 수 있습니다. 우리는 또한 뷰 전환 이름을 설정하여 브라우저가 전환을 위한 별도의 요소를 생성하도록 지시할 수 있습니다. 카운터 구성 요소의 .count 스타일에 view-transition-name: count를 추가하여 첫 번째 예제를 확장할 수 있습니다. 그런 다음 전역 스타일에서 이 뷰 전환을 위한 사용자 정의 애니메이션을 정의할 수 있습니다:
 
 ```css
-/* Custom transition */
+/* 사용자 정의 전환 */
 @keyframes rotate-out {
  to {
    transform: rotate(90deg);
@@ -75,23 +75,22 @@ View transitions can be customized with CSS. We can also instruct the browser to
 }
 ```
 
-It is important that the view transition animations are defined in a global style file. They cannot be defined in the component styles because the default view encapsulation will scope the styles to the component.
+뷰 전환 애니메이션이 전역 스타일 파일에 정의되어야 하는 것이 중요합니다. 구성 요소 스타일에 정의할 수 없으며, 기본 뷰 캡슐화로 인해 스타일이 구성 요소에 한정되기 때문입니다.
 
-[Try the updated “count” example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-fwn4i7?file=src%2Fmain.ts)
+[StackBlitz에서 업데이트된 “카운트” 예시를 시도해보세요](https://stackblitz.com/edit/stackblitz-starters-fwn4i7?file=src%2Fmain.ts)
 
-## Controlling transitions with onViewTransitionCreated
+## onViewTransitionCreated로 전환 제어하기
 
-The `withViewTransitions` router feature can also be called with an options object that includes an `onViewTransitionCreated` callback. This callback is run in an [injection context](/guide/di/dependency-injection-context#run-within-an-injection-context) and receives a [ViewTransitionInfo](/api/router/ViewTransitionInfo) object that includes the `ViewTransition` returned from `startViewTransition`, as well as the `ActivatedRouteSnapshot` that the navigation is transitioning from and the new one that it is transitioning to.
+`withViewTransitions` 라우터 기능은 `onViewTransitionCreated` 콜백을 포함하는 옵션 객체와 함께 호출될 수도 있습니다. 이 콜백은 [주입 컨텍스트](/guide/di/dependency-injection-context#run-within-an-injection-context) 내에서 실행되며, `startViewTransition`에서 반환된 `ViewTransition`과 탐색이 전환되는 `ActivatedRouteSnapshot`를 받을 수 있습니다.
 
-This callback can be used for any number of customizations. For example, you might want to skip transitions under certain conditions. We use this on the new angular.dev docs site:
+이 콜백은 여러 가지 사용자 정의를 위해 사용할 수 있습니다. 예를 들어, 특정 조건에서 전환을 건너뛰고 싶을 수 있습니다. 우리는 새로운 angular.dev 문서 사이트에서 이를 사용하고 있습니다:
 
 ```ts
 withViewTransitions({
  onViewTransitionCreated: ({transition}) => {
    const router = inject(Router);
    const targetUrl = router.getCurrentNavigation()!.finalUrl!;
-   // Skip the transition if the only thing 
-   // changing is the fragment and queryParams
+   // 유일하게 변경되는 것이 조각 및 쿼리 파라미터인 경우 전환을 건너뜁니다
    const config = { 
      paths: 'exact', 
      matrixParams: 'exact',
@@ -106,52 +105,51 @@ withViewTransitions({
 }),
 ```
 
-In this code snippet, we create a `UrlTree` from the `ActivatedRouteSnapshot` the navigation is going to. We then check with the Router to see if this `UrlTree` is already active, ignoring any differences in the fragment or query parameters. If it is already active, we call skipTransition which will skip the animation portion of the view transition. This is the case when clicking on an anchor link that will only scroll to another location in the same document.
+이 코드 스니펫에서 탐색할 `ActivatedRouteSnapshot`에서 `UrlTree`를 생성합니다. 그런 다음 조각이나 쿼리 매개변수에서의 차이를 무시하고 이 `UrlTree`가 이미 활성화되어 있는지 Router에 확인합니다. 이미 활성화되어 있다면 skipTransition을 호출하여 뷰 전환의 애니메이션 부분을 건너뜁니다. 동일한 문서 내에서 다른 위치로 스크롤하는 앵커 링크를 클릭할 때의 경우입니다.
 
-## Examples from the Chrome explainer adapted to Angular
+## Angular에 맞게 조정된 Chrome 설명서의 사례
 
-We’ve recreated some of the great examples from the Chrome Team in Angular for you to explore.
+우리는 Chrome 팀의 훌륭한 사례 중 일부를 Angular로 재구성했습니다. 탐색해보세요.
 
-### Transitioning elements don’t need to be the same DOM element
+### 전환하는 요소는 동일한 DOM 요소일 필요가 없습니다
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#transitioning_elements_dont_need_to_be_the_same_dom_element)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-dh8npr?file=src%2Fmain.ts)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#transitioning_elements_dont_need_to_be_the_same_dom_element)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-dh8npr?file=src%2Fmain.ts)
 
-### Custom entry and exit animations
+### 사용자 정의 진입 및 퇴장 애니메이션
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#custom_entry_and_exit_transitions)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-8kly3o)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#custom_entry_and_exit_transitions)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-8kly3o)
 
-### Async DOM updates and waiting for content
+### 비동기 DOM 업데이트 및 콘텐츠 대기
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#async_dom_updates_and_waiting_for_content)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#async_dom_updates_and_waiting_for_content)
 
-> During this time, the page is frozen, so delays here should be kept to a minimum…in some cases it’s better to avoid the delay altogether, and use the content you already have.
+> 이 시간 동안 페이지가 멈추므로 여기서의 지연은 최소화해야 합니다…경우에 따라 지연을 전혀 피하고 현재 소유하고 있는 콘텐츠를 사용하는 것이 더 좋습니다.
 
-The view transition feature in the Angular router does not provide a way to delay the animation. For the moment, our stance is that it’s always better to use the content you have rather than making the page non-interactive for any additional amount of time.
+Angular 라우터의 뷰 전환 기능은 애니메이션 지연 방법을 제공하지 않습니다. 현재로서는 사용 가능한 콘텐츠를 사용하는 것이 페이지를 추가 시간 동안 비대화형으로 만드는 것보다 항상 더 나은 입장입니다.
 
-### Handle multiple view transition styles with view transition types
+### 뷰 전환 유형으로 여러 뷰 전환 스타일 제어하기
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#view-transition-types)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-vxzcam)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#view-transition-types)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-vxzcam)
 
-### Handle multiple view transition styles with a class name on the view transition root (deprecated)
+### 뷰 전환 루트의 클래스 이름으로 여러 뷰 전환 스타일 처리하기 (사용 중단 예정)
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#changing-on-navigation-type)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-nmnzzg?file=src%2Fmain.ts)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#changing-on-navigation-type)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-nmnzzg?file=src%2Fmain.ts)
 
-### Transitioning without freezing other animations
+### 다른 애니메이션을 멈추지 않고 전환하기
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#transitioning-without-freezing)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-76kgww)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#transitioning-without-freezing)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-76kgww)
 
-### Animating with Javascript
+### 자바스크립트로 애니메이션 만들기
 
-* [Chrome Explainer](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#animating-with-javascript)
-* [Angular Example on StackBlitz](https://stackblitz.com/edit/stackblitz-starters-cklnkm)
+* [Chrome 설명서](https://developer.chrome.com/docs/web-platform/view-transitions/same-document#animating-with-javascript)
+* [StackBlitz의 Angular 예제](https://stackblitz.com/edit/stackblitz-starters-cklnkm)
 
-## Native View Transitions Alternative
+## 기본 View Transitions 대안
 
-Animating the transition between routes can also be done with the `@angular/animations` package. 
-The animation [triggers and transitions](/guide/animations/transition-and-triggers)
-can be derived from the router state, such as the current URL or `ActivatedRoute`.
+경로 간의 전환 애니메이션은 `@angular/animations` 패키지를 사용하여 수행할 수도 있습니다. 
+애니메이션 [트리거 및 전환](/guide/animations/transition-and-triggers)은 현재 URL이나 `ActivatedRoute`와 같은 라우터 상태에서 파생될 수 있습니다.

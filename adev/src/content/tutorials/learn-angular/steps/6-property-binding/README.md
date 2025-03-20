@@ -1,25 +1,25 @@
-# Property Binding in Angular
+# Angular에서의 속성 바인딩
 
-Property binding in Angular enables you to set values for properties of HTML elements, Angular components and more.
+Angular에서의 속성 바인딩은 HTML 요소, Angular 컴포넌트 등의 속성 값 설정을 가능하게 합니다.
 
-Use property binding to dynamically set values for properties and attributes. You can do things such as toggle button features, set image paths programmatically, and share values between components.
+속성 바인딩을 사용하여 속성과 속성 값들을 동적으로 설정할 수 있습니다. 버튼 기능 전환, 이미지 경로 프로그램적으로 설정, 컴포넌트 간 값 공유와 같은 작업을 할 수 있습니다.
 
-In this activity, you'll learn how to use property binding in templates.
+이 활동에서는 템플릿에서 속성 바인딩을 사용하는 방법을 배웁니다.
 
 <hr />
 
-To bind to an element's attribute, wrap the attribute name in square brackets. Here's an example:
+요소의 속성에 바인딩하려면 속성 이름을 대괄호로 감싸세요. 다음은 예시입니다:
 
 ```angular-html
 <img alt="photo" [src]="imageURL">
 ```
 
-In this example, the value of the `src` attribute will be bound to the class property `imageURL`. Whatever value `imageURL` has will be set as the `src` attribute of the `img` tag.
+이 예시에서 `src` 속성의 값은 `imageURL` 클래스 속성에 바인딩됩니다. `imageURL`이 가진 값이 `img` 태그의 `src` 속성으로 설정됩니다.
 
 <docs-workflow>
 
-<docs-step title="Add a property called `isEditable`" header="app.component.ts" language="ts">
-Update the code in `app.component.ts` by adding a property to the `AppComponent` class called `isEditable` with the initial value set to `true`.
+<docs-step title="`isEditable`이라는 속성 추가하기" header="app.component.ts" language="ts">
+`app.component.ts`의 코드를 업데이트하여 `AppComponent` 클래스에 `isEditable`이라는 속성을 추가하고 초기 값을 `true`로 설정합니다.
 
 <docs-code highlight="[2]">
 export class AppComponent {
@@ -28,8 +28,8 @@ export class AppComponent {
 </docs-code>
 </docs-step>
 
-<docs-step title="Bind to `contentEditable`" header="app.component.ts" language="ts">
-Next, bind the `contentEditable` attribute of the `div` to the `isEditable` property by using the <code aria-label="square brackets">[]</code> syntax.
+<docs-step title="`contentEditable`에 바인딩하기" header="app.component.ts" language="ts">
+다음으로, `<code aria-label="square brackets">[]</code>` 구문을 사용하여 `div`의 `contentEditable` 속성을 `isEditable` 속성에 바인딩합니다.
 
 <docs-code highlight="[3]" language="angular-ts">
 @Component({
@@ -41,6 +41,6 @@ Next, bind the `contentEditable` attribute of the `div` to the `isEditable` prop
 
 </docs-workflow>
 
-The div is now editable. Nice work 👍
+이제 div는 편집 가능합니다. 잘 했어요 👍
 
-Property binding is one of Angular's many powerful features. If you'd like to learn more checkout [the Angular documentation](guide/templates/property-binding).
+속성 바인딩은 Angular의 많은 강력한 기능 중 하나입니다. 더 알고 싶다면 [Angular 문서](guide/templates/property-binding)를 확인하세요.

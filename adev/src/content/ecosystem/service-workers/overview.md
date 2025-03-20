@@ -1,108 +1,107 @@
-# Angular service worker overview
+# Angular 서비스 워커 개요
 
-Service workers augment the traditional web deployment model and empower applications to deliver a user experience with the reliability and performance on par with code that is written to run on your operating system and hardware.
-Adding a service worker to an Angular application is one of the steps for turning an application into a [Progressive Web App](https://web.dev/progressive-web-apps/) (also known as a PWA).
+서비스 워커는 전통적인 웹 배포 모델을 보강하고 애플리케이션이 운영 체제 및 하드웨어에서 실행되도록 작성된 코드와 동등한 신뢰성과 성능으로 사용자 경험을 제공할 수 있도록 합니다. Angular 애플리케이션에 서비스 워커를 추가하는 것은 애플리케이션을 [진보적인 웹 애플리케이션](https://web.dev/progressive-web-apps/) (PWA로 알려짐)으로 전환하는 단계 중 하나입니다.
 
-At its simplest, a service worker is a script that runs in the web browser and manages caching for an application.
+가장 간단하게 말하면, 서비스 워커는 웹 브라우저에서 실행되고 애플리케이션의 캐싱을 관리하는 스크립트입니다.
 
-Service workers function as a network proxy.
-They intercept all outgoing HTTP requests made by the application and can choose how to respond to them.
-For example, they can query a local cache and deliver a cached response if one is available.
-Proxying isn't limited to requests made through programmatic APIs, such as `fetch`; it also includes resources referenced in HTML and even the initial request to `index.html`.
-Service worker-based caching is thus completely programmable and doesn't rely on server-specified caching headers.
+서비스 워커는 네트워크 프록시로 기능합니다. 
+애플리케이션이 만든 모든 아웃고잉 HTTP 요청을 가로채고 응답하는 방법을 선택할 수 있습니다. 
+예를 들어, 로컬 캐시를 쿼리하고 사용 가능한 경우 캐시된 응답을 제공할 수 있습니다. 
+프록싱은 `fetch`와 같은 프로그래밍 API를 통해 이루어진 요청에 한정되지 않으며, HTML에서 참조된 리소스와 `index.html`에 대한 초기 요청도 포함됩니다. 
+따라서 서비스 워커 기반 캐싱은 완전히 프로그래밍 가능하며 서버가 지정한 캐싱 헤더에 의존하지 않습니다.
 
-Unlike the other scripts that make up an application, such as the Angular application bundle, the service worker is preserved after the user closes the tab.
-The next time that browser loads the application, the service worker loads first, and can intercept every request for resources to load the application.
-If the service worker is designed to do so, it can *completely satisfy the loading of the application, without the need for the network*.
+애플리케이션을 구성하는 다른 스크립트와 달리, Angular 애플리케이션 번들의 경우 서비스 워커는 사용자가 탭을 닫은 후에도 유지됩니다. 
+브라우저가 애플리케이션을 다음에 로드할 때, 서비스 워커가 먼저 로드되고 애플리케이션을 로드하기 위해 리소스 요청을 가로챌 수 있습니다. 
+서비스 워커가 그렇게 설계되었다면, **네트워크 없이 애플리케이션의 로딩을 완전히 만족시킬 수 있습니다**.
 
-Even across a fast reliable network, round-trip delays can introduce significant latency when loading the application.
-Using a service worker to reduce dependency on the network can significantly improve the user experience.
+빠르고 안정적인 네트워크에서도 왕복 지연이 애플리케이션을 로드할 때 상당한 지연을 초래할 수 있습니다. 
+서비스 워커를 사용하여 네트워크 의존성을 줄이면 사용자 경험을 크게 향상시킬 수 있습니다.
 
-## Service workers in Angular
+## Angular의 서비스 워커
 
-Angular applications, as single-page applications, are in a prime position to benefit from the advantages of service workers. Angular ships with a service worker implementation. Angular developers can take advantage of this service worker and benefit from the increased reliability and performance it provides, without needing to code against low-level APIs.
+Angular 애플리케이션은 단일 페이지 애플리케이션으로, 서비스 워커의 이점을 누리기 위한 최적의 위치에 있습니다. Angular는 서비스 워커 구현을 함께 제공하며, Angular 개발자는 이러한 서비스 워커를 활용하여 낮은 수준의 API에 대한 코딩 없이도 제공하는 신뢰성과 성능의 이점을 누릴 수 있습니다.
 
-Angular's service worker is designed to optimize the end user experience of using an application over a slow or unreliable network connection, while also minimizing the risks of serving outdated content.
+Angular의 서비스 워커는 느리거나 신뢰할 수 없는 네트워크 연결에서 애플리케이션을 사용할 때 최종 사용자 경험을 최적화하도록 설계되었으며, 구식 콘텐츠 제공의 위험을 최소화합니다.
 
-To achieve this, the Angular service worker follows these guidelines:
+이를 달성하기 위해 Angular 서비스 워커는 다음 지침을 따릅니다:
 
-* Caching an application is like installing a native application.
-    The application is cached as one unit, and all files update together.
+* 애플리케이션을 캐싱하는 것은 네이티브 애플리케이션을 설치하는 것과 같습니다.
+    애플리케이션은 하나의 단위로 캐시되며 모든 파일이 함께 업데이트됩니다.
 
-* A running application continues to run with the same version of all files.
-    It does not suddenly start receiving cached files from a newer version, which are likely incompatible.
+* 실행 중인 애플리케이션은 모든 파일의 동일한 버전으로 계속 실행됩니다.
+    사용자는 호환되지 않을 가능성이 있는 최신 버전의 캐시된 파일을 갑자기 받지 않습니다.
 
-* When users refresh the application, they see the latest fully cached version.
-    New tabs load the latest cached code.
+* 사용자가 애플리케이션을 새로 고치면 최신 전체 캐시된 버전을 볼 수 있습니다.
+    새 탭에서는 최신 캐시된 코드가 로드됩니다.
 
-* Updates happen in the background, relatively quickly after changes are published.
-    The previous version of the application is served until an update is installed and ready.
+* 업데이트는 변경 사항이 게시된 후 상대적으로 빠르게 백그라운드에서 발생합니다.
+    업데이트가 설치되고 준비될 때까지 이전 버전의 애플리케이션이 제공됩니다.
 
-* The service worker conserves bandwidth when possible.
-    Resources are only downloaded if they've changed.
+* 서비스 워커는 가능한 경우 대역폭을 절약합니다.
+    리소스가 변경된 경우에만 다운로드됩니다.
 
-To support these behaviors, the Angular service worker loads a *manifest* file from the server.
-The file, called `ngsw.json` (not to be confused with the [web app manifest](https://developer.mozilla.org/docs/Web/Manifest)), describes the resources to cache and includes hashes of every file's contents.
-When an update to the application is deployed, the contents of the manifest change, informing the service worker that a new version of the application should be downloaded and cached.
-This manifest is generated from a CLI-generated configuration file called `ngsw-config.json`.
+이러한 동작을 지원하기 위해 Angular 서비스 워커는 서버에서 *매니페스트* 파일을 로드합니다. 
+`ngsw.json`이라고 불리는 이 파일은 캐시할 리소스를 설명하며 각 파일 내용의 해시를 포함합니다. 
+애플리케이션에 대한 업데이트가 배포되면 매니페스트의 내용이 변경되어 서비스 워커에 새 버전의 애플리케이션을 다운로드하고 캐시해야 한다고 알려줍니다. 
+이 매니페스트는 `ngsw-config.json`이라는 CLI 생성 구성 파일에서 생성됩니다.
 
-Installing the Angular service worker is as straightforward as [running an Angular CLI command](ecosystem/service-workers/getting-started#adding-a-service-worker-to-your-project).
-In addition to registering the Angular service worker with the browser, this also makes a few services available for injection which interact with the service worker and can be used to control it.
-For example, an application can ask to be notified when a new update becomes available, or an application can ask the service worker to check the server for available updates.
+Angular 서비스 워커 설치는 [Angular CLI 명령 실행](ecosystem/service-workers/getting-started#adding-a-service-worker-to-your-project)처럼 간단합니다. 
+브라우저에 Angular 서비스 워커를 등록하는 것 외에도, 서비스 워커와 상호 작용하고 이를 제어하기 위해 사용할 수 있는 몇 가지 서비스를 주입할 수 있습니다. 
+예를 들어, 애플리케이션은 새 업데이트가 제공될 때 알림을 받도록 요청할 수 있으며, 애플리케이션은 서비스 워커에 서버에서 사용 가능한 업데이트를 확인하도록 요청할 수 있습니다.
 
-## Before you start
+## 시작하기 전에
 
-To make use of all the features of Angular service workers, use the latest versions of Angular and the [Angular CLI](tools/cli).
+Angular 서비스 워커의 모든 기능을 활용하려면 최신 버전의 Angular 및 [Angular CLI](tools/cli)를 사용하세요.
 
-For service workers to be registered, the application must be accessed over HTTPS, not HTTP.
-Browsers ignore service workers on pages that are served over an insecure connection.
-The reason is that service workers are quite powerful, so extra care is needed to ensure the service worker script has not been tampered with.
+서비스 워커가 등록되기 위해서는 애플리케이션에 HTTPS를 통해 액세스해야 하며, HTTP는 허용되지 않습니다. 
+브라우저는 불안전한 연결로 제공되는 페이지에서 서비스 워커를 무시합니다. 
+그 이유는 서비스 워커가 매우 강력하기 때문에 서비스 워커 스크립트가 변조되지 않았는지 확인하는 추가적인 주의가 필요하기 때문입니다.
 
-There is one exception to this rule: to make local development more straightforward, browsers do *not* require a secure connection when accessing an application on `localhost`.
+이 규칙에는 하나의 예외가 있습니다: 로컬 개발을 더 간단하게 만들기 위해 브라우저는 `localhost`에서 애플리케이션에 액세스할 때 보안 연결을 *필요로 하지 않습니다*.
 
-### Browser support
+### 브라우저 지원
 
-To benefit from the Angular service worker, your application must run in a web browser that supports service workers in general.
-Currently, service workers are supported in the latest versions of Chrome, Firefox, Edge, Safari, Opera, UC Browser (Android version) and Samsung Internet.
-Browsers like IE and Opera Mini do not support service workers.
+Angular 서비스 워커의 이점을 얻으려면 애플리케이션이 일반적으로 서비스 워커를 지원하는 웹 브라우저에서 실행되어야 합니다. 
+현재, Chrome, Firefox, Edge, Safari, Opera, UC Browser (Android 버전), Samsung Internet의 최신 버전에서 서비스 워커가 지원됩니다. 
+IE 및 Opera Mini와 같은 브라우저는 서비스 워커를 지원하지 않습니다.
 
-If the user is accessing your application with a browser that does not support service workers, the service worker is not registered and related behavior such as offline cache management and push notifications does not happen.
-More specifically:
+사용자가 서비스 워커를 지원하지 않는 브라우저로 애플리케이션에 액세스하면 서비스 워커가 등록되지 않으며 오프라인 캐시 관리 및 푸시 알림과 같은 관련 동작이 발생하지 않습니다. 
+보다 구체적으로:
 
-* The browser does not download the service worker script and the `ngsw.json` manifest file
-* Active attempts to interact with the service worker, such as calling `SwUpdate.checkForUpdate()`, return rejected promises
-* The observable events of related services, such as `SwUpdate.available`, are not triggered
+* 브라우저는 서비스 워커 스크립트 및 `ngsw.json` 매니페스트 파일을 다운로드하지 않습니다.
+* `SwUpdate.checkForUpdate()` 호출과 같은 서비스 워커와 상호 작용하려는 시도는 거부된 프로미스를 반환합니다.
+* `SwUpdate.available`와 같은 관련 서비스의 Observable 이벤트가 트리거되지 않습니다.
 
-It is highly recommended that you ensure that your application works even without service worker support in the browser.
-Although an unsupported browser ignores service worker caching, it still reports errors if the application attempts to interact with the service worker.
-For example, calling `SwUpdate.checkForUpdate()` returns rejected promises.
-To avoid such an error, check whether the Angular service worker is enabled using `SwUpdate.isEnabled`.
+브라우저에서 서비스 워커 지원 없이 애플리케이션이 작동하는지 확인하는 것이 강력히 권장됩니다. 
+지원되지 않는 브라우저는 서비스 워커 캐싱을 무시하지만, 애플리케이션이 서비스 워커와 상호 작용하려고 할 때 오류를 보고합니다. 
+예를 들어, `SwUpdate.checkForUpdate()` 호출은 거부된 프로미스를 반환합니다. 
+이러한 오류를 피하기 위해서는 `SwUpdate.isEnabled`를 사용하여 Angular 서비스 워커가 활성화되어 있는지 확인하세요.
 
-To learn more about other browsers that are service worker ready, see the [Can I Use](https://caniuse.com/#feat=serviceworkers) page and [MDN docs](https://developer.mozilla.org/docs/Web/API/Service_Worker_API).
+서비스 워커 준비가 된 다른 브라우저에 대한 자세한 내용은 [Can I Use](https://caniuse.com/#feat=serviceworkers) 페이지와 [MDN 문서](https://developer.mozilla.org/docs/Web/API/Service_Worker_API)를 참조하세요.
 
-## Related resources
+## 관련 리소스
 
-The rest of the articles in this section specifically address the Angular implementation of service workers.
-
-<docs-pill-row>
-  <docs-pill href="ecosystem/service-workers/config" title="Configuration file"/>
-  <docs-pill href="ecosystem/service-workers/communications" title="Communicating with the Service Worker"/>
-  <docs-pill href="ecosystem/service-workers/push-notifications" title="Push notifications"/>
-  <docs-pill href="ecosystem/service-workers/devops" title="Service Worker devops"/>
-  <docs-pill href="ecosystem/service-workers/app-shell" title="App shell pattern"/>
-</docs-pill-row>
-
-For more information about service workers in general, see [Service Workers: an Introduction](https://developers.google.com/web/fundamentals/primers/service-workers).
-
-For more information about browser support, see the [browser support](https://developers.google.com/web/fundamentals/primers/service-workers/#browser_support) section of [Service Workers: an Introduction](https://developers.google.com/web/fundamentals/primers/service-workers), Jake Archibald's [Is Serviceworker ready?](https://jakearchibald.github.io/isserviceworkerready), and [Can I Use](https://caniuse.com/serviceworkers).
-
-For additional recommendations and examples, see:
+이 섹션의 나머지 기사들은 서비스 워커의 Angular 구현에 구체적으로 다룹니다.
 
 <docs-pill-row>
-  <docs-pill href="https://web.dev/precaching-with-the-angular-service-worker" title="Precaching with Angular Service Worker"/>
-  <docs-pill href="https://web.dev/creating-pwa-with-angular-cli" title="Creating a PWA with Angular CLI"/>
+  <docs-pill href="ecosystem/service-workers/config" title="구성 파일"/>
+  <docs-pill href="ecosystem/service-workers/communications" title="서비스 워커와의 통신"/>
+  <docs-pill href="ecosystem/service-workers/push-notifications" title="푸시 알림"/>
+  <docs-pill href="ecosystem/service-workers/devops" title="서비스 워커 DevOps"/>
+  <docs-pill href="ecosystem/service-workers/app-shell" title="앱 셸 패턴"/>
 </docs-pill-row>
 
-## Next step
+서비스 워커에 대한 일반적인 정보는 [서비스 워커: 소개](https://developers.google.com/web/fundamentals/primers/service-workers)를 참조하세요.
 
-To begin using Angular service workers, see [Getting Started with service workers](ecosystem/service-workers/getting-started).
+브라우저 지원에 대한 추가 정보는 [서비스 워커: 소개](https://developers.google.com/web/fundamentals/primers/service-workers) 섹션의 [브라우저 지원](https://developers.google.com/web/fundamentals/primers/service-workers/#browser_support), Jake Archibald의 [서비스워커 준비 상태?](https://jakearchibald.github.io/isserviceworkerready), 및 [Can I Use](https://caniuse.com/serviceworkers)를 참조하십시오.
+
+추가 권장 사항 및 예제는 다음을 참조하세요:
+
+<docs-pill-row>
+  <docs-pill href="https://web.dev/precaching-with-the-angular-service-worker" title="Angular 서비스 워커로 프리캐싱하기"/>
+  <docs-pill href="https://web.dev/creating-pwa-with-angular-cli" title="Angular CLI로 PWA 만들기"/>
+</docs-pill-row>
+
+## 다음 단계
+
+Angular 서비스 워커를 사용하려면 [서비스 워커 시작하기](ecosystem/service-workers/getting-started)를 참조하세요.

@@ -1,41 +1,41 @@
-# Grouping elements with ng-container
+# 그룹화 요소 ng-container 사용하기
 
-`<ng-container>` is a special element in Angular that groups multiple elements together or marks a location in a template without rendering a real element in the DOM.
+`<ng-container>`는 Angular에서 여러 요소를 함께 그룹화하거나 템플릿 내 위치를 표시하는 특별한 요소로, 실제 요소를 DOM에 렌더링하지 않습니다.
 
 ```angular-html
-<!-- Component template -->
+<!-- 컴포넌트 템플릿 -->
 <section>
   <ng-container>
-    <h3>User bio</h3>
-    <p>Here's some info about the user</p>
+    <h3>사용자 정보</h3>
+    <p>사용자에 대한 정보입니다.</p>
   </ng-container>
 </section>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
+<!-- 렌더링된 DOM -->
 <section>
-  <h3>User bio</h3>
-  <p>Here's some info about the user</p>
+  <h3>사용자 정보</h3>
+  <p>사용자에 대한 정보입니다.</p>
 </section>
 ```
 
-You can apply directives to `<ng-container>` to add behaviors or configuration to a part of your template.
+`<ng-container>`에 지시어를 적용하여 템플릿의 일부에 동작이나 구성을 추가할 수 있습니다.
 
-Angular ignores all attribute bindings and event listeners applied to `<ng-container>`, including those applied via directive.
+Angular는 `<ng-container>`에 적용된 모든 속성 바인딩 및 이벤트 리스너를 무시하며, 지시어를 통해 적용된 것들도 포함됩니다.
 
-## Using `<ng-container>` to display dynamic contents
+## `<ng-container>`를 사용하여 동적 콘텐츠 표시하기
 
-`<ng-container>` can act as a placeholder for rendering dynamic content.
+`<ng-container>`는 동적 콘텐츠를 렌더링하기 위한 자리 표시자로 작용할 수 있습니다.
 
-### Rendering components
+### 컴포넌트 렌더링하기
 
-You can use Angular's built-in `NgComponentOutlet` directive to dynamically render a component to the location of the `<ng-container>`.
+Angular의 내장 `NgComponentOutlet` 지시어를 사용하여 `<ng-container>`의 위치에 동적으로 컴포넌트를 렌더링할 수 있습니다.
 
 ```angular-ts
 @Component({
   template: `
-    <h2>Your profile</h2>
+    <h2>당신의 프로필</h2>
     <ng-container [ngComponentOutlet]="profileComponent()" />
   `
 })
@@ -45,20 +45,20 @@ export class UserProfile {
 }
 ```
 
-In the example above, the `NgComponentOutlet` directive dynamically renders either `AdminProfile` or `BasicUserProfile` in the location of the `<ng-container>` element.
+위 예제에서 `NgComponentOutlet` 지시어는 `<ng-container>` 요소의 위치에 `AdminProfile` 또는 `BasicUserProfile`을 동적으로 렌더링합니다.
 
-### Rendering template fragments
+### 템플릿 조각 렌더링하기
 
-You can use Angular's built-in `NgTemplateOutlet` directive to dynamically render a template fragment to the location of the `<ng-container>`.
+Angular의 내장 `NgTemplateOutlet` 지시어를 사용하여 `<ng-container>`의 위치에 템플릿 조각을 동적으로 렌더링할 수 있습니다.
 
 ```angular-ts
 @Component({
   template: `
-    <h2>Your profile</h2>
+    <h2>당신의 프로필</h2>
     <ng-container [ngTemplateOutlet]="profileTemplate()" />
 
-    <ng-template #admin>This is the admin profile</ng-template>
-    <ng-template #basic>This is the basic profile</ng-template>
+    <ng-template #admin>관리자 프로필입니다</ng-template>
+    <ng-template #basic>기본 프로필입니다</ng-template>
   `
 })
 export class UserProfile {
@@ -69,17 +69,17 @@ export class UserProfile {
 }
 ```
 
-In the example above, the `ngTemplateOutlet` directive dynamically renders one of two template fragments in the location of the `<ng-container>` element.
+위 예제에서 `ngTemplateOutlet` 지시어는 `<ng-container>` 요소의 위치에 두 개의 템플릿 조각 중 하나를 동적으로 렌더링합니다.
 
-For more information regarding NgTemplateOutlet, see the [NgTemplateOutlets API documentation page](/api/common/NgTemplateOutlet).
+`NgTemplateOutlet`에 대한 자세한 정보는 [NgTemplateOutlets API 문서 페이지](/api/common/NgTemplateOutlet)를 참조하세요.
 
-## Using `<ng-container>` with structural directives
+## `<ng-container>`를 구조적 지시어와 함께 사용하기
 
-You can also apply structural directives to `<ng-container>` elements. Common examples of this include `ngIf`and `ngFor`.
+구조적 지시어를 `<ng-container>` 요소에 적용할 수도 있습니다. 일반적인 예로 `ngIf`와 `ngFor`가 있습니다.
 
 ```angular-html
 <ng-container *ngIf="permissions == 'admin'">
-  <h1>Admin Dashboard</h1>
+  <h1>관리자 대시보드</h1>
   <admin-infographic></admin-infographic>
 </ng-container>
 
@@ -89,18 +89,18 @@ You can also apply structural directives to `<ng-container>` elements. Common ex
 </ng-container>
 ```
 
-## Using `<ng-container>` for injection
+## 주입을 위한 `<ng-container>` 사용하기
 
-See the Dependency Injection guide for more information on Angular's dependency injection system.
+Angular의 의존성 주입 시스템에 대한 자세한 정보는 의존성 주입 가이드를 참조하세요.
 
-When you apply a directive to `<ng-container>`, descendant elements can inject the directive or anything that the directive provides. Use this when you want to declaratively provide a value to a specific part of your template.
+`<ng-container>`에 지시어를 적용하면 자식 요소가 지시어나 지시어가 제공하는 내용을 주입할 수 있습니다. 이는 템플릿의 특정 부분에 값을 선언적으로 제공하려는 경우에 사용합니다.
 
 ```angular-ts
 @Directive({
   selector: '[theme]',
 })
 export class Theme {
-  // Create an input that accepts 'light' or 'dark`, defaulting to 'light'.
+  // 'light' 또는 'dark'를 수용하는 입력을 생성하며, 기본값은 'light'입니다.
   mode = input<'light' | 'dark'>('light');
 }
 ```
@@ -112,4 +112,4 @@ export class Theme {
 </ng-container>
 ```
 
-In the example above, the `ProfilePic` and `UserBio` components can inject the `Theme` directive and apply styles based on its `mode`.
+위 예제에서 `ProfilePic` 및 `UserBio` 컴포넌트는 `Theme` 지시어를 주입하고 해당 `mode`에 따라 스타일을 적용할 수 있습니다.

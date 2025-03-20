@@ -1,38 +1,38 @@
-# Understanding dependency injection
+# 의존성 주입 이해하기
 
-Dependency injection, or DI, is one of the fundamental concepts in Angular. DI is wired into the Angular framework and allows classes with Angular decorators, such as Components, Directives, Pipes, and Injectables, to configure dependencies that they need.
+의존성 주입(Dependency Injection, DI)은 Angular의 기본 개념 중 하나입니다. DI는 Angular 프레임워크에 내장되어 있으며, 구성 요소, 지시문, 파이프 및 주입 가능 요소와 같은 Angular 데코레이터가 있는 클래스가 필요한 의존성을 구성할 수 있게 해줍니다.
 
-Two main roles exist in the DI system: dependency consumer and dependency provider.
+DI 시스템에는 두 가지 주요 역할이 있습니다: 의존성 소비자와 의존성 제공자입니다.
 
-Angular facilitates the interaction between dependency consumers and dependency providers using an abstraction called `Injector`. When a dependency is requested, the injector checks its registry to see if there is an instance already available there. If not, a new instance is created and stored in the registry. Angular creates an application-wide injector (also known as the "root" injector) during the application bootstrap process. In most cases you don't need to manually create injectors, but you should know that there is a layer that connects providers and consumers.
+Angular는 `Injector`라는 추상화를 사용하여 의존성 소비자와 의존성 제공자 간의 상호작용을 용이하게 합니다. 의존성이 요청되면 인젝터는 등록소를 확인하여 그곳에 이미 사용 가능한 인스턴스가 있는지 확인합니다. 그렇지 않으면 새로운 인스턴스가 생성되어 등록소에 저장됩니다. Angular는 애플리케이션 부트스트랩 프로세스 중에 애플리케이션 전역 인젝터(루트 인젝터로도 알려짐)를 생성합니다. 대부분의 경우 인젝터를 수동으로 생성할 필요는 없지만, 제공자와 소비자를 연결하는 레이어가 있다는 것을 알고 있어야 합니다.
 
-This topic covers basic scenarios of how a class can act as a dependency. Angular also allows you to use functions, objects, primitive types such as string or Boolean, or any other types as dependencies. For more information, see [Dependency providers](guide/di/dependency-injection-providers).
+이 주제에서는 클래스가 의존성으로 작용할 수 있는 기본 시나리오를 다룹니다. Angular는 또한 함수, 객체, 문자열 또는 불리언과 같은 기본 타입, 또는 기타 종류의 의존성을 사용하는 것을 허용합니다. 더 많은 정보는 [의존성 제공자](guide/di/dependency-injection-providers)를 참조하세요.
 
-## Providing a dependency
+## 의존성 제공하기
 
-Consider a class called `HeroService` that needs to act as a dependency in a component.
+구성 요소에서 의존성 역할을 해야 하는 `HeroService`라는 클래스를 고려해 보세요.
 
-The first step is to add the `@Injectable` decorator to show that the class can be injected.
+첫 번째 단계는 클래스가 주입될 수 있음을 나타내기 위해 `@Injectable` 데코레이터를 추가하는 것입니다.
 
 <docs-code language="typescript" highlight="[1]">
 @Injectable()
 class HeroService {}
 </docs-code>
 
-The next step is to make it available in the DI by providing it.
-A dependency can be provided in multiple places:
+다음 단계는 제공하여 DI에서 이를 사용할 수 있도록 만드는 것입니다.
+의존성은 여러 장소에서 제공될 수 있습니다:
 
-* [**Preferred**: At the application root level using `providedIn`.](#preferred-at-the-application-root-level-using-providedin)
-* [At the Component level.](#at-the-component-level)
-* [At the application root level using `ApplicationConfig`.](#at-the-application-root-level-using-applicationconfig)
-* [`NgModule` based applications.](#ngmodule-based-applications)
+* [**선호됨**: `providedIn`을 사용하여 애플리케이션 루트 수준에서.](#preferred-at-the-application-root-level-using-providedin)
+* [구성 요소 수준에서.](#at-the-component-level)
+* [ApplicationConfig를 사용하여 애플리케이션 루트 수준에서.](#at-the-application-root-level-using-applicationconfig)
+* [`NgModule` 기반 애플리케이션에서.](#ngmodule-based-applications)
 
-### **Preferred**: At the application root level using `providedIn`
+### **선호됨**: `providedIn`을 사용하여 애플리케이션 루트 수준에서
 
-Providing a service at the application root level using `providedIn` allows injecting the service into all other classes.
-Using `providedIn` enables Angular and JavaScript code optimizers to effectively remove services that are unused (known as tree-shaking).
+`providedIn`을 사용하여 애플리케이션 루트 수준에서 서비스를 제공하면 모든 다른 클래스에 서비스를 주입할 수 있습니다.
+`providedIn`을 사용하면 Angular와 JavaScript 코드 최적화 도구가 사용되지 않는 서비스를 효과적으로 제거할 수 있습니다(트리 쉐이킹).
 
-You can provide a service by using `providedIn: 'root'` in the `@Injectable` decorator:
+`@Injectable` 데코레이터에서 `providedIn: 'root'`를 사용하여 서비스를 제공할 수 있습니다:
 
 <docs-code language="typescript" highlight="[2]">
 @Injectable({
@@ -41,14 +41,14 @@ You can provide a service by using `providedIn: 'root'` in the `@Injectable` dec
 class HeroService {}
 </docs-code>
 
-When you provide the service at the root level, Angular creates a single, shared instance of the `HeroService` and injects it into any class that asks for it.
+루트 수준에서 서비스를 제공하면 Angular는 `HeroService`의 단일 공유 인스턴스를 생성하여 이를 요청하는 모든 클래스에 주입합니다.
 
-### At the Component level
+### 구성 요소 수준에서
 
-You can provide services at `@Component` level by using the `providers` field of the `@Component` decorator.
-In this case the `HeroService` becomes available to all instances of this component and other components and directives used in the template.
+`@Component` 데코레이터의 `providers` 필드를 사용하여 `@Component` 수준에서 서비스를 제공할 수 있습니다.
+이 경우 `HeroService`는 이 구성 요소의 모든 인스턴스와 템플릿에서 사용하는 다른 구성 요소 및 지시문에서 사용할 수 있게 됩니다.
 
-For example:
+예를 들어:
 
 <docs-code language="typescript" highlight="[4]">
 @Component({
@@ -59,15 +59,15 @@ For example:
 class HeroListComponent {}
 </docs-code>
 
-When you register a provider at the component level, you get a new instance of the service with each new instance of that component.
+구성 요소 수준에서 제공자를 등록하면 각 새 인스턴스의 서비스에 대한 새로운 인스턴스를 얻게 됩니다.
 
-Note: Declaring a service like this causes `HeroService` to always be included in your application— even if the service is unused.
+참고: 이렇게 서비스를 선언하면 서비스가 사용되지 않더라도 항상 애플리케이션에 `HeroService`가 포함됩니다.
 
-### At the application root level using `ApplicationConfig`
+### ApplicationConfig를 사용하여 애플리케이션 루트 수준에서
 
-You can use the `providers` field of the `ApplicationConfig` (passed to the `bootstrapApplication` function) to provide a service or other `Injectable` at the application level.
+`bootstrapApplication` 함수에 전달된 `ApplicationConfig`의 `providers` 필드를 사용하여 애플리케이션 수준에서 서비스나 다른 `Injectable`을 제공할 수 있습니다.
 
-In the example below, the `HeroService` is available to all components, directives, and pipes:
+아래 예제에서 `HeroService`는 모든 구성 요소, 지시문 및 파이프에서 사용 가능합니다:
 
 <docs-code language="typescript" highlight="[3]">
 export const appConfig: ApplicationConfig = {
@@ -77,26 +77,26 @@ export const appConfig: ApplicationConfig = {
 };
 </docs-code>
 
-Then, in `main.ts`:
+그런 다음 `main.ts`에서:
 
 <docs-code language="typescript">
 bootstrapApplication(AppComponent, appConfig)
 </docs-code>
 
-Note: Declaring a service like this causes `HeroService` to always be included in your application— even if the service is unused.
+참고: 이렇게 서비스를 선언하면 서비스가 사용되지 않더라도 항상 애플리케이션에 `HeroService`가 포함됩니다.
 
-### `NgModule` based applications
+### `NgModule` 기반 애플리케이션
 
-`@NgModule`-based applications use the `providers` field of the `@NgModule` decorator to provide a service or other `Injectable` available at the application level.
+`@NgModule` 기반 애플리케이션은 애플리케이션 수준에서 서비스나 다른 `Injectable`을 제공하기 위해 `@NgModule` 데코레이터의 `providers` 필드를 사용합니다.
 
-A service provided in a module is available to all declarations of the module, or to any other modules which share the same `ModuleInjector`.
-To understand all edge-cases, see [Hierarchical injectors](guide/di/hierarchical-dependency-injection).
+모듈에 제공된 서비스는 모듈의 모든 선언에서 사용 가능하며, 동일한 `ModuleInjector`를 공유하는 다른 모듈에서도 사용 가능합니다.
+모든 엣지 케이스를 이해하려면 [계층 인젝터](guide/di/hierarchical-dependency-injection)를 참조하세요.
 
-Note: Declaring a service using `providers` causes the service to be included in your application— even if the service is unused.
+참고: `providers`를 사용하여 서비스를 선언하면 서비스가 사용되지 않더라도 애플리케이션에 포함됩니다.
 
-## Injecting/consuming a dependency
+## 의존성 주입/소비하기
 
-The most common way to inject a dependency is to declare it in a class constructor. When Angular creates a new instance of a component, directive, or pipe class, it determines which services or other dependencies that class needs by looking at the constructor parameter types. For example, if the `HeroListComponent` needs the `HeroService`, the constructor can look like this:
+의존성을 주입하는 가장 일반적인 방법은 클래서 생성자에 선언하는 것입니다. Angular가 구성 요소, 지시문 또는 파이프 클래스의 새 인스턴스를 생성할 때, 생성자 매개변수 타입을 확인하여 해당 클래스가 필요한 서비스나 다른 의존성을 결정합니다. 예를 들어, `HeroListComponent`가 `HeroService`가 필요하다면, 생성자는 다음과 같이 보일 수 있습니다:
 
 <docs-code language="typescript" highlight="[3]">
 @Component({ … })
@@ -105,7 +105,7 @@ class HeroListComponent {
 }
 </docs-code>
 
-Another option is to use the [inject](api/core/inject) method:
+또 다른 옵션은 [inject](api/core/inject) 메서드를 사용하는 것입니다:
 
 <docs-code language="typescript" highlight="[3]">
 @Component({ … })
@@ -114,26 +114,26 @@ class HeroListComponent {
 }
 </docs-code>
 
-When Angular discovers that a component depends on a service, it first checks if the injector has any existing instances of that service. If a requested service instance doesn't yet exist, the injector creates one using the registered provider, and adds it to the injector before returning the service to Angular.
+Angular가 구성 요소가 서비스에 의존한다는 것을 발견하면, 먼저 인젝터에 해당 서비스의 기존 인스턴스가 있는지 확인합니다. 요청된 서비스 인스턴스가 아직 존재하지 않으면, 인젝터는 등록된 제공자를 사용하여 하나를 생성하고 이것을 인젝터에 추가한 후 Angular에 서비스를 반환합니다.
 
-When all requested services have been resolved and returned, Angular can call the component's constructor with those services as arguments.
+모든 요청된 서비스가 해결되고 반환되면, Angular는 해당 서비스를 인수로 사용하여 구성 요소의 생성자를 호출할 수 있습니다.
 
 ```mermaid
 graph TD;
 subgraph Injector
-serviceA[Service A]
+serviceA[서비스 A]
 heroService[HeroService]
-serviceC[Service C]
-serviceD[Service D]
+serviceC[서비스 C]
+serviceD[서비스 D]
 end
 direction TB
-componentConstructor["Component <br> constructor(HeroService)"]
+componentConstructor["구성 요소 <br> 생성자(HeroService)"]
 heroService-->componentConstructor
 style componentConstructor text-align: left
 ```
 
-## What's next
+## 다음 단계
 
 <docs-pill-row>
-  <docs-pill href="/guide/di/creating-injectable-service" title="Creating an injectable service"/>
+  <docs-pill href="/guide/di/creating-injectable-service" title="주입 가능한 서비스 생성하기"/>
 </docs-pill-row>

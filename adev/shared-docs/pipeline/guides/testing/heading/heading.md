@@ -1,13 +1,13 @@
-# Top Header (h1)
-## Headers (h2)
-### Smaller headers (h3)
-#### Even smaller (h4)
-##### Even more smaller (h5)
-###### The smallest! (h6)
-##### Another "more smaller" (h5)
-## Duplicate Anchor
-## Duplicate Anchor
-## `myClass.myMethod` is the best
-## ステップ 2 - アプリケーションのレイアウトに新しいコンポーネントを追加
-## My heading {# my-custom-id }
-## Query for the `<h1>`
+# 상단 헤더 (h1)
+## 헤더 (h2)
+### 더 작은 헤더 (h3)
+#### 더욱 더 작은 (h4)
+##### 더더욱 작은 (h5)
+###### 가장 작은! (h6)
+##### 또 다른 "더 작은" (h5)
+## 중복 앵커
+## 중복 앵커
+## `myClass.myMethod`가 최고입니다
+## 단계 2 - 애플리케이션 레이아웃에 새 구성 요소 추가
+## 내 제목 {# my-custom-id }
+## `<h1>`에 대한 쿼리

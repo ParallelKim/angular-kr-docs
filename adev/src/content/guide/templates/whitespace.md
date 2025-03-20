@@ -1,64 +1,64 @@
-# Whitespace in templates
+# 템플릿의 공백
 
-By default, Angular templates do not preserve whitespace that the framework considers unnecessary. This commonly occurs in two situations: whitespace between elements, and collapsible whitespace inside of text.
+기본적으로 Angular 템플릿은 프레임워크가 불필요하다고 간주하는 공백을 보존하지 않습니다. 이는 일반적으로 두 가지 상황에서 발생합니다: 요소 사이의 공백과 텍스트 내부의 축소 가능한 공백입니다.
 
-## Whitespace between elements
+## 요소 사이의 공백
 
-Most developers prefer to format their templates with newlines and indentation to make the template readable:
+대부분의 개발자는 템플릿을 읽기 쉽게 만들기 위해 줄 바꿈 및 들여쓰기를 사용하여 형식을 설정하는 것을 선호합니다:
 
 ```angular-html
 <section>
-  <h3>User profile</p>
+  <h3>사용자 프로필</h3>
   <label>
-    User name
+    사용자 이름
     <input>
   </label>
 </section>
 ```
 
-This template contains whitespace between all of the elements. The following snippet shows the same HTML with each whitespace character replaced with the hash (`#`) character to highlight how much whitespace is present:
+이 템플릿에는 모든 요소 사이에 공백이 포함되어 있습니다. 다음 스니펫은 공백 문자를 해시(`#`) 문자로 대체하여 공백이 얼마나 있는지를 강조합니다:
 
 ```angular-html
-<!-- Total Whitespace: 20 -->
-<section>###<h3>User profile</p>###<label>#####User name#####<input>###</label>#</section>
+<!-- 총 공백: 20 -->
+<section>###<h3>사용자 프로필</h3>###<label>#####사용자 이름#####<input>###</label>#</section>
 ```
 
-Preserving the whitespace as written in the template would result in many unnecessary [text nodes](https://developer.mozilla.org/en-US/docs/Web/API/Text) and increase page rendering overhead. By ignoring this whitespace between elements, Angular performs less work when rendering the template on the page, improving overall performance.
+템플릿에 작성된 대로 공백을 보존하면 많은 불필요한 [텍스트 노드](https://developer.mozilla.org/en-US/docs/Web/API/Text)가 생성되고 페이지 렌더링 오버헤드가 증가할 수 있습니다. Angular는 요소 사이의 공백을 무시함으로써 페이지에서 템플릿을 렌더링할 때 덜 작업을 수행하여 전체 성능을 향상시킵니다.
 
-## Collapsible whitespace inside text
+## 텍스트 내부의 축소 가능한 공백
 
-When your web browser renders HTML on a page, it collapses multiple consecutive whitespace characters to a single character:
+웹 브라우저가 페이지에서 HTML을 렌더링할 때 여러 개의 연속적인 공백 문자를 하나의 문자로 축소합니다:
 
 ```angular-html
-<!-- What it looks like in the template -->
-<p>Hello         world</p>
+<!-- 템플릿에서의 보이는 모습 -->
+<p>안녕하세요         세계</p>
 ```
 
-In this example, the browser displays only a single space between "Hello" and "world".
+이 예제에서 브라우저는 "안녕하세요"와 "세계" 사이에 단 하나의 공백만 표시합니다.
 
 ```angular-html
-<!-- What shows up in the browser -->
-<p>Hello world</p>
+<!-- 브라우저에 표시되는 모습 -->
+<p>안녕하세요 세계</p>
 ```
 
-See [How whitespace is handled by HTML, CSS, and in the DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace) for more context on how this works.
+이 작동 방식에 대한 더 많은 맥락은 [HTML, CSS, DOM에서 공백 처리 방법](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model/Whitespace)을 참조하세요.
 
-Angular avoids sending these unnecessary whitespace characters to the browser in the first place by collapsing them to a single character when it compiles the template.
+Angular는 템플릿을 컴파일할 때 이러한 불필요한 공백 문자를 일단락하여 브라우저로 보내지 않도록 하여 성능을 높입니다.
 
-## Preserving whitespace
+## 공백 보존
 
-You can tell Angular to preserve whitespace in a template by specifying `preserveWhitespaces: true` in the `@Component` decorator for a template.
+Angular에게 템플릿에서 공백을 보존하도록 지시하려면 `@Component` 데코레이터에서 `preserveWhitespaces: true`를 지정하면 됩니다.
 
 ```angular-ts
 @Component({
   /* ... */,
   preserveWhitespaces: true,
   template: `
-    <p>Hello         world</p>
+    <p>안녕하세요         세계</p>
   `
 })
 ```
 
-Avoid setting this option unless absolutely necessary. Preserving whitespace can cause Angular to produce significantly more nodes while rendering, slowing down your application.
+이 옵션을 설정하는 것은 절대적으로 필요할 때만 피하세요. 공백을 보존하면 Angular가 렌더링 시에 상당히 더 많은 노드를 생성하게 되어 애플리케이션 속도를 저하할 수 있습니다.
 
-You can additionally use a special HTML entity unique to Angular, `&ngsp;`. This entity produces a single space character that's preserved in the compiled output.
+또한 Angular에 고유한 특수 HTML 엔티티 `&ngsp;`를 사용할 수 있습니다. 이 엔티티는 컴파일된 출력에서 보존되는 단일 공백 문자를 생성합니다.

@@ -1,196 +1,196 @@
-# DevTools Overview
+# DevTools 개요
 
-Angular DevTools is a browser extension that provides debugging and profiling capabilities for Angular applications.
+Angular DevTools는 Angular 애플리케이션을 위한 디버깅 및 프로파일링 기능을 제공하는 브라우저 확장입니다.
 
 <docs-video src="https://www.youtube.com/embed/bavWOHZM6zE"/>
 
-Install Angular DevTools from the [Chrome Web Store](https://chrome.google.com/webstore/detail/angular-developer-tools/ienfalfjdbdpebioblfackkekamfmbnh) or from [Firefox Addons](https://addons.mozilla.org/firefox/addon/angular-devtools/).
+[Chrome 웹 스토어](https://chrome.google.com/webstore/detail/angular-developer-tools/ienfalfjdbdpebioblfackkekamfmbnh) 또는 [Firefox 부가 기능](https://addons.mozilla.org/firefox/addon/angular-devtools/)에서 Angular DevTools를 설치하세요.
 
-You can open Chrome or Firefox DevTools on any web page by pressing <kbd>F12</kbd> or <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd></kbd> (Windows or Linux) and <kbd><kbd>Fn</kbd>+<kbd>F12</kbd></kbd> or <kbd><kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd></kbd> (Mac).
-Once browser DevTools is open and Angular DevTools is installed, you can find it under the "Angular" tab.
+Chrome 또는 Firefox DevTools를 열려면 모든 웹 페이지에서 <kbd>F12</kbd> 또는 <kbd><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>I</kbd></kbd> (Windows 또는 Linux), <kbd><kbd>Fn</kbd>+<kbd>F12</kbd></kbd> 또는 <kbd><kbd>Cmd</kbd>+<kbd>Option</kbd>+<kbd>I</kbd></kbd> (Mac)을 누르세요.
+브라우저 DevTools가 열리고 Angular DevTools가 설치되면 "Angular" 탭 아래에서 찾을 수 있습니다.
 
-HELPFUL: Chrome's new tab page does not run installed extensions, so the Angular tab will not appear in DevTools. Visit any other page to see it.
+도움말: Chrome의 새 탭 페이지에서는 설치된 확장이 실행되지 않으므로 Angular 탭은 DevTools에 나타나지 않습니다. 다른 페이지를 방문하여 확인하세요.
 
-<img src="assets/images/guide/devtools/devtools.png" alt="An overview of Angular DevTools showing a tree of components for an application.">
+<img src="assets/images/guide/devtools/devtools.png" alt="애플리케이션을 위한 구성 요소 트리를 보여주는 Angular DevTools 개요.">
 
-## Open your application
+## 애플리케이션 열기
 
-When you open the extension, you'll see two additional tabs:
+확장을 열면 추가적인 두 개의 탭이 표시됩니다:
 
-| Tabs                                     | Details |
-|:---                                      |:---     |
-| [Components](tools/devtools#debug-your-application) | Lets you explore the components and directives in your application and preview or edit their state.                    |
-| [Profiler](tools/devtools#profile-your-application)     | Lets you profile your application and understand what the performance bottleneck is during change detection execution. |
+| 탭                                   | 세부사항 |
+|:---                                  |:---      |
+| [Components](tools/devtools#debug-your-application) | 애플리케이션의 구성 요소 및 지시어를 탐색하고 그 상태를 미리 보거나 편집할 수 있습니다.                    |
+| [Profiler](tools/devtools#profile-your-application)  | 애플리케이션의 프로파일을 생성하고 변경 감지 실행 중 성능 병목 지점을 이해할 수 있습니다. |
 
-<img src="assets/images/guide/devtools/devtools-tabs.png" alt="A screenshot of the top of Angular DevTools illustrating two tabs in the upper-left corner, one labeled 'Components' and another labeled 'Profiler'.">
+<img src="assets/images/guide/devtools/devtools-tabs.png" alt="왼쪽 상단에 'Components'라는 레이블이 붙은 탭 하나와 'Profiler'라는 레이블이 붙은 두 번째 탭이 있는 Angular DevTools 상단의 스크린샷.">
 
-In the top-right corner of Angular DevTools you'll find which version of Angular is running on the page as well as the latest commit hash for the extension.
+Angular DevTools의 오른쪽 상단 모서리에서는 페이지에서 실행 중인 Angular 버전과 확장에 대한 최신 커밋 해시를 찾을 수 있습니다.
 
-### Angular application not detected
+### Angular 애플리케이션이 감지되지 않음
 
-If you see an error message "Angular application not detected" when opening Angular DevTools, this means it is not able to communicate with an Angular app on the page.
-The most common reason for this is because the web page you are inspecting does not contain an Angular application.
-Double check that you are inspecting the right web page and that the Angular app is running.
+Angular DevTools를 열 때 "Angular 애플리케이션이 감지되지 않음"이라는 오류 메시지가 나타나면, 이는 페이지에서 Angular 앱과 통신할 수 없음을 의미합니다.
+가장 일반적인 이유는 검사 중인 웹 페이지에 Angular 애플리케이션이 포함되어 있지 않기 때문입니다.
+올바른 웹 페이지를 검사하고 Angular 앱이 실행 중인지 다시 확인하세요.
 
-### We detected an application built with production configuration
+### 프로덕션 구성으로 구축된 애플리케이션이 감지됨
 
-If you see an error message "We detected an application built with production configuration. Angular DevTools only supports development builds.", this means that an Angular application was found on the page, but it was compiled with production optimizations.
-When compiling for production, Angular CLI removes various debug features to minimize the amount of the JavaScript on the page to improve performance. This includes features needed to communicate with DevTools.
+"프로덕션 구성으로 구축된 애플리케이션이 감지되었습니다. Angular DevTools는 개발 빌드만 지원합니다."라는 오류 메시지가 나타나면, 이는 페이지에서 Angular 애플리케이션이 발견되었지만 프로덕션 최적화로 컴파일되었음을 의미합니다.
+프로덕션을 위해 컴파일할 때 Angular CLI는 성능 향상을 위해 페이지의 JavaScript 양을 최소화하기 위해 다양한 디버그 기능을 제거합니다. 여기에는 DevTools와의 통신에 필요한 기능이 포함됩니다.
 
-To run DevTools, you need to compile your application with optimizations disabled. `ng serve` does this by default.
-If you need to debug a deployed application, disable optimizations in your build with the [`optimization` configuration option](reference/configs/workspace-config#optimization-configuration) (`{"optimization": false}`).
+DevTools를 실행하려면 최적화를 비활성화하고 애플리케이션을 컴파일해야 합니다. `ng serve`는 기본적으로 이를 수행합니다.
+배포된 애플리케이션을 디버깅해야 하는 경우 [`optimization` 구성 옵션](reference/configs/workspace-config#optimization-configuration)으로 빌드에서 최적화를 비활성화하세요 (`{"optimization": false}`).
 
-## Debug your application
+## 애플리케이션 디버그
 
-The **Components** tab lets you explore the structure of your application.
-You can visualize the component and directive instances in the DOM and inspect or modify their state.
+**Components** 탭을 통해 애플리케이션의 구조를 탐색할 수 있습니다.
+DOM에서 구성 요소 및 지시어 인스턴스를 시각화하고 그 상태를 검사하거나 수정할 수 있습니다.
 
-### Explore the application structure
+### 애플리케이션 구조 탐색
 
-The component tree displays a hierarchical relationship of the *components and directives* within your application.
+구성 요소 트리는 애플리케이션 내의 *구성 요소 및 지시어* 간의 계층 관계를 표시합니다.
 
-<img src="assets/images/guide/devtools/component-explorer.png" alt="A screenshot of the 'Components' tab showing a tree of Angular components and directives starting the root of the application.">
+<img src="assets/images/guide/devtools/component-explorer.png" alt="애플리케이션의 루트에서 시작하는 Angular 구성 요소 및 지시어의 트리를 보여주는 'Components' 탭의 스크린샷.">
 
-Click the individual components or directives in the component explorer to select them and preview their properties.
-Angular DevTools displays properties and metadata on the right side of the component tree.
+구성 요소 탐색기에서 개별 구성 요소 또는 지시어를 클릭하여 선택하고 속성을 미리 볼 수 있습니다.
+Angular DevTools는 구성 요소 트리의 오른쪽에 속성과 메타데이터를 표시합니다.
 
-To look up a component or directive by name use the search box above the component tree.
+이름으로 구성 요소나 지시어를 찾으려면 구성 요소 트리 위의 검색 상자를 사용하세요.
 
-<img src="assets/images/guide/devtools/search.png" alt="A screenshot of the 'Components' tab. The filter bar immediately underneath the tab is searching for 'todo' and all components with 'todo' in the name are highlighted in the tree. `app-todos` is currently selected and a sidebar to the right displays information about the component's properties. This includes a section of `@Output` fields and another section for other properties.">
+<img src="assets/images/guide/devtools/search.png" alt="Components 탭의 스크린샷. 탭 아래에 있는 필터 바가 'todo'를 검색하고 있으며, 이름에 'todo'가 포함된 모든 구성 요소가 트리에서 강조 표시됩니다. 현재 선택되어 있는 것은 `app-todos`이며, 오른쪽 사이드바에는 구성 요소 속성에 대한 정보가 표시됩니다. 여기에는 `@Output` 필드 섹션과 다른 속성 섹션이 포함됩니다.">
 
-### Navigate to the host node
+### 호스트 노드로 이동
 
-To go to the host element of a particular component or directive, double-click it in the component explorer.
-Angular DevTools will open the Elements tab in Chrome or the Inspector tab in Firefox, and select the associated DOM node.
+특정 구성 요소 또는 지시어의 호스트 요소로 이동하려면 구성 요소 탐색기에서 두 번 클릭하세요.
+Angular DevTools는 Chrome의 Elements 탭 또는 Firefox의 Inspector 탭을 열고 관련 DOM 노드를 선택합니다.
 
-### Navigate to source
+### 소스로 이동
 
-For components, Angular DevTools lets you navigate to the component definition in the Sources tab (Chrome) and Debugger tab (Firefox).
-After you select a particular component, click the icon at the top-right of the properties view:
+구성 요소의 경우 Angular DevTools는 Sources 탭(Chrome) 및 Debugger 탭(Firefox)에서 구성 요소 정의로 이동할 수 있습니다.
+특정 구성 요소를 선택한 후 속성 보기의 오른쪽 상단에 있는 아이콘을 클릭하세요:
 
-<img src="assets/images/guide/devtools/navigate-source.png" alt="A screenshot of the 'Components' tab. The properties view on the right is visible for a component and the mouse rests in the upper right corner of that view on top of a `<>` icon. An adjacent tooltip reads 'Open component source'.">
+<img src="assets/images/guide/devtools/navigate-source.png" alt="Components 탭의 스크린샷. 오른쪽에서 속성 보기가 나타나고, 마우스가 해당 뷰의 오른쪽 상단에 있는 `<>` 아이콘 위에 놓여 있습니다. 인접한 툴팁에는 '구성 요소 소스 열기'라고 적혀 있습니다.">
 
-### Update property value
+### 속성 값 업데이트
 
-Like browsers' DevTools, the properties view lets you edit the value of an input, output, or other properties.
-Right-click on the property value and if edit functionality is available for this value type, a text input will appear.
-Type the new value and press `Enter` to apply this value to the property.
+브라우저의 DevTools와 마찬가지로 속성 보기에서는 입력, 출력 또는 기타 속성의 값을 편집할 수 있습니다.
+속성 값을 마우스 오른쪽 버튼으로 클릭하면 이 값 유형에 대해 편집 기능이 가능한 경우 텍스트 입력란이 나타납니다.
+새 값을 입력하고 `Enter`를 눌러 이 값을 속성에 적용하세요.
 
-<img src="assets/images/guide/devtools/update-property.png" alt="A screenshot of the 'Components' tab with the properties view open for a component. An `@Input` named `todo` contains a `label` property which is currently selected and has been manually updated to the value 'Buy milk'.">
+<img src="assets/images/guide/devtools/update-property.png" alt="구성 요소에 대한 속성 보기의 스크린샷을 open. `@Input` 이름이 `todo`인 속성이 선택되었으며, 현재 '우유 사기' 값으로 수동 업데이트되었습니다.">
 
-### Access selected component or directive in console
+### 콘솔에서 선택한 구성 요소 또는 지시어에 액세스
 
-As a shortcut in the console, Angular DevTools provides access to instances of recently selected components or directives.
-Type `$ng0` to get a reference to the instance of the currently selected component or directive, and type `$ng1` for the previously selected instance, `$ng2` for the instance selected before that, and so on.
+콘솔의 바로 가기로 Angular DevTools는 최근 선택된 구성 요소 또는 지시어의 인스턴스에 대한 액세스를 제공합니다.
+현재 선택된 구성 요소나 지시어의 인스턴스에 대한 참조를 얻으려면 `$ng0`를 입력하고, 이전에 선택된 인스턴스에 대해서는 `$ng1`, 그 전 인스턴스에 대해서는 `$ng2`와 같이 입력하세요.
 
-<img src="assets/images/guide/devtools/access-console.png" alt="A screenshot of the 'Components' tab with the browser console underneath. In the console, the user has typed three commands, `$ng0`, `$ng1`, and `$ng2` to view the three most recently selected elements. After each statement, the console prints a different component reference.">
+<img src="assets/images/guide/devtools/access-console.png" alt="브라우저 콘솔 아래의 'Components' 탭의 스크린샷. 콘솔에 사용자가 `$ng0`, `$ng1`, `$ng2` 세 개의 명령을 입력하여 최근에 선택된 세 개의 요소를 확인하고 있습니다. 각 명령 후에 콘솔은 다른 구성 요소 참조를 출력합니다.">
 
-### Select a directive or component
+### 지시어 또는 구성 요소 선택
 
-Similar to browsers' DevTools, you can inspect the page to select a particular component or directive.
-Click the ***Inspect element*** icon in the top left corner within Angular DevTools and hover over a DOM element on the page.
-The extension recognizes the associated directives and/or components and lets you select the corresponding element in the Component tree.
+브라우저의 DevTools와 유사하게 페이지를 검사하여 특정 구성 요소나 지시어를 선택할 수 있습니다.
+Angular DevTools의 왼쪽 상단에 있는 ***Inspect element*** 아이콘을 클릭하고 페이지의 DOM 요소 위에 마우스를 올려놓으세요.
+확장 프로그램은 관련된 지시어 및/또는 구성 요소를 인식하고 구성 요소 트리에서 해당 요소를 선택할 수 있게 합니다.
 
-<img src="assets/images/guide/devtools/inspect-element.png" alt="A screenshot of the 'Components' tab with an Angular todo application visible. In the very top-left corner of Angular DevTools, an icon of a screen with a mouse icon inside it is selected. The mouse rests on a todo element in the Angular application UI. The element is highlighted with a `<TodoComponent>` label displayed in an adjacent tooltip.">
+<img src="assets/images/guide/devtools/inspect-element.png" alt="Angular todo 애플리케이션이 표시된 'Components' 탭의 스크린샷. Angular DevTools의 왼쪽 상단 모서리에서 아이콘이 선택되어 있으며 마우스가 Angular 애플리케이션 UI의 todo 요소 위에 있습니다. 요소는 `<TodoComponent>`라는 레이블이 있는 툴팁과 함께 강조 표시됩니다.">
 
-## Profile your application
+## 애플리케이션 프로파일링
 
-The **Profiler** tab lets you visualize the execution of Angular's change detection.
-This is useful for determining when and how change detection impacts your application's performance.
+**Profiler** 탭은 Angular의 변경 감지 실행을 시각화할 수 있게 해줍니다.
+이는 변경 감지가 애플리케이션의 성능에 어떻게 영향을 미치는지를 이해하는 데 유용합니다.
 
-<img src="assets/images/guide/devtools/profiler.png" alt="A screenshot of the 'Profiler' tab which reads 'Click the play button to start a new recording, or upload a json file containing profiler data.' Next to this is a record button to being recording a new profile as well as a file picker to select an existing profile.">
+<img src="assets/images/guide/devtools/profiler.png" alt="새로 녹음 시작 버튼을 클릭하거나 프로파일러 데이터를 포함하는 json 파일을 업로드하라는 메시지가 있는 'Profiler' 탭의 스크린샷. 그 옆에는 새로운 프로파일을 기록하기 시작하는 녹음 버튼과 기존 프로파일을 선택하는 파일 선택기가 있습니다.">
 
-The Profiler tab lets you start profiling the current application or import an existing profile from a previous run.
-To start profiling your application, hover over the circle in the top-left corner within the **Profiler** tab and click **Start recording**.
+Profiler 탭에서는 현재 애플리케이션의 프로파일링을 시작하거나 이전 실행에서 기존 프로파일을 가져올 수 있습니다.
+애플리케이션 프로파일링을 시작하려면 **Profiler** 탭의 왼쪽 상단 모서리에 있는 원 위로 마우스를 옮기고 **Start recording**을 클릭하세요.
 
-During profiling, Angular DevTools captures execution events, such as change detection and lifecycle hook execution.
-Interact with your application to trigger change detection and generate data Angular DevTools can use.
-To finish recording, click the circle again to **Stop recording**.
+프로파일링 중 Angular DevTools는 변경 감지 및 생명 주기 훅 실행과 같은 실행 이벤트를 캡처합니다.
+변경 감지를 트리거하고 Angular DevTools가 사용할 수 있는 데이터를 생성하려면 애플리케이션과 상호작용하세요.
+기록을 마치려면 원을 다시 클릭하여 **Stop recording**하세요.
 
-You can also import an existing recording.
-Read more about this feature in the [Import recording](tools/devtools#import-and-export-recordings) section.
+기존 기록을 가져올 수도 있습니다.
+이 기능에 대해 더 알아보려면 [Import recording](tools/devtools#import-and-export-recordings) 섹션을 참조하세요.
 
-### Understand your application's execution
+### 애플리케이션 실행 이해하기
 
-After recording or importing a profile, Angular DevTools displays a visualization of change detection cycles.
+프로파일을 기록하거나 가져온 후 Angular DevTools는 변경 감지 주기의 시각화를 표시합니다.
 
-<img src="assets/images/guide/devtools/default-profiler-view.png" alt="A screenshot of the 'Profiler' tab after a profile has been recorded or uploaded. It displays a bar chart illustrating various change detection cycles with some text which reads 'Select a bar to preview a particular change detection cycle'.">
+<img src="assets/images/guide/devtools/default-profiler-view.png" alt="프로파일이 기록되거나 업로드된 후 'Profiler' 탭의 스크린샷. 다양한 변경 감지 주기를 보여주는 막대 차트를 나타내며 '특정 변경 감지 주기를 미리 보려면 막대를 선택하세요'라는 텍스트가 있습니다.">
 
-Each bar in the sequence represents a change detection cycle in your app.
-The taller a bar is, the longer the application spent running change detection in this cycle.
-When you select a bar, DevTools displays useful information about it including:
+순서의 각 막대는 애플리케이션의 변경 감지 주기를 나타냅니다.
+막대가 높을수록 이 주기에서 변경 감지를 실행하는 데 더 많은 시간이 소요되었음을 의미합니다.
+막대를 선택하면 DevTools는 다음과 같은 유용한 정보를 표시합니다:
 
-* A bar chart with all the components and directives that it captured during this cycle
-* How much time Angular spent running change detection in this cycle.
-* An estimated frame rate as experienced by the user.
-* The source which triggered change detection.
+* 이 주기에서 캡처된 모든 구성 요소 및 지시어가 포함된 막대 차트
+* 이 주기에서 Angular가 변경 감지를 실행하는 데 소요된 시간.
+* 사용자 경험에 따른 추정 프레임 속도.
+* 변경 감지를 트리거한 소스.
 
-<img src="assets/images/guide/devtools/profiler-selected-bar.png" alt="A screenshot of the 'Profiler' tab. A single bar has been selected by the user and a nearby dropdown menu displays 'Bar chart`, showing a second bar chart underneath it. The new chart has two bars which take up the majority of the space, one labeled `TodosComponent` and the other labeled `NgForOf`. The other bars are small enough to be negligible in comparison.">
+<img src="assets/images/guide/devtools/profiler-selected-bar.png" alt="선택된 사용자가 하나의 막대를 선택한 'Profiler' 탭의 스크린샷. 인접한 드롭다운 메뉴에는 'Bar chart'가 표시되어 있으며 아래에는 두 번째 막대 차트가 있습니다. 새로운 차트에는 `TodosComponent` 및 `NgForOf`라는 두 개의 막대가 있으며, 다른 막대는 무시할 수 있을 만큼 작습니다.">
 
-### Understand component execution
+### 구성 요소 실행 이해하기
 
-The bar chart displayed after clicking on a change detection cycle displays a detailed view about how much time your application spent running change detection in that particular component or directive.
+변경 감지 주기를 클릭한 후 표시되는 막대 차트는 애플리케이션이 특정 구성 요소나 지시어에서 변경 감지를 실행하는 데 소요된 시간에 대한 자세한 정보를 표시합니다.
 
-This example shows the total time spent by the `NgForOf` directive and which method was called on it.
+이 예제에서는 `NgForOf` 지시어가 소비한 총 시간을 보여줍니다.
 
-<img src="assets/images/guide/devtools/directive-details.png" alt="A screenshot of the 'Profiler' tab where the `NgForOf` bar is selected. A detailed view of `NgForOf` is visible to the right where it lists 'Total time spent: 1.76 ms'. It includes a with exactly one row, listing `NgForOf` as a directives with an `ngDoCheck` method which took 1.76 ms. It also includes a list labeled 'Parent Hierarchy' containing the parent components of this directive.">
+<img src="assets/images/guide/devtools/directive-details.png" alt="선택된 `NgForOf` 막대가 보이는 'Profiler' 탭의 스크린샷. 오른쪽에 '소요 시간: 1.76 ms'라고 나와 있습니다. 여기에는 1.76 ms 걸린 `ngDoCheck` 메소드를 포함한 `NgForOf`라는 지시어가 있는 한 개의 행이 포함되어 있습니다. 이 지시어의 상위 계층을 포함하여 'Parent Hierarchy'로 레이블이 붙은 목록도 표시됩니다.">
 
-### Hierarchical views
+### 계층적 보기
 
-<img src="assets/images/guide/devtools/flame-graph-view.png" alt="A screenshot of the 'Profiler' tab. A single bar has been selected by the user and a nearby dropdown menu now displays 'Flame graph', showing a flame graph underneath it. The flame graph starts with a row called 'Entire application' and another row called 'AppComponent'. Beneath those, the rows start to break up into multiple items, starting with `[RouterOutlet]` and `DemoAppComponent` on the third row. A few layers deep, one cell is highlighted red.">
+<img src="assets/images/guide/devtools/flame-graph-view.png" alt="사용자가 선택한 단일 막대가 표시된 'Profiler' 탭의 스크린샷. 근처의 드롭다운 메뉴는 이제 'Flame graph'의 수준을 보여주고, 그 아래에 불꽃 그래프가 표시됩니다. 불꽃 그래프는 '전체 애플리케이션' 및 'AppComponent'라는 두 개의 행으로 시작합니다. 그 아래 행은 여러 항목으로 분리되며, `[RouterOutlet]`와 `DemoAppComponent`가 세 번째 행에 표시됩니다. 몇 단계 깊이의 한 셀은 빨간색으로 강조 표시됩니다.">
 
-You can also visualize the change detection execution in a flame graph-like view.
+변경 감지 실행을 불꽃 그래프와 같은 보기로 시각화할 수도 있습니다.
 
-Each tile in the graph represents an element on the screen at a specific position in the render tree.
-For example, consider a change detection cycle where a `LoggedOutUserComponent` is removed and in its place Angular rendered a `LoggedInUserComponent`. In this scenario both components will be displayed in the same tile.
+그래프의 각 타일은 렌더 트리의 특정 위치에서 화면의 요소를 나타냅니다.
+예를 들어, 변경 감지 주기에서 `LoggedOutUserComponent`가 제거되고 대신 Angular가 `LoggedInUserComponent`를 렌더링하는 경우 두 구성 요소가 동일한 타일에 표시됩니다.
 
-The x-axis represents the full time it took to render this change detection cycle.
-The y-axis represents the element hierarchy. Running change detection for an element requires render its directives and child components.
-Together, this graph visualizes which components are taking the longest time to render and where that time is going.
+x축은 변경 감지 주기를 렌더링하는 데 소요된 총 시간을 나타냅니다.
+y축은 요소 계층을 나타냅니다. 요소에 대한 변경 감지를 실행하려면 해당 지시어 및 하위 구성 요소를 렌더링해야 합니다.
+이 그래프는 어떤 구성 요소가 렌더링하는 데 가장 오랜 시간이 걸리는지, 그 시간이 어디에 쓰이는지를 시각적으로 나타냅니다.
 
-Each tile is colored depending on how much time Angular spent there.
-Angular DevTools determines the intensity of the color by the time spent relative to the tile where rendering took the most time.
+각 타일은 Angular가 그곳에서 얼마나 오랜 시간을 보냈는지에 따라 색이 지정됩니다.
+Angular DevTools는 가장 오랜 시간이 소요된 타일에 대해 소요된 시간을 기준으로 색의 강도를 결정합니다.
 
-When you click on a certain tile, you'll see details about it in the panel on the right.
-Double-clicking the tile zooms it in so you can more easily view its nested children.
+특정 타일을 클릭하면 오른쪽 패널에서 해당 타일에 대한 세부 정보를 확인할 수 있습니다.
+타일을 두 번 클릭하면 확대되어 중첩 자식 구성 요소를 더 쉽게 볼 수 있습니다.
 
-### Debug change detection and `OnPush` components
+### 변경 감지 및 `OnPush` 구성 요소 디버깅
 
-Normally, the graph visualizes the time it takes to *render* an application, for any given change detection frame. However some components such as `OnPush` components will only re-render if their input properties change. It can be useful to visualize the flame graph without these components for particular frames.
+정상적으로 그래프는 주어진 변경 감지 프레임에서 애플리케이션을 *렌더링*하는 데 소요된 시간을 시각화합니다. 그러나 `OnPush` 구성 요소와 같은 일부 구성 요소는 입력 속성이 변경될 때만 다시 렌더링됩니다. 특정 프레임에 대해 이러한 구성 요소 없이 불꽃 그래프를 시각화하는 것이 유용할 수 있습니다.
 
-To visualize only the components in a change detection frame that went through the change detection process, select the **Change detection** checkbox at the top, above the flame graph.
+변경 감지 프로세스를 거친 구성 요소만을 변경 감지 프레임에서 시각화하려면 불꽃 그래프 위에 있는 **Change detection** 체크박스를 선택하세요.
 
-This view highlights all the components that went through change detection and displays those that did not in gray, such as `OnPush` components that did not re-render.
+이 보기는 변경 감지 과정을 거친 모든 구성 요소를 강조 표시하고 다시 렌더링되지 않은 구성 요소(예: `OnPush` 구성 요소)를 회색으로 표시합니다.
 
-<img src="assets/images/guide/devtools/debugging-onpush.png" alt="A screenshot of the 'Profiler' tab displaying a flame chart visualization of a change detection cycle. A checkbox labeled 'Show only change detection' is now checked. The flame graph looks very similar to before, however the color of components has changed from orange to blue. Several tiles labeled `[RouterOutlet]` are no longer highlighted with any color.">
+<img src="assets/images/guide/devtools/debugging-onpush.png" alt="변경 감지 주기의 불꽃 차트 시각화를 보여주는 'Profiler' 탭의 스크린샷. 'Show only change detection'이라는 레이블이 붙은 체크박스가 이제 선택됨. 불꽃 그래프가 이전과 매우 유사하게 보이지만, 구성 요소의 색상이 주황색에서 파란색으로 변경되었습니다. `[RouterOutlet]`로 레이블이 붙은 여러 개의 타일은 더 이상 색으로 강조 표시되지 않습니다.">
 
-### Import and export recordings
+### 기록 가져오기 및 내보내기
 
-Click the **Save Profile** button at the top-right of a recorded profiling session to export it as a JSON file and save it to the disk.
-Later, import the file in the initial view of the profiler by clicking the **Choose file** input.
+기록된 프로파일 세션의 오른쪽 상단에서 **Save Profile** 버튼을 클릭하여 JSON 파일로 내보내기하고 디스크에 저장하세요.
+이후 처음 보기에 파일을 가져오려면 **Choose file** 입력을 클릭하세요.
 
-<img src="assets/images/guide/devtools/save-profile.png" alt="A screenshot of the 'Profiler' tab displaying change detection cycles. On the right side a 'Save Profile' button is visible.">
+<img src="assets/images/guide/devtools/save-profile.png" alt="변경 감지 주기를 보여주는 'Profiler' 탭의 스크린샷. 오른쪽에 'Save Profile' 버튼이 표시됩니다.">
 
- ## Inspect your injectors
+ ## 인젝터 검사
 
- Note: The Injector Tree is available for Angular Applications built with version 17 or higher.
+ 참고: 인젝터 트리는 버전 17 이상으로 구축된 Angular 애플리케이션에서 사용할 수 있습니다.
 
-### View the injector hierarchy of your application
+### 애플리케이션의 인젝터 계층 보기
 
- The **Injector Tree** tab lets you explore the structure of the Injectors configured in your application. Here you will see two trees representing the [injector hierarchy](guide/di/hierarchical-dependency-injection) of your application. One tree is your environment hierarchy, the other is your element hierarchy.
+**Injector Tree** 탭은 애플리케이션에서 구성된 인젝터의 구조를 탐색할 수 있게 해줍니다. 여기에는 애플리케이션의 [인젝터 계층](guide/di/hierarchical-dependency-injection)을 나타내는 두 개의 트리가 표시됩니다. 하나의 트리는 환경 계층이고, 다른 하나는 요소 계층입니다.
 
-<img src="assets/images/guide/devtools/di-injector-tree.png" alt="A screenshot of the 'Profiler' tab displaying the injector tree tab in Angular Devtools visualizing the injector graph for an example application.">
+<img src="assets/images/guide/devtools/di-injector-tree.png" alt="예제 애플리케이션의 인젝터 그래프를 시각화하는 Angular Devtools의 인젝터 트리 탭을 보여주는 'Profiler' 탭의 스크린샷.">
 
- ### Visualize resolution paths
+ ### 해상도 경로 시각화
 
- When a specific injector is selected, the path that Angular's dependency injection algorithm traverses from that injector to the root is highlighted. For element injectors, this includes highlighting the environment injectors that the dependency injection algorithm jumps to when a dependency cannot be resolved in the element hierarchy.
+특정 인젝터가 선택되면 Angular의 종속성 주입 알고리즘이 해당 인젝터에서 루트까지 거치는 경로가 강조 표시됩니다. 요소 인젝터의 경우, 이는 종속성 주입 알고리즘이 요소 계층에서 종속성을 해결할 수 없는 경우 점프하는 환경 인젝터도 강조 표시합니다.
 
-See [resolution rules](guide/di/hierarchical-dependency-injection#resolution-rules) for more details about how Angular resolves resolution paths. 
+Angular가 해상도 경로를 해결하는 방법에 대한 자세한 내용은 [해상도 규칙](guide/di/hierarchical-dependency-injection#resolution-rules)을 참조하세요.
 
-<img src="assets/images/guide/devtools/di-injector-tree-selected.png" alt="A screenshot of the 'Profiler' tab displaying how the injector tree visualize highlights resolution paths when an injector is selected.">
+<img src="assets/images/guide/devtools/di-injector-tree-selected.png" alt="선택한 인젝터의 경로가 하이라이트된 인젝터 트리를 시각화하는 'Profiler' 탭의 스크린샷.">
 
- ### View injector providers
+ ### 인젝터 제공자 보기
 
- Clicking an injector that has configured providers will display those providers in a list on the right of the injector tree view. Here you can view the provided token and it's type.
+구성된 제공자가 있는 인젝터를 클릭하면 인젝터 트리 보기의 오른쪽에 있는 제공자 목록이 표시됩니다. 여기서 제공된 토큰과 그 유형을 볼 수 있습니다.
 
-<img src="assets/images/guide/devtools/di-injector-tree-providers.png" alt="A screenshot of the 'Profiler' tab displaying how providers are made visible when an injector is selected.">
+<img src="assets/images/guide/devtools/di-injector-tree-providers.png" alt="선택된 인젝터가 제공자를 표시하는 'Profiler' 탭의 스크린샷.">

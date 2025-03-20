@@ -1,19 +1,19 @@
-<docs-decorative-header title="Dependency Injection" imgSrc="adev/src/assets/images/dependency_injection.svg"> <!-- markdownlint-disable-line -->
-Reuse code and control behaviors across your application and tests.
+<docs-decorative-header title="의존성 주입" imgSrc="adev/src/assets/images/dependency_injection.svg"> <!-- markdownlint-disable-line -->
+코드를 재사용하고 애플리케이션과 테스트 전반에 걸쳐 동작을 제어하십시오.
 </docs-decorative-header>
 
-When you need to share logic between components, Angular leverages the design pattern of [dependency injection](guide/di) that allows you to create a “service” which allows you to inject code into components while managing it from a single source of truth.
+구성 요소 간에 로직을 공유해야 할 때 Angular는 [의존성 주입](guide/di) 디자인 패턴을 활용하여 “서비스”를 생성할 수 있게 하며, 이를 통해 단일 진실의 소스에서 코드를 강조하고 구성 요소에 주입할 수 있습니다.
 
-## What are services?
+## 서비스란 무엇인가요?
 
-Services are reusable pieces of code that can be injected.
+서비스는 주입할 수 있는 재사용 가능한 코드 조각입니다.
 
-Similar to defining a component, services are comprised of the following:
+구성 요소를 정의하는 것과 유사하게, 서비스는 다음으로 구성됩니다:
 
-- A **TypeScript decorator** that declares the class as an Angular service via `@Injectable` and allows you to define what part of the application can access the service via the `providedIn` property (which is typically `'root'`) to allow a service to be accessed anywhere within the application.
-- A **TypeScript class** that defines the desired code that will be accessible when the service is injected
+- `@Injectable`을 사용하여 클래스를 Angular 서비스로 선언하고 `providedIn` 속성을 통해 서비스에 접근할 수 있는 애플리케이션의 부분을 정의할 수 있게 해주는 **TypeScript 데코레이터** (일반적으로 `'root'`입니다).
+- 서비스가 주입될 때 접근할 수 있는 원하는 코드를 정의하는 **TypeScript 클래스** 
 
-Here is an example of a `Calculator` service.
+여기 `Calculator` 서비스의 예가 있습니다.
 
 ```angular-ts
 import {Injectable} from '@angular/core';
@@ -26,14 +26,14 @@ export class Calculator {
 }
 ```
 
-## How to use a service
+## 서비스 사용 방법
 
-When you want to use a service in a component, you need to:
+구성 요소에서 서비스를 사용하려면 다음을 수행해야 합니다:
 
-1. Import the service
-2. Declare a class field where the service is injected. Assign the class field to the result of the call of the built-in function `inject` which creates the service
+1. 서비스를 가져옵니다.
+2. 서비스가 주입될 클래스 필드를 선언합니다. 클래스 필드를 내장 함수 `inject`의 호출 결과로 할당하여 서비스를 생성합니다.
 
-Here’s what it might look like in the `Receipt` component:
+`Receipt` 구성 요소에서 이것이 어떻게 보일 수 있는지 보여줍니다:
 
 ```angular-ts
 import { Component, inject } from '@angular/core';
@@ -41,7 +41,7 @@ import { Calculator } from './calculator';
 
 @Component({
   selector: 'app-receipt',
-  template: `<h1>The total is {{ totalCost }}</h1>`,
+  template: `<h1>총액은 {{ totalCost }}입니다</h1>`,
 })
 
 export class Receipt {
@@ -50,11 +50,11 @@ export class Receipt {
 }
 ```
 
-In this example, the `Calculator` is being used by calling the Angular function `inject` and passing in the service to it.
+이 예제에서는 `Calculator`가 Angular 함수 `inject`를 호출하고 서비스로 전달하여 사용되고 있습니다.
 
-## Next Step
+## 다음 단계
 
 <docs-pill-row>
-  <docs-pill title="Next Steps After Essentials" href="essentials/next-steps" />
-  <docs-pill title="In-depth dependency injection guide" href="guide/di" />
+  <docs-pill title="기초 후 다음 단계" href="essentials/next-steps" />
+  <docs-pill title="심층 의존성 주입 가이드" href="guide/di" />
 </docs-pill-row>

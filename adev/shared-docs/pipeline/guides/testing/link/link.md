@@ -1,3 +1,3 @@
-[Angular Site](https://angular.dev)
-[same page](#test)
-[same site](../other/page)
+[Angular Site](https://angular.dev)  
+[same page](#test)  
+[same site](../other/page)  

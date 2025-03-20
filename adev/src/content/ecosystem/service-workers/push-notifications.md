@@ -1,33 +1,33 @@
-# Push notifications
+# 푸시 알림
 
-Push notifications are a compelling way to engage users.
-Through the power of service workers, notifications can be delivered to a device even when your application is not in focus.
+푸시 알림은 사용자와 상호작용할 수 있는 매력적인 방법입니다.
+서비스 워커의 힘을 통해, 애플리케이션이 포커스되고 있지 않을 때에도 푸시 알림을 장치로 전송할 수 있습니다.
 
-The Angular service worker enables the display of push notifications and the handling of notification click events.
+Angular 서비스 워커는 푸시 알림의 표시와 알림 클릭 이벤트의 처리를 가능하게 합니다.
 
-HELPFUL: When using the Angular service worker, push notification interactions are handled using the `SwPush` service.
-To learn more about the browser APIs involved see [Push API](https://developer.mozilla.org/docs/Web/API/Push_API) and [Using the Notifications API](https://developer.mozilla.org/docs/Web/API/Notifications_API/Using_the_Notifications_API).
+도움말: Angular 서비스 워커를 사용할 때, 푸시 알림 상호작용은 `SwPush` 서비스를 사용하여 처리됩니다.
+브라우저 API에 대해 더 알아보려면 [푸시 API](https://developer.mozilla.org/docs/Web/API/Push_API) 및 [알림 API 사용](https://developer.mozilla.org/docs/Web/API/Notifications_API/Using_the_Notifications_API)을 참조하세요.
 
-## Notification payload
+## 알림 페이로드
 
-Invoke push notifications by pushing a message with a valid payload.
-See `SwPush` for guidance.
+유효한 페이로드로 메시지를 푸시하여 푸시 알림을 호출합니다.
+안내는 `SwPush`를 참조하세요.
 
-HELPFUL: In Chrome, you can test push notifications without a backend.
-Open Devtools -> Application -> Service Workers and use the `Push` input to send a JSON notification payload.
+도움말: Chrome에서는 백엔드 없이 푸시 알림을 테스트할 수 있습니다.
+Devtools -> 응용 프로그램 -> 서비스 워커를 열고 `푸시` 입력을 사용하여 JSON 알림 페이로드를 전송하세요.
 
-## Notification click handling
+## 알림 클릭 처리
 
-The default behavior for the `notificationclick` event is to close the notification and notify `SwPush.notificationClicks`.
+`notificationclick` 이벤트에 대한 기본 동작은 알림을 닫고 `SwPush.notificationClicks`에 알립니다.
 
-You can specify an additional operation to be executed on `notificationclick` by adding an `onActionClick` property to the `data` object, and providing a `default` entry.
-This is especially useful for when there are no open clients when a notification is clicked.
+`data` 객체에 `onActionClick` 속성을 추가하고 `default` 항목을 제공하여 `notificationclick`에서 실행될 추가 작업을 지정할 수 있습니다.
+이는 알림이 클릭될 때 열려 있는 클라이언트가 없을 경우 특히 유용합니다.
 
 <docs-code language="json">
 
 {
   "notification": {
-    "title": "New Notification!",
+    "title": "새 알림!",
     "data": {
       "onActionClick": {
         "default": {"operation": "openWindow", "url": "foo"}
@@ -38,39 +38,39 @@ This is especially useful for when there are no open clients when a notification
 
 </docs-code>
 
-### Operations
+### 작업
 
-The Angular service worker supports the following operations:
+Angular 서비스 워커는 다음 작업을 지원합니다:
 
-| Operations                  | Details |
-|:---                         |:---     |
-| `openWindow`                | Opens a new tab at the specified URL.                                                                                                            |
-| `focusLastFocusedOrOpen`    | Focuses the last focused client. If there is no client open, then it opens a new tab at the specified URL.                                       |
-| `navigateLastFocusedOrOpen` | Focuses the last focused client and navigates it to the specified URL. If there is no client open, then it opens a new tab at the specified URL. |
-| `sendRequest`               | Send a simple GET request to the specified URL.                                                                                                                                                          |
+| 작업                       | 세부정보 |
+|:---                        |:---      |
+| `openWindow`                | 지정된 URL에서 새 탭을 엽니다.                                                                                                            |
+| `focusLastFocusedOrOpen`    | 마지막으로 포커스된 클라이언트에 포커스를 맞춥니다. 클라이언트가 열려 있지 않으면 지정된 URL에서 새 탭을 엽니다.                                       |
+| `navigateLastFocusedOrOpen` | 마지막으로 포커스된 클라이언트에 포커스를 맞추고 지정된 URL로 이동합니다. 클라이언트가 열려 있지 않으면 지정된 URL에서 새 탭을 엽니다. |
+| `sendRequest`               | 지정된 URL로 간단한 GET 요청을 전송합니다.                                                                                                                                                          |
 
-IMPORTANT: URLs are resolved relative to the service worker's registration scope.<br />If an `onActionClick` item does not define a `url`, then the service worker's registration scope is used.
+중요: URL은 서비스 워커의 등록 범위에 상대적으로 해결됩니다.<br />`onActionClick` 항목이 `url`을 정의하지 않으면 서비스 워커의 등록 범위가 사용됩니다.
 
-### Actions
+### 작업
 
-Actions offer a way to customize how the user can interact with a notification.
+작업은 사용자가 알림과 상호작용할 수 있는 방식을 사용자 정의할 수 있는 방법을 제공합니다.
 
-Using the `actions` property, you can define a set of available actions.
-Each action is represented as an action button that the user can click to interact with the notification.
+`actions` 속성을 사용하여 사용 가능한 작업 집합을 정의할 수 있습니다.
+각 작업은 사용자가 클릭하여 알림과 상호작용할 수 있는 작업 버튼으로 표시됩니다.
 
-In addition, using the `onActionClick` property on the `data` object, you can tie each action to an operation to be performed when the corresponding action button is clicked:
+또한, `data` 객체의 `onActionClick` 속성을 사용하여 각 작업을 해당 작업 버튼이 클릭될 때 수행할 작업에 연결할 수 있습니다:
 
 <docs-code language="typescript">
 
 {
   "notification": {
-    "title": "New Notification!",
+    "title": "새 알림!",
     "actions": [
-      {"action": "foo", "title": "Open new tab"},
-      {"action": "bar", "title": "Focus last"},
-      {"action": "baz", "title": "Navigate last"},
-      {"action": "qux", "title": "Send request in the background"},
-      {"action": "other", "title": "Just notify existing clients"}
+      {"action": "foo", "title": "새 탭 열기"},
+      {"action": "bar", "title": "마지막으로 포커스"},
+      {"action": "baz", "title": "마지막으로 이동"},
+      {"action": "qux", "title": "백그라운드에서 요청 전송"},
+      {"action": "other", "title": "기존 클라이언트에 알림만 보내기"}
     ],
     "data": {
       "onActionClick": {
@@ -86,14 +86,14 @@ In addition, using the `onActionClick` property on the `data` object, you can ti
 
 </docs-code>
 
-IMPORTANT: If an action does not have a corresponding `onActionClick` entry, then the notification is closed and `SwPush.notificationClicks` is notified on existing clients.
+중요: 작업에 해당 `onActionClick` 항목이 없는 경우, 알림은 닫히고 `SwPush.notificationClicks`가 기존 클라이언트에 알립니다.
 
-## More on Angular service workers
+## Angular 서비스 워커에 대한 더 많은 정보
 
-You might also be interested in the following:
+다음 정보에 관심이 있을 수도 있습니다:
 
 <docs-pill-row>
 
-  <docs-pill href="ecosystem/service-workers/communications" title="Communicating with the Service Worker"/>
-  <docs-pill href="ecosystem/service-workers/devops" title="Service Worker devops"/>
+  <docs-pill href="ecosystem/service-workers/communications" title="서비스 워커와의 통신"/>
+  <docs-pill href="ecosystem/service-workers/devops" title="서비스 워커 DevOps"/>
 </docs-pill-row>

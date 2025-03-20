@@ -1,14 +1,14 @@
 # Example Angular Internationalization application
 
-<!-- ## Explore the translated example application -->
+<!-- ## 탐색 번역된 예제 애플리케이션 -->
 
-<!-- Explore the sample application with French translations used in the [Angular Internationalization][GuideI18nOverview] guide: -->
-<!-- TODO: link to GitHub -->
+<!-- [Angular Internationalization][GuideI18nOverview] 가이드에서 사용된 프랑스어 번역이 포함된 샘플 애플리케이션을 탐색하십시오: -->
+<!-- TODO: GitHub 링크 -->
 <!-- <docs-code live path="adev/src/content/examples/i18n" title="live example"/> -->
 
-## `fr-CA` and `en-US` example
+## `fr-CA` 및 `en-US` 예제
 
-The following tabs display the example application and the associated translation files.
+다음 탭에서는 예제 애플리케이션과 관련된 번역 파일을 표시합니다.
 
 <docs-code-multifile>
     <docs-code header="src/app/app.component.html" path="adev/src/content/examples/i18n/src/app/app.component.html"/>

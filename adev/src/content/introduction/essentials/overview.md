@@ -1,27 +1,27 @@
-<docs-decorative-header title="Essentials" imgSrc="adev/src/assets/images/what_is_angular.svg"> <!-- markdownlint-disable-line -->
-A short introduction to some of Angular's main concepts.
+<docs-decorative-header title="필수 요소" imgSrc="adev/src/assets/images/what_is_angular.svg"> <!-- markdownlint-disable-line -->
+Angular의 주요 개념에 대한 간단한 소개.
 </docs-decorative-header>
 
-## Interested in Angular?
+## Angular에 관심이 있나요?
 
-Welcome! This _Essentials_ guide explains some of Angular's main concepts, helping you understand what it's like to use the framework. This guide focuses on just a few building blocks as a short introduction. If you're looking for deep, comprehensive documentation, you can navigate to specific _In-depth Guides_ from the [documentation landing page](overview).
+환영합니다! 이 _필수 요소_ 가이드는 Angular의 주요 개념 중 일부를 설명하여 프레임워크를 사용하는 것이 어떤 것인지 이해하는 데 도움을 줍니다. 이 가이드는 짧은 소개를 위해 몇 가지 기본 구성 요소에만 집중합니다. 깊이 있는 종합 문서를 찾고 계신다면 [문서 랜딩 페이지](overview)에서 특정 _심층 가이드_로 이동할 수 있습니다.
 
-If you prefer to immediately start writing some code, you can [skip straight to the hands-on tutorial](tutorials/learn-angular).
+바로 코드를 작성하는 것을 선호하신다면, [실습 튜토리얼로 바로 건너뛰기](tutorials/learn-angular) 하실 수 있습니다.
 
-### Before you start
+### 시작하기 전에
 
-This site expects that you're familiar with HTML, CSS and TypeScript. If you are totally new to web development, you should seek out some more introductory content before coming back here.
+이 사이트는 여러분이 HTML, CSS 및 TypeScript에 익숙하다고 가정합니다. 웹 개발에 전혀 익숙하지 않다면, 여기로 돌아오기 전에 더 많은 소개 콘텐츠를 찾아보아야 합니다.
 
-In particular, you should be familiar with the following concepts:
+특히 다음 개념을 이해하고 있어야 합니다:
 
-- [JavaScript Classes](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Classes)
-- [TypeScript fundamentals](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
-- [TypeScript Decorators](https://www.typescriptlang.org/docs/handbook/decorators.html)
+- [JavaScript 클래스](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Classes)
+- [TypeScript 기본 사항](https://www.typescriptlang.org/docs/handbook/typescript-in-5-minutes.html)
+- [TypeScript 데코레이터](https://www.typescriptlang.org/docs/handbook/decorators.html)
 
-## Next Step
+## 다음 단계
 
-Ready to jump in? It's time to learn about components in Angular!
+준비가 되셨나요? 이제 Angular의 컴포넌트에 대해 배울 시간입니다!
 
 <docs-pill-row>
-  <docs-pill title="Composing with Components" href="essentials/components" />
+  <docs-pill title="컴포넌트로 구성하기" href="essentials/components" />
 </docs-pill-row>

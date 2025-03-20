@@ -1,10 +1,8 @@
-# Component selectors
+# 구성 요소 선택기
 
-Tip: This guide assumes you've already read the [Essentials Guide](essentials). Read that first if you're new to Angular.
+팁: 이 가이드는 이미 [필수 가이드](essentials)를 읽었다고 가정합니다. Angular에 익숙하지 않은 경우 먼저 해당 내용을 읽으세요.
 
-Every component defines
-a [CSS selector](https://developer.mozilla.org/docs/Web/CSS/CSS_selectors) that determines how
-the component is used:
+모든 구성 요소는 구성 요소가 사용되는 방식을 결정하는 [CSS 선택기](https://developer.mozilla.org/docs/Web/CSS/CSS_selectors)를 정의합니다:
 
 <docs-code language="angular-ts" highlight="[2]">
 @Component({
@@ -14,54 +12,43 @@ the component is used:
 export class ProfilePhoto { }
 </docs-code>
 
-You use a component by creating a matching HTML element in the templates of _other_ components:
+구성 요소는 _다른_ 구성 요소의 템플릿에 일치하는 HTML 요소를 생성함으로써 사용합니다:
 
 <docs-code language="angular-ts" highlight="[3]">
 @Component({
   template: `
     <profile-photo />
-    <button>Upload a new profile photo</button>`,
+    <button>새 프로필 사진 업로드</button>`,
   ...,
 })
 export class UserProfile { }
 </docs-code>
 
-**Angular matches selectors statically at compile-time**. Changing the DOM at run-time, either via
-Angular bindings or with DOM APIs, does not affect the components rendered.
+**Angular는 컴파일 시간에 선택기를 정적으로 일치시킵니다**. 실행 시간에 DOM을 변경하면 Angular 바인딩이나 DOM API를 통해서도 렌더링된 구성 요소에는 영향을 미치지 않습니다.
 
-**An element can match exactly one component selector.** If multiple component selectors match a
-single element, Angular reports an error.
+**하나의 요소는 정확히 하나의 구성 요소 선택기에만 일치할 수 있습니다.** 여러 구성 요소 선택기가 단일 요소에 일치하는 경우 Angular는 오류를 보고합니다.
 
-**Component selectors are case-sensitive.**
+**구성 요소 선택기는 대소문자를 구분합니다.**
 
-## Types of selectors
+## 선택기 유형
 
-Angular supports a limited subset
-of [basic CSS selector types](https://developer.mozilla.org/docs/Web/CSS/CSS_Selectors) in
-component selectors:
+Angular는 구성 요소 선택기에서 [기본 CSS 선택기 유형](https://developer.mozilla.org/docs/Web/CSS/CSS_Selectors)의 제한된 하위 집합을 지원합니다:
 
-| **Selector type**  | **Description**                                                                                                 | **Examples**                  |
-| ------------------ | --------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| Type selector      | Matches elements based on their HTML tag name, or node name.                                                    | `profile-photo`               |
-| Attribute selector | Matches elements based on the presence of an HTML attribute and, optionally, an exact value for that attribute. | `[dropzone]` `[type="reset"]` |
-| Class selector     | Matches elements based on the presence of a CSS class.                                                          | `.menu-item`                  |
+| **선택기 유형**  | **설명**                                                                                                    | **예**                       |
+| ----------------- | ------------------------------------------------------------------------------------------------------------ | ---------------------------- |
+| 유형 선택기      | HTML 태그 이름 또는 노드 이름을 기준으로 요소와 일치합니다.                                               | `profile-photo`              |
+| 속성 선택기      | HTML 속성의 존재와 선택적으로 해당 속성의 정확한 값을 기준으로 요소와 일치합니다.                        | `[dropzone]` `[type="reset"]` |
+| 클래스 선택기     | CSS 클래스의 존재를 기준으로 요소와 일치합니다.                                                           | `.menu-item`                 |
 
-For attribute values, Angular supports matching an exact attribute value with the equals (`=`)
-operator. Angular does not support other attribute value operators.
+속성 값의 경우, Angular는 등호(`=`) 연산자를 사용하여 정확한 속성 값을 일치시키는 것을 지원합니다. Angular는 다른 속성 값 연산자를 지원하지 않습니다.
 
-Angular component selectors do not support combinators, including
-the [descendant combinator](https://developer.mozilla.org/docs/Web/CSS/Descendant_combinator)
-or [child combinator](https://developer.mozilla.org/docs/Web/CSS/Child_combinator).
+Angular 구성 요소 선택기는 [자손 결합기](https://developer.mozilla.org/docs/Web/CSS/Descendant_combinator) 또는 [자식 결합기](https://developer.mozilla.org/docs/Web/CSS/Child_combinator)를 포함한 결합기를 지원하지 않습니다.
 
-Angular component selectors do not support
-specifying [namespaces](https://developer.mozilla.org/docs/Web/SVG/Namespaces_Crash_Course).
+Angular 구성 요소 선택기는 [네임스페이스](https://developer.mozilla.org/docs/Web/SVG/Namespaces_Crash_Course)를 지정하는 것을 지원하지 않습니다.
 
-### The `:not` pseudo-class
+### `:not` 의사 클래스
 
-Angular supports [the `:not` pseudo-class](https://developer.mozilla.org/docs/Web/CSS/:not).
-You can append this pseudo-class to any other selector to narrow which elements a component's
-selector matches. For example, you could define a `[dropzone]` attribute selector and prevent
-matching `textarea` elements:
+Angular는 [`:not` 의사 클래스](https://developer.mozilla.org/docs/Web/CSS/:not)를 지원합니다. 이 의사 클래스를 다른 선택기에 추가하여 구성 요소의 선택기가 어떤 요소와 일치하는지를 좁힐 수 있습니다. 예를 들어 `[dropzone]` 속성 선택기를 정의하고 `textarea` 요소와 일치하지 않도록 할 수 있습니다:
 
 <docs-code language="angular-ts" highlight="[2]">
 @Component({
@@ -71,12 +58,11 @@ matching `textarea` elements:
 export class DropZone { }
 </docs-code>
 
-Angular does not support any other pseudo-classes or pseudo-elements in component selectors.
+Angular는 구성 요소 선택기에서 다른 의사 클래스나 의사 요소를 지원하지 않습니다.
 
-### Combining selectors
+### 선택기 결합
 
-You can combine multiple selectors by concatenating them. For example, you can match `<button>`
-elements that specify `type="reset"`:
+여러 선택기를 결합하여 사용할 수 있습니다. 예를 들어, `type="reset"`인 `<button>` 요소와 일치시킬 수 있습니다:
 
 <docs-code language="angular-ts" highlight="[2]">
 @Component({
@@ -86,7 +72,7 @@ elements that specify `type="reset"`:
 export class ResetButton { }
 </docs-code>
 
-You can also define multiple selectors with a comma-separated list:
+쉼표로 구분된 목록을 사용하여 여러 선택기를 정의할 수도 있습니다:
 
 <docs-code language="angular-ts" highlight="[2]">
 @Component({
@@ -96,36 +82,23 @@ You can also define multiple selectors with a comma-separated list:
 export class DropZone { }
 </docs-code>
 
-Angular creates a component for each element that matches _any_ of the selectors in the list.
+Angular는 목록의 _모든_ 선택기와 일치하는 요소마다 구성 요소를 생성합니다.
 
-## Choosing a selector
+## 선택기 선택
 
-The vast majority of components should use a custom element name as their selector. All custom
-element names should include a hyphen as described
-by [the HTML specification](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name).
-By default, Angular reports an error if it encounters a custom tag name that does not match any
-available components, preventing bugs due to mistyped component names.
+대다수의 구성 요소는 선택기로 사용자 정의 요소 이름을 사용하는 것이 좋습니다. 모든 사용자 정의 요소 이름은 [HTML 사양](https://html.spec.whatwg.org/multipage/custom-elements.html#valid-custom-element-name)에 설명된 대로 하이픈을 포함해야 합니다. 기본적으로 Angular는 사용 가능한 구성 요소와 일치하지 않는 사용자 정의 태그 이름을 만나면 오류를 보고하여 잘못 입력된 구성 요소 이름으로 인한 버그를 방지합니다.
 
-See [Advanced component configuration](guide/components/advanced-configuration) for details on
-using [native custom elements](https://developer.mozilla.org/docs/Web/Web_Components) in
-Angular templates.
+[네이티브 사용자 정의 요소](https://developer.mozilla.org/docs/Web/Web_Components)를 Angular 템플릿에서 사용하는 방법에 대한 자세한 내용은 [고급 구성 요소 구성](guide/components/advanced-configuration)을 참조하세요.
 
-### Selector prefixes
+### 선택기 접두사
 
-The Angular team recommends using a short, consistent prefix for all the custom components
-defined inside your project. For example, if you were to build YouTube with Angular, you might
-prefix your components with `yt-`, with components like `yt-menu`, `yt-player`, etc. Namespacing
-your selectors like this makes it immediately clear where a particular component comes from. By
-default, the Angular CLI uses `app-`.
+Angular 팀은 프로젝트 내에서 정의된 모든 사용자 정의 구성 요소에 대해 짧고 일관된 접두사를 사용할 것을 권장합니다. 예를 들어 Angular로 YouTube를 빌드하려는 경우 구성 요소에 `yt-` 접두사를 붙일 수 있으며, 그러면 `yt-menu`, `yt-player`와 같은 구성 요소가 생깁니다. 이렇게 선택기에 네임스페이스를 부여하면 특정 구성 요소가 어디에서 오는지 즉시 명확해집니다. 기본적으로 Angular CLI는 `app-`를 사용합니다.
 
-Angular uses the `ng` selector prefix for its own framework APIs. Never use `ng` as a selector
-prefix for your own custom components.
+Angular는 자체 프레임워크 API에 대해 `ng` 선택기 접두사를 사용합니다. 사용자 정의 구성 요소에 대한 선택기 접두사로 `ng`를 절대 사용하지 마십시오.
 
-### When to use an attribute selector
+### 속성 선택기를 사용할 때
 
-You should consider an attribute selector when you want to create a component on a standard native
-element. For example, if you want to create a custom button component, you can take advantage of the
-standard `<button>` element by using an attribute selector:
+표준 네이티브 요소에서 구성 요소를 생성하려는 경우 속성 선택기를 고려해야 합니다. 예를 들어 사용자 정의 버튼 구성 요소를 생성하려는 경우, 속성 선택기를 사용하여 표준 `<button>` 요소를 활용할 수 있습니다:
 
 <docs-code language="angular-ts" highlight="[2]">
 @Component({
@@ -135,13 +108,8 @@ standard `<button>` element by using an attribute selector:
 export class YouTubeUploadButton { }
 </docs-code>
 
-This approach allows consumers of the component to directly use all the element's standard APIs
-without extra work. This is especially valuable for ARIA attributes such as `aria-label`.
+이 접근 방식은 구성 요소 소비자가 추가 작업 없이 요소의 모든 표준 API를 직접 사용할 수 있게 합니다. 이는 `aria-label`과 같은 ARIA 속성에 특히 유용합니다.
 
-Angular does not report errors when it encounters custom attributes that don't match an available
-component. When using components with attribute selectors, consumers may forget to import the
-component or its NgModule, resulting in the component not rendering.
-See [Importing and using components](guide/components/importing) for more information.
+Angular는 사용 가능한 구성 요소와 일치하지 않는 사용자 정의 속성을 만날 때 오류를 보고하지 않습니다. 속성 선택기를 가진 구성 요소를 사용할 때 소비자가 구성 요소나 해당 NgModule을 가져오는 것을 잊어버릴 수 있으며, 이로 인해 구성 요소가 렌더링되지 않을 수 있습니다. 더 많은 정보는 [구성 요소 가져오기 및 사용](guide/components/importing)을 참조하세요.
 
-Components that define attribute selectors should use lowercase, dash-case attributes. You can
-follow the same prefixing recommendation described above.
+속성 선택기를 정의한 구성 요소는 소문자와 대시 구문 속성을 사용해야 합니다. 위에서 설명한 접두사 추천을 따를 수 있습니다.

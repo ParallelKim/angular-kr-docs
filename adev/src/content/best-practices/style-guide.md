@@ -1,70 +1,67 @@
-# Angular coding style guide
+# Angular 코딩 스타일 가이드
 
-Looking for an opinionated guide to Angular syntax, conventions, and application structure?
-Step right in.
-This style guide presents preferred conventions and, as importantly, explains why.
+Angular 구문, 규칙 및 애플리케이션 구조에 대한 의견이 반영된 가이드를 찾고 계십니까?  
+바로 들어오세요.  
+이 스타일 가이드는 선호하는 규칙을 제시하고, 그 이유를 설명합니다.
 
-## Style vocabulary
+## 스타일 용어
 
-Each guideline describes either a good or bad practice, and all have a consistent presentation.
+각 지침은 좋은 또는 나쁜 관행을 설명하며, 모두 일관된 표현을 가지고 있습니다.  
+각 지침의 표현은 권장 정도를 나타냅니다.
 
-The wording of each guideline indicates how strong the recommendation is.
+**Do**는 항상 따르야 하는 규칙입니다.  
+*항상* 이라는 단어는 다소 강할 수 있습니다.  
+정말로 항상 준수해야 하는 규칙은 극히 드뭅니다.  
+반면, *Do* 지침을 위반해야 하는 경우는 정말로 특별한 경우입니다.
 
-**Do** is one that should always be followed.
-*Always* might be a bit too strong of a word.
-Guidelines that literally should always be followed are extremely rare.
-On the other hand, you need a really unusual case for breaking a *Do* guideline.
+**Consider** 지침은 일반적으로 따르는 것이 좋습니다.  
+규칙의 의미를 완전히 이해하고 따르지 않을 이유가 분명하다면 그렇게 하십시오.  
+일관성을 유지하는 것이 목표입니다.
 
-**Consider** guidelines should generally be followed.
-If you fully understand the meaning behind the guideline and have a good reason to deviate, then do so.
-Aim to be consistent.
+**Avoid**는 거의 하지 말아야 할 것을 의미합니다.  
+*Avoid*할 코드 예시는 눈에 띄는 빨간색 머리글이 있습니다.
 
-**Avoid** indicates something you should almost never do.
-Code examples to *avoid* have an unmistakable red header.
+**왜**? <br />
+이전 권장 사항을 따르는 이유를 제공합니다.
 
-**Why**? <br />
-Gives reasons for following the previous recommendations.
+## 파일 구조 규칙
 
-## File structure conventions
+일부 코드 예시는 하나 이상의 유사한 이름의 보조 파일이 있는 파일을 표시합니다.  
+예를 들어, `hero.component.ts` 및 `hero.component.html`.
 
-Some code examples display a file that has one or more similarly named companion files.
-For example, `hero.component.ts` and `hero.component.html`.
+지침에서는 이러한 다양한 파일을 나타내기 위해 단축키 `hero.component.ts|html|css|spec`를 사용합니다.  
+이 단축키를 사용하면 이 가이드의 파일 구조를 더 쉽게 읽을 수 있습니다.
 
-The guideline uses the shortcut `hero.component.ts|html|css|spec` to represent those various files.
-Using this shortcut makes this guide's file structures easier to read and more terse.
+## 단일 책임
 
-## Single responsibility
+모든 구성 요소, 서비스 및 기타 기호에 [*단일 책임 원칙(SRP)*](https://wikipedia.org/wiki/Single_responsibility_principle)를 적용합니다.  
+이것은 애플리케이션을 더 깔끔하고 읽기 쉬우며 유지 보수가 용이하고 테스트 가능하게 만듭니다.
 
-Apply the [*single responsibility principle (SRP)*](https://wikipedia.org/wiki/Single_responsibility_principle) to all components, services, and other symbols.
-This helps make the application cleaner, easier to read and maintain, and more testable.
+### 하나의 규칙
 
-### Rule of One
+#### 스타일 01-01
 
-#### Style 01-01
+**Do** 파일당 하나의 서비스나 구성 요소와 같은 것만 정의하십시오.
 
-**Do** define one thing, such as a service or component, per file.
+**Consider** 파일을 400줄로 제한하는 것을 고려하십시오.
 
-**Consider** limiting files to 400 lines of code.
+**왜**? <br />
+파일당 하나의 구성 요소는 읽기, 유지 보수 및 소스 제어에서 팀 간 충돌을 피하는 데 훨씬 쉽게 만듭니다.
 
-**Why**? <br />
-One component per file makes it far easier to read, maintain, and avoid collisions with teams in source control.
+**왜**? <br />
+파일당 하나의 구성 요소는 변수 공유, 원치 않는 클로저 생성 또는 종속성과의 원치 않는 결합이 발생할 수 있는 파일 내에서 구성 요소를 결합할 때 종종 발생하는 숨겨진 버그를 방지합니다.
 
-**Why**? <br />
-One component per file avoids hidden bugs that often arise when combining components in a file where they may share variables, create unwanted closures, or unwanted coupling with dependencies.
+**왜**? <br />
+단일 구성 요소는 해당 파일의 기본 내보내기가 될 수 있어 라우터와 함께 지연 로딩을 용이하게 합니다.
 
-**Why**? <br />
-A single component can be the default export for its file which facilitates lazy loading with the router.
+핵심은 코드를 더 재사용 가능하게 하고, 읽기 쉽게 만들고, 실수를 덜 하게 만드는 것입니다.
 
-The key is to make the code more reusable, easier to read, and less mistake-prone.
-
-The following *negative* example defines the `AppComponent`, bootstraps the app,
-defines the `Hero` model object, and loads heroes from the server all in the same file.
-*Don't do this*.
+다음 *부정적인* 예시는 `AppComponent`를 정의하고, 앱을 부트스트랩하고, `Hero` 모델 객체를 정의하며, 서버에서 영웅을 모두 같은 파일에서 로드합니다.  
+*이런 식으로 하지 마세요*.
 
 <docs-code path="adev/src/content/examples/styleguide/src/01-01/app/heroes/hero.component.avoid.ts" language="typescript" header="app/heroes/hero.component.ts"/>
 
-It is a better practice to redistribute the component and its
-supporting classes into their own, dedicated files.
+구성 요소와 해당 지원 클래스를 전용 파일로 재배포하는 것이 더 나은 관행입니다.
 
 <docs-code-multifile>
     <docs-code header="main.ts" path="adev/src/content/examples/styleguide/src/01-01/main.ts"/>
@@ -76,80 +73,80 @@ supporting classes into their own, dedicated files.
     <docs-code header="app/heroes/shared/mock-heroes.ts" path="adev/src/content/examples/styleguide/src/01-01/app/heroes/shared/mock-heroes.ts"/>
 </docs-code-multifile>
 
-As the application grows, this rule becomes even more important.
+애플리케이션이 성장함에 따라 이 규칙은 더욱 중요해집니다.
 
-## Naming
+## 명명
 
-Naming conventions are hugely important to maintainability and readability.
-This guide recommends naming conventions for the file name and the symbol name.
+명명 규칙은 유지 보수성과 가독성에 매우 중요합니다.  
+이 가이드는 파일 이름과 기호 이름에 대한 명명 규칙을 추천합니다.
 
-### General Naming Guidelines
+### 일반 명명 규칙
 
-#### Style 02-01
+#### 스타일 02-01
 
-**Do** use consistent names for all symbols.
+**Do** 모든 기호에 대해 일관된 이름을 사용하십시오.
 
-**Do** follow a pattern that describes the symbol's feature then its type.
-The recommended pattern is `feature.type.ts`.
+**Do** 기호의 기능을 설명하는 패턴을 따르고 그 다음에는 타입을 설명하십시오.  
+추천 패턴은 `feature.type.ts`입니다.
 
-**Why**? <br />
-Naming conventions help provide a consistent way to find content at a glance.
-Consistency within the project is vital.
-Consistency with a team is important.
-Consistency across a company provides tremendous efficiency.
+**왜**? <br />
+명명 규칙은 내용을 한눈에 쉽게 찾을 수 있는 일관된 방법을 제공하는 데 도움이 됩니다.  
+프로젝트 내의 일관성이 중요합니다.  
+팀 내 일관성도 중요합니다.  
+회사의 일관성은 엄청난 효율성을 제공합니다.
 
-**Why**? <br />
-The naming conventions should help find desired code faster and make it easier to understand.
+**왜**? <br />
+명명 규칙은 원하는 코드를 더 빨리 찾을 수 있도록 도와주고 이해하기 쉽게 만듭니다.
 
-**Why**? <br />
-Names of folders and files should clearly convey their intent.
-For example, `app/heroes/hero-list.component.ts` may contain a component that manages a list of heroes.
+**왜**? <br />
+폴더와 파일의 이름은 그 의도를 명확하게 전달해야 합니다.  
+예를 들어, `app/heroes/hero-list.component.ts`는 영웅 목록을 관리하는 구성 요소를 포함할 수 있습니다.
 
-### Separate file names with dots and dashes
+### 파일 이름을 점과 대시로 구분
 
-#### Style 02-02
+#### 스타일 02-02
 
-**Do** use dashes to separate words in the descriptive name.
+**Do** 설명적인 이름의 단어를 구분하기 위해 대시를 사용하십시오.
 
-**Do** use dots to separate the descriptive name from the type.
+**Do** 설명적인 이름과 타입 이름을 구분하기 위해 점을 사용하십시오.
 
-**Do** use consistent type names for all components following a pattern that describes the component's feature then its type.
-A recommended pattern is `feature.type.ts`.
+**Do** 모든 구성 요소에 대해 일관된 타입 이름을 사용하십시오. 구성 요소의 기능을 설명하는 패턴을 따르십시오.  
+추천 패턴은 `feature.type.ts`입니다.
 
-**Do** use conventional type names including `.service`, `.component`, `.pipe`, `.module`, and `.directive`.
-Invent additional type names if you must but take care not to create too many.
+**Do** `.service`, `.component`, `.pipe`, `.module`, 및 `.directive`와 같은 관습적인 타입 이름을 사용하십시오.  
+추가 타입 이름을 만들 필요가 있다면 너무 많이 만들지 않도록 주의하십시오.
 
-**Why**? <br />
-Type names provide a consistent way to quickly identify what is in the file.
+**왜**? <br />
+타입 이름은 파일에 무엇이 들어 있는지를 빠르게 식별할 수 있는 일관된 방법을 제공합니다.
 
-**Why**? <br />
-Type names make it easy to find a specific file type using an editor or IDE's fuzzy search techniques.
+**왜**? <br />
+타입 이름은 에디터나 IDE의 퍼지 검색 기술을 사용하여 특정 파일 유형을 쉽게 찾을 수 있도록 합니다.
 
-**Why**? <br />
-Unabbreviated type names such as `.service` are descriptive and unambiguous.
-Abbreviations such as `.srv`, `.svc`, and `.serv` can be confusing.
+**왜**? <br />
+`.service`와 같은 비축약 방식의 타입 이름은 설명적이며 모호하지 않습니다.  
+`.srv`, `.svc`, 및 `.serv`와 같은 약어는 혼란을 줄 수 있습니다.
 
-**Why**? <br />
-Type names provide pattern matching for any automated tasks.
+**왜**? <br />
+타입 이름은 자동화 작업을 위한 패턴 매칭을 제공합니다.
 
-### Symbols and file names
+### 기호 및 파일 이름
 
-#### Style 02-03
+#### 스타일 02-03
 
-**Do** use consistent names for all assets named after what they represent.
+**Do** 자신이 나타내는 것에 따라 이름을 붙인 모든 자산에 대해 일관된 이름을 사용하십시오.
 
-**Do** use upper camel case for class names.
+**Do** 클래스 이름에 대해 대문자 카멜 표기법을 사용하십시오.
 
-**Do** match the name of the symbol to the name of the file.
+**Do** 기호의 이름을 파일의 이름과 일치시킵니다.
 
-**Do** append the symbol name with the conventional suffix \(such as `Component`, `Directive`, `Module`, `Pipe`, or `Service`\) for a thing of that type.
+**Do** 해당 유형의 항목에 대한 전통적인 접미사 \(예: `Component`, `Directive`, `Module`, `Pipe`, 또는 `Service`\)로 기호 이름을 추가하십시오.
 
-**Do** give the filename the conventional suffix \(such as `.component.ts`, `.directive.ts`, `.module.ts`, `.pipe.ts`, or `.service.ts`\) for a file of that type.
+**Do** 해당 유형의 파일에 대해 전통적인 접미사 \(예: `.component.ts`, `.directive.ts`, `.module.ts`, `.pipe.ts`, 또는 `.service.ts`\)를 파일 이름에 추가하십시오.
 
-**Why**? <br />
-Consistent conventions make it easy to quickly identify and reference assets of different types.
+**왜**? <br />
+일관된 규칙은 다양한 유형의 자산을 빠르게 식별하고 참조할 수 있도록 쉽게 만듭니다.
 
-| Symbol name                                                                                                                                                                          | File name |
+| 기호 이름                                                                                                                                                                          | 파일 이름 |
 |:---                                                                                                                                                                                  |:---       |
 | <docs-code hideCopy language="typescript"> @Component({ … }) <br>export class AppComponent { } </docs-code>                             | app.component.ts |
 | <docs-code hideCopy language="typescript"> @Component({ … }) <br>export class HeroesComponent { } </docs-code>                          | heroes.component.ts |
@@ -160,63 +157,63 @@ Consistent conventions make it easy to quickly identify and reference assets of 
 | <docs-code hideCopy language="typescript"> @Pipe({ name: 'initCaps' }) <br>export class InitCapsPipe implements PipeTransform { } </docs-code> | init-caps.pipe.ts |
 | <docs-code hideCopy language="typescript"> @Injectable() <br>export class UserProfileService { } </docs-code>                                  | user-profile.service.ts |
 
-### Service names
+### 서비스 이름
 
-#### Style 02-04
+#### 스타일 02-04
 
-**Do** use consistent names for all services named after their feature.
+**Do** 자신들의 기능에 따라 이름을 붙인 모든 서비스에 대해 일관된 이름을 사용하십시오.
 
-**Do** suffix a service class name with `Service`.
-For example, something that gets data or heroes should be called a `DataService` or a `HeroService`.
+**Do** 서비스 클래스 이름에 `Service`를 접미사로 붙이십시오.  
+예를 들어, 데이터를 가져오거나 영웅을 가져오는 항목은 `DataService` 또는 `HeroService`로 불려야 합니다.
 
-A few terms are unambiguously services.
-They typically indicate agency by ending in "-er".
-You may prefer to name a service that logs messages `Logger` rather than `LoggerService`.
-Decide if this exception is agreeable in your project.
-As always, strive for consistency.
+몇 가지 용어는 서비스임을 명확히 나타냅니다.  
+그들은 일반적으로 "-er"로 끝나는 에이전시를 나타냅니다.  
+메시지를 기록하는 서비스를 `LoggerService`보다 `Logger`라고 명명하는 것을 선호할 수 있습니다.  
+이 예외가 프로젝트에서 수용 가능한지 결정하십시오.  
+항상 일관성을 유지하기 위해 노력하십시오.
 
-**Why**? <br />
-Provides a consistent way to quickly identify and reference services.
+**왜**? <br />
+서비스를 빠르게 식별하고 참조할 수 있는 일관된 방법을 제공합니다.
 
-**Why**? <br />
-Clear service names such as `Logger` do not require a suffix.
+**왜**? <br />
+`Logger`와 같은 명확한 서비스 이름은 접미사가 필요 없습니다.
 
-**Why**? <br />
-Service names such as `Credit` are nouns and require a suffix and should be named with a suffix when it is not obvious if it is a service or something else.
+**왜**? <br />
+`Credit`와 같은 서비스 이름은 명사이고 접미사가 필요하며 서비스인지 다른 것인지 명확하지 않을 경우 접미사를 붙여야 합니다.
 
-| Symbol name                                                                                                                                      | File name |
+| 기호 이름                                                                                                                                      | 파일 이름 |
 |:---                                                                                                                                              |:---       |
 | <docs-code hideCopy language="typescript"> @Injectable() <br>export class HeroDataService { } </docs-code> | hero-data.service.ts |
 | <docs-code hideCopy language="typescript"> @Injectable() <br>export class CreditService { } </docs-code>   | credit.service.ts    |
 | <docs-code hideCopy language="typescript"> @Injectable() <br>export class Logger { } </docs-code>          | logger.service.ts    |
 
-### Bootstrapping
+### 부트스트래핑
 
-#### Style 02-05
+#### 스타일 02-05
 
-**Do** put bootstrapping and platform logic for the application in a file named `main.ts`.
+**Do** 애플리케이션의 부트스트래핑 및 플랫폼 로직을 `main.ts`라는 파일에 넣으십시오.
 
-**Do** include error handling in the bootstrapping logic.
+**Do** 부트스트래핑 로직에 오류 처리를 포함하십시오.
 
-**Avoid** putting application logic in `main.ts`.
-Instead, consider placing it in a component or service.
+**Avoid** `main.ts`에 애플리케이션 로직을 넣지 마십시오.  
+대신, 이를 구성 요소 또는 서비스에 두는 것이 좋습니다.
 
-**Why**? <br />
-Follows a consistent convention for the startup logic of an app.
+**왜**? <br />
+앱의 시작 로직에 대해 일관된 규칙을 따릅니다.
 
-**Why**? <br />
-Follows a familiar convention from other technology platforms.
+**왜**? <br />
+다른 기술 플랫폼에서 익숙한 규칙을 따릅니다.
 
 <docs-code header="main.ts" path="adev/src/content/examples/styleguide/src/02-05/main.ts"/>
 
-### Component selectors
+### 구성 요소 선택자
 
-#### Style 05-02
+#### 스타일 05-02
 
-**Do** use *dashed-case* or *kebab-case* for naming the element selectors of components.
+**Do** 구성 요소의 요소 선택자를 이름 짓는 데 *대시 대소문자* 또는 *케밥 대소문자*를 사용하십시오.
 
-**Why**? <br />
-Keeps the element names consistent with the specification for [Custom Elements](https://www.w3.org/TR/custom-elements).
+**왜**? <br />
+요소 이름을 [Custom Elements](https://www.w3.org/TR/custom-elements) 사양과 일치시킵니다.
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/05-02/app/heroes/shared/hero-button/hero-button.component.avoid.ts" visibleRegion="example"/>
 
@@ -225,22 +222,22 @@ Keeps the element names consistent with the specification for [Custom Elements](
     <docs-code header="app/app.component.html" path="adev/src/content/examples/styleguide/src/05-02/app/app.component.html"/>
 </docs-code-multifile>
 
-### Component custom prefix
+### 구성 요소 사용자 정의 접두사
 
-#### Style 02-07
+#### 스타일 02-07
 
-**Do** use a hyphenated, lowercase element selector value; for example, `admin-users`.
+**Do** 하이픈이 있는 소문자 요소 선택기 값을 사용하십시오. 예를 들어, `admin-users`.
 
-**Do** use a prefix that identifies the feature area or the application itself.
+**Do** 기능 영역이나 애플리케이션 자체를 식별하는 접두사를 사용하십시오.
 
-**Why**? <br />
-Prevents element name collisions with components in other applications and with native HTML elements.
+**왜**? <br />
+다른 애플리케이션의 구성 요소 및 기본 HTML 요소와 이름 충돌을 방지합니다.
 
-**Why**? <br />
-Makes it easier to promote and share the component in other applications.
+**왜**? <br />
+다른 애플리케이션에서 구성 요소를 홍보하고 공유하기 쉽게 만듭니다.
 
-**Why**? <br />
-Components are easy to identify in the DOM.
+**왜**? <br />
+DOM에서 구성 요소를 쉽게 식별할 수 있습니다.
 
 <docs-code header="app/heroes/hero.component.ts" path="adev/src/content/examples/styleguide/src/02-07/app/heroes/hero.component.avoid.ts" visibleRegion="example"/>
 
@@ -250,104 +247,104 @@ Components are easy to identify in the DOM.
 
 <docs-code header="app/users/users.component.ts" path="adev/src/content/examples/styleguide/src/02-07/app/users/users.component.ts" visibleRegion="example"/>
 
-### Directive selectors
+### 지시자 선택자
 
-#### Style 02-06
+#### 스타일 02-06
 
-**Do** Use lower camel case for naming the selectors of directives.
+**Do** 지시자의 선택자 이름에 대해 소문자 카멜 표기법을 사용하십시오.
 
-**Why**? <br />
-Keeps the names of the properties defined in the directives that are bound to the view consistent with the attribute names.
+**왜**? <br />
+보기와 바인딩된 지시자에서 정의된 속성 이름이 속성 이름과 일치하게 유지됩니다.
 
-**Why**? <br />
-The Angular HTML parser is case-sensitive and recognizes lower camel case.
+**왜**? <br />
+Angular HTML 파서는 대소문자를 구분하며 소문자 카멜 표기법을 인식합니다.
 
-### Directive custom prefix
+### 지시자 사용자 정의 접두사
 
-#### Style 02-08
+#### 스타일 02-08
 
-**Do** spell non-element selectors in lower camel case unless the selector is meant to match a native HTML attribute.
+**Do** 요소가 아닌 선택자는 소문자 카멜 표기법으로 표기합니다. 지시자가 기본 HTML 속성과 일치하는 경우는 제외입니다.
 
-**Don't** prefix a directive name with `ng` because that prefix is reserved for Angular and using it could cause bugs that are difficult to diagnose.
+**Don't** 지시자 이름에 `ng`로 접두어를 붙이지 마십시오. 그 접두사는 Angular에 예약되어 있으며, 사용하면 진단하기 어려운 버그를 초래할 수 있습니다.
 
-**Why**? <br />
-Prevents name collisions.
+**왜**? <br />
+이름 충돌을 방지합니다.
 
-**Why**? <br />
-Directives are easily identified.
+**왜**? <br />
+지시자를 쉽게 식별할 수 있습니다.
 
 <docs-code header="app/shared/validate.directive.ts" path="adev/src/content/examples/styleguide/src/02-08/app/shared/validate.directive.avoid.ts" visibleRegion="example"/>
 
 <docs-code header="app/shared/validate.directive.ts" path="adev/src/content/examples/styleguide/src/02-08/app/shared/validate.directive.ts" visibleRegion="example"/>
 
-### Pipe names
+### 파이프 이름
 
-#### Style 02-09
+#### 스타일 02-09
 
-**Do** use consistent names for all pipes, named after their feature.
-The pipe class name should use `UpperCamelCase` \(the general convention for class names\), and the corresponding `name` string should use *lowerCamelCase*.
-The `name` string cannot use hyphens \("dash-case" or "kebab-case"\).
+**Do** 모든 파이프에 대해 일관된 이름을 사용하십시오. 각 파이프는 그 기능에 맞춰 이름을 붙여야 합니다.  
+파이프 클래스 이름은 `UpperCamelCase` \(클래스 이름의 일반 규칙\)를 사용하고, 해당하는 `name` 문자열은 *lowerCamelCase*를 사용해야 합니다.  
+`name` 문자열은 하이픈을 사용할 수 없습니다 \("대시 대소문자" 또는 "케밥 대소문자"\).
 
-**Why**? <br />
-Provides a consistent way to quickly identify and reference pipes.
+**왜**? <br />
+파이프를 빠르게 식별하고 참조할 수 있는 일관된 방법을 제공합니다.
 
-| Symbol name                                                                                                                                                                          | File name |
+| 기호 이름                                                                                                                                                                          | 파일 이름 |
 |:---                                                                                                                                                                                  |:---       |
 | <docs-code hideCopy language="typescript"> @Pipe({ name: 'ellipsis' }) <br>export class EllipsisPipe implements PipeTransform { } </docs-code> | ellipsis.pipe.ts  |
 | <docs-code hideCopy language="typescript"> @Pipe({ name: 'initCaps' }) <br>export class InitCapsPipe implements PipeTransform { } </docs-code> | init-caps.pipe.ts |
 
-### Unit test file names
+### 단위 테스트 파일 이름
 
-#### Style 02-10
+#### 스타일 02-10
 
-**Do** name test specification files the same as the component they test.
+**Do** 테스트 사양 파일의 이름을 해당 테스트의 구성 요소와 동일하게 지정하십시오.
 
-**Do** name test specification files with a suffix of `.spec`.
+**Do** 테스트 사양 파일 이름에 `.spec` 접미사를 붙이십시오.
 
-**Why**? <br />
-Provides a consistent way to quickly identify tests.
+**왜**? <br />
+테스트를 빠르게 식별할 수 있는 일관된 방법을 제공합니다.
 
-**Why**? <br />
-Provides pattern matching for [karma](https://karma-runner.github.io) or other test runners.
+**왜**? <br />
+[karma](https://karma-runner.github.io) 또는 기타 테스트 실행기를 위한 패턴 매칭을 제공합니다.
 
-| Test type  | File names |
+| 테스트 유형 | 파일 이름 |
 |:---        |:---        |
-| Components | heroes.component.spec.ts <br /> hero-list.component.spec.ts <br /> hero-detail.component.spec.ts |
-| Services   | logger.service.spec.ts <br /> hero.service.spec.ts <br /> filter-text.service.spec.ts            |
-| Pipes      | ellipsis.pipe.spec.ts <br /> init-caps.pipe.spec.ts                                              |
+| 구성 요소 | heroes.component.spec.ts <br /> hero-list.component.spec.ts <br /> hero-detail.component.spec.ts |
+| 서비스   | logger.service.spec.ts <br /> hero.service.spec.ts <br /> filter-text.service.spec.ts            |
+| 파이프      | ellipsis.pipe.spec.ts <br /> init-caps.pipe.spec.ts                                              |
 
-## Application structure and NgModules
+## 애플리케이션 구조 및 NgModules
 
-Have a near-term view of implementation and a long-term vision.
-Start small but keep in mind where the application is heading.
+구현에 대한 단기적 관점을 갖고 장기적 비전을 세우십시오.  
+작게 시작하되 애플리케이션이 향후 나아갈 방향을 염두에 두십시오.
 
-All of the application's code goes in a folder named `src`.
-All feature areas are in their own folder.
+애플리케이션의 모든 코드는 `src`라는 폴더에 저장됩니다.  
+모든 기능 영역은 각각의 폴더에 위치합니다.
 
-All content is one asset per file.
-Each component, service, and pipe is in its own file.
-All third party vendor scripts are stored in another folder and not in the `src` folder.
-Use the naming conventions for files in this guide.
+모든 콘텐츠는 파일당 하나의 자산입니다.  
+각 구성 요소, 서비스 및 파이프는 각자의 파일에 있습니다.  
+모든 서드파티 벤더 스크립트는 다른 폴더에 저장되고 `src` 폴더에 저장되지 않습니다.  
+파일에 대한 이 가이드의 명명 규칙을 사용하십시오.
 
-### Overall structural guidelines
+### 전체 구조 규칙
 
-#### Style 04-06
+#### 스타일 04-06
 
-**Do** start small but keep in mind where the application is heading down the road.
+**Do** 작게 시작하되 애플리케이션이 향후 나아갈 방향을 염두에 두십시오.
 
-**Do** have a near term view of implementation and a long term vision.
+**Do** 구현에 대해 단기적 관점을 갖고 장기적 비전을 세우십시오.
 
-**Do** put all of the application's code in a folder named `src`.
+**Do** 애플리케이션의 모든 코드를 `src`라는 폴더에 넣으십시오.
 
-**Consider** creating a folder for a component when it has multiple accompanying files \(`.ts`, `.html`, `.css`, and `.spec`\).
+**Consider** 여러 개의 보조 파일 \(`.ts`, `.html`, `.css`, 및 `.spec`\)이 있는 경우 구성 요소 폴더를 만드는 것을 고려하십시오.
 
-**Why**? <br />
-Helps keep the application structure small and easy to maintain in the early stages, while being easy to evolve as the application grows.
+**왜**? <br />
+애플리케이션 구조를 작고 유지 보수하기 쉽게 만드는 데 도움이 되며, 애플리케이션이 성장할수록 발전하기 쉬워집니다.
 
-**Why**? <br />
-Components often have four files \(for example, `*.html`, `*.css`, `*.ts`, and `*.spec.ts`\) and can clutter a folder quickly.
+**왜**? <br />
+구성 요소는 종종 네 개의 파일 \(`*.html`, `*.css`, `*.ts`, 및 `*.spec.ts`\)을 가지며 빠르게 폴더를 혼잡하게 만들 수 있습니다.
 
-Here is a compliant folder and file structure:
+다음은 준수하는 폴더 및 파일 구조입니다:
 
 ```markdown
 project root
@@ -390,115 +387,113 @@ project root
 └── …
 ```
 
-HELPFUL: While components in dedicated folders are widely preferred, another option for small applications is to keep components flat \(not in a dedicated folder\).
-This adds up to four files to the existing folder, but also reduces the folder nesting.
-Whatever you choose, be consistent.
+유용한 팁: 전용 폴더에 구성 요소를 두는 것이 널리 선호되지만, 작은 애플리케이션의 경우 구성 요소를 평면으로 유지하는 것도 선택할 수 있습니다 \(전용 폴더에 두지 않음\).  
+이렇게 하면 기존 폴더에 최대 네 개의 파일이 추가되지만 폴더의 중첩도 줄어듭니다.  
+어떤 것을 선택하든 일관성을 유지해야 합니다.
 
-### *Folders-by-feature* structure
+### *기능별 폴더* 구조
 
-#### Style 04-07
+#### 스타일 04-07
 
-**Do** create folders named for the feature area they represent.
+**Do** 그 기능 영역을 나타내는 이름의 폴더를 만드십시오.
 
-**Why**? <br />
-A developer can locate the code and identify what each file represents at a glance.
-The structure is as flat as it can be and there are no repetitive or redundant names.
+**왜**? <br />
+개발자는 코드를 찾고 각 파일이 무엇을 나타내는지 한눈에 식별할 수 있습니다.  
+구조는 가능한 한 평면이며 반복되거나 불필요한 이름이 없습니다.
 
-**Why**? <br />
-Helps reduce the application from becoming cluttered through organizing the content.
+**왜**? <br />
+내용을 정리하여 애플리케이션이 복잡해지지 않도록 도와줍니다.
 
-**Why**? <br />
-When there are a lot of files, for example 10+, locating them is easier with a consistent folder structure and more difficult in a flat structure.
+**왜**? <br />
+파일이 많을 때, 예를 들어 10개 이상일 경우에는 일관된 폴더 구조로 찾기가 편하고 평면 구조에서는 더 어렵습니다.
 
-For more information, refer to [this folder and file structure example](#overall-structural-guidelines).
+더 많은 정보는 [이 폴더 및 파일 구조 예제](#overall-structural-guidelines)를 참조하십시오.
 
-### App *root module*
+### 앱 *루트 모듈*
 
-IMPORTANT: The following style guide recommendations are for applications based on `NgModule`. New applications should use standalone components, directives, and pipes instead.
+중요: 다음 스타일 가이드 권장 사항은 `NgModule` 기반 애플리케이션에 해당됩니다. 새 애플리케이션은 독립형 구성 요소, 지시자 및 파이프를 사용해야 합니다.
 
-#### Style 04-08
+#### 스타일 04-08
 
-**Do** create an NgModule in the application's root folder, for example, in `/src/app` if creating a `NgModule` based app.
+**Do** 애플리케이션의 루트 폴더에 NgModule을 생성하십시오. 예를 들어, `/src/app`에 `NgModule` 기반 앱을 만들 때.
 
-**Why**? <br />
-Every `NgModule` based application requires at least one root NgModule.
+**왜**? <br />
+모든 `NgModule` 기반 애플리케이션은 최소한 하나의 루트 NgModule이 필요합니다.
 
-**Consider** naming the root module `app.module.ts`.
+**Consider** 루트 모듈의 이름을 `app.module.ts`로 하십시오.
 
-**Why**? <br />
-Makes it easier to locate and identify the root module.
+**왜**? <br />
+루트 모듈을 식별하고 찾기 쉽게 만듭니다.
 
 <docs-code path="adev/src/content/examples/styleguide/src/04-08/app/app.module.ts" language="typescript" visibleRegion="example" header="app/app.module.ts"/>
 
-### Feature modules
+### 기능 모듈
 
-#### Style 04-09
+#### 스타일 04-09
 
-**Do** create an NgModule for all distinct features in an application; for example, a `Heroes` feature.
+**Do** 애플리케이션의 모든 특정 기능에 대해 NgModule을 만드십시오. 예를 들어, `Heroes` 기능.
 
-**Do** place the feature module in the same named folder as the feature area; for example, in `app/heroes`.
+**Do** 기능 모듈을 기능 영역과 동일한 이름의 폴더에 배치하십시오. 예를 들어, `app/heroes`에.
 
-**Do** name the feature module file reflecting the name of the feature area and folder; for example, `app/heroes/heroes.module.ts`.
+**Do** 기능 모듈 파일을 기능 영역 및 폴더의 이름을 반영하여 이름 지으십시오. 예를 들어, `app/heroes/heroes.module.ts`.
 
-**Do** name the feature module symbol reflecting the name of the feature area, folder, and file; for example, `app/heroes/heroes.module.ts` defines `HeroesModule`.
+**Do** 기능 모듈 기호를 기능 영역, 폴더 및 파일 이름을 반영하여 이름 지으십시오. 예를 들어, `app/heroes/heroes.module.ts`는 `HeroesModule`을 정의합니다.
 
-**Why**? <br />
-A feature module can expose or hide its implementation from other modules.
+**왜**? <br />
+기능 모듈은 구현을 다른 모듈에서 노출하거나 숨길 수 있습니다.
 
-**Why**? <br />
-A feature module identifies distinct sets of related components that comprise the feature area.
+**왜**? <br />
+기능 모듈은 기능 영역을 구성하는 관련된 구성 요소의 특정 세트를 식별합니다.
 
-**Why**? <br />
-A feature module can easily be routed to both eagerly and lazily.
+**왜**? <br />
+기능 모듈은 열기 및 지연 로드 모두에 쉽게 라우팅될 수 있습니다.
 
-**Why**? <br />
-A feature module defines clear boundaries between specific functionality and other application features.
+**왜**? <br />
+기능 모듈은 특정 기능과 다른 애플리케이션 기능 간의 명확한 경계를 정의합니다.
 
-**Why**? <br />
-A feature module helps clarify and make it easier to assign development responsibilities to different teams.
+**왜**? <br />
+기능 모듈은 개발 책임을 여러 팀에 원활하게 배분할 수 있습니다.
 
-**Why**? <br />
-A feature module can easily be isolated for testing.
+**왜**? <br />
+기능 모듈은 쉽게 테스트를 위해 격리될 수 있습니다.
 
-### Shared feature module
+### 공유 기능 모듈
 
-#### Style 04-10
+#### 스타일 04-10
 
-**Do** create a feature module named `SharedModule` in a `shared` folder; for example, `app/shared/shared.module.ts` defines `SharedModule`.
+**Do** `SharedModule`라는 기능 모듈을 `shared` 폴더에 만드십시오. 예를 들어, `app/shared/shared.module.ts`는 `SharedModule`을 정의합니다.
 
-**Do** declare components, directives, and pipes in a shared module when those items will be re-used and referenced by the components declared in other feature modules.
+**Do** 구성 요소, 지시자 및 파이프를 공유 모듈에 선언하십시오. 이러한 항목이 다른 기능 모듈에서 정의된 구성 요소에 의해 재사용되고 참조될 것입니다.
 
-**Consider** using the name SharedModule when the contents of a shared
-module are referenced across the entire application.
+**Consider** 공유 모듈의 내용이 전체 애플리케이션에서 참조되는 경우 `SharedModule`이라는 이름을 사용하는 것을 고려하십시오.
 
-**Consider** *not* providing services in shared modules.
-Services are usually singletons that are provided once for the entire application or in a particular feature module.
-There are exceptions, however.
-For example, in the sample code that follows, notice that the `SharedModule` provides `FilterTextService`.
-This is acceptable here because the service is stateless;that is, the consumers of the service aren't impacted by new instances.
+**Consider** 공유 모듈에서 서비스를 제공하지 마십시오.  
+서비스는 일반적으로 전체 애플리케이션이나 특정 기능 모듈에 대해 한 번 제공되는 단일 객체입니다.  
+그러나 예외가 있을 수 있습니다.  
+예를 들어, 아래의 샘플 코드에서 `SharedModule`이 `FilterTextService`를 제공하는 것을 확인하십시오.  
+여기서 서비스가 상태가 없기 때문에 허용됩니다. 즉, 서비스 소비자는 새로운 인스턴스의 영향을 받지 않습니다.
 
-**Do** import all modules required by the assets in the `SharedModule`; for example, `CommonModule` and `FormsModule`.
+**Do** `SharedModule`의 자산에 필요한 모든 모듈을 가져오십시오. 예를 들어, `CommonModule` 및 `FormsModule`.
 
-**Why**? <br />
-`SharedModule` will contain components, directives, and pipes that may need features from another common module; for example, `ngFor` in `CommonModule`.
+**왜**? <br />
+`SharedModule`은 다른 공통 모듈의 기능이 필요할 수 있는 구성 요소, 지시자 및 파이프를 포함합니다. 예를 들어, `CommonModule`의 `ngFor`.
 
-**Do** declare all components, directives, and pipes in the `SharedModule`.
+**Do** `SharedModule`의 모든 구성 요소, 지시자 및 파이프를 선언하십시오.
 
-**Do** export all symbols from the `SharedModule` that other feature modules need to use.
+**Do** 다른 기능 모듈에서 사용하기 위해 `SharedModule`에서 필요한 모든 기호를 내보내십시오.
 
-**Why**? <br />
-`SharedModule` exists to make commonly used components, directives, and pipes available for use in the templates of components in many other modules.
+**왜**? <br />
+`SharedModule`은 여러 다른 모듈의 구성 요소 템플릿에서 사용할 수 있는 일반적으로 사용되는 구성 요소, 지시자 및 파이프를 만들기 위해 존재합니다.
 
-**Avoid** specifying app-wide singleton providers in a `SharedModule`.
-Intentional singletons are OK.
-Take care.
+**Avoid** `SharedModule`에서 애플리케이션 전역 단일 제공자를 지정하십시오.  
+의도적인 단일 제공자는 괜찮습니다.  
+주목하십시오.
 
-**Why**? <br />
-A lazy loaded feature module that imports that shared module will make its own copy of the service and likely have undesirable results.
+**왜**? <br />
+지연 로드된 기능 모듈이 공유 모듈을 가져오면 서비스의 자체 복사본이 생성되고 원하지 않는 결과가 발생할 수 있습니다.
 
-**Why**? <br />
-You don't want each module to have its own separate instance of singleton services.
-Yet there is a real danger of that happening if the `SharedModule` provides a service.
+**왜**? <br />
+각 모듈이 단일 서비스의 별도 인스턴스를 갖게 하지 않으려면 그렇지 않으면 `SharedModule`이 서비스를 제공하면 발생할 수 있습니다.
 
 ```markdown
 project root
@@ -526,37 +521,37 @@ project root
     <docs-code header="app/heroes/heroes.component.html" path="adev/src/content/examples/styleguide/src/04-10/app/heroes/heroes.component.html"/>
 </docs-code-multifile>
 
-### Lazy Loaded folders
+### 지연 로드 폴더
 
-#### Style 04-11
+#### 스타일 04-11
 
-A distinct application feature or workflow may be *lazy loaded* or *loaded on demand* rather than when the application starts.
+특정 애플리케이션 기능이나 워크플로를 *지연 로드* 또는 *요청 시 로드* 할 수 있습니다. 애플리케이션이 시작될 때가 아닌 경우입니다.
 
-**Do** put the contents of lazy loaded features in a *lazy loaded folder*.
-A typical *lazy loaded folder* contains a *routing component*, its child components, and their related assets.
+**Do** 지연 로드된 기능의 내용을 *지연 로드 폴더*에 넣으십시오.  
+일반적인 *지연 로드 폴더*는 *라우팅 구성 요소*, 자식 구성 요소 및 관련 자산을 포함합니다.
 
-**Why**? <br />
-The folder makes it easy to identify and isolate the feature content.
+**왜**? <br />
+폴더가 기능 콘텐츠를 식별하고 격리하는 것을 쉽게 만듭니다.
 
-## Components
+## 구성 요소
 
-### Components as elements
+### 요소로서의 구성 요소
 
-#### Style 05-03
+#### 스타일 05-03
 
-**Consider** giving components an *element* selector, as opposed to *attribute* or *class* selectors.
+**Consider** 구성 요소에 *요소* 선택기를 부여하십시오. *속성* 또는 *클래스* 선택기 대신에.
 
-**Why**? <br />
-Components have templates containing HTML and optional Angular template syntax.
-They display content.
-Developers place components on the page as they would native HTML elements and web components.
+**왜**? <br />
+구성 요소에는 HTML 및 선택적 Angular 템플릿 구문이 포함된 템플릿이 있습니다.  
+그들은 콘텐츠를 표시합니다.  
+개발자는 구성 요소를 페이지에 원래 HTML 요소 및 웹 구성 요소처럼 배치합니다.
 
-**Why**? <br />
-It is easier to recognize that a symbol is a component by looking at the template's html.
+**왜**? <br />
+템플릿의 HTML을 보고 기호가 구성 요소임을 인식하기가 더 쉽습니다.
 
-HELPFUL: There are a few cases where you give a component an attribute, such as when you want to augment a built-in element.
-For example, [Material Design](https://material.angular.io/components/button/overview) uses this technique with `<button mat-button>`.
-However, you wouldn't use this technique on a custom element.
+유용한 팁: 기본 요소를 증강하려는 경우와 같이 구성 요소에 속성을 부여하는 몇 가지 사례가 있습니다.  
+예를 들어, [Material Design](https://material.angular.io/components/button/overview)은 `<button mat-button>`에서 이 기술을 사용합니다.  
+그러나 사용자 정의 요소에서는 이 기술을 사용하지 않을 것입니다.
 
 <docs-code header="app/heroes/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/05-03/app/heroes/shared/hero-button/hero-button.component.avoid.ts" visibleRegion="example"/>
 
@@ -567,30 +562,30 @@ However, you wouldn't use this technique on a custom element.
     <docs-code header="app/app.component.html" path="adev/src/content/examples/styleguide/src/05-03/app/app.component.html"/>
 </docs-code-multifile>
 
-### Extract templates and styles to their own files
+### 템플릿 및 스타일을 별도의 파일로 추출
 
-#### Style 05-04
+#### 스타일 05-04
 
-**Do** extract templates and styles into a separate file, when more than 3 lines.
+**Do** 3줄 이상일 때 템플릿 및 스타일을 별도의 파일로 추출하십시오.
 
-**Do** name the template file `[component-name].component.html`, where [component-name] is the component name.
+**Do** 템플릿 파일의 이름을 `[component-name].component.html`로 지정하십시오. 여기서 [component-name]은 구성 요소의 이름입니다.
 
-**Do** name the style file `[component-name].component.css`, where [component-name] is the component name.
+**Do** 스타일 파일의 이름을 `[component-name].component.css`로 지정하십시오. 여기서 [component-name]은 구성 요소의 이름입니다.
 
-**Do** specify *component-relative* URLs, prefixed with `./`.
+**Do** `./`로 접두사된 *구성 요소 상대* URL을 지정하십시오.
 
-**Why**? <br />
-Large, inline templates and styles obscure the component's purpose and implementation, reducing readability and maintainability.
+**왜**? <br />
+큰 인라인 템플릿과 스타일은 구성 요소의 목적과 구현을 흐릿하게 하여 가독성과 유지 보수성을 감소시킵니다.
 
-**Why**? <br />
-In most editors, syntax hints and code snippets aren't available when developing inline templates and styles.
-The Angular TypeScript Language Service \(forthcoming\) promises to overcome this deficiency for HTML templates in those editors that support it; it won't help with CSS styles.
+**왜**? <br />
+대부분의 에디터에서 인라인 템플릿 및 스타일을 개발할 때 구문 힌트 및 코드 스니펫을 사용할 수 없습니다.  
+Angular TypeScript 언어 서비스 \(곧 출시 예정\)는 이러한 에디터에서 HTML 템플릿을 지원하여 이 결점을 극복할 수 있습니다. 그러나 CSS 스타일에 대해서는 도움이 되지 않습니다.
 
-**Why**? <br />
-A *component relative* URL requires no change when you move the component files, as long as the files stay together.
+**왜**? <br />
+구성 요소 파일을 이동할 때 파일이 함께 유지되는 한 *구성 요소 상대* URL은 변경이 필요 없습니다.
 
-**Why**? <br />
-The `./` prefix is standard syntax for relative URLs; don't depend on Angular's current ability to do without that prefix.
+**왜**? <br />
+`./` 접두사는 상대 URL의 표준 구문입니다. Angular의 현재 기능에 의존해서는 안 됩니다.
 
 <docs-code header="app/heroes/heroes.component.ts" path="adev/src/content/examples/styleguide/src/05-04/app/heroes/heroes.component.avoid.ts" visibleRegion="example"/>
 
@@ -600,43 +595,42 @@ The `./` prefix is standard syntax for relative URLs; don't depend on Angular's 
     <docs-code header="app/heroes/heroes.component.css" path="adev/src/content/examples/styleguide/src/05-04/app/heroes/heroes.component.css"/>
 </docs-code-multifile>
 
-### Decorate `input` and `output` properties
+### `input` 및 `output` 속성 장식
 
-#### Style 05-12
+#### 스타일 05-12
 
-**Do** use the `@Input()` and `@Output()` class decorators instead of the `inputs` and `outputs` properties of the `@Directive` and `@Component` metadata:
+**Do** `@Input()` 및 `@Output()` 클래스 장식자를 사용하고, `@Directive` 및 `@Component` 메타데이터의 `inputs` 및 `outputs` 속성은 사용하지 마십시오:
 
-**Consider** placing `@Input()` or `@Output()` on the same line as the property it decorates.
+**Consider** `@Input()` 또는 `@Output()`를 장식하는 속성과 같은 줄에 배치하는 것을 고려하십시오.
 
-**Why**? <br />
-It is easier and more readable to identify which properties in a class are inputs or outputs.
+**왜**? <br />
+클래스의 어떤 속성이 입력인지 출력인지 식별하는 것이 더 쉽고 가독성이 향상됩니다.
 
-**Why**? <br />
-If you ever need to rename the property or event name associated with `@Input()` or `@Output()`, you can modify it in a single place.
+**왜**? <br />
+`@Input()` 또는 `@Output()`와 관련된 속성이나 이벤트 이름을 변경해야 하는 경우, 한 곳에서 수정할 수 있습니다.
 
-**Why**? <br />
-The metadata declaration attached to the directive is shorter and thus more readable.
+**왜**? <br />
+지시자에 대한 메타데이터 선언이 더 짧고 가독성이 뛰어납니다.
 
-**Why**? <br />
-Placing the decorator on the same line *usually* makes for shorter code and still easily identifies the property as an input or output.
-Put it on the line above when doing so is clearly more readable.
+**왜**? <br />
+장식자를 같은 줄에 배치하는 것은 *대개* 더 짧은 코드를 만들고 속성이 입력 또는 출력임을 쉽게 식별할 수 있습니다.  
+더 가독성이 좋으면 이전 줄에 두십시오.
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/05-12/app/heroes/shared/hero-button/hero-button.component.avoid.ts" visibleRegion="example"/>
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/05-12/app/heroes/shared/hero-button/hero-button.component.ts" visibleRegion="example"/>
 
-### Avoid aliasing `inputs` and `outputs`
+### `inputs` 및 `outputs` 별칭 피하기
 
-#### Style 05-13
+#### 스타일 05-13
 
-**Avoid** `input` and `output` aliases except when it serves an important purpose.
+**Avoid** `input` 및 `output` 별칭은 중요한 목적이 필요 없는 한 사용하지 마십시오.
 
-**Why**? <br />
-Two names for the same property \(one private, one public\) is inherently confusing.
+**왜**? <br />
+같은 속성에 대해 두 가지 이름 \(`하나는 비공식적이고 다른 하나는 공식적`\)을 두는 것은 본질적으로 혼란스럽습니다.
 
-**Why**? <br />
-You should use an alias when the directive name is also an `input` property,
-and the directive name doesn't describe the property.
+**왜**? <br />
+지시자 이름이 `input` 속성이기도 하고, 지시자 이름이 속성을 설명하지 않는 경우 알리아스 사용을 고려해야 합니다.
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/05-13/app/heroes/shared/hero-button/hero-button.component.avoid.ts" visibleRegion="example"/>
 
@@ -648,45 +642,45 @@ and the directive name doesn't describe the property.
     <docs-code header="app/app.component.html" path="adev/src/content/examples/styleguide/src/05-13/app/app.component.html"/>
 </docs-code-multifile>
 
-### Delegate complex component logic to services
+### 복잡한 구성 요소 논리를 서비스에 위임
 
-#### Style 05-15
+#### 스타일 05-15
 
-**Do** limit logic in a component to only that required for the view.
-All other logic should be delegated to services.
+**Do** 구성 요소의 논리를 뷰에 필요한 논리로 제한하십시오.  
+나머지 모든 논리는 서비스에 위임해야 합니다.
 
-**Do** move reusable logic to services and keep components simple and focused on their intended purpose.
+**Do** 재사용 가능한 논리를 서비스를 통해 이동시키고 구성 요소는 단순하고 의도한 목적에 집중하게 하십시오.
 
-**Why**? <br />
-Logic may be reused by multiple components when placed within a service and exposed as a function.
+**왜**? <br />
+로직은 서비스 내에 배치되어 함수로 노출될 때 여러 구성 요소에서 재사용할 수 있습니다.
 
-**Why**? <br />
-Logic in a service can more easily be isolated in a unit test, while the calling logic in the component can be easily mocked.
+**왜**? <br />
+서비스 내의 로직은 단위 테스트에서 더 쉽게 격리될 수 있으며, 구성 요소에서 호출되는 로직을 쉽게 모의할 수 있습니다.
 
-**Why**? <br />
-Removes dependencies and hides implementation details from the component.
+**왜**? <br />
+구성 요소에서 종속성을 제거하고 구현 세부사항을 숨깁니다.
 
-**Why**? <br />
-Keeps the component slim, trim, and focused.
+**왜**? <br />
+구성 요소를 날씬하고 간결하며 집중하도록 유지합니다.
 
 <docs-code header="app/heroes/hero-list/hero-list.component.ts" path="adev/src/content/examples/styleguide/src/05-15/app/heroes/hero-list/hero-list.component.avoid.ts"/>
 
 <docs-code header="app/heroes/hero-list/hero-list.component.ts" path="adev/src/content/examples/styleguide/src/05-15/app/heroes/hero-list/hero-list.component.ts" visibleRegion="example"/>
 
-### Don't prefix `output` properties
+### `output` 속성에 접두어를 붙이지 마십시오.
 
-#### Style 05-16
+#### 스타일 05-16
 
-**Do** name events without the prefix `on`.
+**Do** 이벤트의 이름 앞에 `on` 접두어를 붙이지 마십시오.
 
-**Do** name event handler methods with the prefix `on` followed by the event name.
+**Do** 이벤트 핸들러 메서드에 이벤트 이름 다음에 `on` 접두어를 붙이십시오.
 
-**Why**? <br />
-This is consistent with built-in events such as button clicks.
+**왜**? <br />
+이는 버튼 클릭과 같은 내장 이벤트와 일관성이 있습니다.
 
-**Why**? <br />
-Angular allows for an [alternative syntax](guide/templates/binding) `on-*`.
-If the event itself was prefixed with `on` this would result in an `on-onEvent` binding expression.
+**왜**? <br />
+Angular는 [대체 구문](guide/templates/binding) `on-*`을 허용합니다.  
+이벤트 이름에 `on` 접두사가 붙으면 `on-onEvent` 바인딩 표현식이 생성됩니다.
 
 <docs-code header="app/heroes/hero.component.ts" path="adev/src/content/examples/styleguide/src/05-16/app/heroes/hero.component.avoid.ts" visibleRegion="example"/>
 
@@ -697,190 +691,188 @@ If the event itself was prefixed with `on` this would result in an `on-onEvent` 
     <docs-code header="app/app.component.html" path="adev/src/content/examples/styleguide/src/05-16/app/app.component.html"/>
 </docs-code-multifile>
 
-### Put presentation logic in the component class
+### 표현 논리를 구성 요소 클래스에 넣으십시오.
 
-#### Style 05-17
+#### 스타일 05-17
 
-**Do** put presentation logic in the component class, and not in the template.
+**Do** 표현 논리를 구성 요소 클래스에 두고 템플릿에 두지 마십시오.
 
-**Why**? <br />
-Logic will be contained in one place \(the component class\) instead of being spread in two places.
+**왜**? <br />
+논리가 한 곳 \(구성 요소 클래스\)에 저장되므로 두 육각형에 분산되지 않습니다.
 
-**Why**? <br />
-Keeping the component's presentation logic in the class instead of the template improves testability, maintainability, and reusability.
+**왜**? <br />
+구성 요소의 표현 논리를 템플릿 대신 클래스에 보관하면 테스트 가능성, 유지 보수성 및 재사용성이 향상됩니다.
 
 <docs-code header="app/heroes/hero-list/hero-list.component.ts" path="adev/src/content/examples/styleguide/src/05-17/app/heroes/hero-list/hero-list.component.avoid.ts" visibleRegion="example"/>
 
 <docs-code header="app/heroes/hero-list/hero-list.component.ts" path="adev/src/content/examples/styleguide/src/05-17/app/heroes/hero-list/hero-list.component.ts" visibleRegion="example"/>
-### Initialize inputs
+### 입력 초기화
 
-#### Style 05-18
+#### 스타일 05-18
 
-TypeScript's `--strictPropertyInitialization` compiler option ensures that a class initializes its properties during construction.
-When enabled, this option causes the TypeScript compiler to report an error if the class does not set a value to any property that is not explicitly marked as optional.
+TypeScript의 `--strictPropertyInitialization` 컴파일러 옵션은 클래스가 생성하는 동안 속성을 초기화하도록 보장합니다.  
+이 옵션이 활성화되면 클래스가 명시적으로 선택란로 표시되지 않은 속성에 값을 설정하지 않으면 TypeScript 컴파일러가 오류를 보고합니다.
 
-By design, Angular treats all `@Input` properties as optional.
-When possible, you should satisfy `--strictPropertyInitialization` by providing a default value.
+설계상 Angular는 모든 `@Input` 속성을 선택적으로 처리합니다.  
+가능할 경우 기본값을 제공하여 `--strictPropertyInitialization`을 충족해야 합니다.
 
 <docs-code header="app/heroes/hero/hero.component.ts" path="adev/src/content/examples/styleguide/src/05-18/app/heroes/hero/hero.component.ts" visibleRegion="example"/>
 
-If the property is hard to construct a default value for, use `?` to explicitly mark the property as optional.
+기본값을 생성하기 어려운 속성이 있다면 `?`를 사용하여 해당 속성을 명시적 선택적 속성으로 표시하십시오.
 
 <docs-code header="app/heroes/hero/hero.component.ts" path="adev/src/content/examples/styleguide/src/05-18/app/heroes/hero/hero.component.optional.ts" visibleRegion="example"/>
 
-You may want to have a required `@Input` field, meaning all your component users are required to pass that attribute.
-In such cases, use a default value.
-Just suppressing the TypeScript error with `!` is insufficient and should be avoided because it will prevent the type checker from ensuring the input value is provided.
+필수 `@Input` 필드를 가져오고 싶다는 의미이기에 모든 구성 요소 사용자는 해당 속성을 전달해야 합니다.  
+이런 경우에는 기본값을 사용해야 합니다.  
+TypeScript 오류를 `!`로 억제하는 것은 충분하지 않으며 피해야 합니다. 이는 입력 값이 제공되도록 유형 검사기가 확인하는 것을 방해합니다.
 
 <docs-code header="app/heroes/hero/hero.component.ts" path="adev/src/content/examples/styleguide/src/05-18/app/heroes/hero/hero.component.avoid.ts" visibleRegion="example"/>
 
-## Directives
+## 지시자
 
-### Use directives to enhance an element
+### 요소를 향상시키기 위해 지시자를 사용하십시오.
 
-#### Style 06-01
+#### 스타일 06-01
 
-**Do** use attribute directives when you have presentation logic without a template.
+**Do** 프레젠테이션 로직이 템플릿 없이 있는 경우 속성 지시자를 사용하십시오.
 
-**Why**? <br />
-Attribute directives don't have an associated template.
+**왜**? <br />
+속성 지시자는 관련된 템플릿이 없습니다.
 
-**Why**? <br />
-An element may have more than one attribute directive applied.
+**왜**? <br />
+하나의 요소에 여러 개의 속성 지시자가 적용될 수 있습니다.
 
 <docs-code header="app/shared/highlight.directive.ts" path="adev/src/content/examples/styleguide/src/06-01/app/shared/highlight.directive.ts" visibleRegion="example"/>
 
 <docs-code header="app/app.component.html" path="adev/src/content/examples/styleguide/src/06-01/app/app.component.html"/>
 
-### `HostListener`/`HostBinding` decorators versus `host` metadata
+### `HostListener`/`HostBinding` 장식자 대 `host` 메타데이터
 
-#### Style 06-03
+#### 스타일 06-03
 
-**Consider** preferring the `@HostListener` and `@HostBinding` to the `host` property of the `@Directive` and `@Component` decorators.
+**Consider** `@Directive` 및 `@Component` 장식자의 `host` 속성 대신 `@HostListener`와 `@HostBinding`을 선호하십시오.
 
-**Do** be consistent in your choice.
+**Do** 선택 사항에서 일관성을 유지하십시오.
 
-**Why**? <br />
-The property associated with `@HostBinding` or the method associated with `@HostListener` can be modified only in a single place —in the directive's class.
-If you use the `host` metadata property, you must modify both the property/method declaration in the directive's class and the metadata in the decorator associated with the directive.
+**왜**? <br />
+`@HostBinding`과 관련된 속성이나 `@HostListener`와 관련된 메서드는 단일 위치에서만 수정될 수 있습니다. 이러한 지시자의 클래스에서 변수를 조정해야 합니다.  
+`host` 메타데이터 속성을 사용하는 경우, 속성/메서드 선언과 지시자와 관련된 장식자에서 모두 수정해야 합니다.
 
 <docs-code header="app/shared/validator.directive.ts" path="adev/src/content/examples/styleguide/src/06-03/app/shared/validator.directive.ts"/>
 
-Compare with the less preferred `host` metadata alternative.
+덜 선호되는 `host` 메타데이터 대안과 비교하십시오.
 
-**Why**? <br />
-The `host` metadata is only one term to remember and doesn't require extra ES imports.
+**왜**? <br />
+`host` 메타데이터는 한 가지 기억할 용어만 필요하며 추가 ES 가져오기를 요구하지 않습니다.
 
 <docs-code header="app/shared/validator2.directive.ts" path="adev/src/content/examples/styleguide/src/06-03/app/shared/validator2.directive.ts"/>
-## Services
+## 서비스
 
-### Services are singletons
+### 서비스는 단일 객체입니다.
 
-#### Style 07-01
+#### 스타일 07-01
 
-**Do** use services as singletons within the same injector.
-Use them for sharing data and functionality.
+**Do** 서비스를 동일한 주입기에서 단일 객체로 사용하십시오.  
+데이터 및 기능 공유 용도로 사용합니다.
 
-**Why**? <br />
-Services are ideal for sharing methods across a feature area or an app.
+**왜**? <br />
+서비스는 기능 영역 또는 앱 전체에서 메서드를 공유하는 데 이상적입니다.
 
-**Why**? <br />
-Services are ideal for sharing stateful in-memory data.
+**왜**? <br />
+서비스는 상태가 있는 메모리 내 데이터를 공유하는 데 이상적입니다.
 
 <docs-code header="app/heroes/shared/hero.service.ts" path="adev/src/content/examples/styleguide/src/07-01/app/heroes/shared/hero.service.ts" visibleRegion="example"/>
 
-### Providing a service
+### 서비스를 제공하기
 
-#### Style 07-03
+#### 스타일 07-03
 
-**Do** provide a service with the application root injector in the `@Injectable` decorator of the service.
+**Do** 서비스를 `@Injectable` decorators의 루트 주입기에서 제공합니다.
 
-**Why**? <br />
-The Angular injector is hierarchical.
+**왜**? <br />
+Angular 주입기는 계층적입니다.
 
-**Why**? <br />
-When you provide the service to a root injector, that instance of the service is shared and available in every class that needs the service.
-This is ideal when a service is sharing methods or state.
+**왜**? <br />
+루트 주입기에 서비스를 제공할 때 해당 서비스의 인스턴스가 공유되며 서비스를 필요로 하는 모든 클래스에서 사용할 수 있습니다.  
+서비스가 메서드나 상태를 공유할 때 이상적입니다.
 
-**Why**? <br />
-When you register a service in the `@Injectable` decorator of the service, optimization tools such as those used by the [Angular CLI's](cli) production builds can perform tree shaking and remove services that aren't used by your app.
+**왜**? <br />
+서비스를 `@Injectable` 장식자의 `@Injectable`에서 등록할 때 Angular CLI의 프로덕션 빌드에서 사용하는 최적화 도구가 트리 흔들기 및 앱에서 사용되지 않는 서비스를 제거할 수 있습니다.
 
-**Why**? <br />
-This is not ideal when two different components need different instances of a service.
-In this scenario it would be better to provide the service at the component level that needs the new and separate instance.
+**왜**? <br />
+이는 서로 다른 두 개의 구성 요소가 서비스의 서로 다른 인스턴스가 필요할 때 이상적이지 않습니다.  
+이 경우 새로운 및 별도의 인스턴스를 필요로 하는 구성 요소 수준에서 서비스를 제공하면 더 나은 솔루션이 됩니다.
 
 <docs-code header="src/app/treeshaking/service.ts" path="adev/src/content/examples/dependency-injection/src/app/tree-shaking/service.ts"/>
 
-### Use the @Injectable() class decorator
+### @Injectable() 클래스 장식자 사용
 
-#### Style 07-04
+#### 스타일 07-04
 
-**Do** use the `@Injectable()` class decorator instead of the `@Inject` parameter decorator when using types as tokens for the dependencies of a service.
+**Do** 서비스의 의존성에 대한 토큰으로 유형을 사용할 때 `@Inject` 매개변수 장식자 대신 `@Injectable()` 클래스 장식자를 사용하십시오.
 
-**Why**? <br />
-The Angular Dependency Injection \(DI\) mechanism resolves a service's own
-dependencies based on the declared types of that service's constructor parameters.
+**왜**? <br />
+Angular의 종속성 주입 \(DI\) 메커니즘은 서비스의 생성자 매개변수로 선언된 유형을 기반으로 자신의 종속성을 해결합니다.
 
-**Why**? <br />
-When a service accepts only dependencies associated with type tokens, the `@Injectable()` syntax is much less verbose compared to using `@Inject()` on each individual constructor parameter.
+**왜**? <br />
+서비스가 유형 토큰과 연관된 종속성만 수용할 때, `@Injectable()` 구문은 각 개별 생성자 매개변수에 대해 `@Inject()`를 사용하는 것보다 훨씬 간단합니다.
 
 <docs-code header="app/heroes/shared/hero-arena.service.ts" path="adev/src/content/examples/styleguide/src/07-04/app/heroes/shared/hero-arena.service.avoid.ts" visibleRegion="example"/>
 
 <docs-code header="app/heroes/shared/hero-arena.service.ts" path="adev/src/content/examples/styleguide/src/07-04/app/heroes/shared/hero-arena.service.ts" visibleRegion="example"/>
-## Data Services
+## 데이터 서비스
 
-### Talk to the server through a service
+### 서버와 소통하기
 
-#### Style 08-01
+#### 스타일 08-01
 
-**Do** refactor logic for making data operations and interacting with data to a service.
+**Do** 데이터 작업 및 데이터와의 상호 작용에 대한 로직을 서비스로 리팩토링하십시오.
 
-**Do** make data services responsible for XHR calls, local storage, stashing in memory, or any other data operations.
+**Do** 데이터 서비스가 XHR 호출, 로컬 저장소, 메모리에서 저장, 또는 기타 데이터 작업을 담당하게 하십시오.
 
-**Why**? <br />
-The component's responsibility is for the presentation and gathering of information for the view.
-It should not care how it gets the data, just that it knows who to ask for it.
-Separating the data services moves the logic on how to get it to the data service, and lets the component be simpler and more focused on the view.
+**왜**? <br />
+구성 요소의 책임은 프레젠테이션이며, 뷰를 위한 정보를 모으는 것입니다.  
+데이터를 얻는 방법은 신경 쓰지 않고 단지 요청할 사람이 누구인지 알아야 합니다.  
+데이터 서비스로 로직을 분리하면 이를 얻는 방법을 데이터 서비스에 맡기고 구성 요소 논리를 단순하게 유지할 수 있습니다.
 
-**Why**? <br />
-This makes it easier to test \(mock or real\) the data calls when testing a component that uses a data service.
+**왜**? <br />
+이를 통해 데이터 서비스를 사용하는 구성 요소를 테스트할 때 \(모의 또는 실제\) 데이터 호출 테스트가 더 쉬워집니다.
 
-**Why**? <br />
-The details of data management, such as headers, HTTP methods, caching, error handling, and retry logic, are irrelevant to components and other data consumers.
+**왜**? <br />
+헤더, HTTP 메서드, 캐싱, 오류 처리 및 재시도 로직과 같은 데이터 관리의 세부 사항은 구성 요소 및 기타 데이터 소비자에게는 중요하지 않습니다.  
+데이터 서비스는 이러한 세부 사항을 캡슐화합니다.  
+서비스 내에서 이러한 세부 사항을 발전시키는 것이 소비자에게 영향을 주지 않고 더 쉽습니다.  
+그리고 모의 서비스 구현으로 소비자를 테스트하는 것이 더 쉽습니다.
 
-A data service encapsulates these details.
-It's easier to evolve these details inside the service without affecting its consumers.
-And it's easier to test the consumers with mock service implementations.
+## 생명 주기 훅
 
-## Lifecycle hooks
+Angular가 노출하는 중요 이벤트에 참여하는 생명 주기 훅을 사용하십시오.
 
-Use Lifecycle hooks to tap into important events exposed by Angular.
+### 생명 주기 훅 인터페이스 구현
 
-### Implement lifecycle hook interfaces
+#### 스타일 09-01
 
-#### Style 09-01
+**Do** 생명 주기 훅 인터페이스를 구현하십시오.
 
-**Do** implement the lifecycle hook interfaces.
-
-**Why**? <br />
-Lifecycle interfaces prescribe typed method signatures.
-Use those signatures to flag spelling and syntax mistakes.
+**왜**? <br />
+생명 주기 인터페이스는 형식화된 메서드 시그니처를 규정합니다.  
+오타 및 구문 오류에 대해 해당 서명을 사용하십시오.
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/09-01/app/heroes/shared/hero-button/hero-button.component.avoid.ts" visibleRegion="example"/>
 
 <docs-code header="app/heroes/shared/hero-button/hero-button.component.ts" path="adev/src/content/examples/styleguide/src/09-01/app/heroes/shared/hero-button/hero-button.component.ts" visibleRegion="example"/>
-## Appendix
+## 부록
 
-Useful tools and tips for Angular.
+Angular에 유용한 도구와 팁입니다.
 
-### File templates and snippets
+### 파일 템플릿 및 스니펫
 
-#### Style A-02
+#### 스타일 A-02
 
-**Do** use file templates or snippets to help follow consistent styles and patterns.
-Here are templates and/or snippets for some of the web development editors and IDEs.
+**Do** 일관된 스타일 및 패턴을 따르도록 도와주는 파일 템플릿이나 스니펫을 사용하십시오.  
+다음은 일부 웹 개발 에디터와 IDE를 위한 템플릿 및/또는 스니펫입니다.
 
-**Consider** using [snippets](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2) for [Visual Studio Code](https://code.visualstudio.com) that follow these styles and guidelines.
+**Consider** 이 스타일 및 규칙을 따르는 [Visual Studio Code](https://code.visualstudio.com)용 [스니펫](https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2)을 사용하는 것을 고려하십시오.
 
 <a href="https://marketplace.visualstudio.com/items?itemName=johnpapa.Angular2">
 
@@ -888,6 +880,6 @@ Here are templates and/or snippets for some of the web development editors and I
 
 </a>
 
-**Consider** using [snippets](https://github.com/orizens/sublime-angular2-snippets) for [Sublime Text](https://www.sublimetext.com) that follow these styles and guidelines.
+**Consider** 이 스타일 및 규칙을 따르는 [Sublime Text](https://www.sublimetext.com)용 [스니펫](https://github.com/orizens/sublime-angular2-snippets)을 사용하는 것을 고려하십시오.
 
-**Consider** using [snippets](https://github.com/mhartington/vim-angular2-snippets) for [Vim](https://www.vim.org) that follow these styles and guidelines.
+**Consider** 이 스타일 및 규칙을 따르는 [Vim](https://www.vim.org)용 [스니펫](https://github.com/mhartington/vim-angular2-snippets)을 사용하는 것을 고려하십시오.

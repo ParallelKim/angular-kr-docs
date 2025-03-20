@@ -1,21 +1,21 @@
-# EmbeddedEditor components, services and functionality
+# EmbeddedEditor 구성 요소, 서비스 및 기능
 
-- [Scenarios](#scenarios)
-  - [Loading a project](#loading-a-project)
-  - [Updating the code](#updating-the-code)
-  - [Creating a new file](#creating-a-new-file)
-  - [Deleting a file](#deleting-a-file)
-  - [Switching a project](#switching-a-project)
-- [Components and services](#components-and-services)
+- [시나리오](#scenarios)
+  - [프로젝트 로딩](#loading-a-project)
+  - [코드 업데이트](#updating-the-code)
+  - [새 파일 생성](#creating-a-new-file)
+  - [파일 삭제](#deleting-a-file)
+  - [프로젝트 전환](#switching-a-project)
+- [구성 요소 및 서비스](#components-and-services)
 
   - [EmbeddedEditor](#EmbeddedEditor)
   - [CodeEditor](#CodeEditor)
     - [CodeMirrorEditor](#CodeMirrorEditor)
-      - [TypeScript Web Worker](#typescript-web-worker)
-  - [Preview](#Preview)
-  - [Terminal](#Terminal)
+      - [TypeScript 웹 워커](#typescript-web-worker)
+  - [미리보기](#Preview)
+  - [터미널](#Terminal)
     - [InteractiveTerminal](#InteractiveTerminal)
-    - [Console](#Console)
+    - [콘솔](#Console)
   - [NodeRuntimeSandbox](#NodeRuntimeSandbox)
     - [NodeRuntimeState](#NodeRuntimeState)
   - [EmbeddedTutorialManager](#EmbeddedTutorialManager)
@@ -24,184 +24,184 @@
   - [AlertManager](#AlertManager)
   - [TypingsLoader](#TypingsLoader)
 
-## External libraries
+## 외부 라이브러리
 
 - [WebContainers API](https://webcontainers.io/)
 - [CodeMirror](https://codemirror.net/)
 - [@typescript/vfs](https://www.npmjs.com/package/@typescript/vfs)
 - [Xterm.js](https://xtermjs.org/)
 
-## Notes
+## 노트
 
-- See [scripts/tutorials/README.md](/scripts/tutorials/README.md) for more information about the tutorials script.
-- See [adev/src/content/tutorials/README.md](/adev/src/content/tutorials/README.md) for more information about the tutorials content.
+- 튜토리얼 스크립트에 대한 자세한 정보는 [scripts/tutorials/README.md](/scripts/tutorials/README.md)를 참조하세요.
+- 튜토리얼 콘텐츠에 대한 자세한 정보는 [adev/src/content/tutorials/README.md](/adev/src/content/tutorials/README.md)를 참조하세요.
 
 ---
 
-## Scenarios
+## 시나리오
 
-### Loading a project
+### 프로젝트 로딩
 
-1. The page responsible for the embedded editor lazy loads the [`EmbeddedEditor`](./embedded-editor.component.ts) component and the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts), then triggers the initialization of all components and services. The embedded editor is available in the following pages:
+1. EmbeddedEditor를 위한 페이지는 [`EmbeddedEditor`](./embedded-editor.component.ts) 구성 요소와 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)를 지연 로딩하고, 모든 구성 요소 및 서비스의 초기화를 트리거합니다. EmbeddedEditor는 다음 페이지에서 사용할 수 있습니다:
 
-   - homepage: https://angular.dev
-   - playground: https://angular.dev/playground
-   - tutorial pages: https://angular.dev/tutorials
+   - 홈페이지: https://angular.dev
+   - 플레이그라운드: https://angular.dev/playground
+   - 튜토리얼 페이지: https://angular.dev/tutorials
 
-2. The project assets are fetched by the [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts). Meanwhile:
+2. 프로젝트 자산은 [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts)에 의해 가져옵니다. 이 동안:
 
-   - The code editor is initialized
-   - The code editor initializes the TypeScript Web Worker, which initializes the "default file system map" using TypeScript's CDN.
-   - The WebContainer is initialized
-   - The terminal is initialized
+   - 코드 편집기가 초기화됩니다
+   - 코드 편집기는 TypeScript 웹 워커를 초기화하며, 이는 TypeScript의 CDN을 사용해 "기본 파일 시스템 맵"을 초기화합니다.
+   - WebContainer가 초기화됩니다
+   - 터미널이 초기화됩니다
 
-3. The tutorial source code is mounted in the `WebContainer`'s filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)
-4. The tutorial project dependencies are installed by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts).
-5. The development server is started by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts) and the types are loaded by the [`TypingsLoader`](./typings-loader.service.ts) service.
-6. The preview is loaded with the URL provided by the WebContainer API after the development server is started.
-7. The project is ready.
+3. 튜토리얼 소스 코드는 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 `WebContainer`의 파일 시스템에 마운트됩니다.
+4. 튜토리얼 프로젝트의 종속성이 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 설치됩니다.
+5. 개발 서버는 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 시작되며, 타입은 [`TypingsLoader`](./typings-loader.service.ts) 서비스에 의해 로드됩니다.
+6. 미리보기는 개발 서버가 시작된 후 WebContainer API에서 제공하는 URL로 로드됩니다.
+7. 프로젝트가 준비됩니다.
 
-### Updating the code
+### 코드 업데이트
 
-1. The user update the code in the code editor.
-2. The code editor state is updated on real time, without debouncing so that the user can see the changes in the code editor and CodeMirror can handle the changes accordingly.
-3. At the same time, the changes are sent to the TypeScript web worker to provide diagnostics, autocomplete and type features as soon as possible.
-4. The code changes are debounced to be written in the WebContainer filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts).
-5. After the debounce time is reached, the code changes are written in the WebContainer filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts), then the user can see the changes in the preview.
+1. 사용자는 코드 편집기에서 코드를 업데이트합니다.
+2. 코드 편집기 상태는 실시간으로 업데이트되며, 사용자에게 코드 편집기에서 변경 사항을 확인할 수 있도록 하며, CodeMirror는 변경 사항을 적절히 처리합니다.
+3. 동시에, 변경 사항은 TypeScript 웹 워커에 전달되어 가능한 한 빨리 진단, 자동 완완 및 타입 기능을 제공합니다.
+4. 코드 변경 사항은 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 WebContainer 파일 시스템에 기록되기 위해 디바운스됩니다.
+5. 디바운스 시간이 초과되면 코드 변경 사항이 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 WebContainer 파일 시스템에 기록되며, 사용자는 미리보기에서 변경 사항을 확인할 수 있습니다.
 
-### Creating a new file
+### 새 파일 생성
 
-1. The user clicks on the new file button.
-2. The new file tab is opened.
-3. The user types the new file name.
-4. If the file name is valid, the file is created in the WebContainer filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts).
+1. 사용자가 새 파일 버튼을 클릭합니다.
+2. 새 파일 탭이 열립니다.
+3. 사용자가 새 파일 이름을 입력합니다.
+4. 파일 이름이 유효하면, [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 WebContainer 파일 시스템에서 파일이 생성됩니다.
 
-   - `..` is disallowed in the file name to prevent users to create files outside the `src` directory.
+   - `..`는 사용자들이 `src` 디렉토리 외부에 파일을 생성하지 못하도록 파일 이름에 허용되지 않습니다.
 
-5. The file is added to the TypeScript virtual file system, allowing the TypeScript web worker to provide diagnostics, autocomplete and type features for the new file. Also, exports from the new file are available in other files.
-6. The new file is added as the last tab in the code editor and the new file can be edited.
+5. 파일은 TypeScript 가상 파일 시스템에 추가되어 새로운 파일에 대한 진단, 자동 완완 및 타입 기능을 제공할 수 있게 됩니다. 또한, 새로운 파일에서의 내보내기는 다른 파일에서 사용할 수 있습니다.
+6. 새로운 파일은 코드 편집기에서 마지막 탭으로 추가되며, 새 파일은 편집할 수 있습니다.
 
-Note: If the new file name matches a file that already exists but is hidden in the code editor, the content for that file will show up in the created file. An example for a file that always exists is `index.html`.
+노트: 새 파일 이름이 이미 존재하지만 코드 편집기에서 숨겨진 파일과 일치할 경우, 해당 파일의 콘텐츠가 생성된 파일에 표시됩니다. 항상 존재하는 파일의 예는 `index.html`입니다.
 
-### Deleting a file
+### 파일 삭제
 
-1. The user clicks on the delete file button.
-2. The file is deleted from the WebContainer filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts).
-3. The file is removed from the TypeScript virtual file system.
-4. The file is removed from the code editor tabs.
+1. 사용자가 파일 삭제 버튼을 클릭합니다.
+2. 파일은 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 WebContainer 파일 시스템에서 삭제됩니다.
+3. 파일은 TypeScript 가상 파일 시스템에서 제거됩니다.
+4. 파일은 코드 편집기 탭에서 제거됩니다.
 
-Note: Some files can't be deleted to prevent users to break the app, being `src/main.ts`and `src/index.html`
+노트: 일부 파일은 사용자가 애플리케이션을 파괴하는 것을 방지하기 위해 삭제할 수 없습니다. 해당 파일은 `src/main.ts` 및 `src/index.html`입니다.
 
-### Switching a project
+### 프로젝트 전환
 
-The embedded editor considers a project change when the embedded editor was already initialized and the user changes the page in the following scenarios:
+EmbeddedEditor는 EmbeddedEditor가 이미 초기화된 상태에서 사용자가 다음 시나리오에서 페이지를 변경할 때 프로젝트 변경을 고려합니다:
 
-- Navigating through tutorial steps
-- Going from the homepage after the embedded editor is initialized to the playground
-- Going from a tutorial page to the playground
-- Going from a tutorial page to the homepage
-- Going from the playground to the homepage
+- 튜토리얼 단계를 탐색할 때
+- EmbeddedEditor가 초기화된 후 홈페이지에서 플레이그라운드로 이동할 때
+- 튜토리얼 페이지에서 플레이그라운드로 이동할 때
+- 튜토리얼 페이지에서 홈페이지로 이동할 때
+- 플레이그라운드에서 홈페이지로 이동할 때
 
-When a project change is detected, the [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts) emits the `tutorialChanged` observable, which is listened in multiple sub-components and services, then each component/service performs the necessary operations to switch the project.
+프로젝트 변경이 감지되면, [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts)는 `tutorialChanged` 옵저버블을 방출하며, 이는 여러 하위 구성 요소 및 서비스에서 수신 대기되고, 각 구성 요소/서비스는 프로젝트 전환에 필요한 작업을 수행합니다.
 
-The following steps are executed on project change:
+프로젝트 변경 시 다음 단계가 실행됩니다:
 
-1. The new project files are fetched by the [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts).
-2. The new project files are mounted in the WebContainer filesystem.
-3. The TypeScript virtual filesystem is updated with the new files and contents.
-4. The previous project and new project files are compared.
-   1. Files that are not available in the new project are deleted from the WebContainer filesystem.
-   2. Files that have the same path and name have their content replaced on the previous step when the files are mounted.
-5. The previous project dependencies are compared with the new project dependencies.
-   1. If there are differences, a `npm install` is triggered, hiding the preview and going to the install loading step.
-   2. If there are no differences, the project is ready.
-6. Some states are reset, for example the "reveal answer" state if the previous project was in the "reveal answer" state.
+1. 새로운 프로젝트 파일은 [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts)에 의해 가져옵니다.
+2. 새로운 프로젝트 파일은 WebContainer 파일 시스템에 마운트됩니다.
+3. TypeScript 가상 파일 시스템은 새로운 파일 및 내용으로 업데이트됩니다.
+4. 이전 프로젝트와 새로운 프로젝트 파일이 비교됩니다.
+   1. 새로운 프로젝트에 없는 파일은 WebContainer 파일 시스템에서 삭제됩니다.
+   2. 같은 경로와 이름을 가진 파일은 파일이 마운트 될 때 이전 단계에서 그 콘텐츠가 대체됩니다.
+5. 이전 프로젝트 종속성이 새로운 프로젝트 종속성과 비교됩니다.
+   1. 차이가 있으면, `npm install`이 실행되어 미리보기를 숨기고 설치 로딩 단계로 진행됩니다.
+   2. 차이가 없으면, 프로젝트가 준비됩니다.
+6. 일부 상태가 리셋되며, 예를 들어 이전 프로젝트가 "답안 표시" 상태였던 경우 "답안 표시" 상태가 리셋됩니다.
 
-## Components and services
+## 구성 요소 및 서비스
 
 ### [`EmbeddedEditor`](./embedded-editor.component.ts)
 
-The embedded editor is the parent component that holds all the components and services that compose the embedded editor.
+EmbeddedEditor는 EmbeddedEditor를 구성하는 모든 구성 요소 및 서비스를 보유하는 부모 구성 요소입니다.
 
 #### [`CodeEditor`](./code-editor/code-editor.component.ts)
 
-The component that holds the code editor view and the code editor state.
+코드 편집기 뷰와 코드 편집기 상태를 보유하는 구성 요소입니다.
 
 ##### [`CodeMirrorEditor`](./code-editor/code-mirror-editor.service.ts)
 
-[CodeMirror](https://codemirror.net/) is the library used to handle the code editor.
+[CodeMirror](https://codemirror.net/)는 코드 편집기를 다루기 위해 사용되는 라이브러리입니다.
 
-The `CodeMirrorEditor` service manages the CodeMirror instance and all the interactions with the library used to handle the code editor.
+`CodeMirrorEditor` 서비스는 CodeMirror 인스턴스와 코드 편집기를 다루기 위해 사용되는 모든 상호작용을 관리합니다.
 
-- handle the file edits and the CodeMirror view and state
-- handle the current project files in the code editor
-- handle the file creations and deletions
-- handle the file changes
-- handle all the CodeMirror specific events and extensions
+- 파일 편집 및 CodeMirror 뷰와 상태 처리
+- 코드 편집기에서 현재 프로젝트 파일 관리
+- 파일 생성 및 삭제 처리
+- 파일 변경 처리
+- 모든 CodeMirror 특화 이벤트와 확장을 처리
 
-###### [TypeScript Web Worker](./code-editor/workers/typescript-vfs.worker.ts)
+###### [TypeScript 웹 워커](./code-editor/workers/typescript-vfs.worker.ts)
 
-The TypeScript features are provided by the TypeScript web worker, that is initialized by the `CodeMirrorEditor` service.
+TypeScript 기능은 `CodeMirrorEditor` 서비스에 의해 초기화된 TypeScript 웹 워커에 의해 제공됩니다.
 
-The TypeScript web worker uses `@typescript/vfs` and the TypeScript language service to provide diagnostics, autocomplete and type features.
+TypeScript 웹 워커는 `@typescript/vfs` 및 TypeScript 언어 서비스를 사용하여 진단, 자동 완완 및 타입 기능을 제공합니다.
 
 #### [`Preview`](./preview/preview.component.ts)
 
-The preview component manages the `iframe` responsible for displaying the tutorial project preview, with the URL provided by the WebContainer API after the development server is started.
+미리보기 구성 요소는 튜토리얼 프로젝트 미리보기를 표시하는 책임이 있는 `iframe`을 관리하며, 개발 서버가 시작된 후 WebContainer API에서 제공되는 URL을 사용합니다.
 
-While the project is being initialized, the preview displays the loading state.
+프로젝트가 초기화되는 동안, 미리보기는 로딩 상태를 표시합니다.
 
 #### [`Terminal`](./terminal/terminal.component.ts)
 
-[Xterm.js](https://xtermjs.org/) is the library used to handle the terminals.
+[Xterm.js](https://xtermjs.org/)는 터미널을 다루기 위해 사용되는 라이브러리입니다.
 
-The terminal component handles the Xterm.js instance for the console and for the interactive terminal.
+터미널 구성 요소는 콘솔을 위한 Xterm.js 인스턴스와 인터랙티브 터미널을 처리합니다.
 
 ##### [`InteractiveTerminal`](./terminal/interactive-terminal.ts)
 
-The interactive terminal is the terminal where the user can interact with the terminal and run commands, supporting only commands for the Angular CLI.
+인터랙티브 터미널은 사용자가 터미널과 상호작용하고 명령어를 실행할 수 있는 터미널로 Angular CLI용 명령어만 지원합니다.
 
-##### Console
+##### 콘솔
 
-The console displays the output for `npm install` and `ng serve`.
+콘솔은 `npm install` 및 `ng serve`의 출력을 표시합니다.
 
 #### [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)
 
-Responsible for managing the WebContainer instance and all communication with its API. This service handles:
+WebContainer 인스턴스와 API 간의 모든 통신을 관리하는 책임이 있는 서비스입니다. 이 서비스는 다음을 처리합니다:
 
-- the WebContainer instance
-- all Node.js scripts
-- the WebContainer filesystem, mounting the tutorial project files, writing new content, deleting and creating files.
-- the terminal session, reading and processing user inputs.
-- the tutorial project dependencies, installing the dependencies.
-- the processes running inside the WebContainer, being the npm scripts to install the dependencies, run the development server and the user inputs for the `ng` CLI.
+- WebContainer 인스턴스
+- 모든 Node.js 스크립트
+- WebContainer 파일 시스템, 튜토리얼 프로젝트 파일을 마운트하고 새로운 내용을 기록하고, 파일을 삭제 및 생성합니다.
+- 터미널 세션, 사용자 입력을 읽고 처리합니다.
+- 튜토리얼 프로젝트 종속성, 종속성을 설치합니다.
+- WebContainer 내부에서 실행되는 프로세스, 종속성을 설치하고 개발 서버를 실행하며 사용자의 입력을 `ng` CLI에 전달합니다.
 
 ##### [`NodeRuntimeState`](./node-runtime-state.service.ts)
 
-Manages the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts) loading and error state.
+[`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)의 로딩 및 오류 상태를 관리합니다.
 
 #### [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts)
 
-Manages the tutorial assets, being responsible for fetching the tutorial source code and metadata.
+튜토리얼 자산을 관리하며, 튜토리얼 소스 코드와 메타데이터를 가져오는 책임이 있습니다.
 
-The source code is mounted in the WebContainer filesystem by the [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts).
+소스 코드는 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)에 의해 WebContainer 파일 시스템에 마운트됩니다.
 
-The metadata is used to manage the project, handle the project changes and the user interactivity with the app.
+메타데이터는 프로젝트 관리, 프로젝트 변경 처리 및 사용자와 애플리케이션 간의 상호작용을 처리하는 데 사용됩니다.
 
-This service also handles the reveal answer and reset reveal answer feature.
+이 서비스는 또한 답안 표시 및 답안 표시 재설정 기능을 처리합니다.
 
 #### [`EditorUiState`](./editor-ui-state.service.ts)
 
-Manages the editor UI state, being responsible for handling the user interactions with the editor tabs, switching between the preview, the terminal and the console.
+편집기 UI 상태를 관리하며, 편집기 탭 간의 사용자 상호작용을 처리하고 미리보기, 터미널 및 콘솔 간의 전환을 담당합니다.
 
 #### [`DownloadManager`](./download-manager.service.ts)
 
-Responsible for handling the download button in the embedded editor, fetching the tutorial project files and generating a zip file with the project content.
+EmbeddedEditor에서 다운로드 버튼을 처리하는 책임이 있으며, 튜토리얼 프로젝트 파일을 가져오고 프로젝트 내용을 포함하는 zip 파일을 생성합니다.
 
 #### [`AlertManager`](./alert-manager.service.ts)
 
-Manage the alerts displayed in the embedded editor, being the out of memory alert when multiple tabs are opened, and unsupported environments alerts.
+EmbeddedEditor에서 표시되는 알림을 관리하며, 여러 탭이 열린 경우 메모리 부족 경고 및 지원되지 않는 환경 경고를 포함합니다.
 
 #### [`TypingsLoader`](./typings-loader.service.ts)
 
-Manages the types definitions for the code editor.
+코드 편집기를 위한 타입 정의를 관리합니다.

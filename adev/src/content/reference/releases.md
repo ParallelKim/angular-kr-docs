@@ -1,172 +1,169 @@
-# Angular versioning and releases
+# Angular 버전 관리 및 출시
 
-We recognize that you need stability from the Angular framework.
-Stability ensures that reusable components and libraries, tutorials, tools, and learned practices don't become obsolete unexpectedly.
-Stability is essential for the ecosystem around Angular to thrive.
+우리는 Angular 프레임워크에서 안정성이 필요하다는 것을 인식하고 있습니다.
+안정성은 재사용 가능한 구성 요소 및 라이브러리, 자습서, 도구 및 학습된 관행이 예기치 않게 쓸모없게 되지 않도록 보장합니다.
+안정성은 Angular 주위의 생태계가 번창하는 데 필수적입니다.
 
-We also share with you the need for Angular to keep evolving.
-We strive to ensure that the foundation on top of which you are building is continuously improving and enabling you to stay up-to-date with the rest of the web ecosystem and your user needs.
+우리는 또한 Angular가 계속 진화해야 할 필요성을 공유합니다.
+우리는 여러분이 구축하고 있는 기반이 지속적으로 개선되고 있으며, 웹 생태계와 사용자 요구에 맞게 최신 상태를 유지할 수 있도록 보장하기 위해 노력합니다.
 
-This document contains the practices that we follow to provide you with a leading-edge application development platform, balanced with stability.
-We strive to ensure that future changes are always introduced in a predictable way.
-We want everyone who depends on Angular to know when and how new features are added, and to be well-prepared when obsolete ones are removed.
+이 문서에는 최첨단 응용 프로그램 개발 플랫폼을 안정성과 균형을 맞추어 제공하기 위해 우리가 따르는 관행이 포함되어 있습니다.
+우리는 미래의 변경 사항이 항상 예측 가능한 방식으로 도입되도록 보장하기 위해 노력합니다.
+Angular에 의존하는 모든 사람들이 새로운 기능이 언제 어떻게 추가되는지 알고 있으며, 쓸모없게 된 기능이 제거될 때 잘 준비되기를 바랍니다.
 
-Sometimes *breaking changes*, such as the removal of APIs or features, are necessary to innovate and stay current with evolving best practices, changing dependencies, or shifts in the web platform. These breaking changes go through a deprecation process explained in our [deprecation policy](#deprecation-policy).
+API 또는 기능의 제거와 같은 *브레이킹 변화*가 필요할 때가 있습니다. 이는 혁신하고 진화하는 모범 사례, 변화하는 종속성 또는 웹 플랫폼의 변화에 대응하기 위함입니다. 이러한 브레이킹 변화는 [사용 중단 정책](#deprecation-policy)에서 설명한 사용 중단 프로세스를 거칩니다.
 
-To make these transitions as straightforward as possible, the Angular team makes these commitments:
+이러한 전환을 가능한 한 간단하게 만들기 위해 Angular 팀은 다음과 같은 약속을 합니다:
 
-* We work hard to minimize the number of breaking changes and to provide migration tools when possible
-* We follow the deprecation policy described here, so you have time to update your applications to the latest APIs and best practices
+* 우리는 브레이킹 변화의 수를 최소화하고 가능할 때 마이그레이션 도구를 제공합니다.
+* 우리는 여기서 설명한 사용 중단 정책을 준수하므로, 최신 API 및 모범 사례로 애플리케이션을 업데이트할 시간을 확보할 수 있습니다.
 
-HELPFUL: The practices described in this document apply to Angular 2.0 and later.
-If you are currently using AngularJS, see [Upgrading from AngularJS](https://angular.io/guide/upgrade "Upgrading from Angular JS").
-*AngularJS* is the name for all v1.x versions of Angular.
+도움이 되는 정보: 이 문서에 설명된 관행은 Angular 2.0 이상에 적용됩니다.
+현재 AngularJS를 사용 중인 경우 [AngularJS에서 업그레이드](https://angular.io/guide/upgrade "Angular JS에서 업그레이드")를 참조하십시오.
+*AngularJS*는 Angular의 모든 v1.x 버전의 이름입니다.
 
-## Angular versioning
+## Angular 버전 관리
 
-Angular version numbers indicate the level of changes that are introduced by the release.
-This use of [semantic versioning](https://semver.org/ "Semantic Versioning Specification") helps you understand the potential impact of updating to a new version.
+Angular 버전 번호는 출시로 인해 도입된 변경 수준을 나타냅니다.
+[의미론적 버전 관리](https://semver.org/ "의미론적 버전 관리 규격")의 사용은 새로운 버전으로 업데이트할 때의 잠재적 영향을 이해하는 데 도움이 됩니다.
 
-Angular version numbers have three parts: `major.minor.patch`.
-For example, version 7.2.11 indicates major version 7, minor version 2, and patch level 11.
+Angular 버전 번호는 세 부분으로 구성됩니다: `major.minor.patch`.
+예를 들어, 버전 7.2.11은 주요 버전 7, 부 버전 2 및 패치 수준 11을 나타냅니다.
 
-The version number is incremented based on the level of change included in the release.
+버전 번호는 출시 내용의 변경 수준에 따라 증가합니다.
 
-| Level of change | Details |
-|:---             |:---     |
-| Major release   | Contains significant new features, some but minimal developer assistance is expected during the update. When updating to a new major release, you might need to run update scripts, refactor code, run additional tests, and learn new APIs.                                                                                                                                                                                      |
-| Minor release   | Contains new smaller features. Minor releases are fully backward-compatible; no developer assistance is expected during update, but you can optionally modify your applications and libraries to begin using new APIs, features, and capabilities that were added in the release. We update peer dependencies in minor versions by expanding the supported versions, but we do not require projects to update these dependencies. |
-| Patch release   | Low risk, bug fix release. No developer assistance is expected during update.                                                                                                                                                                                                                                                                                                                                                     |
-
-HELPFUL: As of Angular version 7, the major versions of Angular core and the CLI are aligned.
-This means that in order to use the CLI as you develop an Angular app, the version of `@angular/core` and the CLI need to be the same.
-
-### Preview releases
-
-We let you preview what's coming by providing "Next" and Release Candidates \(`rc`\) pre-releases for each major and minor release:
-
-| Pre-release type  | Details |
+| 변경 수준         | 세부사항 |
 |:---               |:---     |
-| Next              | The release that is under active development and testing. The next release is indicated by a release tag appended with the `-next` identifier, such as  `8.1.0-next.0`.      |
-| Release candidate | A release that is feature complete and in final testing. A release candidate is indicated by a release tag appended with the `-rc` identifier, such as version `8.1.0-rc.0`. |
+| 주요 릴리스       | 중요한 새로운 기능을 포함하고 있으며, 업데이트 중 최소한의 개발자 지원이 예상됩니다. 새로운 주요 릴리스로 업데이트할 때는 업데이트 스크립트를 실행하고, 코드를 리팩토링하고, 추가 테스트를 수행하며, 새로운 API를 배워야 할 수 있습니다. |
+| 부 릴리스         | 새로운 소규모 기능을 포함합니다. 부 릴리스는 완전히 이전 버전과 호환되며, 업데이트 중에 개발자 지원이 필요하지 않지만, 선택적으로 애플리케이션 및 라이브러리를 수정하여 출시된 새로운 API, 기능 및 능력을 사용하기 시작할 수 있습니다. 우리는 부 버전에서 지원되는 버전을 확장하여 동료 종속성을 업데이트하지만, 프로젝트가 이러한 종속성을 업데이트하도록 요구하지는 않습니다. |
+| 패치 릴리스       | 위험이 낮은 버그 수정 릴리스입니다. 업데이트 중에 개발자 지원이 필요하지 않습니다. |
 
-The latest `next` or `rc` pre-release version of the documentation is available at [next.angular.dev](https://next.angular.dev).
+도움이 되는 정보: Angular 버전 7부터 Angular 핵심 및 CLI의 주요 버전이 일치합니다.
+즉, Angular 앱을 개발할 때 CLI를 사용하려면 `@angular/core`와 CLI의 버전이 동일해야 합니다.
 
-## Release frequency
+### 미리보기 릴리스
 
-We work toward a regular schedule of releases, so that you can plan and coordinate your updates with the continuing evolution of Angular.
+우리는 주요 및 부 릴리스마다 "다음" 및 릴리스 후보(`rc`) 미리보기를 제공함으로써 여러분에게 다가오는 내용을 미리 볼 수 있게 합니다:
 
-HELPFUL: Dates are offered as general guidance and are subject to change.
+| 미리보기 릴리스 유형 | 세부사항 |
+|:---                 |:---     |
+| 다음                | 현재 활성 개발 및 테스트 중인 릴리스입니다. 다음 릴리스는 `-next` 식별자가 붙은 릴리스 태그로 표시되며, 예를 들어 `8.1.0-next.0`과 같습니다.      |
+| 릴리스 후보        | 기능이 완전하고 최종 테스트 중인 릴리스입니다. 릴리스 후보는 `-rc` 식별자가 붙은 릴리스 태그로 표시되며, 예를 들어 버전 `8.1.0-rc.0`과 같습니다. |
 
-In general, expect the following release cycle:
+문서의 최신 `next` 또는 `rc` 미리보기 버전은 [next.angular.dev](https://next.angular.dev)에서 확인할 수 있습니다.
 
-* A major release every 6 months
-* 1-3 minor releases for each major release
-* A patch release and pre-release \(`next` or `rc`\) build almost every week
+## 릴리스 주기
 
-This cadence of releases gives eager developers access to new features as soon as they are fully developed and pass through our code review and integration testing processes, while maintaining the stability and reliability of the platform for production users that prefer to receive features after they have been validated by Google and other developers that use the pre-release builds.
+우리는 정기적인 릴리스 일정을 지향하여 여러분이 Angular의 지속적인 발전에 맞춰 업데이트를 계획하고 조율할 수 있도록 합니다.
 
-## Support policy and schedule
+도움이 되는 정보: 날짜는 일반적인 가이드라인으로 제공되며 변경될 수 있습니다.
 
-HELPFUL: Approximate dates are offered as general guidance and are subject to change.
+일반적으로 다음 릴리스 주기를 예상하십시오:
 
-### Release schedule
+* 매 6개월마다 주요 릴리스
+* 각 주요 릴리스에 대해 1-3개의 부 릴리스
+* 거의 매주 패치 릴리스 및 미리보기(`next` 또는 `rc`) 빌드
 
-| Version | Date               |
-|:--------|:-------------------|
-| v19.1   | Week of 2025-01-13 |
-| v19.2   | Week of 2025-02-24 |
-| v20.0   | Week of 2025-05-26 |
+이러한 릴리스 주기는 열정적인 개발자들이 새로운 기능을 완전히 개발하고 코드 검토 및 통합 테스트 프로세스를 통과한 즉시 사용할 수 있도록 하면서도, 기능이 Google 및 기타 개발자에 의해 검증된 후 제공되기를 선호하는 프로덕션 사용자에게 플랫폼의 안정성과 신뢰성을 유지합니다.
 
-### Support window
+## 지원 정책 및 일정
 
-All major releases are typically supported for 18 months.
+도움이 되는 정보: 근사 날짜는 일반적인 가이드라인으로 제공되며 변경될 수 있습니다.
 
-| Support stage     | Support Timing | Details |
-|:---               |:---            |:---     |
-| Active            | 6 months       | Regularly-scheduled updates and patches are released                |
-| Long-term \(LTS\) | 12 months      | Only [critical fixes and security patches](#lts-fixes) are released |
+### 릴리스 일정
 
-### Actively supported versions
+| 버전   | 날짜                 |
+|:------|:---------------------|
+| v19.1 | 2025-01-13 주       |
+| v19.2 | 2025-02-24 주       |
+| v20.0 | 2025-05-26 주       |
 
-The following table provides the status for Angular versions under support.
+### 지원 기간
 
-| Version | Status | Released   | Active ends | LTS ends   |
-|:--------|:-------|:-----------|:------------|:-----------|
-| ^19.0.0 | Active | 2024-11-19 | 2025-05-19  | 2026-05-19 |
-| ^18.0.0 | LTS    | 2024-05-22 | 2024-11-19  | 2025-11-19 |
-| ^17.0.0 | LTS    | 2023-11-08 | 2024-05-08  | 2025-05-15 |
+모든 주요 릴리스는 일반적으로 18개월 동안 지원됩니다.
 
-Angular versions v2 to v16 are no longer supported.
+| 지원 단계       | 지원 기간  | 세부사항 |
+|:---             |:---        |:---     |
+| 활성            | 6개월      | 정기적으로 예약된 업데이트 및 패치가 릴리스됩니다. |
+| 장기 지원(LTS)  | 12개월     | [중요 수정 및 보안 패치](#lts-fixes)만 릴리스됩니다. |
 
-### LTS fixes
+### 적극적으로 지원되는 버전
 
-As a general rule, a fix is considered for an LTS version if it resolves one of:
+다음 표는 지원 중인 Angular 버전의 상태를 제공합니다.
 
-* A newly identified security vulnerability,
-* A regression, since the start of LTS, caused by a 3rd party change, such as a new browser version.
+| 버전      | 상태    | 릴리스 날짜  | 활성 종료  | LTS 종료   |
+|:---------|:--------|:-----------|:-----------|:-----------|
+| ^19.0.0  | 활성    | 2024-11-19 | 2025-05-19 | 2026-05-19 |
+| ^18.0.0  | LTS     | 2024-05-22 | 2024-11-19 | 2025-11-19 |
+| ^17.0.0  | LTS     | 2023-11-08 | 2024-05-08 | 2025-05-15 |
 
-## Deprecation policy
+Angular 버전 v2에서 v16까지는 더 이상 지원되지 않습니다.
 
-When the Angular team intends to remove an API or feature, it will be marked as *deprecated*. This occurs when an API is obsolete, superseded by another API, or otherwise discontinued. Deprecated API remain available through their deprecated phase, which lasts a minimum two major versions (approximately one year).
+### LTS 수정
 
-To help ensure that you have sufficient time and a clear path to update, this is our deprecation policy:
+일반 규칙으로, 수정은 다음 중 하나를 해결하는 경우 LTS 버전에 고려됩니다:
 
-| Deprecation stages | Details |
-|:---                |:---     |
-| Announcement       | We announce deprecated APIs and features in the [change log](https://github.com/angular/angular/blob/main/CHANGELOG.md "Angular change log"). Deprecated APIs appear in the [documentation](api?status=deprecated) with ~~strikethrough~~. When we announce a deprecation, we also announce a recommended update path. Additionally, all deprecated APIs are annotated with `@deprecated` in the corresponding documentation, which enables text editors and IDEs to provide hints if your project depends on them.                            |
-| Deprecation period | When an API or a feature is deprecated, it is still present in at least the next two major releases (period of at least 12 months). After that, deprecated APIs and features are candidates for removal. A deprecation can be announced in any release, but the removal of a deprecated API or feature happens only in major release. Until a deprecated API or feature is removed, it is maintained according to the LTS support policy, meaning that only critical and security issues are fixed. |
-| npm dependencies   | We only make npm dependency updates that require changes to your applications in a major release. In minor releases, we update peer dependencies by expanding the supported versions, but we do not require projects to update these dependencies until a future major version. This means that during minor Angular releases, npm dependency updates within Angular applications and libraries are optional.                                               |
+* 새롭게 식별된 보안 취약점,
+* LTS 시작 이후 제3자 변경(예: 새 브라우저 버전)으로 인한 회귀.
 
-## Compatibility policy
+## 사용 중단 정책
 
-Angular is a collection of many packages, subprojects, and tools.
-To prevent accidental use of private APIs and so that you can clearly understand what is covered by the practices described here — we document what is and is not considered our public API surface.
-For details, see [Supported Public API Surface of Angular](https://github.com/angular/angular/blob/main/contributing-docs/public-api-surface.md "Supported Public API Surface of Angular").
+Angular 팀이 API 또는 기능을 제거하려고 할 때, 그것은 *사용 중단*으로 표시됩니다. 이는 API가 쓸모없어지거나 다른 API로 대체되거나 다른 이유로 중단될 때 발생합니다. 사용 중단된 API는 최소 두 개의 주요 버전(약 1년) 동안 사용 중단 단계에서 사용할 수 있습니다.
 
-To guarantee backward compatibility of Angular we run a series of checks before we merge any change:
+여러분이 충분한 시간과 명확한 경로로 업데이트할 수 있도록 돕기 위해, 우리의 사용 중단 정책은 다음과 같습니다:
 
-* Unit tests and integration tests
-* Comparing the type definitions of the public API surface before and after the change
-* Running the tests of all the applications at Google that depend on Angular
+| 사용 중단 단계 | 세부사항 |
+|:---            |:---     |
+| 발표           | 우리는 [변경 로그](https://github.com/angular/angular/blob/main/CHANGELOG.md "Angular 변경 로그")에서 사용 중단된 API 및 기능을 발표합니다. 사용 중단된 API는 [문서](api?status=deprecated)에서 ~~취소선~~으로 표시됩니다. 사용 중단을 발표할 때, 권장 업데이트 경로도 함께 발표합니다. 또한 모든 사용 중단된 API는 해당 문서에서 `@deprecated`로 주석이 달려 있어, 여러분의 프로젝트에서 이를 의존하는지 여부에 따라 텍스트 편집기와 IDE가 힌트를 제공할 수 있습니다. |
+| 사용 중단 기간 | API 또는 기능이 사용 중단될 때, 다음 두 개의 주요 릴리스(최소 12개월) 동안 여전히 존재합니다. 그 후, 사용 중단된 API 및 기능은 제거 후보가 됩니다. 사용 중단은 모든 릴리스에서 발표될 수 있지만, 사용 중단된 API 또는 기능의 제거는 주요 릴리스에서만 발생합니다. 사용 중단된 API 또는 기능이 제거될 때까지, LTS 지원 정책에 따라 유지 관리되며, 이는 오직 중요한 문제와 보안 문제만 수정된다는 것을 의미합니다. |
+| npm 종속성  | 우리는 주요 릴리스에서 애플리케이션 변경이 필요한 npm 종속성 업데이트만 수행합니다. 부 릴리스에서 지원되는 버전을 확대하여 동료 종속성을 업데이트하지만, 향후 주요 버전까지 이러한 종속성 업데이트를 요구하지 않습니다. 이는 부 Angular 릴리스 중에 Angular 애플리케이션 및 라이브러리 내에서 npm 종속성 업데이트가 선택적임을 의미합니다. |
 
-Any changes to the public API surface are made in accordance with the versioning, support, and depreciation policies previously described. In exceptional cases, such as critical security patches, fixes may introduce backwards incompatible changes. Such exceptional cases are accompanied by explicit notice on the framework's official communication channels.
+## 호환성 정책
 
-## Breaking change policy and update paths
+Angular는 많은 패키지, 하위 프로젝트 및 도구의 모음입니다.
+우리는 개인 API의 우발적인 사용을 방지하고 여러분이 이곳에 설명된 관행에 의해 무엇이 포함되는지 명확하게 이해하도록 돕기 위해 — 무엇이 우리의 공공 API 표면에 포함되고 포함되지 않는지를 문서화합니다.
+자세한 내용은 [Angular의 지원되는 공공 API 표면](https://github.com/angular/angular/blob/main/contributing-docs/public-api-surface.md "Angular의 지원되는 공공 API 표면")을 참조하십시오.
 
-Breaking change requires you to do work because the state after it is not backward compatible with the state before it. You can find the rare exceptions from this rule in the [Compatibility policy](#compatibility-policy). Examples of breaking changes are the removal of public APIs or other changes of the type definition of Angular, changing the timing of calls, or updating to a new version of a dependency of Angular, which includes breaking changes itself.
+Angular의 이전 호환성을 보장하기 위해 우리는 어떤 변경사항도 병합하기 전에 일련의 검사를 수행합니다:
 
-To support you in case of breaking changes in Angular:
+* 단위 테스트 및 통합 테스트
+* 변경 전후의 공공 API 표면의 유형 정의 비교
+* Angular에 의존하는 Google의 모든 애플리케이션 테스트 실행
 
-* We follow our [deprecation policy](#deprecation-policy) before we remove a public API
-* Support update automation via the `ng update` command. It provides code transformations which we often have tested ahead of time over hundreds of thousands of projects at Google
-* Step by step instructions how to update from one major version to another at the ["Angular Update Guide"](update-guide)
+공공 API 표면에 대한 모든 변경 사항은 이전에 설명된 버전 관리, 지원 및 사용 중단 정책에 따라 이루어집니다. 예외적인 경우(예: 중요한 보안 패치)에는 수정이 이전과 호환되지 않는 변경을 도입할 수 있습니다. 이러한 예외적인 경우에는 프레임워크의 공식 커뮤니케이션 채널에서 명확한 통지가 수반됩니다.
 
-You can `ng update` to any version of Angular, provided that the following criteria are met:
+## 브레이킹 변경 정책 및 업데이트 경로
 
-* The version you want to update *to* is supported.
-* The version you want to update *from* is within one major version of the version you want to
-    upgrade to.
+브레이킹 변경은 작업이 필요합니다. 이는 상태가 이전 상태와 호환되지 않기 때문입니다. 이 규칙의 드문 예외는 [호환성 정책](#compatibility-policy)에서 찾을 수 있습니다. 브레이킹 변경의 예로는 공공 API의 제거 또는 Angular의 타입 정의 변경, 호출 타이밍 변경 또는 브레이킹 변경이 포함된 Angular의 종속성 버전 업데이트 등이 있습니다.
 
-For example, you can update from version 11 to version 12, provided that version 12 is still supported.
-If you want to update across multiple major versions, perform each update one major version at a time.
-For example, to update from version 10 to version 12:
+Angular에서 브레이킹 변경 발생 시 여러분을 지원하기 위해:
 
-1. Update from version 10 to version 11.
-1. Update from version 11 to version 12.
+* 우리는 공공 API 제거 전에 [사용 중단 정책](#deprecation-policy)을 따릅니다.
+* `ng update` 명령어를 통한 업데이트 자동화를 지원합니다. 이 명령어는 Google에서 수십만 개의 프로젝트를 사전 테스트한 코드 변환을 제공합니다.
+* 한 주요 버전에서 다른 주요 버전으로 업데이트하는 단계별 지침을 ["Angular 업데이트 가이드"](update-guide)에서 제공합니다.
 
-## Developer Preview
+여러분은 다음 기준이 충족되면 Angular의 모든 버전으로 `ng update`를 수행할 수 있습니다:
 
-Occasionally we introduce new APIs under the label of "Developer Preview". These are APIs that are fully functional and polished, but that we are not ready to stabilize under our normal deprecation policy.
+* 업데이트할 버전이 지원됩니다.
+* 업데이트할 버전이 업그레이드하려는 버전의 한 주요 버전 내에 있어야 합니다.
 
-This may be because we want to gather feedback from real applications before stabilization, or because the associated documentation or migration tooling is not fully complete. Feedback can be provided via a [GitHub issue](https://github.com/angular/angular/issues), where developers can share their experiences, report bugs, or suggest improvements to help refine the feature.
+예를 들어, 버전 12가 여전히 지원되는 경우 버전 11에서 버전 12로 업데이트할 수 있습니다.
+여러 주요 버전 간에 업데이트하려면, 각 업데이트를 한 주요 버전씩 수행하십시오.
+예를 들어, 버전 10에서 버전 12로 업데이트하려면:
 
-The policies and practices that are described in this document do not apply to APIs marked as Developer Preview. Such APIs can change at any time, even in new patch versions of the framework. Teams should decide for themselves whether the benefits of using Developer Preview APIs are worth the risk of breaking changes outside of our normal use of semantic versioning.
+1. 버전 10에서 버전 11로 업데이트합니다.
+2. 버전 11에서 버전 12로 업데이트합니다.
 
+## 개발자 미리보기
 
+때때로 우리는 "개발자 미리보기"라는 레이블로 새로운 API를 소개합니다. 이러한 API는 완전히 작동하고 다듬어져 있지만, 우리의 일반적인 사용 중단 정책에 따라 안정화할 준비가 되어 있지 않습니다.
 
-## Experimental
+이는 안정화 전에 실제 애플리케이션으로부터 피드백을 수집하고자 하거나, 관련 문서나 마이그레이션 도구가 완전히 준비되지 않았기 때문일 수 있습니다. 피드백은 [GitHub 문제](https://github.com/angular/angular/issues)를 통해 제공될 수 있으며, 개발자들은 그들의 경험을 공유하고 버그를 보고하거나 기능을 개선할 수 있는 제안을 할 수 있습니다.
 
-These APIs might not become stable at all or have significant changes before becoming stable.
+이 문서에 설명된 정책 및 관행은 개발자 미리보기로 표시된 API에 적용되지 않습니다. 이러한 API는 언제든지 변경될 수 있으며, 심지어 프레임워크의 새로운 패치 버전에서도 변경 가능합니다. 팀은 개발자 미리보기 API를 사용하는 이점과 일반적인 의미론적 버전 관리 사용 외에 브레이킹 변경의 위험이 가치가 있는지를 스스로 판단해야 합니다.
 
-The policies and practices that are described in this document do not apply to APIs marked as experimental. Such APIs can change at any time, even in new patch versions of the framework. Teams should decide for themselves whether the benefits of using experimental APIs are worth the risk of breaking changes outside of our normal use of semantic versioning.
+## 실험적
+
+이러한 API는 아예 안정화되지 않거나 안정화되기 전에 상당한 변경이 발생할 수 있습니다.
+
+이 문서에 설명된 정책 및 관행은 실험적으로 표시된 API에 적용되지 않습니다. 이러한 API는 언제든지 변경될 수 있으며, 심지어 프레임워크의 새로운 패치 버전에서도 변경될 수 있습니다. 팀은 실험적 API를 사용하는 이점과 일반적인 의미론적 버전 관리 사용 외에 브레이킹 변경의 위험이 가치가 있는지를 스스로 판단해야 합니다.

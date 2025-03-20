@@ -1,34 +1,34 @@
-# Control flow
+# 제어 흐름
 
-Angular templates support control flow blocks that let you conditionally show, hide, and repeat elements.
+Angular 템플릿은 조건에 따라 요소를 표시, 숨기고 반복할 수 있는 제어 흐름 블록을 지원합니다.
 
-Note: This was previously accomplished with the *ngIf, *ngFor, and \*ngSwitch directives.
+참고: 이것은 이전에 *ngIf, *ngFor 및 \*ngSwitch 지시어로 수행되었습니다.
 
-## Conditionally display content with `@if`, `@else-if` and `@else`
+## `@if`, `@else-if` 및 `@else`로 조건부 콘텐츠 표시
 
-The `@if` block conditionally displays its content when its condition expression is truthy:
+`@if` 블록은 그 조건 표현식이 참일 때 내용을 조건부로 표시합니다:
 
 ```angular-html
 @if (a > b) {
-  <p>{{a}} is greater than {{b}}</p>
+  <p>{{a}}는 {{b}}보다 큽니다</p>
 }
 ```
 
-If you want to display alternative content, you can do so by providing any number of `@else if` blocks and a singular `@else` block.
+대체 콘텐츠를 표시하고 싶다면, 임의의 개수의 `@else if` 블록과 단일 `@else` 블록을 제공할 수 있습니다.
 
 ```angular-html
 @if (a > b) {
-  {{a}} is greater than {{b}}
+  {{a}}는 {{b}}보다 큽니다
 } @else if (b > a) {
-  {{a}} is less than {{b}}
+  {{a}}는 {{b}}보다 작습니다
 } @else {
-  {{a}} is equal to {{b}}
+  {{a}}는 {{b}}와 같습니다
 }
 ```
 
-### Referencing the conditional expression's result
+### 조건 표현식 결과 참조하기
 
-The `@if` conditional supports saving the result of the conditional expression into a variable for reuse inside of the block.
+`@if` 조건부는 조건 표현식의 결과를 변수에 저장하여 블록 내에서 재사용할 수 있도록 지원합니다.
 
 ```angular-html
 @if (user.profile.settings.startDate; as startDate) {
@@ -36,13 +36,13 @@ The `@if` conditional supports saving the result of the conditional expression i
 }
 ```
 
-This can be useful for referencing longer expressions that would be easier to read and maintain within the template.
+이는 템플릿 내에서 읽기 쉽고 유지 관리하기 쉬운 긴 표현식을 참조하는 데 유용할 수 있습니다.
 
-## Repeat content with the `@for` block
+## `@for` 블록으로 콘텐츠 반복
 
-The `@for` block loops through a collection and repeatedly renders the content of a block. The collection can be any JavaScript [iterable](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Iteration_protocols), but Angular has additional performance optimizations for `Array` values.
+`@for` 블록은 컬렉션을 반복하고 블록의 내용을 반복적으로 렌더링합니다. 컬렉션은 모든 JavaScript [iterable](https://developer.mozilla.org/docs/Web/JavaScript/Reference/Iteration_protocols)일 수 있지만, Angular는 `Array` 값에 대한 추가 성능 최적화를 제공합니다.
 
-A typical `@for` loop looks like:
+전형적인 `@for` 루프는 다음과 같습니다:
 
 ```angular-html
 @for (item of items; track item.id) {
@@ -50,58 +50,58 @@ A typical `@for` loop looks like:
 }
 ```
 
-Angular's `@for` block does not support flow-modifying statements like JavaScript's `continue` or `break`.
+Angular의 `@for` 블록은 JavaScript의 `continue` 또는 `break`와 같은 흐름 수정문을 지원하지 않습니다.
 
-### Why is `track` in `@for` blocks important?
+### `@for` 블록의 `track`이 중요한 이유는 무엇인가요?
 
-The `track` expression allows Angular to maintain a relationship between your data and the DOM nodes on the page. This allows Angular to optimize performance by executing the minimum necessary DOM operations when the data changes.
+`track` 표현식은 Angular가 데이터와 페이지의 DOM 노드 간의 관계를 유지하도록 합니다. 이렇게 하면 데이터가 변경될 때 최소한의 DOM 작업을 실행하여 성능을 최적화할 수 있습니다.
 
-Using track effectively can significantly improve your application's rendering performance when looping over data collections.
+트랙을 효과적으로 사용하면 데이터 컬렉션을 반복할 때 애플리케이션의 렌더링 성능을 크게 향상시킬 수 있습니다.
 
-Select a property that uniquely identifies each item in the `track` expression. If your data model includes a uniquely identifying property, commonly `id` or `uuid`, use this value. If your data does not include a field like this, strongly consider adding one.
+`track` 표현식에서 각 항목을 고유하게 식별하는 속성을 선택하세요. 데이터 모델에 일반적으로 `id` 또는 `uuid`와 같은 고유 식별 속성이 포함되어 있다면 이 값을 사용하세요. 데이터에 이러한 필드가 포함되어 있지 않다면 반드시 추가하는 것을 고려하세요.
 
-For static collections that never change, you can use `$index` to tell Angular to track each item by its index in the collection.
+변경되지 않는 정적 컬렉션의 경우 `$index`를 사용하여 Angular가 컬렉션 내에서 각 항목을 인덱스로 추적하도록 할 수 있습니다.
 
-If no other option is available, you can specify `identity`. This tells Angular to track the item by its reference identity using the triple-equals operator (`===`). Avoid this option whenever possible as it can lead to significantly slower rendering updates, as Angular has no way to map which data item corresponds to which DOM nodes.
+다른 옵션이 없으면 `identity`를 지정할 수 있습니다. 이는 Angular가 삼중 등호 연산자(`===`)를 사용하여 항목을 참조 아이덴티티로 추적하도록 지시합니다. 가능한 한 이 옵션은 피하세요. 이 옵션은 Angular가 데이터 항목과 어떤 DOM 노드가 연결되어 있는지 매핑할 수 없기 때문에 렌더링 업데이트가 현저히 느려질 수 있습니다.
 
-### Contextual variables in `@for` blocks
+### `@for` 블록의 컨텍스트 변수
 
-Inside `@for` blocks, several implicit variables are always available:
+`@for` 블록 내에서는 항상 여러 암묵적 변수가 사용 가능합니다:
 
-| Variable | Meaning                                       |
-| -------- | --------------------------------------------- |
-| `$count` | Number of items in a collection iterated over |
-| `$index` | Index of the current row                      |
-| `$first` | Whether the current row is the first row      |
-| `$last`  | Whether the current row is the last row       |
-| `$even`  | Whether the current row index is even         |
-| `$odd`   | Whether the current row index is odd          |
+| 변수     | 의미                                         |
+| -------- | -------------------------------------------- |
+| `$count` | 반복된 컬렉션의 항목 수                   |
+| `$index` | 현재 행의 인덱스                             |
+| `$first` | 현재 행이 첫 번째 행인지 여부                |
+| `$last`  | 현재 행이 마지막 행인지 여부                |
+| `$even`  | 현재 행 인덱스가 짝수인지 여부              |
+| `$odd`   | 현재 행 인덱스가 홀수인지 여부              |
 
-These variables are always available with these names, but can be aliased via a `let` segment:
+이 변수들은 항상 이러한 이름으로 사용 가능하지만 `let` 세그먼트를 통해 별칭을 붙일 수 있습니다:
 
 ```angular-html
 @for (item of items; track item.id; let idx = $index, e = $even) {
-  <p>Item #{{ idx }}: {{ item.name }}</p>
+  <p>항목 #{{ idx }}: {{ item.name }}</p>
 }
 ```
 
-The aliasing is useful when nesting `@for` blocks, letting you read variables from the outer `@for` block from an inner `@for` block.
+별칭은 `@for` 블록을 중첩할 때 유용하며, 내부 `@for` 블록에서 외부 `@for` 블록의 변수를 읽을 수 있도록 합니다.
 
-### Providing a fallback for `@for` blocks with the `@empty` block
+### `@empty` 블록으로 `@for` 블록에 대한 대체 콘텐츠 제공
 
-You can optionally include an `@empty` section immediately after the `@for` block content. The content of the `@empty` block displays when there are no items:
+선택적으로 `@for` 블록 콘텐츠 직후에 `@empty` 섹션을 포함할 수 있습니다. `@empty` 블록의 콘텐츠는 항목이 없을 때 표시됩니다:
 
 ```angular-html
 @for (item of items; track item.name) {
   <li> {{ item.name }}</li>
 } @empty {
-  <li aria-hidden="true"> There are no items. </li>
+  <li aria-hidden="true"> 항목이 없습니다. </li>
 }
 ```
 
-## Conditionally display content with the `@switch` block
+## `@switch` 블록으로 조건부 콘텐츠 표시
 
-While the `@if` block is great for most scenarios, the `@switch` block provides an alternate syntax to conditionally render data. Its syntax closely resembles JavaScript's `switch` statement.
+`@if` 블록이 대부분의 시나리오에 유용하지만, `@switch` 블록은 데이터를 조건부로 렌더링하기 위한 대체 구문을 제공합니다. 그 구문은 JavaScript의 `switch` 문과 유사합니다.
 
 ```angular-html
 @switch (userPermissions) {
@@ -120,10 +120,10 @@ While the `@if` block is great for most scenarios, the `@switch` block provides 
 }
 ```
 
-The value of the conditional expression is compared to the case expression using the triple-equals (`===`) operator.
+조건 표현식의 값은 삼중 등호(`===`) 연산자를 사용하여 케이스 표현식과 비교됩니다.
 
-**`@switch` does not have a fallthrough**, so you do not need an equivalent to a `break` or `return` statement in the block.
+**`@switch`는 추적이 없으므로 블록 내에서 `break` 또는 `return` 문과 같은 동등한 항목이 필요하지 않습니다.**
 
-You can optionally include a `@default` block. The content of the `@default` block displays if none of the preceding case expressions match the switch value.
+옵션으로 `@default` 블록을 포함할 수 있습니다. `@default` 블록의 내용은 앞의 케이스 표현식이 스위치 값을 일치시키지 않을 경우 표시됩니다.
 
-If no `@case` matches the expression and there is no `@default` block, nothing is shown.
+어떠한 `@case`도 표현식과 일치하지 않고 `@default` 블록이 없으면, 아무것도 표시되지 않습니다.
