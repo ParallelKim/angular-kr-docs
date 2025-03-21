@@ -1,90 +1,90 @@
-# Work with translation files
+# 번역 파일 작업
 
-After you prepare a component for translation, use the [`extract-i18n`][CliExtractI18n] [Angular CLI][CliMain] command to extract the marked text in the component into a *source language* file.
+번역할 구성 요소를 준비한 후, [`extract-i18n`][CliExtractI18n] [Angular CLI][CliMain] 명령을 사용하여 구성 요소에서 표시된 텍스트를 *소스 언어* 파일로 추출합니다.
 
-The marked text includes text marked with `i18n`, attributes marked with `i18n-`*attribute*, and text tagged with `$localize` as described in [Prepare component for translation][GuideI18nCommonPrepare].
+표시된 텍스트에는 `i18n`로 표시된 텍스트, `i18n-`*속성*으로 표시된 속성 및 [번역을 위한 구성 요소 준비][GuideI18nCommonPrepare]에 설명된 대로 `$localize` 태그가 있는 텍스트가 포함됩니다.
 
-Complete the following steps to create and update translation files for your project.
+프로젝트의 번역 파일을 생성하고 업데이트하려면 다음 단계를 완료하십시오.
 
-1. [Extract the source language file][GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile].
-    1. Optionally, change the location, format, and name.
-1. Copy the source language file to [create a translation file for each language][GuideI18nCommonTranslationFilesCreateATranslationFileForEachLanguage].
-1. [Translate each translation file][GuideI18nCommonTranslationFilesTranslateEachTranslationFile].
-1. Translate plurals and alternate expressions separately.
-    1. [Translate plurals][GuideI18nCommonTranslationFilesTranslatePlurals].
-    1. [Translate alternate expressions][GuideI18nCommonTranslationFilesTranslateAlternateExpressions].
-    1. [Translate nested expressions][GuideI18nCommonTranslationFilesTranslateNestedExpressions].
+1. [소스 언어 파일 추출][GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile].
+    1. 선택적으로 위치, 형식 및 이름을 변경합니다.
+1. 각 언어에 대한 번역 파일을 생성하기 위해 소스 언어 파일을 복사합니다. [각 언어에 대한 번역 파일 생성][GuideI18nCommonTranslationFilesCreateATranslationFileForEachLanguage].
+1. [각 번역 파일 번역][GuideI18nCommonTranslationFilesTranslateEachTranslationFile].
+1. 복수 형태와 대체 표현을 별도로 번역합니다.
+    1. [복수 형태 번역][GuideI18nCommonTranslationFilesTranslatePlurals].
+    1. [대체 표현 번역][GuideI18nCommonTranslationFilesTranslateAlternateExpressions].
+    1. [중첩 표현 번역][GuideI18nCommonTranslationFilesTranslateNestedExpressions].
 
-## Extract the source language file
+## 소스 언어 파일 추출
 
-To extract the source language file, complete the following actions.
+소스 언어 파일을 추출하려면 다음 작업을 완료하십시오.
 
-1. Open a terminal window.
-1. Change to the root directory of your project.
-1. Run the following CLI command.
+1. 터미널 창을 엽니다.
+1. 프로젝트의 루트 디렉토리로 변경합니다.
+1. 다음 CLI 명령을 실행합니다.
 
     <docs-code path="adev/src/content/examples/i18n/doc-files/commands.sh" visibleRegion="extract-i18n-default"/>
 
-The `extract-i18n` command creates a source language file named `messages.xlf` in the root directory of your project.
-For more information about the XML Localization Interchange File Format \(XLIFF, version 1.2\), see [XLIFF][WikipediaWikiXliff].
+`extract-i18n` 명령은 프로젝트의 루트 디렉토리에 `messages.xlf`라는 이름의 소스 언어 파일을 생성합니다.
+XML 로컬라이제이션 교환 파일 형식(XLIFF, 버전 1.2)에 대한 자세한 내용은 [XLIFF][WikipediaWikiXliff]를 참조하십시오.
 
-Use the following [`extract-i18n`][CliExtractI18n] command options to change the source language file location, format, and file name.
+소스 언어 파일의 위치, 형식 및 파일 이름을 변경하려면 다음 [`extract-i18n`][CliExtractI18n] 명령 옵션을 사용하십시오.
 
-| Command option  | Details |
-|:---             |:---     |
-| `--format`      | Set the format of the output file    |
-| `--out-file`     | Set the name of the output file      |
-| `--output-path` | Set the path of the output directory |
+| 명령 옵션       | 세부사항                       |
+|:---             |:---                           |
+| `--format`      | 출력 파일의 형식을 설정합니다.      |
+| `--out-file`    | 출력 파일의 이름을 설정합니다.      |
+| `--output-path` | 출력 디렉토리의 경로를 설정합니다. |
 
-### Change the source language file location
+### 소스 언어 파일 위치 변경
 
-To create a file in the `src/locale` directory, specify the output path as an option.
+`src/locale` 디렉토리에 파일을 생성하려면 출력 경로를 옵션으로 지정합니다.
 
-#### `extract-i18n --output-path` example
+#### `extract-i18n --output-path` 예제
 
-The following example specifies the output path as an option.
+다음 예제는 출력 경로를 옵션으로 지정합니다.
 
 <docs-code path="adev/src/content/examples/i18n/doc-files/commands.sh" visibleRegion="extract-i18n-output-path"/>
 
-### Change the source language file format
+### 소스 언어 파일 형식 변경
 
-The `extract-i18n` command creates files in the following translation formats.
+`extract-i18n` 명령은 다음 번역 형식으로 파일을 생성합니다.
 
-| Translation format | Details                                                                                                          | File extension |
-|:---                |:---                                                                                                              |:---            |
-| ARB                | [Application Resource Bundle][GithubGoogleAppResourceBundleWikiApplicationresourcebundlespecification]           | `.arb`            |
-| JSON               | [JavaScript Object Notation][JsonMain]                                                                           | `.json`           |
-| XLIFF 1.2          | [XML Localization Interchange File Format, version 1.2][OasisOpenDocsXliffXliffCoreXliffCoreHtml]                | `.xlf`            |
-| XLIFF 2            | [XML Localization Interchange File Format, version 2][OasisOpenDocsXliffXliffCoreV20Cos01XliffCoreV20Cose01Html] | `.xlf`            |
-| XMB                | [XML Message Bundle][UnicodeCldrDevelopmentDevelopmentProcessDesignProposalsXmb]                                 | `.xmb` \(`.xtb`\) |
+| 번역 형식       | 세부사항                                                                 | 파일 확장자    |
+|:---              |:---                                                                       |:---            |
+| ARB              | [응용 프로그램 리소스 번들][GithubGoogleAppResourceBundleWikiApplicationresourcebundlespecification] | `.arb`         |
+| JSON             | [자바스크립트 객체 표기법][JsonMain]                                       | `.json`        |
+| XLIFF 1.2        | [XML 로컬라이제이션 교환 파일 형식, 버전 1.2][OasisOpenDocsXliffXliffCoreXliffCoreHtml] | `.xlf`         |
+| XLIFF 2          | [XML 로컬라이제이션 교환 파일 형식, 버전 2][OasisOpenDocsXliffXliffCoreV20Cos01XliffCoreV20Cose01Html] | `.xlf`         |
+| XMB              | [XML 메시지 번들][UnicodeCldrDevelopmentDevelopmentProcessDesignProposalsXmb] | `.xmb` \(`.xtb`\) |
 
-Specify the translation format explicitly with the `--format` command option.
+`--format` 명령 옵션으로 번역 형식을 명시적으로 지정하십시오.
 
-HELPFUL: The XMB format generates `.xmb` source language files, but uses`.xtb` translation files.
+도움이 되는 정보: XMB 형식은 `.xmb` 소스 언어 파일을 생성하지만 `.xtb` 번역 파일을 사용합니다.
 
-#### `extract-i18n --format` example
+#### `extract-i18n --format` 예제
 
-The following example demonstrates several translation formats.
+다음 예제는 여러 번역 형식을 보여줍니다.
 
 <docs-code path="adev/src/content/examples/i18n/doc-files/commands.sh" visibleRegion="extract-i18n-formats"/>
 
-### Change the source language file name
+### 소스 언어 파일 이름 변경
 
-To change the name of the source language file generated by the extraction tool, use the `--out-file` command option.
+추출 도구에서 생성된 소스 언어 파일의 이름을 변경하려면 `--out-file` 명령 옵션을 사용하십시오.
 
-#### `extract-i18n --out-file` example
+#### `extract-i18n --out-file` 예제
 
-The following example demonstrates naming the output file.
+다음 예제는 출력 파일의 이름을 보여줍니다.
 
 <docs-code path="adev/src/content/examples/i18n/doc-files/commands.sh" visibleRegion="extract-i18n-out-file"/>
 
-## Create a translation file for each language
+## 각 언어에 대한 번역 파일 생성
 
-To create a translation file for a locale or language, complete the following actions.
+로캘 또는 언어에 대한 번역 파일을 생성하려면 다음 작업을 완료하십시오.
 
-1. [Extract the source language file][GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile].
-1. Make a copy of the source language file to create a *translation* file for each language.
-1. Rename the *translation* file to add the locale.
+1. [소스 언어 파일 추출][GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile].
+1. 각 언어에 대한 *번역* 파일을 생성하기 위해 소스 언어 파일을 복사합니다.
+1. 로캘을 추가하기 위해 *번역* 파일의 이름을 바꿉니다.
 
     <docs-code language="file">
 
@@ -92,7 +92,7 @@ To create a translation file for a locale or language, complete the following ac
 
     </docs-code>
 
-1. Create a new directory at your project root named `locale`.
+1. 프로젝트 루트에 `locale`이라는 새 디렉토리를 생성합니다.
 
     <docs-code language="file">
 
@@ -100,154 +100,154 @@ To create a translation file for a locale or language, complete the following ac
 
     </docs-code>
 
-1. Move the *translation* file to the new directory.
-1. Send the *translation* file to your translator.
-1. Repeat the above steps for each language you want to add to your application.
+1. *번역* 파일을 새 디렉토리로 이동합니다.
+1. *번역* 파일을 번역자에게 보냅니다.
+1. 애플리케이션에 추가할 각 언어에 대해 위 단계를 반복합니다.
 
-### `extract-i18n` example for French
+### 프랑스어에 대한 `extract-i18n` 예제
 
-For example, to create a French translation file, complete the following actions.
+예를 들어 프랑스어 번역 파일을 생성하려면 다음 작업을 완료하십시오.
 
-1. Run the `extract-i18n` command.
-1. Make a copy of the `messages.xlf` source language file.
-1. Rename the copy to `messages.fr.xlf` for the French language \(`fr`\) translation.
-1. Move the `fr` translation file to the `src/locale` directory.
-1. Send the `fr` translation file to the translator.
+1. `extract-i18n` 명령을 실행합니다.
+1. `messages.xlf` 소스 언어 파일을 복사합니다.
+1. 복사본의 이름을 프랑스어 \(`fr`\) 번역을 위해 `messages.fr.xlf`로 변경합니다.
+1. `fr` 번역 파일을 `src/locale` 디렉토리로 이동합니다.
+1. `fr` 번역 파일을 번역자에게 보냅니다.
 
-## Translate each translation file
+## 각 번역 파일 번역
 
-Unless you are fluent in the language and have the time to edit translations, you will likely complete the following steps.
+해당 언어에 능숙하고 번역을 편집할 시간이 없다면 다음 단계를 완료할 가능성이 높습니다.
 
-1. Send each translation file to a translator.
-1. The translator uses an XLIFF file editor to complete the following actions.
-    1. Create the translation.
-    1. Edit the translation.
+1. 각 번역 파일을 번역자에게 보냅니다.
+1. 번역자는 XLIFF 파일 편집기를 사용하여 다음 작업을 완료합니다.
+    1. 번역을 생성합니다.
+    1. 번역을 편집합니다.
 
-### Translation process example for French
+### 프랑스어 번역 프로세스 예제
 
-To demonstrate the process, review the `messages.fr.xlf` file in the [Example Angular Internationalization application][GuideI18nExample].  The [Example Angular Internationalization application][GuideI18nExample] includes a French translation for you to edit without a special XLIFF editor or knowledge of French.
+프로세스를 보여주기 위해, [예제 Angular 국제화 애플리케이션][GuideI18nExample]의 `messages.fr.xlf` 파일을 검토하십시오. [예제 Angular 국제화 애플리케이션][GuideI18nExample]에는 특별한 XLIFF 편집기 없이 수정할 수 있는 프랑스어 번역이 포함되어 있습니다.
 
-The following actions describe the translation process for French.
+다음 작업은 프랑스어 번역 프로세스를 설명합니다.
 
-1. Open `messages.fr.xlf` and find the first `<trans-unit>` element.
-    This is a *translation unit*, also known as a *text node*, that represents the translation of the `<h1>` greeting tag that was previously marked with the `i18n` attribute.
+1. `messages.fr.xlf`를 열고 첫 번째 `<trans-unit>` 요소를 찾습니다.
+    이것은 `i18n` 속성으로 이전에 표시된 `<h1>` 인사 태그의 번역을 나타내는 *번역 단위*입니다.
 
     <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translated-hello-before"/>
 
-    The `id="introductionHeader"` is a [custom ID][GuideI18nOptionalManageMarkedText], but without the `@@` prefix required in the source HTML.
+    `id="introductionHeader"`는 [사용자 정의 ID][GuideI18nOptionalManageMarkedText]이며, 소스 HTML에서 필요한 `@@` 접두사가 없습니다.
 
-1. Duplicate the `<source>... </source>` element in the text node, rename it to `target`, and then replace the content with the French text.
+1. 텍스트 노드에서 `<source>... </source>` 요소를 복제하고 `target`으로 이름을 바꾼 다음 내용을 프랑스어 텍스트로 대체합니다.
 
     <docs-code header="src/locale/messages.fr.xlf (<trans-unit>, after translation)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translated-hello"/>
 
-    In a more complex translation, the information and context in the [description and meaning elements][GuideI18nCommonPrepareAddHelpfulDescriptionsAndMeanings] help you choose the right words for translation.
+    더 복잡한 번역에서는 [설명 및 의미 요소][GuideI18nCommonPrepareAddHelpfulDescriptionsAndMeanings]에 포함된 정보와 맥락이 올바른 단어 선택에 도움을 줍니다.
 
-1. Translate the other text nodes.
-    The following example displays the way to translate.
+1. 다른 텍스트 노드를 번역합니다.
+    다음 예제는 번역 방식에 대한 표시입니다.
 
     <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translated-other-nodes"/>
 
-IMPORTANT: Don't change the IDs for translation units.
-Each `id` attribute is generated by Angular and depends on the content of the component text and the assigned meaning.
+중요: 번역 단위의 ID를 변경하지 마십시오.
+각 `id` 속성은 Angular에 의해 생성되며 구성 요소 텍스트의 내용과 할당된 의미에 따라 달라집니다.
 
-If you change either the text or the meaning, then the `id` attribute changes.
-For more about managing text updates and IDs, see [custom IDs][GuideI18nOptionalManageMarkedText].
+텍스트 또는 의미를 변경하면 `id` 속성이 변경됩니다.
+텍스트 업데이트 및 ID 관리를 위한 자세한 내용은 [사용자 정의 ID][GuideI18nOptionalManageMarkedText]를 참조하십시오.
 
-## Translate plurals
+## 복수형 번역
 
-Add or remove plural cases as needed for each language.
+각 언어에 필요에 따라 복수 형태를 추가하거나 제거합니다.
 
-HELPFUL: For language plural rules, see [CLDR plural rules][GithubUnicodeOrgCldrStagingChartsLatestSupplementalLanguagePluralRulesHtml].
+도움이 되는 정보: 언어 복수 규칙에 대한 내용은 [CLDR 복수 규칙][GithubUnicodeOrgCldrStagingChartsLatestSupplementalLanguagePluralRulesHtml]을 참조하십시오.
 
-### `minute` `plural` example
+### `minute` `plural` 예제
 
-To translate a `plural`, translate the ICU format match values.
+`plural`을 번역하려면 ICU 형식의 일치 값을 번역합니다.
 
-* `just now`
-* `one minute ago`
-* `<x id="INTERPOLATION" equiv-text="{{minutes}}"/> minutes ago`
+* 지금 막
+* 1분 전
+* `<x id="INTERPOLATION" equiv-text="{{minutes}}"/> 분 전`
 
-The following example displays the way to translate.
+다음 예제는 번역 방식에 대한 표시입니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translated-plural"/>
 
-## Translate alternate expressions
+## 대체 표현 번역
 
-Angular also extracts alternate `select` ICU expressions as separate translation units.
+Angular는 또한 대체 `select` ICU 표현을 별도의 번역 단위로 추출합니다.
 
-### `gender` `select` example
+### `gender` `select` 예제
 
-The following example displays a `select` ICU expression in the component template.
+다음 예제는 구성 요소 템플릿에서 `select` ICU 표현을 보여줍니다.
 
 <docs-code header="src/app/app.component.html" path="adev/src/content/examples/i18n/src/app/app.component.html" visibleRegion="i18n-select"/>
 
-In this example, Angular extracts the expression into two translation units.
-The first contains the text outside of the `select` clause, and uses a placeholder for `select` \(`<x id="ICU">`\):
+이 예에서 Angular는 표현을 두 개의 번역 단위로 추출합니다.
+첫 번째 단위에는 `select` 절 외부의 텍스트가 포함되고, `select`에 대한 플레이스홀더가 사용됩니다 \(`<x id="ICU">`\):
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translate-select-1"/>
 
-IMPORTANT: When you translate the text, move the placeholder if necessary, but don't remove it.
-If you remove the placeholder, the ICU expression is removed from your translated application.
+중요: 텍스트를 번역할 때 필요 시 플레이스홀더를 이동하되, 제거하지 마십시오.
+플레이스홀더를 제거하면 ICU 표현이 번역된 애플리케이션에서 제거됩니다.
 
-The following example displays the second translation unit that contains the `select` clause.
+다음 예제는 `select` 절이 포함된 두 번째 번역 단위를 표시합니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translate-select-2"/>
 
-The following example displays both translation units after translation is complete.
+다음 예제는 번역이 완료된 후 두 개의 번역 단위를 모두 표시합니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translated-select"/>
 
-## Translate nested expressions
+## 중첩 표현 번역
 
-Angular treats a nested expression in the same manner as an alternate expression.
-Angular extracts the expression into two translation units.
+Angular는 중첩 표현을 대체 표현과 동일하게 처리합니다.
+Angular는 표현을 두 개의 번역 단위로 추출합니다.
 
-### Nested `plural` example
+### 중첩 `plural` 예제
 
-The following example displays the first translation unit that contains the text outside of the nested expression.
+다음 예제는 중첩 표현 외부의 텍스트를 포함하는 첫 번째 번역 단위를 표시합니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translate-nested-1"/>
 
-The following example displays the second translation unit that contains the complete nested expression.
+다음 예제는 전체 중첩 표현을 포함하는 두 번째 번역 단위를 표시합니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translate-nested-2"/>
 
-The following example displays both translation units after translating.
+다음 예제는 번역한 후 두 개의 번역 단위를 모두 표시합니다.
 
 <docs-code header="src/locale/messages.fr.xlf (<trans-unit>)" path="adev/src/content/examples/i18n/doc-files/messages.fr.xlf.html" visibleRegion="translate-nested"/>
 
-## What's next
+## 다음 단계
 
 <docs-pill-row>
-  <docs-pill href="guide/i18n/merge" title="Merge translations into the app"/>
+  <docs-pill href="guide/i18n/merge" title="앱에 번역 병합"/>
 </docs-pill-row>
 
-[CliMain]: cli "CLI Overview and Command Reference | Angular"
+[CliMain]: cli "CLI 개요 및 명령 참조 | Angular"
 [CliExtractI18n]: cli/extract-i18n "ng extract-i18n | CLI | Angular"
 
-[GuideI18nCommonPrepare]: guide/i18n/prepare "Prepare component for translation | Angular"
-[GuideI18nCommonPrepareAddHelpfulDescriptionsAndMeanings]: guide/i18n/prepare#add-helpful-descriptions-and-meanings "Add helpful descriptions and meanings - Prepare component for translation | Angular"
+[GuideI18nCommonPrepare]: guide/i18n/prepare "번역을 위한 구성 요소 준비 | Angular"
+[GuideI18nCommonPrepareAddHelpfulDescriptionsAndMeanings]: guide/i18n/prepare#add-helpful-descriptions-and-meanings "유용한 설명 및 의미 추가 - 번역을 위한 구성 요소 준비 | Angular"
 
-[GuideI18nCommonTranslationFilesCreateATranslationFileForEachLanguage]: guide/i18n/translation-files#create-a-translation-file-for-each-language "Create a translation file for each language - Work with translation files | Angular"
-[GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile]: guide/i18n/translation-files#extract-the-source-language-file "Extract the source language file - Work with translation files | Angular"
-[GuideI18nCommonTranslationFilesTranslateAlternateExpressions]: guide/i18n/translation-files#translate-alternate-expressions "Translate alternate expressions - Work with translation files | Angular"
-[GuideI18nCommonTranslationFilesTranslateEachTranslationFile]: guide/i18n/translation-files#translate-each-translation-file "Translate each translation file - Work with translation files | Angular"
-[GuideI18nCommonTranslationFilesTranslateNestedExpressions]: guide/i18n/translation-files#translate-nested-expressions "Translate nested expressions - Work with translation files | Angular"
-[GuideI18nCommonTranslationFilesTranslatePlurals]: guide/i18n/translation-files#translate-plurals "Translate plurals - Work with translation files | Angular"
+[GuideI18nCommonTranslationFilesCreateATranslationFileForEachLanguage]: guide/i18n/translation-files#create-a-translation-file-for-each-language "각 언어에 대한 번역 파일 생성 - 번역 파일 작업 | Angular"
+[GuideI18nCommonTranslationFilesExtractTheSourceLanguageFile]: guide/i18n/translation-files#extract-the-source-language-file "소스 언어 파일 추출 - 번역 파일 작업 | Angular"
+[GuideI18nCommonTranslationFilesTranslateAlternateExpressions]: guide/i18n/translation-files#translate-alternate-expressions "대체 표현 번역 - 번역 파일 작업 | Angular"
+[GuideI18nCommonTranslationFilesTranslateEachTranslationFile]: guide/i18n/translation-files#translate-each-translation-file "각 번역 파일 번역 - 번역 파일 작업 | Angular"
+[GuideI18nCommonTranslationFilesTranslateNestedExpressions]: guide/i18n/translation-files#translate-nested-expressions "중첩 표현 번역 - 번역 파일 작업 | Angular"
+[GuideI18nCommonTranslationFilesTranslatePlurals]: guide/i18n/translation-files#translate-plurals "복수형 번역 - 번역 파일 작업 | Angular"
 
-[GuideI18nExample]: guide/i18n/example "Example Angular Internationalization application | Angular"
+[GuideI18nExample]: guide/i18n/example "예제 Angular 국제화 애플리케이션 | Angular"
 
-[GuideI18nOptionalManageMarkedText]: guide/i18n/manage-marked-text "Manage marked text with custom IDs | Angular"
+[GuideI18nOptionalManageMarkedText]: guide/i18n/manage-marked-text "사용자 정의 ID로 표시된 텍스트 관리 | Angular"
 
-[GithubGoogleAppResourceBundleWikiApplicationresourcebundlespecification]: https://github.com/google/app-resource-bundle/wiki/ApplicationResourceBundleSpecification "ApplicationResourceBundleSpecification | google/app-resource-bundle | GitHub"
+[GithubGoogleAppResourceBundleWikiApplicationresourcebundlespecification]: https://github.com/google/app-resource-bundle/wiki/ApplicationResourceBundleSpecification "응용 프로그램 리소스 번들 사양 | google/app-resource-bundle | GitHub"
 
-[GithubUnicodeOrgCldrStagingChartsLatestSupplementalLanguagePluralRulesHtml]: https://cldr.unicode.org/index/cldr-spec/plural-rules "Language Plural Rules - CLDR Charts | Unicode | GitHub"
+[GithubUnicodeOrgCldrStagingChartsLatestSupplementalLanguagePluralRulesHtml]: https://cldr.unicode.org/index/cldr-spec/plural-rules "언어 복수 규칙 - CLDR 차트 | Unicode | GitHub"
 
-[JsonMain]: https://www.json.org "Introducing JSON | JSON"
+[JsonMain]: https://www.json.org "JSON 소개 | JSON"
 
-[OasisOpenDocsXliffXliffCoreXliffCoreHtml]: http://docs.oasis-open.org/xliff/xliff-core/xliff-core.html "XLIFF Version 1.2 Specification | Oasis Open Docs"
-[OasisOpenDocsXliffXliffCoreV20Cos01XliffCoreV20Cose01Html]: http://docs.oasis-open.org/xliff/xliff-core/v2.0/cos01/xliff-core-v2.0-cos01.html "XLIFF Version 2.0 | Oasis Open Docs"
+[OasisOpenDocsXliffXliffCoreXliffCoreHtml]: http://docs.oasis-open.org/xliff/xliff-core/xliff-core.html "XLIFF 버전 1.2 사양 | Oasis Open Docs"
+[OasisOpenDocsXliffXliffCoreV20Cos01XliffCoreV20Cose01Html]: http://docs.oasis-open.org/xliff/xliff-core/v2.0/cos01/xliff-core-v2.0-cos01.html "XLIFF 버전 2.0 | Oasis Open Docs"
 
-[UnicodeCldrDevelopmentDevelopmentProcessDesignProposalsXmb]: http://cldr.unicode.org/development/development-process/design-proposals/xmb "XMB | CLDR - Unicode Common Locale Data Repository | Unicode"
+[UnicodeCldrDevelopmentDevelopmentProcessDesignProposalsXmb]: http://cldr.unicode.org/development/development-process/design-proposals/xmb "XMB | CLDR - Unicode 공통 로캘 데이터 저장소 | Unicode"
 
 [WikipediaWikiXliff]: https://en.wikipedia.org/wiki/XLIFF "XLIFF | Wikipedia"

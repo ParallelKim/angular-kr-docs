@@ -1,11 +1,10 @@
-# Inheritance
+# 상속
 
-Tip: This guide assumes you've already read the [Essentials Guide](essentials). Read that first if you're new to Angular.
+팁: 이 가이드는 이미 [필수 가이드](essentials)를 읽었고 Angular에 익숙하지 않은 경우 먼저 읽어야 한다고 가정합니다.
 
-Angular components are TypeScript classes and participate in standard JavaScript inheritance
-semantics.
+Angular 컴포넌트는 TypeScript 클래스이며 표준 JavaScript 상속 의미론에 참여합니다.
 
-A component can extend any base class:
+컴포넌트는 어떤 기본 클래스도 확장할 수 있습니다:
 
 ```ts
 export class ListboxBase {
@@ -14,15 +13,13 @@ export class ListboxBase {
 
 @Component({ ... })
 export class CustomListbox extends ListboxBase {
-  // CustomListbox inherits the `value` property.
+  // CustomListbox는 `value` 속성을 상속받습니다.
 }
 ```
 
-## Extending other components and directives
+## 다른 컴포넌트 및 지시문 확장
 
-When a component extends another component or a directive, it inherits some of the metadata defined in
-the base class's decorator and the base class's decorated members. This includes
-host bindings, inputs, outputs, lifecycle methods.
+컴포넌트가 다른 컴포넌트 또는 지시문을 확장할 때, 기본 클래스의 장식자에 정의된 일부 메타데이터와 기본 클래스의 장식된 멤버를 상속받습니다. 여기에는 호스트 바인딩, 입력, 출력, 생명 주기 메소드가 포함됩니다.
 
 ```angular-ts
 @Component({
@@ -58,17 +55,13 @@ export class CustomListbox extends ListboxBase {
 }
 ```
 
-In the example above, `CustomListbox` inherits all the information associated with `ListboxBase`,
-overriding the selector and template with its own values. `CustomListbox` has two inputs (`value`
-and `disabled`) and two event listeners (`keydown` and `click`).
+위의 예에서 `CustomListbox`는 `ListboxBase`와 관련된 모든 정보를 상속받으며, 자신의 값으로 선택자와 템플릿을 재정의합니다. `CustomListbox`에는 두 개의 입력(`value` 및 `disabled`)과 두 개의 이벤트 리스너(`keydown` 및 `click`)가 있습니다.
 
-Child classes end up with the _union_ of all of their ancestors' inputs, outputs, and host bindings
-and their own.
+자식 클래스는 모든 조상의 입력, 출력 및 호스트 바인딩과 자신의 입력의 _합집합_을 가지게 됩니다.
 
-### Forwarding injected dependencies
+### 주입된 종속성 전달
 
-If a base class relies on dependency injection, the child class must explicitly pass these
-dependencies to `super`.
+기본 클래스가 종속성 주입에 의존하는 경우, 자식 클래스는 이러한 종속성을 `super`에 명시적으로 전달해야 합니다.
 
 ```ts
 @Component({ ... })
@@ -84,11 +77,9 @@ export class CustomListbox extends ListboxBase {
 }
 ```
 
-### Overriding lifecycle methods
+### 생명 주기 메소드 재정의
 
-If a base class defines a lifecycle method, such as `ngOnInit`, a child class that also
-implements `ngOnInit` _overrides_ the base class's implementation. If you want to preserve the base
-class's lifecycle method, explicitly call the method with `super`:
+기본 클래스가 `ngOnInit`와 같은 생명 주기 메소드를 정의하는 경우, `ngOnInit`을 구현하는 자식 클래스는 기본 클래스의 구현을 _재정의_합니다. 기본 클래스의 생명 주기 메소드를 보존하려면 `super`를 사용하여 메소드를 명시적으로 호출하십시오:
 
 ```ts
 @Component({ ... })
@@ -106,4 +97,3 @@ export class CustomListbox extends ListboxBase {
     /* ... */
   }
 }
-```

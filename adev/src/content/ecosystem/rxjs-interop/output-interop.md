@@ -1,12 +1,12 @@
-# RxJS interop with component and directive outputs
+# RxJS 컴포넌트 및 지시자 출력과의 상호 운용성
 
-Tip: This guide assumes you're familiar with [component and directive outputs](guide/components/outputs).
+팁: 이 가이드는 [컴포넌트 및 지시자 출력](guide/components/outputs)에 익숙하다고 가정합니다.
 
-The `@angular/rxjs-interop` package offers two APIs related to component and directive outputs.
+`@angular/rxjs-interop` 패키지는 컴포넌트 및 지시자 출력과 관련된 두 가지 API를 제공합니다.
 
-## Creating an output based on an RxJs Observable
+## RxJS Observable을 기반으로 하는 출력 만들기
 
-The `outputFromObservable` lets you create a component or directive output that emits based on an RxJS observable:
+`outputFromObservable`을 사용하면 RxJS Observable을 기반으로 방출되는 컴포넌트 또는 지시자 출력을 생성할 수 있습니다:
 
 <docs-code language="ts" highlight="[7]">
 import {Directive} from '@angular/core';
@@ -16,20 +16,20 @@ import {outputFromObservable} from '@angular/core/rxjs-interop';
 class Draggable {
   pointerMoves$: Observable<PointerMovements> = listenToPointerMoves();
   
-  // Whenever `pointerMoves$` emits, the `pointerMove` event fires.
+  // `pointerMoves$`가 방출될 때마다 `pointerMove` 이벤트가 발생합니다.
   pointerMove = outputFromObservable(this.pointerMoves$);
 }
 </docs-code>
 
-The `outputFromObservable` function has special meaning to the Angular compiler. **You may only call `outputFromObservable` in component and directive property initializers.**
+`outputFromObservable` 함수는 Angular 컴파일러에 특별한 의미가 있습니다. **컴포넌트 및 지시자 속성 초기화기에서만 `outputFromObservable`을 호출해야 합니다.**
 
-When you `subscribe` to the output, Angular automatically forwards the subscription to the underlying observable. Angular stops forwarding values when the component or directive is destroyed.
+출력에 `subscribe`할 때 Angular는 자동으로 기본 Observable로 구독을 전달합니다. Angular는 컴포넌트 또는 지시자가 파괴될 때 값을 전달하는 것을 중지합니다.
 
-HELPFUL: Consider using `output()` directly if you can emit values imperatively.
+도움이 됨: 명령형으로 값을 방출할 수 있다면 `output()`을 직접 사용하는 것을 고려하세요.
 
-## Creating an RxJS Observable from a component or directive output
+## 컴포넌트 또는 지시자 출에서 RxJS Observable 생성하기
 
-The `outputToObservable` function lets you create an RxJS observable from a component output.
+`outputToObservable` 함수는 컴포넌트 출력에서 RxJS Observable을 생성할 수 있게 해줍니다.
 
 <docs-code language="ts" highlight="[11]">
 import {outputToObservable} from '@angular/core/rxjs-interop';
@@ -39,7 +39,7 @@ class CustomSlider {
   valueChange = output<number>();
 }
 
-// Instance reference to `CustomSlider`.
+// `CustomSlider`에 대한 인스턴스 참조.
 const slider: CustomSlider = createSlider();
 
 outputToObservable(slider.valueChange) // Observable<number>
@@ -47,4 +47,4 @@ outputToObservable(slider.valueChange) // Observable<number>
   .subscribe(...);
 </docs-code>
 
-HELPFUL: Consider using the `subscribe` method on `OutputRef` directly if it meets your needs.
+도움이 됨: 필요에 맞는다면 `OutputRef`에서 직접 `subscribe` 메서드를 사용하는 것을 고려하세요.

@@ -1,60 +1,60 @@
-# Add an interpolation to a component’s template
+# 컴포넌트 템플릿에 인터폴레이션 추가하기
 
-This tutorial lesson demonstrates how to add interpolation to Angular templates in order to display dynamic data in a template.
+이 튜토리얼 수업에서는 Angular 템플릿에 인터폴레이션을 추가하여 템플릿에서 동적 데이터를 표시하는 방법을 보여줍니다.
 
 <docs-video src="https://www.youtube.com/embed/eM3zi_n7lNs?si=IFAly3Ss8dwqFx8N&amp;start=338"/>
 
-## What you'll learn
+## 배울 내용
 
-- Your app will display interpolated values in the `HousingLocationComponent` template.
-- Your app will render a housing location data to the browser.
+- `HousingLocationComponent` 템플릿에서 인터폴레이션된 값을 표시할 수 있습니다.
+- 앱이 브라우저에 주택 위치 데이터를 렌더링합니다.
 
-## Conceptual preview of interpolation
+## 인터폴레이션의 개념적 미리보기
 
-In this step you will display values (properties and `Input` values) in a template using interpolation.
+이 단계에서는 인터폴레이션을 사용하여 템플릿에 값(속성 및 `Input` 값)을 표시합니다.
 
-Using the `{{ expression }}` in Angular templates, you can render values from properties, `Inputs` and valid JavaScript expressions.
+Angular 템플릿에서 `{{ expression }}`을 사용하여 속성, `Inputs` 및 유효한 JavaScript 표현식에서 값을 렌더링할 수 있습니다.
 
-For a more in depth explanation, please refer to the [Displaying values with interpolation](guide/templates/binding#render-dynamic-text-with-text-interpolation) guide.
+더 깊이 있는 설명은 [인터폴레이션으로 값 표시](guide/templates/binding#render-dynamic-text-with-text-interpolation) 가이드를 참조하세요.
 
 <docs-workflow>
 
-<docs-step title="Update `HousingLocationComponent` template to include interpolated values">
-This step adds new HTML structure and interpolated values in the `HousingLocationComponent` template.
+<docs-step title="인터폴레이션된 값을 포함하도록 `HousingLocationComponent` 템플릿 업데이트">
+이 단계에서는 `HousingLocationComponent` 템플릿에 새로운 HTML 구조와 인터폴레이션된 값을 추가합니다.
 
-In the code editor:
+코드 편집기에서:
 
-1.  Navigate to `src/app/housing-location/housing-location.component.ts`
-1.  In the template property of the `@Component` decorator, replace the existing HTML markup with the following code:
+1. `src/app/housing-location/housing-location.component.ts`로 이동합니다.
+1. `@Component` 데코레이터의 템플릿 속성에서 기존 HTML 마크업을 다음 코드로 교체합니다:
 
-<docs-code header="Update HousingLocationComponent template" path="adev/src/content/tutorials/first-app/steps/08-ngFor/src/app/housing-location/housing-location.component.ts" visibleLines="[9,20]"/>
+<docs-code header="HousingLocationComponent 템플릿 업데이트" path="adev/src/content/tutorials/first-app/steps/08-ngFor/src/app/housing-location/housing-location.component.ts" visibleLines="[9,20]"/>
 
-  In this updated template code you have used property binding to bind the `housingLocation.photo` to the `src` attribute. The `alt` attribute uses interpolation to give more context to the alt text of the image.
+  이 업데이트된 템플릿 코드에서는 `housingLocation.photo`를 `src` 속성에 바인딩하기 위해 속성 바인딩을 사용했습니다. `alt` 속성에는 이미지의 대체 텍스트에 대한 더 많은 컨텍스트를 제공하기 위해 인터폴레이션을 사용합니다.
 
-  You use interpolation to include the values for `name`, `city` and `state` of the `housingLocation` property.
+  인터폴레이션을 사용하여 `housingLocation` 속성의 `name`, `city` 및 `state`에 대한 값을 포함합니다.
 
 </docs-step>
 
-<docs-step title="Confirm the changes render in the browser">
-1.  Save all changes.
-1.  Open the browser and confirm that the app renders the photo, city and state sample data.
-    <img alt="browser frame of homes-app displaying logo, filter text input box, search button and the same housing location UI card" src="assets/images/tutorials/first-app/homes-app-lesson-07-step-2.png">
+<docs-step title="변경 사항이 브라우저에서 렌더링되는지 확인">
+1. 모든 변경 사항을 저장합니다.
+1. 브라우저를 열고 앱이 사진, 도시 및 주 샘플 데이터를 렌더링하는지 확인합니다.
+    <img alt="로고, 필터 텍스트 입력 상자, 검색 버튼 및 동일한 주택 위치 UI 카드가 표시된 homes-app의 브라우저 프레임" src="assets/images/tutorials/first-app/homes-app-lesson-07-step-2.png">
 </docs-step>
 
 </docs-workflow>
 
-Summary: In this lesson, you added a new HTML structure and used Angular template syntax to render values in the `HousingLocation` template.
+요약: 이 수업에서는 새로운 HTML 구조를 추가하고 Angular 템플릿 구문을 사용하여 `HousingLocation` 템플릿에 값을 렌더링했습니다.
 
-Now, you have two important skills:
+이제 두 가지 중요한 기술을 습득했습니다:
 
-- passing data to components
-- Interpolating values into a template
+- 컴포넌트에 데이터 전달
+- 템플릿에 값 인터폴레이션
 
-With these skills, your app can now share data and display dynamic values in the browser. Great work so far.
+이 기술로 이제 앱이 데이터를 공유하고 브라우저에서 동적 값을 표시할 수 있습니다. 지금까지 잘 하고 있습니다.
 
-For more information about the topics covered in this lesson, visit:
+이번 수업에서 다룬 주제에 대한 자세한 정보는 다음을 방문하세요:
 
 <docs-pill-row>
-  <docs-pill href="guide/templates" title="Template syntax"/>
-  <docs-pill href="guide/templates/binding#render-dynamic-text-with-text-interpolation" title="Displaying values with interpolation"/>
+  <docs-pill href="guide/templates" title="템플릿 구문"/>
+  <docs-pill href="guide/templates/binding#render-dynamic-text-with-text-interpolation" title="인터폴레이션으로 값 표시"/>
 </docs-pill-row>

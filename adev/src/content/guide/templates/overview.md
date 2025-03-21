@@ -1,48 +1,48 @@
-<docs-decorative-header title="Template syntax" imgSrc="adev/src/assets/images/templates.svg"> <!-- markdownlint-disable-line -->
-In Angular, a template is a chunk of HTML.
-Use special syntax within a template to leverage many of Angular's features.
+<docs-decorative-header title="템플릿 구문" imgSrc="adev/src/assets/images/templates.svg"> <!-- markdownlint-disable-line -->
+Angular에서 템플릿은 HTML의 조각입니다.
+템플릿 내에서 특수 구문을 사용하여 Angular의 많은 기능을 활용하세요.
 </docs-decorative-header>
 
-Tip: Check out Angular's [Essentials](essentials/templates) before diving into this comprehensive guide.
+팁: 이 포괄적인 가이드를 살펴보기 전에 Angular의 [필수 사항](essentials/templates)을 확인하세요.
 
-Every Angular component has a **template** that defines the [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model) that the component renders onto the page. By using templates, Angular is able to automatically keep your page up-to-date as data changes.
+모든 Angular 컴포넌트에는 페이지에 렌더링되는 [DOM](https://developer.mozilla.org/en-US/docs/Web/API/Document_Object_Model)을 정의하는 **템플릿**이 있습니다. 템플릿을 사용하면 Angular는 데이터가 변경될 때 페이지를 자동으로 최신 상태로 유지할 수 있습니다.
 
-Templates are usually found within either the `template` property of a `*.component.ts` file or the `*.component.html` file. To learn more, check out the [in-depth components guide](/guide/components).
+템플릿은 일반적으로 `*.component.ts` 파일의 `template` 속성 또는 `*.component.html` 파일 내에서 찾을 수 있습니다. 더 배우고 싶다면 [심층 컴포넌트 가이드](/guide/components)를 확인하세요.
 
-## How do templates work?
+## 템플릿은 어떻게 작동합니까?
 
-Templates are based on [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) syntax, with additional features such as built-in template functions, data binding, event listening, variables, and more.
+템플릿은 [HTML](https://developer.mozilla.org/en-US/docs/Web/HTML) 구문을 기반으로 하며, 내장 템플릿 함수, 데이터 바인딩, 이벤트 리스닝, 변수 등과 같은 추가 기능이 있습니다.
 
-Angular compiles templates into JavaScript in order to build up an internal understanding of your application. One of the benefits of this are built-in rendering optimizations that Angular applies to your application automatically.
+Angular는 템플릿을 JavaScript로 컴파일하여 애플리케이션에 대한 내부 이해를 구축합니다. 이의 이점 중 하나는 Angular가 애플리케이션에 자동으로 적용하는 내장 렌더링 최적화입니다.
 
-### Differences from standard HTML
+### 표준 HTML과의 차이점
 
-Some differences between templates and standard HTML syntax include:
+템플릿과 표준 HTML 구문 간의 몇 가지 차이점은 다음과 같습니다:
 
-- Comments in the template source code are not included in the rendered output
-- Component and directive elements can be self-closed (e.g., `<UserProfile />`)
-- Attributes with certain characters (i.e., `[]`, `()`, etc.) have special meaning to Angular. See [binding docs](guide/templates/binding) and [adding event listeners docs](guide/templates/event-listeners) for more information.
-- The `@` character has a special meaning to Angular for adding dynamic behavior, such as [control flow](guide/templates/control-flow), to templates. You can include a literal `@` character by escaping it as an HTML entity code (`&commat;` or `&#64;`).
-- Angular ignores and collapses unnecessary whitespace characters. See [whitespace in templates](guide/templates/whitespace) for more details.
-- Angular may add comment nodes to a page as placeholders for dynamic content, but developers can ignore these.
+- 템플릿 소스 코드의 주석은 렌더링된 출력에 포함되지 않습니다.
+- 컴포넌트 및 디렉티브 요소는 자기 닫힘이 가능합니다 (예: `<UserProfile />`).
+- 특정 문자를 포함한 속성(예: `[]`, `()`, 등)은 Angular에 특별한 의미를 갖습니다. 자세한 내용은 [바인딩 문서](guide/templates/binding)와 [이벤트 리스너 추가 문서](guide/templates/event-listeners)를 참조하세요.
+- `@` 문자는 템플릿에 [제어 흐름](guide/templates/control-flow)과 같은 동적 동작을 추가하기 위해 Angular에 특별한 의미가 있습니다. 리터럴 `@` 문자를 포함하려면 HTML 엔터티 코드(`&commat;` 또는 `&#64;`)로 이스케이프하면 됩니다.
+- Angular는 불필요한 공백 문자를 무시하고 축소합니다. 자세한 내용은 [템플릿의 공백](guide/templates/whitespace)을 참조하세요.
+- Angular는 동적 콘텐츠에 대한 자리 표시자 역할을 하는 주석 노드를 페이지에 추가할 수 있지만, 개발자는 이를 무시할 수 있습니다.
 
-In addition, while most HTML syntax is valid template syntax, Angular does not support `<script>` element in templates. For more information, see the [Security](best-practices/security) page.
+또한 대부분의 HTML 구문이 유효한 템플릿 구문이지만, Angular는 템플릿 내에서 `<script>` 요소를 지원하지 않습니다. 자세한 내용은 [보안](best-practices/security) 페이지를 참조하세요.
 
-## What's next?
+## 다음은 무엇입니까?
 
-You might also be interested in the following:
+다음도 관심이 있을 수 있습니다:
 
-| Topics                                                                      | Details                                                                                 |
-| :-------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------- |
-| [Binding dynamic text, properties, and attributes](guide/templates/binding) | Bind dynamic data to text, properties and attributes.                                   |
-| [Adding event listeners](guide/templates/event-listeners)                   | Respond to events in your templates.                                                    |
-| [Two-way binding](guide/templates/two-way-binding)                          | Simultaneously binds a value and propagate changes.                                     |
-| [Control flow](guide/templates/control-flow)                                | Conditionally show, hide and repeat elements.                                           |
-| [Pipes](guide/templates/pipes)                                              | Transform data declaratively.                                                           |
-| [Slotting child content with ng-content](guide/templates/ng-content)        | Control how components render content.                                                  |
-| [Create template fragments with ng-template](guide/templates/ng-template)   | Declare a template fragment.                                                            |
-| [Grouping elements with ng-container](guide/templates/ng-container)         | Group multiple elements together or mark a location for rendering.                      |
-| [Variables in templates](guide/templates/variables)                         | Learn about variable declarations.                                                      |
-| [Deferred loading with @defer](guide/templates/defer)                       | Create deferrable views with `@defer`.                                                  |
-| [Expression syntax](guide/templates/expression-syntax)                      | Learn similarities and differences between Angular expressions and standard JavaScript. |
-| [Whitespace in templates](guide/templates/whitespace)                       | Learn how Angular handles whitespace.                                                   |
+| 주제                                                                        | 세부정보                                                                                  |
+| :-------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------- |
+| [동적 텍스트, 속성 및 속성 바인딩](guide/templates/binding)               | 텍스트, 속성 및 속성에 동적 데이터를 바인딩합니다.                                        |
+| [이벤트 리스너 추가](guide/templates/event-listeners)                      | 템플릿 내에서 이벤트에 응답합니다.                                                        |
+| [양방향 바인딩](guide/templates/two-way-binding)                          | 값을 동시에 바인딩하고 변경 사항을 전파합니다.                                            |
+| [제어 흐름](guide/templates/control-flow)                                   | 요소를 조건부로 보여주거나 숨기고 반복합니다.                                            |
+| [파이프](guide/templates/pipes)                                            | 데이터 변환을 선언적으로 수행합니다.                                                      |
+| [ng-content를 사용한 자식 콘텐츠 슬롯팅](guide/templates/ng-content)       | 컴포넌트가 콘텐츠를 렌더링하는 방식을 제어합니다.                                          |
+| [ng-template로 템플릿 조각 만들기](guide/templates/ng-template)           | 템플릿 조각을 선언합니다.                                                                  |
+| [ng-container로 요소 그룹화](guide/templates/ng-container)                 | 여러 요소를 함께 그룹화하거나 렌더링을 위한 위치를 표시합니다.                            |
+| [템플릿의 변수](guide/templates/variables)                                 | 변수 선언에 대해 배우세요.                                                                |
+| [@defer로 지연 로딩](guide/templates/defer)                                | `@defer`를 사용해 지연 가능 뷰를 생성합니다.                                              |
+| [표현식 구문](guide/templates/expression-syntax)                           | Angular 표현식과 표준 JavaScript 간의 유사점과 차이점을 학습합니다.                       |
+| [템플릿에서의 공백](guide/templates/whitespace)                           | Angular가 공백을 처리하는 방법을 배웁니다.                                               |

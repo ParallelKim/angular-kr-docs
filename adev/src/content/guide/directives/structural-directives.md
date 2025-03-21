@@ -1,79 +1,79 @@
-# Structural directives
+# 구조 지시자
 
-Structural directives are directives applied to an `<ng-template>` element that conditionally or repeatedly render the content of that `<ng-template>`.
+구조 지시자는 `<ng-template>` 요소에 적용되어 해당 `<ng-template>`의 내용을 조건부로 또는 반복적으로 렌더링하는 지시자입니다.
 
-## Example use case
+## 예제 사용 사례
 
-In this guide you'll build a structural directive which fetches data from a given data source and renders its template when that data is available. This directive is called `SelectDirective`, after the SQL keyword `SELECT`, and match it with an attribute selector `[select]`.
+이 가이드에서는 주어진 데이터 소스에서 데이터를 가져오고 해당 데이터가 사용할 수 있을 때 템플릿을 렌더링하는 구조 지시자를 만들 것입니다. 이 지시자는 SQL 키워드 `SELECT`에 따라 이름 지어진 `SelectDirective`이며, 특성 선택자 `[select]`와 일치합니다.
 
-`SelectDirective` will have an input naming the data source to be used, which you will call `selectFrom`. The `select` prefix for this input is important for the [shorthand syntax](#structural-directive-shorthand). The directive will instantiate its `<ng-template>` with a template context providing the selected data.
+`SelectDirective`는 사용될 데이터 소스를 명명하는 입력값을 가지며, 이를 `selectFrom`이라 부릅니다. 이 입력의 `select` 접두사는 [축약 구문](#structural-directive-shorthand)에 중요합니다. 이 지시자는 선택된 데이터를 제공하는 템플릿 컨텍스트로 `<ng-template>`을 인스턴스화합니다.
 
-The following is an example of using this directive directly on an `<ng-template>` would look like:
+다음은 `<ng-template>`에서 이 지시자를 직접 사용하는 예제입니다:
 
 ```angular-html
 <ng-template select let-data [selectFrom]="source">
-  <p>The data is: {{ data }}</p>
+  <p>데이터는: {{ data }}</p>
 </ng-template>
 ```
 
-The structural directive can wait for the data to become available and then render its `<ng-template>`.
+구조 지시자는 데이터가 사용할 수 있게 될 때까지 기다렸다가 `<ng-template>`을 렌더링할 수 있습니다.
 
-HELPFUL: Note that Angular's `<ng-template>` element defines a template that doesn't render anything by default, if you just wrap elements in an `<ng-template>` without applying a structural directive those elements will not be rendered.
+도움말: Angular의 `<ng-template>` 요소는 기본적으로 아무 것도 렌더링하지 않는 템플릿을 정의합니다. 구조 지시자를 적용하지 않고 요소를 `<ng-template>`으로 단순히 감싸면 해당 요소는 렌더링되지 않습니다.
 
-For more information, see the [ng-template API](api/core/ng-template) documentation.
+자세한 내용은 [ng-template API](api/core/ng-template) 문서를 참조하십시오.
 
-## Structural directive shorthand
+## 구조 지시자 축약 구문
 
-Angular supports a shorthand syntax for structural directives which avoids the need to explicitly author an `<ng-template>` element.
+Angular는 구조 지시자에 대해 명시적으로 `<ng-template>` 요소를 작성할 필요가 없는 축약 구문을 지원합니다.
 
-Structural directives can be applied directly on an element by prefixing the directive attribute selector with an asterisk (`*`), such as `*select`. Angular transforms the asterisk in front of a structural directive into an `<ng-template>` that hosts the directive and surrounds the element and its descendants.
+구조 지시자는 지시자 속성 선택자 앞에 별표(`*`)를 접두사로 붙여 요소에 직접 적용할 수 있습니다. 예를 들어 `*select`와 같이 사용합니다. Angular는 구조 지시자 앞의 별표를 지시자를 호스팅하고 요소 및 그 자손을 둘러싸는 `<ng-template>`으로 변환합니다.
 
-You can use this with `SelectDirective` as follows:
+`SelectDirective`와 함께 다음과 같이 사용할 수 있습니다:
 
 ```angular-html
-<p *select="let data from source">The data is: {{data}}</p>
+<p *select="let data from source">데이터는: {{data}}</p>
 ```
 
-This example shows the flexibility of structural directive shorthand syntax, which is sometimes called _microsyntax_.
+이 예제는 때때로 _마이크로구문_이라고 불리는 구조 지시자 축약 구문의 유연성을 보여줍니다.
 
-When used in this way, only the structural directive and its bindings are applied to the `<ng-template>`. Any other attributes or bindings on the `<p>` tag are left alone. For example, these two forms are equivalent:
+이와 같이 사용될 때 구조 지시자와 그 바인딩만이 `<ng-template>`에 적용됩니다. `<p>` 태그의 다른 속성이나 바인딩은 그대로 남아 있습니다. 예를 들어, 다음 두 형태는 동등합니다:
 
 ```angular-html
-<!-- Shorthand syntax: -->
-<p class="data-view" *select="let data from source">The data is: {{data}}</p>
+<!-- 축약 구문: -->
+<p class="data-view" *select="let data from source">데이터는: {{data}}</p>
 
-<!-- Long-form syntax: -->
+<!-- 장황한 구문: -->
 <ng-template select let-data [selectFrom]="source">
-  <p class="data-view">The data is: {{data}}</p>
+  <p class="data-view">데이터는: {{data}}</p>
 </ng-template>
 ```
 
-Shorthand syntax is expanded through a set of conventions. A more thorough [grammar](#structural-directive-syntax-reference) is defined below, but in the above example, this transformation can be explained as follows:
+축약 구문은 일련의 관례를 통해 확장됩니다. 더 철저한 [문법](#structural-directive-syntax-reference)은 아래에 정의되어 있지만, 위의 예에서는 이 변환을 다음과 같이 설명할 수 있습니다:
 
-The first part of the `*select` expression is `let data`, which declares a template variable `data`. Since no assignment follows, the template variable is bound to the template context property `$implicit`.
+`*select` 표현의 첫 번째 부분은 `let data`로, 템플릿 변수를 선언합니다. 할당이 뒤따르지 않으므로 템플릿 변수는 템플릿 컨텍스트 속성 `$implicit`에 바인딩됩니다.
 
-The second piece of syntax is a key-expression pair, `from source`. `from` is a binding key and `source` is a regular template expression. Binding keys are mapped to properties by transforming them to PascalCase and prepending the structural directive selector. The `from` key is mapped to `selectFrom`, which is then bound to the expression `source`. This is why many structural directives will have inputs that are all prefixed with the structural directive's selector.
+두 번째 구문 조각은 키-표현 쌍인 `from source`입니다. `from`은 바인딩 키이며 `source`는 일반 템플릿 표현입니다. 바인딩 키는 PascalCase로 변환되고 구조 지시자 선택자에 접두사가 붙여서 속성에 매핑됩니다. `from` 키는 `selectFrom`에 매핑되며, 이후 표현식 `source`에 바인딩됩니다. 이는 많은 구조 지시자들이 모두 구조 지시자의 선택자로 접두사가 붙은 입력값을 가지는 이유입니다.
 
-## One structural directive per element
+## 요소당 하나의 구조 지시자
 
-You can only apply one structural directive per element when using the shorthand syntax. This is because there is only one `<ng-template>` element onto which that directive gets unwrapped. Multiple directives would require multiple nested `<ng-template>`, and it's unclear which directive should be first. `<ng-container>` can be used when to create wrapper layers when multiple structural directives need to be applied around the same physical DOM element or component, which allows the user to define the nested structure.
+축약 구문을 사용할 때 각 요소에 하나의 구조 지시자만 적용할 수 있습니다. 이는 해당 지시자가 펼쳐질 `<ng-template>` 요소가 하나만 존재하기 때문입니다. 여러 지시자가 필요한 경우 여러 개의 중첩 `<ng-template>`이 필요하며, 어떤 지시자가 먼저 와야 하는지 명확하지 않습니다. `<ng-container>`는 같은 물리적 DOM 요소 또는 구성 요소 주위에 여러 구조 지시자를 적용해야 할 때 래퍼 레이어를 생성하는 데 사용될 수 있으며, 사용자가 중첩 구조를 정의할 수 있게 해줍니다.
 
-## Creating a structural directive
+## 구조 지시자 만들기
 
-This section guides you through creating the `SelectDirective`.
+이 섹션에서는 `SelectDirective`를 만드는 방법을 안내합니다.
 
 <docs-workflow>
-<docs-step title="Generate the directive">
-Using the Angular CLI, run the following command, where `select` is the name of the directive:
+<docs-step title="지시자 생성">
+Angular CLI를 사용하여 다음 명령을 실행합니다. 여기서 `select`는 지시자 이름입니다:
 
 ```shell
 ng generate directive select
 ```
 
-Angular creates the directive class and specifies the CSS selector, `[select]`, that identifies the directive in a template.
+Angular는 지시자 클래스를 생성하고 템플릿에서 지시자를 식별하는 CSS 선택자 `[select]`를 지정합니다.
 </docs-step>
-<docs-step title="Make the directive structural">
-Import `TemplateRef`, and `ViewContainerRef`. Inject `TemplateRef` and `ViewContainerRef` in the directive constructor as private variables.
+<docs-step title="지시자 구조형 만들기">
+`TemplateRef`와 `ViewContainerRef`를 가져옵니다. 지시자 생성자에 `TemplateRef`와 `ViewContainerRef`를 개인 변수로 주입합니다.
 
 ```ts
 import {Directive, TemplateRef, ViewContainerRef} from '@angular/core';
@@ -88,8 +88,8 @@ export class SelectDirective {
 ```
 
 </docs-step>
-<docs-step title="Add the 'selectFrom' input">
-Add a `selectFrom` `@Input()` property.
+<docs-step title="‘selectFrom’ 입력 추가">
+`selectFrom` `@Input()` 속성을 추가합니다.
 
 ```ts
 export class SelectDirective {
@@ -100,8 +100,8 @@ export class SelectDirective {
 ```
 
 </docs-step>
-<docs-step title="Add the business logic">
-With `SelectDirective` now scaffolded as a structural directive with its input, you can now add the logic to fetch the data and render the template with it:
+<docs-step title="비즈니스 논리 추가">
+이제 구조 지시자로 틀을 갖춘 `SelectDirective`에 데이터를 가져오고 템플릿을 렌더링하는 논리를 추가할 수 있습니다:
 
 ```ts
 export class SelectDirective {
@@ -110,8 +110,7 @@ export class SelectDirective {
   async ngOnInit() {
     const data = await this.selectFrom.load();
     this.viewContainerRef.createEmbeddedView(this.templateRef, {
-      // Create the embedded view with a context object that contains
-      // the data via the key `$implicit`.
+      // 데이터 키 `$implicit`로 구성된 컨텍스트 개체로 내장된 뷰를 생성합니다.
       $implicit: data,
     });
   }
@@ -121,11 +120,11 @@ export class SelectDirective {
 </docs-step>
 </docs-workflow>
 
-That's it - `SelectDirective` is up and running. A follow-up step might be to [add template type-checking support](#typing-the-directives-context).
+그것으로 `SelectDirective`가 실행됩니다. 후속 단계는 [템플릿 유형 검사 지원 추가](#typing-the-directives-context)일 수 있습니다.
 
-## Structural directive syntax reference
+## 구조 지시자 구문 참조
 
-When you write your own structural directives, use the following syntax:
+자체 구조 지시자를 작성할 때 다음 구문을 사용하십시오:
 
 <docs-code hideCopy language="typescript">
 
@@ -133,7 +132,7 @@ When you write your own structural directives, use the following syntax:
 
 </docs-code>
 
-The following patterns describe each portion of the structural directive grammar:
+다음 패턴은 구조 지시자 문법의 각 부분을 설명합니다:
 
 ```ts
 as = :export "as" :local ";"?
@@ -141,77 +140,72 @@ keyExp = :key ":"? :expression ("as" :local)? ";"?
 let = "let" :local "=" :export ";"?
 ```
 
-| Keyword      | Details                                            |
+| 키워드      | 세부정보                                            |
 | :----------- | :------------------------------------------------- |
-| `prefix`     | HTML attribute key                                 |
-| `key`        | HTML attribute key                                 |
-| `local`      | Local variable name used in the template           |
-| `export`     | Value exported by the directive under a given name |
-| `expression` | Standard Angular expression                        |
+| `prefix`     | HTML 속성 키                                      |
+| `key`        | HTML 속성 키                                      |
+| `local`      | 템플릿에서 사용되는 로컬 변수 이름               |
+| `export`     | 주어진 이름으로 지시자에 의해 내보낸 값          |
+| `expression` | 표준 Angular 표현                                 |
 
-### How Angular translates shorthand
+### Angular가 축약형을 변환하는 방법
 
-Angular translates structural directive shorthand into the normal binding syntax as follows:
+Angular는 구조 지시자 축약형을 정상 바인딩 구문으로 변환합니다:
 
-| Shorthand | Translation |
+| 축약형 | 변환 |
 |:--- |:--- |
-| `prefix` and naked `expression` | `[prefix]="expression"` |
-| `keyExp` | `[prefixKey]="expression"` (The `prefix` is added to the `key`) |
+| `prefix` 및 나체 `expression` | `[prefix]="expression"` |
+| `keyExp` | `[prefixKey]="expression"` (여기서 `prefix`는 `key`에 추가됨) |
 | `let local` | `let-local="export"` |
 
-### Shorthand examples
+### 축약형 예제
 
-The following table provides shorthand examples:
+다음 표는 축약형 예제를 제공합니다:
 
-| Shorthand | How Angular interprets the syntax |
+| 축약형 | Angular가 구문을 해석하는 방법 |
 |:--- |:--- |
 | `*ngFor="let item of [1,2,3]"` | `<ng-template ngFor let-item [ngForOf]="[1, 2, 3]">` |
 | `*ngFor="let item of [1,2,3] as items; trackBy: myTrack; index as i"` | `<ng-template ngFor let-item [ngForOf]="[1,2,3]" let-items="ngForOf" [ngForTrackBy]="myTrack" let-i="index">` |
 | `*ngIf="exp"`| `<ng-template [ngIf]="exp">` |
 | `*ngIf="exp as value"` | `<ng-template [ngIf]="exp" let-value="ngIf">` |
 
-## Improving template type checking for custom directives
+## 맞춤 지시자의 템플릿 유형 검사 개선하기
 
-You can improve template type checking for custom directives by adding template guards to your directive definition.
-These guards help the Angular template type checker find mistakes in the template at compile time, which can avoid runtime errors.
-Two different types of guards are possible:
+맞춤 지시자의 템플릿 유형 검사를 개선하려면 지시자 정의에 템플릿 가드를 추가할 수 있습니다. 이러한 가드는 Angular 템플릿 유형 검사기가 컴파일 타임에 템플릿의 오류를 찾도록 도와주며, 이는 런타임 오류를 피할 수 있습니다. 두 가지 유형의 가드가 가능합니다:
 
-* `ngTemplateGuard_(input)` lets you control how an input expression should be narrowed based on the type of a specific input.
-* `ngTemplateContextGuard` is used to determine the type of the context object for the template, based on the type of the directive itself.
+* `ngTemplateGuard_(input)`를 사용하면 특정 입력 유형에 따라 입력 표현식을 좁히는 방법을 제어할 수 있습니다.
+* `ngTemplateContextGuard`는 템플릿의 컨텍스트 객체 유형을 지시자 자체 유형에 따라 결정하는 데 사용됩니다.
 
-This section provides examples of both kinds of guards.
-For more information, see [Template type checking](tools/cli/template-typecheck "Template type-checking guide").
+이 섹션에서는 두 가지 유형의 가드 예제를 제공합니다. 자세한 내용은 [템플릿 유형 검사](tools/cli/template-typecheck "템플릿 유형 검사 가이드")를 참조하십시오.
 
-### Type narrowing with template guards
+### 템플릿 가드를 사용한 유형 좁히기
 
-A structural directive in a template controls whether that template is rendered at run time. Some structural directives want to perform type narrowing based on the type of input expression.
+템플릿의 구조 지시자는 해당 템플릿이 런타임에서 렌더링되는지 여부를 제어합니다. 일부 구조 지시자는 입력 표현식의 유형에 따라 유형 좁히기를 수행하고자 합니다.
 
-There are two narrowings which are possible with input guards:
+입력 가드를 사용하여 아래 두 가지 유형의 좁히기가 가능합니다:
 
-* Narrowing the input expression based on a TypeScript type assertion function.
-* Narrowing the input expression based on its truthiness.
+* TypeScript 유형 단언 기능을 기반으로 입력 표현식을 좁히기.
+* 진리성을 기반으로 입력 표현식을 좁히기.
 
-To narrow the input expression by defining a type assertion function:
+타입 단언 기능을 정의하여 입력 표현식을 좁히려면:
 
 ```ts
-// This directive only renders its template if the actor is a user.
-// You want to assert that within the template, the type of the `actor`
-// expression is narrowed to `User`.
+// 이 지시자는 배우가 사용자일 경우에만 템플릿을 렌더링합니다.
+// 템플릿 내에서 `actor` 표현식의 유형이 `User`로 좁혀지도록 단언하고자 합니다.
 @Directive(...)
 class ActorIsUser {
   @Input() actor: User|Robot;
 
   static ngTemplateGuard_actor(dir: ActorIsUser, expr: User|Robot): expr is User {
-    // The return statement is unnecessary in practice, but included to
-    // prevent TypeScript errors.
+    // 반환문은 실제로 필요하지 않지만 TypeScript 오류를 피하기 위해 포함되어 있습니다.
     return true;
   }
 }
 ```
 
-Type-checking will behave within the template as if the `ngTemplateGuard_actor` has been asserted on the expression bound to the input.
+유형 검사는 템플릿 내에서 입력에 바인딩된 표현식에 `ngTemplateGuard_actor`가 단언된 것처럼 행동합니다.
 
-Some directives only render their templates when an input is truthy. It's not possible to capture the full semantics of truthiness in a type assertion function, so instead a literal type of `'binding'` can be used to signal to the template type-checker that the binding expression itself should be used as the guard:
+일부 지시자는 입력이 진리성(true)일 때만 템플릿을 렌더링합니다. 진리성의 전체 의미를 타입 단언 기능으로 포착할 수는 없으므로, 대신 `binding`이라는 리터럴 유형을 사용하여 템플릿 유형 검사기에 바인딩 표현식 자체가 가드로 사용되도록 신호를 전달할 수 있습니다:
 
 ```ts
 @Directive(...)
@@ -222,31 +216,28 @@ class CustomIf {
 }
 ```
 
-The template type-checker will behave as if the expression bound to `condition` was asserted to be truthy within the template.
+템플릿 유형 검사기는 조건에 바인딩된 표현식이 템플릿 내에서 진리성으로 단언되었다고 가정하여 동작합니다.
 
-### Typing the directive's context
+### 지시자의 컨텍스트 유형 지정
 
-If your structural directive provides a context to the instantiated template, you can properly type it inside the template by providing a static `ngTemplateContextGuard` type assertion function. This function can use the type of the directive to derive the type of the context, which is useful when the type of the directive is generic.
+구조 지시자가 인스턴스화된 템플릿에 컨텍스트를 제공하는 경우, 템플릿 내에서 이를 적절히 타입 지정할 수 있습니다. 이를 위해 정적 `ngTemplateContextGuard` 유형 단언 기능을 제공할 수 있습니다. 이 함수는 지시자의 유형을 사용하여 컨텍스트의 유형을 유도할 수 있으며, 지시자의 유형이 일반적일 때 유용합니다.
 
-For the `SelectDirective` described above, you can implement an `ngTemplateContextGuard` to correctly specify the data type, even if the data source is generic.
+위에서 설명한 `SelectDirective`의 경우, 데이터 유형을 올바르게 지정하기 위해 `ngTemplateContextGuard`를 구현할 수 있습니다. 데이터 소스가 일반적인 경우에도 가능합니다.
 
 ```ts
-// Declare an interface for the template context:
+// 템플릿 컨텍스트에 대한 인터페이스를 선언합니다:
 export interface SelectTemplateContext<T> {
   $implicit: T;
 }
 
 @Directive(...)
 export class SelectDirective<T> {
-  // The directive's generic type `T` will be inferred from the `DataSource` type
-  // passed to the input.
+  // 지시자의 일반 유형 `T`는 입력으로 전달된 `DataSource` 유형에서 유추됩니다.
   @Input({required: true}) selectFrom!: DataSource<T>;
 
-  // Narrow the type of the context using the generic type of the directive.
+  // 지시자의 일반 유형을 사용하여 컨텍스트 유형을 좁힙니다.
   static ngTemplateContextGuard<T>(dir: SelectDirective<T>, ctx: any): ctx is SelectTemplateContext<T> {
-    // As before the guard body is not used at runtime, and included only to avoid
-    // TypeScript errors.
+    // 이전과 마찬가지로 가드 본체는 런타임에서 사용되지 않으며, TypeScript 오류를 방지하기 위해 포함되어 있습니다.
     return true;
   }
 }
-```

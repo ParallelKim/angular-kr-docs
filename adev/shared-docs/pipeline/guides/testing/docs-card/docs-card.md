@@ -1,5 +1,5 @@
-<docs-card title="No Link Card">Card Content</docs-card>
-<docs-card title="Link Card" link="Try It Now" href="in/app/link">
-  Card Content
+<docs-card title="링크 없는 카드">카드 내용</docs-card>
+<docs-card title="링크 카드" link="지금 시도하기" href="in/app/link">
+  카드 내용
 </docs-card>
-<docs-card title="Image Card" imgSrc="adev/shared-docs/pipeline/guides/testing/docs-card/angular.svg"></docs-card>
+<docs-card title="이미지 카드" imgSrc="adev/shared-docs/pipeline/guides/testing/docs-card/angular.svg"></docs-card>

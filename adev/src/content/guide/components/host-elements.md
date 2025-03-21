@@ -1,13 +1,11 @@
-# Component host elements
+# 컴포넌트 호스트 요소
 
-Tip: This guide assumes you've already read the [Essentials Guide](essentials). Read that first if you're new to Angular.
+팁: 이 가이드는 여러분이 [필수 가이드](essentials)를 이미 읽었다고 가정합니다. Angular에 처음이라면 먼저 그것을 읽어보세요.
 
-Angular creates an instance of a component for every HTML element that matches the component's
-selector. The DOM element that matches a component's selector is that component's **host element**.
-The contents of a component's template are rendered inside its host element.
+Angular는 컴포넌트의 선택자와 일치하는 HTML 요소마다 컴포넌트의 인스턴스를 생성합니다. 컴포넌트의 선택자와 일치하는 DOM 요소는 해당 컴포넌트의 **호스트 요소**입니다. 컴포넌트의 템플릿 내용은 호스트 요소 내에 렌더링됩니다.
 
 ```angular-ts
-// Component source
+// 컴포넌트 소스
 @Component({
   selector: 'profile-photo',
   template: `
@@ -18,28 +16,26 @@ export class ProfilePhoto {}
 ```
 
 ```angular-html
-<!-- Using the component -->
-<h3>Your profile photo</h3>
+<!-- 컴포넌트 사용 -->
+<h3>당신의 프로필 사진</h3>
 <profile-photo />
-<button>Upload a new profile photo</button>
+<button>새 프로필 사진 업로드</button>
 ```
 
 ```angular-html
-<!-- Rendered DOM -->
-<h3>Your profile photo</h3>
+<!-- 렌더링된 DOM -->
+<h3>당신의 프로필 사진</h3>
 <profile-photo>
   <img src="profile-photo.jpg" alt="Your profile photo" />
 </profile-photo>
-<button>Upload a new profile photo</button>
+<button>새 프로필 사진 업로드</button>
 ```
 
-In the above example, `<profile-photo>` is the host element of the `ProfilePhoto` component.
+위의 예에서 `<profile-photo>`는 `ProfilePhoto` 컴포넌트의 호스트 요소입니다.
 
-## Binding to the host element
+## 호스트 요소에 바인딩
 
-A component can bind properties, attributes, and events to its host element. This behaves
-identically to bindings on elements inside the component's template, but instead defined with
-the `host` property in the `@Component` decorator:
+컴포넌트는 호스트 요소에 속성, 특성 및 이벤트를 바인딩할 수 있습니다. 이는 컴포넌트의 템플릿 내 요소에 대한 바인딩과 동일하게 작동하지만, `@Component` 데코레이터의 `host` 속성으로 정의됩니다:
 
 ```angular-ts
 @Component({
@@ -62,12 +58,11 @@ export class CustomSlider {
 }
 ```
 
-## The `@HostBinding` and `@HostListener` decorators
+## `@HostBinding` 및 `@HostListener` 데코레이터
 
-You can alternatively bind to the host element by applying the `@HostBinding` and `@HostListener`
-decorator to class members.
+대안으로 클래스 멤버에 `@HostBinding` 및 `@HostListener` 데코레이터를 적용하여 호스트 요소에 바인딩할 수 있습니다.
 
-`@HostBinding` lets you bind host properties and attributes to properties and methods:
+`@HostBinding`은 호스트 속성과 특성을 속성 및 메서드에 바인딩할 수 있게 해줍니다:
 
 ```angular-ts
 @Component({
@@ -86,8 +81,7 @@ export class CustomSlider {
 }
 ```
 
-`@HostListener` lets you bind event listeners to the host element. The decorator accepts an event
-name and an optional array of arguments:
+`@HostListener`는 호스트 요소에 이벤트 리스너를 바인딩할 수 있게 해줍니다. 이 데코레이터는 이벤트 이름과 선택적으로 인수 배열을 받습니다:
 
 ```ts
 export class CustomSlider {
@@ -98,13 +92,11 @@ export class CustomSlider {
 }
 ```
 
-**Always prefer using the `host` property over `@HostBinding` and `@HostListener`.** These
-decorators exist exclusively for backwards compatibility.
+**항상 `@HostBinding` 및 `@HostListener`보다 `host` 속성을 사용하는 것을 선호하세요.** 이 데코레이터는 오직 하위 호환성을 위해 존재합니다.
 
-## Binding collisions
+## 바인딩 충돌
 
-When you use a component in a template, you can add bindings to that component instance's element.
-The component may _also_ define host bindings for the same properties or attributes.
+템플릿에서 컴포넌트를 사용할 때 해당 컴포넌트 인스턴스의 요소에 바인딩을 추가할 수 있습니다. 컴포넌트는 동일한 속성이나 특성에 대해 호스트 바인딩도 정의할 수 있습니다.
 
 ```angular-ts
 @Component({
@@ -121,8 +113,8 @@ export class ProfilePhoto { /* ... */ }
 <profile-photo role="group" [id]="otherId" />
 ```
 
-In cases like this, the following rules determine which value wins:
+이와 같은 경우, 다음 규칙에 따라 어떤 값이 우선하는지를 결정합니다:
 
-- If both values are static, the instance binding wins.
-- If one value is static and the other dynamic, the dynamic value wins.
-- If both values are dynamic, the component's host binding wins.
+- 두 값이 모두 정적이면 인스턴스 바인딩이 우선합니다.
+- 하나의 값이 정적이고 다른 하나가 동적이라면 동적 값이 우선합니다.
+- 두 값이 모두 동적이면 컴포넌트의 호스트 바인딩이 우선합니다.

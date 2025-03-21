@@ -1,11 +1,11 @@
-<docs-decorative-header title="Server-side & hybrid rendering" imgSrc="adev/src/assets/images/overview.svg"> <!-- markdownlint-disable-line -->
-Learn about different ways you can optimize the performance of your application with different rendering strategies.
+<docs-decorative-header title="서버 측 및 하이브리드 렌더링" imgSrc="adev/src/assets/images/overview.svg"> <!-- markdownlint-disable-line -->
+다양한 렌더링 전략을 사용하여 애플리케이션의 성능을 최적화할 수 있는 방법에 대해 알아보세요.
 </docs-decorative-header>
 
-One of the top priorities of any developer is ensuring that their application is as performant as possible. These guides are here to help you follow best practices for building performant applications by taking advantage of different rendering strategies.
+모든 개발자의 최우선 과제 중 하나는 애플리케이션이 가능한 한 성능이 뛰어나도록 하는 것입니다. 이 가이드들은 다양한 렌더링 전략을 활용하여 성능이 뛰어난 애플리케이션을 구축하기 위한 모범 사례를 따르는 데 도움을 주기 위해 마련되었습니다.
 
-| Guides Types                              | Description                                                                                                |
-| :---------------------------------------- | :--------------------------------------------------------------------------------------------------------- |
-| [Server and hybrid rendering](/guide/ssr) | Learn how to leverage rendering pages on the server to improve load times.                                 |
-| [Hydration](/guide/hydration)             | A process to improve application performance by restoring its state after server-side rendering and reusing existing DOM structure as much as possible. |
-| [Incremental Hydration](/guide/incremental-hydration) | Incremental hydration is an advanced type of hydration that can leave sections of your application dehydrated and incrementally trigger hydration of those sections as they are needed. |
+| 가이드 유형                                   | 설명                                                                                                     |
+| :------------------------------------------- | :------------------------------------------------------------------------------------------------------ |
+| [서버 및 하이브리드 렌더링](/guide/ssr)       | 로드 시간을 개선하기 위해 서버에서 페이지를 렌더링하는 방법을 알아보세요.                              |
+| [수화(hydration)](/guide/hydration)          | 서버 측 렌더링 이후 애플리케이션의 상태를 복원하고 가능한 한 기존 DOM 구조를 재사용하여 성능을 향상시키는 프로세스입니다. |
+| [점진적 수화(incremental hydration)](/guide/incremental-hydration) | 점진적 수화는 애플리케이션의 일부 섹션을 탈수 상태로 두고 필요할 때마다 해당 섹션의 수화를 점진적으로 트리거할 수 있는 고급 유형의 수화입니다. |

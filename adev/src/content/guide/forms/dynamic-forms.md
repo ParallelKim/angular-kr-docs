@@ -1,143 +1,142 @@
-# Building dynamic forms
+# 동적 양식 구축
 
-Many forms, such as questionnaires, can be very similar to one another in format and intent.
-To make it faster and easier to generate different versions of such a form, you can create a _dynamic form template_ based on metadata that describes the business object model.
-Then, use the template to generate new forms automatically, according to changes in the data model.
+설문지와 같은 많은 양식은 형식과 의도가 매우 유사할 수 있습니다.
+이러한 양식의 다양한 버전을 생성하는 데 더 빠르고 쉽게 만들기 위해 비즈니스 개체 모델을 설명하는 메타데이터를 기반으로 하는 _동적 양식 템플릿_을 생성할 수 있습니다.
+그런 다음, 데이터 모델의 변경 사항에 따라 새 양식을 자동으로 생성하기 위해 템플릿을 사용합니다.
 
-The technique is particularly useful when you have a type of form whose content must change frequently to meet rapidly changing business and regulatory requirements.
-A typical use-case is a questionnaire.
-You might need to get input from users in different contexts.
-The format and style of the forms a user sees should remain constant, while the actual questions you need to ask vary with the context.
+이 기술은 내용이 자주 변경되어야 하는 양식 유형이 있을 때 특히 유용합니다. 
+일반적인 사용 사례는 설문지입니다.
+사용자로부터 다양한 맥락에서 입력을 받아야 할 수 있습니다.
+사용자가 보는 양식의 형식과 스타일은 일정하게 유지되어야 하지만, 실제로 질문해야 하는 내용은 맥락에 따라 달라집니다.
 
-In this tutorial you will build a dynamic form that presents a basic questionnaire.
-You build an online application for heroes seeking employment.
-The agency is constantly tinkering with the application process, but by using the dynamic form
-you can create the new forms on the fly without changing the application code.
+이번 튜토리얼에서는 기본 설문지를 제공하는 동적 양식을 구축합니다.
+취업을 원하는 영웅들에 대한 온라인 응용 프로그램을 만듭니다.
+이 기관은 계속해서 신청 프로세스를 수정하고 있지만, 동적 양식을 사용함으로써 애플리케이션 코드를 변경하지 않고도 즉석에서 새 양식을 생성할 수 있습니다.
 
-The tutorial walks you through the following steps.
+튜토리얼은 다음 단계를 안내합니다.
 
-1. Enable reactive forms for a project.
-1. Establish a data model to represent form controls.
-1. Populate the model with sample data.
-1. Develop a component to create form controls dynamically.
+1. 프로젝트에 대한 반응형 양식 활성화.
+1. 양식 컨트롤을 나타내기 위한 데이터 모델 설정.
+1. 모델에 샘플 데이터로 채우기.
+1. 양식 컨트롤을 동적으로 생성하기 위한 컴포넌트 개발.
 
-The form you create uses input validation and styling to improve the user experience.
-It has a Submit button that is only enabled when all user input is valid, and flags invalid input with color coding and error messages.
+당신이 생성한 양식은 사용자 경험을 개선하기 위해 입력 유효성 검사 및 스타일링을 사용합니다.
+모든 사용자 입력이 유효할 때만 활성화되는 제출 버튼이 있으며, 색상 코드 및 오류 메시지로 잘못된 입력을 표시합니다.
 
-The basic version can evolve to support a richer variety of questions, more graceful rendering, and superior user experience.
+기본 버전은 더 다양한 질문을 지원하고, 더 우아하게 렌더링하며, 우수한 사용자 경험을 제공하기 위해 발전할 수 있습니다.
 
-## Enable reactive forms for your project
+## 프로젝트에 대한 반응형 양식 활성화
 
-Dynamic forms are based on reactive forms.
+동적 양식은 반응형 양리를 기반으로 합니다.
 
-To give the application access reactive forms directives, import `ReactiveFormsModule` from the `@angular/forms` library into the necessary components.
+응용 프로그램이 반응형 양식 지시문에 접근할 수 있도록 필수 구성 요소에 `@angular/forms` 라이브러리에서 `ReactiveFormsModule`을 가져옵니다.
 
-The following code from the example shows the setup in the root module.
+예제에서 다음 코드는 루트 모듈 설정을 보여줍니다.
 
 <docs-code-multifile>
     <docs-code header="dynamic-form.component.ts" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form.component.ts"/>
     <docs-code header="dynamic-form-question.component.ts" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form-question.component.ts"/>
 </docs-code-multifile>
 
-## Create a form object model
+## 양식 객체 모델 만들기
 
-A dynamic form requires an object model that can describe all scenarios needed by the form functionality.
-The example hero-application form is a set of questions — that is, each control in the form must ask a question and accept an answer.
+동적 양식은 양식 기능에 필요한 모든 시나리오를 설명할 수 있는 객체 모델이 필요합니다.
+예제 영웅 신청 양식은 질문의 집합으로 구성되며 — 즉, 양식의 각 컨트롤은 질문을 하고 답변을 받아야 합니다.
 
-The data model for this type of form must represent a question.
-The example includes the `DynamicFormQuestionComponent`, which defines a question as the fundamental object in the model.
+이 유형의 양식에 대한 데이터 모델은 질문을 나타내야 합니다.
+예제에는 모델의 기본 객체로 질문을 정의하는 `DynamicFormQuestionComponent`가 포함되어 있습니다.
 
-The following `QuestionBase` is a base class for a set of controls that can represent the question and its answer in the form.
+다음 `QuestionBase`는 질문과 그 답변을 양식에 나타낼 수 있는 컨트롤 집합을 위한 기본 클래스입니다.
 
 <docs-code header="src/app/question-base.ts" path="adev/src/content/examples/dynamic-form/src/app/question-base.ts"/>
 
-### Define control classes
+### 컨트롤 클래스 정의
 
-From this base, the example derives two new classes, `TextboxQuestion` and `DropdownQuestion`, that represent different control types.
-When you create the form template in the next step, you instantiate these specific question types in order to render the appropriate controls dynamically.
+이 기본 클래스에서 예제는 `TextboxQuestion` 및 `DropdownQuestion`의 두 개의 새로운 클래스를 파생시켜 서로 다른 컨트롤 유형을 나타냅니다.
+다음 단계에서 양식 템플릿을 만들 때 이러한 특정 질문 유형을 인스턴스화하여 적절한 컨트롤을 동적으로 렌더링합니다.
 
-The `TextboxQuestion` control type is represented in a form template using an `<input>` element. It presents a question and lets users enter input. The `type` attribute of the element is defined based on the `type` field specified in the `options` argument (for example `text`, `email`, `url`).
+`TextboxQuestion` 컨트롤 유형은 `<input>` 요소를 사용하여 양식 템플릿에 나타냅니다. 질문을 제시하고 사용자가 입력할 수 있도록 합니다. 요소의 `type` 속성은 `options` 인수에 지정된 `type` 필드를 기반으로 정의됩니다(예: `text`, `email`, `url`).
 
 <docs-code header="question-textbox.ts" path="adev/src/content/examples/dynamic-form/src/app/question-textbox.ts"/>
 
-The `DropdownQuestion` control type presents a list of choices in a select box.
+`DropdownQuestion` 컨트롤 유형은 선택 상자에서 선택 목록을 제시합니다.
 
- <docs-code header="question-dropdown.ts" path="adev/src/content/examples/dynamic-form/src/app/question-dropdown.ts"/>
+<docs-code header="question-dropdown.ts" path="adev/src/content/examples/dynamic-form/src/app/question-dropdown.ts"/>
 
-### Compose form groups
+### 양식 그룹 구성
 
-A dynamic form uses a service to create grouped sets of input controls, based on the form model.
-The following `QuestionControlService` collects a set of `FormGroup` instances that consume the metadata from the question model.
-You can specify default values and validation rules.
+동적 양식은 양식 모델을 기반으로 입력 컨트롤의 그룹 세트를 만들기 위해 서비스를 사용합니다.
+다음 `QuestionControlService`는 질문 모델에서 메타데이터를 소비하는 여러 `FormGroup` 인스턴스를 수집합니다.
+기본값 및 유효성 검사 규칙을 지정할 수 있습니다.
 
 <docs-code header="src/app/question-control.service.ts" path="adev/src/content/examples/dynamic-form/src/app/question-control.service.ts"/>
 
-## Compose dynamic form contents
+## 동적 양식 내용 구성하기
 
-The dynamic form itself is represented by a container component, which you add in a later step.
-Each question is represented in the form component's template by an `<app-question>` tag, which matches an instance of `DynamicFormQuestionComponent`.
+동적 양식 자체는 나중에 추가할 컨테이너 컴포넌트로 표시됩니다.
+각 질문은 양식 컴포넌트의 템플릿에서 `<app-question>` 태그로 표시되며, 이는 `DynamicFormQuestionComponent`의 인스턴스와 일치합니다.
 
-The `DynamicFormQuestionComponent` is responsible for rendering the details of an individual question based on values in the data-bound question object.
-The form relies on a [`[formGroup]` directive](api/forms/FormGroupDirective "API reference") to connect the template HTML to the underlying control objects.
-The `DynamicFormQuestionComponent` creates form groups and populates them with controls defined in the question model, specifying display and validation rules.
+`DynamicFormQuestionComponent`는 데이터 바인딩된 질문 객체의 값에 기반하여 개별 질문의 세부정보를 렌더링하는 책임을 집니다.
+양식은 템플릿 HTML을 기본 컨트롤 객체와 연결하는 [`[formGroup]` 지시문](api/forms/FormGroupDirective "API reference")에 의존합니다.
+`DynamicFormQuestionComponent`는 양식 그룹을 생성하고 질문 모델에 정의된 컨트롤로 채우며, 표시 및 유효성 검사 규칙을 지정합니다.
 
 <docs-code-multifile>
   <docs-code header="dynamic-form-question.component.html" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form-question.component.html"/>
   <docs-code header="dynamic-form-question.component.ts" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form-question.component.ts"/>
 </docs-code-multifile>
 
-The goal of the `DynamicFormQuestionComponent` is to present question types defined in your model.
-You only have two types of questions at this point but you can imagine many more.
-The `ngSwitch` statement in the template determines which type of question to display.
-The switch uses directives with the [`formControlName`](api/forms/FormControlName "FormControlName directive API reference") and [`formGroup`](api/forms/FormGroupDirective "FormGroupDirective API reference") selectors.
-Both directives are defined in `ReactiveFormsModule`.
+`DynamicFormQuestionComponent`의 목표는 모델에 정의된 질문 유형을 나타내는 것입니다.
+이 시점에서 질문 유형은 두 가지에 불과하지만, 훨씬 더 많은 질문 유형을 상상할 수 있습니다.
+템플릿의 `ngSwitch` 문은 표시할 질문 유형을 결정합니다.
+스위치는 [`formControlName`](api/forms/FormControlName "FormControlName directive API reference") 및 [`formGroup`](api/forms/FormGroupDirective "FormGroupDirective API reference") 선택기가 포함된 지시문을 사용합니다.
+두 지시문은 `ReactiveFormsModule`에 정의되어 있습니다.
 
-### Supply data
+### 데이터 제공
 
-Another service is needed to supply a specific set of questions from which to build an individual form.
-For this exercise you create the `QuestionService` to supply this array of questions from the hard-coded sample data.
-In a real-world app, the service might fetch data from a backend system.
-The key point, however, is that you control the hero job-application questions entirely through the objects returned from `QuestionService`.
-To maintain the questionnaire as requirements change, you only need to add, update, and remove objects from the `questions` array.
+개별 양식을 빌드하기 위한 특정 질문 세트를 제공하기 위해 또 다른 서비스가 필요합니다.
+이번 연습에서는 하드코딩된 샘플 데이터에서 이 질문 배열을 제공할 `QuestionService`를 생성합니다.
+실제 애플리케이션에서는 서비스가 백엔드 시스템에서 데이터를 가져올 수 있습니다.
+그러나 핵심은 `QuestionService`에서 반환된 객체를 통해 영웅 구직 질문을 완전히 제어할 수 있다는 것입니다.
+요구 사항이 변경됨에 따라 설문지를 유지 관리하려면 `questions` 배열에서 객체를 추가, 업데이트 및 제거하기만 하면 됩니다.
 
-The `QuestionService` supplies a set of questions in the form of an array bound to `@Input()` questions.
+`QuestionService`는 `@Input()` 질문에 바인딩된 형태로 질문 세트를 제공합니다.
 
 <docs-code header="src/app/question.service.ts" path="adev/src/content/examples/dynamic-form/src/app/question.service.ts"/>
 
-## Create a dynamic form template
+## 동적 양식 템플릿 만들기
 
-The `DynamicFormComponent` component is the entry point and the main container for the form, which is represented using the `<app-dynamic-form>` in a template.
+`DynamicFormComponent` 컴포넌트는 진입점이자 양식의 주요 컨테이너로, 템플릿에서 `<app-dynamic-form>`을 사용하여 표현됩니다.
 
-The `DynamicFormComponent` component presents a list of questions by binding each one to an `<app-question>` element that matches the `DynamicFormQuestionComponent`.
+`DynamicFormComponent` 컴포넌트는 각 질문을 `DynamicFormQuestionComponent`와 일치하는 `<app-question>` 요소에 바인딩하여 질문 목록을 제공합니다.
 
 <docs-code-multifile>
     <docs-code header="dynamic-form.component.html" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form.component.html"/>
     <docs-code header="dynamic-form.component.ts" path="adev/src/content/examples/dynamic-form/src/app/dynamic-form.component.ts"/>
 </docs-code-multifile>
 
-### Display the form
+### 양식 표시하기
 
-To display an instance of the dynamic form, the `AppComponent` shell template passes the `questions` array returned by the `QuestionService` to the form container component, `<app-dynamic-form>`.
+동적 양식의 인스턴스를 표시하기 위해 `AppComponent` 셸 템플릿은 `QuestionService`에서 반환된 `questions` 배열을 양식 컨테이너 컴포넌트 `<app-dynamic-form>`에 전달합니다.
 
 <docs-code header="app.component.ts" path="adev/src/content/examples/dynamic-form/src/app/app.component.ts"/>
 
-This separation of model and data lets you repurpose the components for any type of survey, as long as it's compatible with the _question_ object model.
+모델과 데이터의 분리는 질문 객체 모델과 호환되는 한 모든 유형의 설문조사를 위해 컴포넌트를 재사용할 수 있게 합니다.
 
-### Ensuring valid data
+### 유효한 데이터 보장
 
-The form template uses dynamic data binding of metadata to render the form without making any hardcoded assumptions about specific questions.
-It adds both control metadata and validation criteria dynamically.
+양식 템플릿은 특정 질문에 대한 하드코딩된 가정을 하지 않고 메타데이터의 동적 데이터 바인딩을 사용하여 양식을 렌더링합니다.
+제어 메타데이터와 유효성 검사 기준을 동적으로 추가합니다.
 
-To ensure valid input, the _Save_ button is disabled until the form is in a valid state.
-When the form is valid, click _Save_ and the application renders the current form values as JSON.
+유효한 입력을 보장하기 위해 _저장_ 버튼은 양식이 유효한 상태가 될 때까지 비활성화됩니다.
+양식이 유효할 때 _저장_을 클릭하면 애플리케이션이 현재 양식 값을 JSON 형식으로 렌더링합니다.
 
-The following figure shows the final form.
+다음 그림은 최종 양식을 보여줍니다.
 
 <img alt="Dynamic-Form" src="assets/images/guide/dynamic-form/dynamic-form.png">
 
-## Next steps
+## 다음 단계
 
 <docs-pill-row>
-  <docs-pill title="Validating form input" href="guide/forms/reactive-forms#validating-form-input" />
-  <docs-pill title="Form validation guide" href="guide/forms/form-validation" />
+  <docs-pill title="양식 입력 유효성 검사" href="guide/forms/reactive-forms#validating-form-input" />
+  <docs-pill title="양식 유효성 검사 가이드" href="guide/forms/form-validation" />
 </docs-pill-row>

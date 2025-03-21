@@ -1,5 +1,5 @@
-This is a string that contains an emoji, 😎. See there it was;
+이 문자열에는 이모지가 포함되어 있습니다, 😎. 봐요, 저기에 있었어요;
 
-# This header causes there to be two text areas
+# 이 헤더는 두 개의 텍스트 영역을 생성합니다.
 
-This is a string without an emoji.
+이 문자열에는 이모지가 없습니다.

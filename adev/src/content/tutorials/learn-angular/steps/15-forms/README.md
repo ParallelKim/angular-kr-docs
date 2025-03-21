@@ -1,33 +1,33 @@
-# Forms Overview
+# 양식 개요
 
-Forms are a big part of many apps because they enable your app to accept user input. Let's learn about how forms are handled in Angular.
+양식은 사용자 입력을 수락할 수 있게 해주기 때문에 많은 앱의 큰 부분입니다. Angular에서 양식이 어떻게 처리되는지 배워봅시다.
 
-In Angular, there are two types of forms: template-driven and reactive. You'll learn about both over the next few activities.
+Angular에는 템플릿 기반과 반응형의 두 가지 유형의 양식이 있습니다. 다음 몇 가지 활동을 통해 두 가지 모두를 배울 것입니다.
 
-In this activity, you'll learn how to set up a form using a template-driven approach.
+이 활동에서는 템플릿 기반 접근 방식을 사용해 양식을 설정하는 방법을 배울 것입니다.
 
 <hr>
 
 <docs-workflow>
 
-<docs-step title="Create an input field">
+<docs-step title="입력 필드 만들기">
 
-In `user.component.ts`, update the template by adding a text input with the `id` set to `framework`, type set to `text`.
+`user.component.ts`에서 `id`를 `framework`로 설정하고, 타입을 `text`로 설정하여 텍스트 입력을 추가하여 템플릿을 업데이트합니다.
 
 ```angular-html
 <label for="framework">
-  Favorite Framework:
+  좋아하는 프레임워크:
   <input id="framework" type="text" />
 </label>
 ```
 
 </docs-step>
 
-<docs-step title="Import `FormsModule`">
+<docs-step title="`FormsModule` 가져오기">
 
-For this form to use Angular features that enable data binding to forms, you'll need to import the `FormsModule`.
+이 양식이 데이터 바인딩 기능을 사용하도록 하려면 `FormsModule`을 가져와야 합니다.
 
-Import the `FormsModule` from `@angular/forms` and add it to the `imports` array of the `UserComponent`.
+`@angular/forms`에서 `FormsModule`을 가져오고 `UserComponent`의 `imports` 배열에 추가합니다.
 
 <docs-code language="ts" highlight="[2, 7]">
 import {Component} from '@angular/core';
@@ -42,27 +42,27 @@ export class UserComponent {}
 
 </docs-step>
 
-<docs-step title="Add binding to the value of the input">
+<docs-step title="입력 값에 바인딩 추가 하기">
 
-The `FormsModule` has a directive called `ngModel` that binds the value of the input to a property in your class.
+`FormsModule`에는 입력 값과 클래스의 속성을 바인딩하는 `ngModel`이라는 지시어가 있습니다.
 
-Update the input to use the `ngModel` directive, specifically with the following syntax `[(ngModel)]="favoriteFramework"` to bind to the `favoriteFramework` property.
+입력을 업데이트하여 `ngModel` 지시어를 사용하고, 다음 구문 `[(ngModel)]="favoriteFramework"`로 `favoriteFramework` 속성과 바인딩합니다.
 
 <docs-code language="html" highlight="[3]">
 <label for="framework">
-  Favorite Framework:
+  좋아하는 프레임워크:
   <input id="framework" type="text" [(ngModel)]="favoriteFramework" />
 </label>
 </docs-code>
 
-After you've made changes, try entering a value in the input field. Notice how it updates on the screen (yes, very cool).
+변경을 완료한 후 입력 필드에 값을 입력해 보세요. 화면에서 어떻게 업데이트되는지 주목하세요 (네, 정말 멋집니다).
 
-Note: The syntax `[()]` is known as "banana in a box" but it represents two-way binding: property binding and event binding. Learn more in the [Angular docs about two-way data binding](guide/templates/two-way-binding).
+참고: 구문 `[()]`은 "상자 속의 바나나"라고 알려져 있지만, 양방향 바인딩: 속성 바인딩과 이벤트 바인딩을 나타냅니다. [양방향 데이터 바인딩에 대한 Angular 문서](guide/templates/two-way-binding)에서 더 많은 정보를 알아보세요.
 
 </docs-step>
 
 </docs-workflow>
 
-You've now taken an important first step towards building forms with Angular.
+이제 Angular로 양식을 구축하는 중요한 첫 단계를 밟았습니다.
 
-Nice work. Let's keep the momentum going!
+잘했어요. 이 momentum을 계속 유지해봅시다!

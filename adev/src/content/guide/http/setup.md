@@ -1,10 +1,10 @@
-# Setting up `HttpClient`
+# `HttpClient` 설정
 
-Before you can use `HttpClient` in your app, you must configure it using [dependency injection](guide/di).
+앱에서 `HttpClient`를 사용하기 전에 [의존성 주입](guide/di)을 사용하여 구성해야 합니다.
 
-## Providing `HttpClient` through dependency injection
+## 의존성 주입을 통한 `HttpClient` 제공
 
-`HttpClient` is provided using the `provideHttpClient` helper function, which most apps include in the application `providers` in `app.config.ts`.
+`HttpClient`는 `app.config.ts`의 애플리케이션 `providers`에 대부분의 앱에서 포함하는 `provideHttpClient` 도우미 함수를 사용하여 제공됩니다.
 
 <docs-code language="ts">
 export const appConfig: ApplicationConfig = {
@@ -14,32 +14,32 @@ export const appConfig: ApplicationConfig = {
 };
 </docs-code>
 
-If your app is using NgModule-based bootstrap instead, you can include `provideHttpClient` in the providers of your app's NgModule:
+앱이 NgModule 기반 부트를 사용하는 경우, 앱의 NgModule의 providers에 `provideHttpClient`를 포함할 수 있습니다:
 
 <docs-code language="ts">
 @NgModule({
   providers: [
     provideHttpClient(),
   ],
-  // ... other application configuration
+  // ... 다른 애플리케이션 구성
 })
 export class AppModule {}
 </docs-code>
 
-You can then inject the `HttpClient` service as a dependency of your components, services, or other classes:
+그런 다음 구성요소, 서비스 또는 기타 클래스의 의존성으로 `HttpClient` 서비스를 주입할 수 있습니다:
 
 <docs-code language="ts">
 @Injectable({providedIn: 'root'})
 export class ConfigService {
   constructor(private http: HttpClient) {
-    // This service can now make HTTP requests via `this.http`.
+    // 이제 이 서비스는 `this.http`를 통해 HTTP 요청을 할 수 있습니다.
   }
 }
 </docs-code>
 
-## Configuring features of `HttpClient`
+## `HttpClient`의 기능 구성
 
-`provideHttpClient` accepts a list of optional feature configurations, to enable or configure the behavior of different aspects of the client. This section details the optional features and their usages.
+`provideHttpClient`는 클라이언트의 다양한 측면의 동작을 활성화하거나 구성하기 위한 선택적 기능 구성 목록을 수용합니다. 이 섹션에서는 선택적 기능과 그 용도를 자세히 설명합니다.
 
 ### `withFetch`
 
@@ -53,57 +53,57 @@ export const appConfig: ApplicationConfig = {
 };
 </docs-code>
 
-By default, `HttpClient` uses the [`XMLHttpRequest`](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest) API to make requests. The `withFetch` feature switches the client to use the [`fetch`](https://developer.mozilla.org/docs/Web/API/Fetch_API) API instead.
+기본적으로 `HttpClient`는 [`XMLHttpRequest`](https://developer.mozilla.org/docs/Web/API/XMLHttpRequest) API를 사용하여 요청을 합니다. `withFetch` 기능은 클라이언트를 [`fetch`](https://developer.mozilla.org/docs/Web/API/Fetch_API) API를 사용하도록 전환합니다.
 
-`fetch` is a more modern API and is available in a few environments where `XMLHttpRequest` is not supported. It does have a few limitations, such as not producing upload progress events.
+`fetch`는 더 최신의 API이며, `XMLHttpRequest`가 지원되지 않는 몇 가지 환경에서 사용할 수 있습니다. 업로드 진행 상황 이벤트를 생성하지 않는 등 몇 가지 제한사항이 있습니다.
 
 ### `withInterceptors(...)`
 
-`withInterceptors` configures the set of interceptor functions which will process requests made through `HttpClient`. See the [interceptor guide](guide/http/interceptors) for more information.
+`withInterceptors`는 `HttpClient`를 통해 수행된 요청을 처리할 인터셉터 함수 집합을 구성합니다. 자세한 내용은 [인터셉터 가이드](guide/http/interceptors)를 참조하십시오.
 
 ### `withInterceptorsFromDi()`
 
-`withInterceptorsFromDi` includes the older style of class-based interceptors in the `HttpClient` configuration. See the [interceptor guide](guide/http/interceptors) for more information.
+`withInterceptorsFromDi`는 `HttpClient` 구성에서 구식 클래스 기반 인터셉터를 포함합니다. 자세한 내용은 [인터셉터 가이드](guide/http/interceptors)를 참조하십시오.
 
-HELPFUL: Functional interceptors (through `withInterceptors`) have more predictable ordering and we recommend them over DI-based interceptors.
+유용한 팁: 기능적 인터셉터(`withInterceptors`를 통해)는 더 예측 가능한 순서를 가지며, DI 기반 인터셉터보다 추천합니다.
 
 ### `withRequestsMadeViaParent()`
 
-By default, when you configure `HttpClient` using `provideHttpClient` within a given injector, this configuration overrides any configuration for `HttpClient` which may be present in the parent injector.
+기본적으로, `provideHttpClient`를 사용하여 특정 주입기 내에서 `HttpClient`를 구성할 때, 이 구성은 부모 주입기에 존재할 수 있는 `HttpClient`에 대한 구성을 덮어씁니다.
 
-When you add `withRequestsMadeViaParent()`, `HttpClient` is configured to instead pass requests up to the `HttpClient` instance in the parent injector, once they've passed through any configured interceptors at this level. This is useful if you want to _add_ interceptors in a child injector, while still sending the request through the parent injector's interceptors as well.
+`withRequestsMadeViaParent()`를 추가하면, `HttpClient`는 요청을 현재 레벨에서 구성된 인터셉터를 통과한 후 부모 주입기의 `HttpClient` 인스턴스로 요청을 전달하도록 구성됩니다. 이는 요청을 부모 주입기의 인터셉터를 통해 전송하면서 자식 주입기에 인터셉터를 _추가_하려는 경우에 유용합니다.
 
-CRITICAL: You must configure an instance of `HttpClient` above the current injector, or this option is not valid and you'll get a runtime error when you try to use it.
+중요: 현재 주입기 위에 `HttpClient`의 인스턴스를 구성해야 합니다. 그렇지 않으면 이 옵션은 유효하지 않으며, 사용 시 런타임 오류가 발생합니다.
 
 ### `withJsonpSupport()`
 
-Including `withJsonpSupport` enables the `.jsonp()` method on `HttpClient`, which makes a GET request via the [JSONP convention](https://en.wikipedia.org/wiki/JSONP) for cross-domain loading of data.
+`withJsonpSupport`를 포함하면, `HttpClient`에서 `.jsonp()` 메서드를 활성화하여 데이터의 교차 도메인 로드를 위한 [JSONP 규약](https://en.wikipedia.org/wiki/JSONP)을 통해 GET 요청을 수행합니다.
 
-HELPFUL: Prefer using [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS) to make cross-domain requests instead of JSONP when possible.
+유용한 팁: 가능할 때 JSONP 대신 [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS)를 사용하여 교차 도메인 요청을 하는 것이 좋습니다.
 
 ### `withXsrfConfiguration(...)`
 
-Including this option allows for customization of `HttpClient`'s built-in XSRF security functionality. See the [security guide](best-practices/security) for more information.
+이 옵션을 포함하면 `HttpClient`의 내장 XSRF 보안 기능을 사용자 정의할 수 있습니다. 자세한 내용은 [보안 가이드](best-practices/security)를 참조하십시오.
 
 ### `withNoXsrfProtection()`
 
-Including this option disables `HttpClient`'s built-in XSRF security functionality. See the [security guide](best-practices/security) for more information.
+이 옵션을 포함하면 `HttpClient`의 내장 XSRF 보안 기능이 비활성화됩니다. 자세한 내용은 [보안 가이드](best-practices/security)를 참조하십시오.
 
-## `HttpClientModule`-based configuration
+## `HttpClientModule` 기반 구성
 
-Some applications may configure `HttpClient` using the older API based on NgModules.
+일부 애플리케이션은 NgModules 기반의 구형 API를 사용하여 `HttpClient`를 구성할 수 있습니다.
 
-This table lists the NgModules available from `@angular/common/http` and how they relate to the provider configuration functions above.
+이 표는 `@angular/common/http`에서 제공되는 NgModules와 그들이 위의 공급자 구성 함수와 어떻게 관련되어 있는지를 보여줍니다.
 
-| **NgModule**                            | `provideHttpClient()` equivalent              |
+| **NgModule**                            | `provideHttpClient()` 동등물              |
 | --------------------------------------- | --------------------------------------------- |
 | `HttpClientModule`                      | `provideHttpClient(withInterceptorsFromDi())` |
 | `HttpClientJsonpModule`                 | `withJsonpSupport()`                          |
 | `HttpClientXsrfModule.withOptions(...)` | `withXsrfConfiguration(...)`                  |
 | `HttpClientXsrfModule.disable()`        | `withNoXsrfProtection()`                      |
 
-<docs-callout important title="Use caution when using HttpClientModule in multiple injectors">
-When `HttpClientModule` is present in multiple injectors, the behavior of interceptors is poorly defined and depends on the exact options and provider/import ordering.
+<docs-callout important title="여러 주입기에서 HttpClientModule을 사용할 때 주의하십시오">
+`HttpClientModule`이 여러 주입기에 존재할 때 인터셉터의 동작은 정의되지 않았으며, 정확한 옵션 및 공급자/가져오기 순서에 따라 달라집니다.
 
-Prefer `provideHttpClient` for multi-injector configurations, as it has more stable behavior. See the `withRequestsMadeViaParent` feature above.
+다중 주입기 구성을 위해 `provideHttpClient`를 선호하십시오. 이 구성은 더 안정적인 동작을 가지고 있습니다. 위에서 설명한 `withRequestsMadeViaParent` 기능을 참조하십시오.
 </docs-callout>

@@ -1,52 +1,51 @@
-# The Angular CLI
+# Angular CLI
 
-The Angular CLI is a command-line interface tool which allows you to scaffold, develop, test, deploy, and maintain Angular applications directly from a command shell.
+Angular CLI는 명령줄 인터페이스 도구로, 명령 셸에서 직접 Angular 애플리케이션을 스캐폴드하고 개발, 테스트, 배포 및 유지 관리할 수 있게 해줍니다.
 
-Angular CLI is published on npm as the `@angular/cli` package and includes a binary named `ng`. Commands invoking `ng` are using the Angular CLI.
+Angular CLI는 npm에서 `@angular/cli` 패키지로 게시되며, `ng`라는 이진 파일을 포함합니다. `ng`를 호출하는 명령은 Angular CLI를 사용하는 것입니다.
 
-<docs-callout title="Try Angular without local setup">
+<docs-callout title="로컬 설정 없이 Angular 사용해보기">
 
-If you are new to Angular, you might want to start with [Try it now!](tutorials/learn-angular), which introduces the essentials of Angular in the context of a ready-made basic online store app for you to examine and modify.
-This standalone tutorial takes advantage of the interactive [StackBlitz](https://stackblitz.com) environment for online development.
-You don't need to set up your local environment until you're ready.
+Angular에 처음이신가요? [지금 시도해보세요!](tutorials/learn-angular)를 시작해보는 것이 좋습니다. 이 튜토리얼은 수정하고 살펴볼 수 있는 기본 온라인 상점 앱의 맥락에서 Angular의 필수 요소를 소개합니다.
+이 독립형 튜토리얼은 온라인 개발을 위한 대화형 [StackBlitz](https://stackblitz.com) 환경을 활용합니다.
+준비가 될 때까지 로컬 환경을 설정할 필요가 없습니다.
 
 </docs-callout>
 
 <docs-card-container>
-  <docs-card title="Getting Started" link="Get Started" href="tools/cli/setup-local">
-    Install Angular CLI to create and build your first app.
+  <docs-card title="시작하기" link="시작하기" href="tools/cli/setup-local">
+    Angular CLI를 설치하여 첫 번째 앱을 생성하고 빌드합니다.
   </docs-card>
-  <docs-card title="Command Reference" link="Learn More" href="cli">
-    Discover CLI commands to make you more productive with Angular.
+  <docs-card title="명령 참조" link="더 알아보기" href="cli">
+    Angular로 생산성을 높이기 위한 CLI 명령을 알아보세요.
   </docs-card>
-  <docs-card title="Schematics" link="Learn More" href="tools/cli/schematics">
-    Create and run schematics to generate and modify source files in your application automatically.
+  <docs-card title="스키매틱" link="더 알아보기" href="tools/cli/schematics">
+    애플리케이션의 소스 파일을 자동으로 생성하고 수정하는 스키매틱을 생성하고 실행합니다.
   </docs-card>
-  <docs-card title="Builders" link="Learn More" href="tools/cli/cli-builder">
-    Create and run builders to perform complex transformations from your source code to generated build outputs.
+  <docs-card title="빌더" link="더 알아보기" href="tools/cli/cli-builder">
+    소스 코드에서 생성된 빌드 출력으로 복잡한 변환을 수행하는 빌더를 생성하고 실행합니다.
   </docs-card>
 </docs-card-container>
 
-## CLI command-language syntax
+## CLI 명령-언어 문법
 
-Angular CLI roughly follows Unix/POSIX conventions for option syntax.
+Angular CLI는 대략적으로 옵션 문법에 대한 Unix/POSIX 규칙을 따릅니다.
 
-### Boolean options
+### 불리언 옵션
 
-Boolean options have two forms: `--this-option` sets the flag to `true`, `--no-this-option` sets it to `false`.
-You can also use `--this-option=false` or `--this-option=true`.
-If neither option is supplied, the flag remains in its default state, as listed in the reference documentation.
+불리언 옵션은 두 가지 형태가 있습니다: `--this-option`은 플래그를 `true`로 설정하고, `--no-this-option`은 `false`로 설정합니다.
+`--this-option=false` 또는 `--this-option=true`를 사용할 수도 있습니다.
+어느 옵션도 제공되지 않으면 플래그는 참조 문서에 나열된 기본 상태를 유지합니다.
 
-### Array options
+### 배열 옵션
 
-Array options can be provided in two forms: `--option value1 value2` or `--option value1 --option value2`.
+배열 옵션은 두 가지 형태로 제공될 수 있습니다: `--option value1 value2` 또는 `--option value1 --option value2`입니다.
 
-### Key/value options
+### 키/값 옵션
 
-Some options like `--define` expect an array of `key=value` pairs as their values.
-Just like array options, key/value options can be provided in two forms:
-`--define 'KEY_1="value1"' KEY_2=true` or `--define 'KEY_1="value1"' --define KEY_2=true`.
+`--define`과 같은 일부 옵션은 배열의 `key=value` 쌍을 값으로 기대합니다.
+배열 옵션처럼, 키/값 옵션은 두 가지 형태로 제공될 수 있습니다: `--define 'KEY_1="value1"' KEY_2=true` 또는 `--define 'KEY_1="value1"' --define KEY_2=true`입니다.
 
-### Relative paths
+### 상대 경로
 
-Options that specify files can be given as absolute paths, or as paths relative to the current working directory, which is generally either the workspace or project root.
+파일을 지정하는 옵션은 절대 경로로 제공할 수 있으며, 현재 작업 디렉토리(일반적으로 작업 공간 또는 프로젝트 루트)에 상대적인 경로로도 제공할 수 있습니다.

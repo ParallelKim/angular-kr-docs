@@ -1,47 +1,47 @@
-# Error Encyclopedia
+# 오류 백과사전
 
-## Runtime errors
+## 런타임 오류
 
-| Code      | Name                                                                                 |
+| 코드      | 이름                                                                                 |
 | :-------- | :----------------------------------------------------------------------------------- |
-| `NG0100`  | [Expression Changed After Checked](errors/NG0100)                                    |
-| `NG0200`  | [Circular Dependency in DI](errors/NG0200)                                           |
-| `NG0201`  | [No Provider Found](errors/NG0201)                                                   |
-| `NG0203`  | [`inject()` must be called from an injection context](errors/NG0203)                 |
-| `NG0209`  | [Invalid multi provider](errors/NG0209)                                              |
-| `NG0300`  | [Selector Collision](errors/NG0300)                                                  |
-| `NG0301`  | [Export Not Found](errors/NG0301)                                                    |
-| `NG0302`  | [Pipe Not Found](errors/NG0302)                                                      |
-| `NG0403`  | [Bootstrapped NgModule doesn't specify which component to initialize](errors/NG0403) |
-| `NG0500`  | [Hydration Node Mismatch](errors/NG0500)                                             |
-| `NG0501`  | [Hydration Missing Siblings](errors/NG0501)                                          |
-| `NG0502`  | [Hydration Missing Node](errors/NG0502)                                              |
-| `NG0503`  | [Hydration Unsupported Projection of DOM Nodes](errors/NG0503)                       |
-| `NG0504`  | [Skip hydration flag is applied to an invalid node](errors/NG0504)                   |
-| `NG0505`  | [No hydration info in server response](errors/NG0505)                                |
-| `NG0506`  | [NgZone remains unstable](errors/NG0506)                                             |
-| `NG0507`  | [HTML content was altered after SSR](errors/NG0507)                                  |
-| `NG0750`  | [@defer dependencies failed to load](errors/NG0750)                                  |
-| `NG0910`  | [Unsafe bindings on an iframe element](errors/NG0910)                                |
-| `NG0912`  | [Component ID generation collision](errors/NG0912)                                   |
-| `NG0955`  | [Track expression resulted in duplicated keys for a given collection](errors/NG0955) |
-| `NG0956`  | [Tracking expression caused re-creation of the DOM structure](errors/NG0956)         |
-| `NG01101` | [Wrong Async Validator Return Type](errors/NG01101)                                  |
-| `NG01203` | [Missing value accessor](errors/NG01203)                                             |
-| `NG02200` | [Missing Iterable Differ](errors/NG02200)                                            |
-| `NG02800` | [JSONP support in HttpClient configuration](errors/NG02800)                          |
-| `NG05000` | [Hydration with unsupported Zone.js instance.](errors/NG05000)                       |
-| `NG05104` | [Root element was not found.](errors/NG05104)                                        |
+| `NG0100`  | [체크 후 표현식이 변경됨](errors/NG0100)                                            |
+| `NG0200`  | [DI의 순환 의존성](errors/NG0200)                                                  |
+| `NG0201`  | [제공자를 찾을 수 없음](errors/NG0201)                                             |
+| `NG0203`  | [`inject()`는 주입 컨텍스트에서 호출해야 함](errors/NG0203)                        |
+| `NG0209`  | [유효하지 않은 다중 제공자](errors/NG0209)                                         |
+| `NG0300`  | [선택자 충돌](errors/NG0300)                                                        |
+| `NG0301`  | [내보내기 찾을 수 없음](errors/NG0301)                                            |
+| `NG0302`  | [파이프를 찾을 수 없음](errors/NG0302)                                             |
+| `NG0403`  | [부트스트랩된 NgModule가 초기화할 구성 요소를 지정하지 않음](errors/NG0403)       |
+| `NG0500`  | [하이드레이션 노드 불일치](errors/NG0500)                                          |
+| `NG0501`  | [하이드레이션에서 누락된 형제](errors/NG0501)                                     |
+| `NG0502`  | [하이드레이션에서 누락된 노드](errors/NG0502)                                     |
+| `NG0503`  | [하이드레이션에서 지원되지 않는 DOM 노드 투영](errors/NG0503)                    |
+| `NG0504`  | [유효하지 않은 노드에 적용된 하이드레이션 건너뛰기 플래그](errors/NG0504)          |
+| `NG0505`  | [서버 응답에 하이드레이션 정보가 없음](errors/NG0505)                             |
+| `NG0506`  | [NgZone이 불안정함](errors/NG0506)                                                  |
+| `NG0507`  | [SSR 후 HTML 콘텐츠가 변경됨](errors/NG0507)                                       |
+| `NG0750`  | [@defer 의존성을 로드하지 못함](errors/NG0750)                                     |
+| `NG0910`  | [iframe 요소에서 안전하지 않은 바인딩](errors/NG0910)                             |
+| `NG0912`  | [구성 요소 ID 생성 충돌](errors/NG0912)                                           |
+| `NG0955`  | [추적 표현식이 주어진 컬렉션의 중복 키를 초래함](errors/NG0955)                   |
+| `NG0956`  | [추적 표현식이 DOM 구조의 재생성을 초래함](errors/NG0956)                        |
+| `NG01101` | [잘못된 비동기 검증기 반환 유형](errors/NG01101)                                   |
+| `NG01203` | [값 접근자가 누락됨](errors/NG01203)                                               |
+| `NG02200` | [누락된 반복 가능한 차별자](errors/NG02200)                                        |
+| `NG02800` | [HttpClient 구성에서 JSONP 지원](errors/NG02800)                                   |
+| `NG05000` | [지원되지 않는 Zone.js 인스턴스와 함께 하는 하이드레이션](errors/NG05000)       |
+| `NG05104` | [루트 요소를 찾을 수 없음](errors/NG05104)                                         |
 
-## Compiler errors
+## 컴파일러 오류
 
-| Code     | Name                                                       |
+| 코드     | 이름                                                       |
 | :------- | :--------------------------------------------------------- |
-| `NG1001` | [Argument Not Literal](errors/NG1001)                      |
-| `NG2003` | [Missing Token](errors/NG2003)                             |
-| `NG2009` | [Invalid Shadow DOM selector](errors/NG2009)               |
-| `NG3003` | [Import Cycle Detected](errors/NG3003)                     |
-| `NG6100` | [NgModule.id Set to module.id anti-pattern](errors/NG6100) |
-| `NG8001` | [Invalid Element](errors/NG8001)                           |
-| `NG8002` | [Invalid Attribute](errors/NG8002)                         |
-| `NG8003` | [Missing Reference Target](errors/NG8003)                  |
+| `NG1001` | [인수가 리터럴이 아님](errors/NG1001)                      |
+| `NG2003` | [토큰이 누락됨](errors/NG2003)                             |
+| `NG2009` | [유효하지 않은 Shadow DOM 선택자](errors/NG2009)          |
+| `NG3003` | [가져오기 사이클 감지됨](errors/NG3003)                     |
+| `NG6100` | [NgModule.id가 module.id 반패턴으로 설정됨](errors/NG6100) |
+| `NG8001` | [유효하지 않은 요소](errors/NG8001)                        |
+| `NG8002` | [유효하지 않은 속성](errors/NG8002)                       |
+| `NG8003` | [참조 대상 누락](errors/NG8003)                            |

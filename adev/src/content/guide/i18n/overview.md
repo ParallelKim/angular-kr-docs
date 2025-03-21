@@ -1,54 +1,54 @@
-# Angular Internationalization
+# Angular 국제화
 
-*Internationalization*, sometimes referenced as i18n, is the process of designing and preparing your project for use in different locales around the world.
-*Localization* is the process of building versions of your project for different locales.
-The localization process includes the following actions.
+*국제화*는 때때로 i18n으로 언급되며, 전 세계의 다양한 지역에서 프로젝트를 사용할 수 있도록 설계하고 준비하는 과정입니다.
+*현지화*는 다양한 지역을 위한 프로젝트 버전을 구축하는 과정입니다.
+현지화 과정에는 다음과 같은 작업이 포함됩니다.
 
-* Extract text for translation into different languages
-* Format data for a specific locale
+* 다른 언어로 번역하기 위한 텍스트 추출
+* 특정 지역에 맞게 데이터 형식화
 
-A *locale* identifies a region in which people speak a particular language or language variant.
-Possible regions include countries and geographical regions.
-A locale determines the formatting and parsing of the following details.
+*로케일*은 사람들이 특정 언어 또는 언어 변형을 사용하는 지역을 식별합니다.
+가능한 지역에는 국가 및 지리적 지역이 포함됩니다.
+로케일은 다음 세부 사항의 형식 지정 및 구문 분석을 결정합니다.
 
-* Measurement units including date and time, numbers, and currencies
-* Translated names including time zones, languages, and countries
+* 날짜 및 시간, 숫자 및 통화를 포함한 측정 단위
+* 시간대, 언어 및 국가를 포함한 번역된 이름
 
-For a quick introduction to localization and internationalization watch this video:
+현지화 및 국제화에 대한 간단한 소개를 보려면 이 비디오를 시청하세요:
 
 <docs-video src="https://www.youtube.com/embed/KNTN-nsbV7M"/>
 
-## Learn about Angular internationalization
+## Angular 국제화에 대해 알아보기
 
 <docs-card-container>
-  <docs-card title="Add the localize package" href="guide/i18n/add-package">
-    Learn how to add the Angular Localize package to your project
+  <docs-card title="로컬라이즈 패키지 추가" href="guide/i18n/add-package">
+    Angular Localize 패키지를 프로젝트에 추가하는 방법 알아보기
   </docs-card>
-  <docs-card title="Refer to locales by ID" href="guide/i18n/locale-id">
-    Learn how to identify and specify a locale identifier for your project
+  <docs-card title="ID로 로케일 참조" href="guide/i18n/locale-id">
+    프로젝트에 대한 로케일 식별자를 식별하고 지정하는 방법 알아보기
   </docs-card>
-  <docs-card title="Format data based on locale" href="guide/i18n/format-data-locale">
-    Learn how to implement localized data pipes and override the locale for your project
+  <docs-card title="로케일 기반 데이터 형식화" href="guide/i18n/format-data-locale">
+    지역화된 데이터 파이프를 구현하고 프로젝트에 대한 로케일을 재정의하는 방법 알아보기
   </docs-card>
-  <docs-card title="Prepare component for translation" href="guide/i18n/prepare">
-    Learn how to specify source text for translation
+  <docs-card title="번역을 위한 구성 요소 준비" href="guide/i18n/prepare">
+    번역을 위한 원본 텍스트를 지정하는 방법 알아보기
   </docs-card>
-  <docs-card title="Work with translation files" href="guide/i18n/translation-files">
-    Learn how to review and process translation text
+  <docs-card title="번역 파일 작업" href="guide/i18n/translation-files">
+    번역 텍스트를 검토하고 처리하는 방법 알아보기
   </docs-card>
-  <docs-card title="Merge translations into the application" href="guide/i18n/merge">
-    Learn how to merge translations and build your translated application
+  <docs-card title="애플리케이션에 번역 병합" href="guide/i18n/merge">
+    번역을 병합하고 번역된 애플리케이션을 빌드하는 방법 알아보기
   </docs-card>
-  <docs-card title="Deploy multiple locales" href="guide/i18n/deploy">
-    Learn how to deploy multiple locales for your application
+  <docs-card title="다양한 로케일 배포" href="guide/i18n/deploy">
+    애플리케이션을 위해 다양한 로케일을 배포하는 방법 알아보기
   </docs-card>
-  <docs-card title="Import global variants of the locale data" href="guide/i18n/import-global-variants">
-    Learn how to import locale data for language variants
+  <docs-card title="로케일 데이터의 전역 변형 가져오기" href="guide/i18n/import-global-variants">
+    언어 변형을 위한 로케일 데이터를 가져오는 방법 알아보기
   </docs-card>
-  <docs-card title="Manage marked text with custom IDs" href="guide/i18n/manage-marked-text">
-    Learn how to implement custom IDs to help you manage your marked text
+  <docs-card title="사용자 지정 ID로 표시된 텍스트 관리" href="guide/i18n/manage-marked-text">
+    표시된 텍스트를 관리하기 위해 사용자 지정 ID를 구현하는 방법 알아보기
   </docs-card>
-  <docs-card title="Internationalization example" href="guide/i18n/example">
-    Review an example of Angular internationalization.
+  <docs-card title="국제화 예제" href="guide/i18n/example">
+    Angular 국제화의 예제를 검토하세요.
   </docs-card>
 </docs-card-container>

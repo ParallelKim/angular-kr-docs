@@ -1,67 +1,67 @@
-# Service Worker configuration file
+# 서비스 워커 구성 파일
 
-This topic describes the properties of the service worker configuration file.
+이 주제는 서비스 워커 구성 파일의 속성에 대해 설명합니다.
 
-## Modifying the configuration
+## 구성 수정
 
-The `ngsw-config.json` JSON configuration file specifies which files and data URLs the Angular service worker should cache and how it should update the cached files and data.
-The [Angular CLI](tools/cli) processes this configuration file during `ng build`.
+`ngsw-config.json` JSON 구성 파일은 Angular 서비스 워커가 캐시해야 할 파일과 데이터 URL을 지정하고, 캐시된 파일과 데이터를 업데이트하는 방법을 정의합니다.
+[Angular CLI](tools/cli)는 `ng build` 동안 이 구성 파일을 처리합니다.
 
-All file paths must begin with `/`, which corresponds to the deployment directory — usually `dist/<project-name>` in CLI projects.
+모든 파일 경로는 `/`로 시작해야 하며, 이는 배포 디렉터리에 해당합니다. 일반적으로 CLI 프로젝트에서는 `dist/<project-name>`입니다.
 
-Unless otherwise commented, patterns use a **limited*** glob format that internally will be converted into regex:
+특별한 언급이 없는 한, 패턴은 **제한된** glob 형식을 사용하며, 내부적으로는 regex로 변환됩니다.
 
-| Glob formats | Details |
-|:---          |:---     |
-| `**`         | Matches 0 or more path segments                                                                        |
-| `*`          | Matches 0 or more characters excluding `/`                                                             |
-| `?`          | Matches exactly one character excluding `/`                                                            |
-| `!` prefix   | Marks the pattern as being negative, meaning that only files that don't match the pattern are included |
+| Glob 형식   | 세부사항                |
+|:---         |:---                    |
+| `**`        | 0개 이상의 경로 세그먼트를 일치시킵니다.                  |
+| `*`         | `/`를 제외한 0개 이상의 문자와 일치합니다.               |
+| `?`         | `/`를 제외한 정확히 하나의 문자와 일치합니다.            |
+| `!` 접두사  | 패턴을 부정으로 표시하여 패턴과 일치하지 않는 파일만 포함됩니다. |
 
-<docs-callout important title="Special characters need to be escaped">
-Pay attention that some characters with a special meaning in a regular expression are not escaped and also the pattern is not wrapped in `^`/`$` in the internal glob to regex conversion.
+<docs-callout important title="특수 문자는 이스케이프되어야 합니다">
+정규 표현식에서 특별한 의미를 가진 일부 문자가 이스케이프되지 않으며, 내부 glob에서 regex 변환 시 패턴이 `^`/`$`로 감싸지지 않는 것을 주의하십시오.
 
-`$` is a special character in regex that matches the end of the string and will not be automatically escaped when converting the glob pattern to a regular expression.
+`$`는 문자열의 끝과 일치하는 regex의 특수 문자이며, glob 패턴을 정규 표현식으로 변환할 때 자동으로 이스케이프되지 않습니다.
 
-If you want to literally match the `$` character, you have to escape it yourself (with `\\$`). For example, the glob pattern `/foo/bar/$value` results in an unmatchable expression, because it is impossible to have a string that has any characters after it has ended.
+`$` 문자를 문자적으로 일치시키려면 직접 이스케이프해야 합니다(예: `\\$`). 예를 들어, glob 패턴 `/foo/bar/$value`는 일치할 수 없는 표현식을 생성합니다. 문자열이 끝난 이후에 어떤 문자도 존재할 수 없기 때문입니다.
 
-The pattern will not be automatically wrapped in `^` and `$` when converting it to a regular expression. Therefore, the patterns will partially match the request URLs.
+패턴은 정규 표현식으로 변환할 때 자동으로 `^`와 `$`로 감싸지지 않습니다. 따라서 패턴은 요청 URL과 부분적으로 일치합니다.
 
-If you want your patterns to match the beginning and/or end of URLs, you can add `^`/`$` yourself. For example, the glob pattern `/foo/bar/*.js` will match both `.js` and `.json` files. If you want to only match `.js` files, use `/foo/bar/*.js$`.
+패턴이 URL의 시작 및/또는 끝과 일치하려면 `^`/`$`를 직접 추가할 수 있습니다. 예를 들어, glob 패턴 `/foo/bar/*.js`는 `.js` 및 `.json` 파일을 모두 일치시킵니다. `.js` 파일만 일치시키려면 `/foo/bar/*.js$`를 사용하십시오.
 </docs-callout>
 
-Example patterns:
+예시 패턴:
 
-| Patterns     | Details |
-|:---          |:---     |
-| `/**/*.html` | Specifies all HTML files              |
-| `/*.html`    | Specifies only HTML files in the root |
-| `!/**/*.map` | Exclude all sourcemaps                |
+| 패턴        | 세부사항                          |
+|:---         |:---                              |
+| `/**/*.html` | 모든 HTML 파일을 지정합니다.      |
+| `/*.html`    | 루트에서만 HTML 파일을 지정합니다. |
+| `!/**/*.map` | 모든 소스 맵을 제외합니다.           |
 
-## Service worker configuration properties
+## 서비스 워커 구성 속성
 
-The following sections describe each property of the configuration file.
+다음 섹션에서는 구성 파일의 각 속성에 대해 설명합니다.
 
 ### `appData`
 
-This section enables you to pass any data you want that describes this particular version of the application.
-The `SwUpdate` service includes that data in the update notifications.
-Many applications use this section to provide additional information for the display of UI popups, notifying users of the available update.
+이 섹션에서는 이 특정 버전의 애플리케이션을 설명하는 데이터를 전달할 수 있습니다.
+`SwUpdate` 서비스는 해당 데이터를 업데이트 알림에 포함합니다.
+많은 애플리케이션이 이 섹션을 사용하여 UI 팝업 표시를 위한 추가 정보를 제공하며, 사용자가 사용 가능한 업데이트에 대해 알립니다.
 
 ### `index`
 
-Specifies the file that serves as the index page to satisfy navigation requests.
-Usually this is `/index.html`.
+탐색 요청을 만족시키기 위해 인덱스 페이지 역할을 하는 파일을 지정합니다.
+보통 이 파일은 `/index.html`입니다.
 
 ### `assetGroups`
 
-*Assets* are resources that are part of the application version that update along with the application.
-They can include resources loaded from the page's origin as well as third-party resources loaded from CDNs and other external URLs.
-As not all such external URLs might be known at build time, URL patterns can be matched.
+*자산*은 애플리케이션 버전의 일부로, 애플리케이션과 함께 업데이트되는 리소스입니다.
+이는 페이지의 출처에서 로드되는 리소스와 CDN 및 기타 외부 URL에서 로드되는 제3자 리소스를 포함할 수 있습니다.
+모든 외부 URL이 빌드 시점에 알려지지 않을 수 있으므로, URL 패턴을 매칭할 수 있습니다.
 
-HELPFUL: For the service worker to handle resources that are loaded from different origins, make sure that [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS) is correctly configured on each origin's server.
+도움이 됨: 다양한 출처에서 로드되는 리소스를 서비스 워커가 처리하게 하려면 각 출처 서버에서 [CORS](https://developer.mozilla.org/docs/Web/HTTP/CORS)가 올바르게 구성되어 있는지 확인하십시오.
 
-This field contains an array of asset groups, each of which defines a set of asset resources and the policy by which they are cached.
+이 필드는 각각 자신이 캐시되는 자산 리소스 집합과 정책을 정의하는 자산 그룹의 배열을 포함합니다.
 
 <docs-code language="json">
 
@@ -78,16 +78,16 @@ This field contains an array of asset groups, each of which defines a set of ass
 
 </docs-code>
 
-HELPFUL: When the ServiceWorker handles a request, it checks asset groups in the order in which they appear in `ngsw-config.json`.
-The first asset group that matches the requested resource handles the request.
+도움이 됨: 서비스 워커가 요청을 처리할 때 `ngsw-config.json`에 나타나는 순서대로 자산 그룹을 체크합니다.
+첫 번째로 요청된 리소스와 일치하는 자산 그룹이 요청을 처리합니다.
 
-It is recommended that you put the more specific asset groups higher in the list.
-For example, an asset group that matches `/foo.js` should appear before one that matches `*.js`.
+더 구체적인 자산 그룹을 목록 상단에 배치하는 것이 좋습니다.
+예를 들어, `/foo.js`와 일치하는 자산 그룹은 `*.js`와 일치하는 자산 그룹보다 위에 와야 합니다.
 
-Each asset group specifies both a group of resources and a policy that governs them.
-This policy determines when the resources are fetched and what happens when changes are detected.
+각 자산 그룹은 리소스 그룹과 이를 관리하는 정책을 모두 지정합니다.
+이 정책은 리소스가 언제 가져오는지와 변경 사항이 감지되었을 때 어떤 일이 발생하는지를 결정합니다.
 
-Asset groups follow the Typescript interface shown here:
+자산 그룹은 다음과 같은 Typescript 인터페이스를 따릅니다:
 
 <docs-code language="typescript">
 
@@ -106,63 +106,63 @@ interface AssetGroup {
 
 </docs-code>
 
-Each `AssetGroup` is defined by the following asset group properties.
+각 `AssetGroup`은 다음 자산 그룹 속성으로 정의됩니다.
 
 #### `name`
 
-A `name` is mandatory.
-It identifies this particular group of assets between versions of the configuration.
+`name`은 필수입니다.
+구성의 버전 간에 특정 자산 그룹을 구분합니다.
 
 #### `installMode`
 
-The `installMode` determines how these resources are initially cached.
-The `installMode` can be either of two values:
+`installMode`는 이러한 리소스가 처음 캐시되는 방법을 결정합니다.
+`installMode`는 두 가지 값 중 하나일 수 있습니다:
 
-| Values     | Details |
-|:---        |:---     |
-| `prefetch` | Tells the Angular service worker to fetch every single listed resource while it's caching the current version of the application. This is bandwidth-intensive but ensures resources are available whenever they're requested, even if the browser is currently offline.                                                                                                                       |
-| `lazy`     | Does not cache any of the resources up front. Instead, the Angular service worker only caches resources for which it receives requests. This is an on-demand caching mode. Resources that are never requested are not cached. This is useful for things like images at different resolutions, so the service worker only caches the correct assets for the particular screen and orientation. |
+| 값         | 세부사항                                                                                                                                                                                             |
+|:---        |:---                                                                                                                                                                                               |
+| `prefetch` | Angular 서비스 워커에게 현재 애플리케이션의 버전을 캐시하는 동안 모든 나열된 리소스를 미리 가져오라고 지시합니다. 이는 대역폭을 많이 소모하지만, 브라우저가 오프라인일 때에도 리소스를 요청할 때 사용할 수 있도록 보장합니다. |
+| `lazy`     | 리소스를 사전에 캐시하지 않습니다. 대신, Angular 서비스 워커는 요청이 들어오는 리소스만 캐시합니다. 이는 요구 시 캐싱 모드입니다. 요청되지 않은 리소스는 캐시되지 않습니다. 이는 다양한 해상도의 이미지와 같은 것에 유용하여, 서비스 워커는 특정 화면과 방향에 필요한 올바른 자산만 캐시합니다. |
 
-Defaults to `prefetch`.
+기본값은 `prefetch`입니다.
 
 #### `updateMode`
 
-For resources already in the cache, the `updateMode` determines the caching behavior when a new version of the application is discovered.
-Any resources in the group that have changed since the previous version are updated in accordance with `updateMode`.
+캐시에 이미 있는 리소스의 경우, `updateMode`는 새로운 버전의 애플리케이션이 발견되었을 때의 캐싱 동작을 결정합니다.
+이전 버전 이후 변경된 자산 그룹의 리소스는 `updateMode`에 따라 업데이트됩니다.
 
-| Values     | Details |
-|:---        |:---     |
-| `prefetch` | Tells the service worker to download and cache the changed resources immediately.                                                                                                                                                        |
-| `lazy`     | Tells the service worker to not cache those resources. Instead, it treats them as unrequested and waits until they're requested again before updating them. An `updateMode` of `lazy` is only valid if the `installMode` is also `lazy`. |
+| 값         | 세부사항                                                                                                                                              |
+|:---        |:---                                                                                                                                               |
+| `prefetch` | 변경된 리소스를 즉시 다운로드 및 캐시하라고 서비스 워커에 지시합니다.                                                                                   |
+| `lazy`     | 서비스 워커에 해당 리소스를 캐시하지 말라고 지시합니다. 대신, 이는 요청되지 않은 것처럼 처리하고 요청이 다시 들어올 때까지 업데이트를 기다립니다. `lazy`의 `updateMode`는 `installMode`도 `lazy`일 때만 유효합니다. |
 
-Defaults to the value `installMode` is set to.
+기본값은 `installMode`에 설정된 값입니다.
 
 #### `resources`
 
-This section describes the resources to cache, broken up into the following groups:
+이 섹션에서는 캐시할 리소스를 설명하며, 다음 그룹으로 나뉩니다:
 
-| Resource groups | Details |
-|:---             |:---     |
-| `files`         | Lists patterns that match files in the distribution directory. These can be single files or glob-like patterns that match a number of files.                                                                                                                                                                                                                                                                   |
-| `urls`          | Includes both URLs and URL patterns that are matched at runtime. These resources are not fetched directly and do not have content hashes, but they are cached according to their HTTP headers. This is most useful for CDNs such as the Google Fonts service. <br />  *(Negative glob patterns are not supported and `?` will be matched literally; that is, it will not match any character other than `?`.)* |
+| 리소스 그룹  | 세부사항                                                    |
+|:---          |:---                                                        |
+| `files`      | 배포 디렉터리에서 파일과 일치하는 패턴 목록입니다. 이러한 패턴은 단일 파일 또는 여러 파일과 일치하는 glob과 유사한 패턴일 수 있습니다. |
+| `urls`       | 런타임에서 일치하는 URL 및 URL 패턴을 포함합니다. 이러한 리소스는 직접 가져오지 않으며 콘텐츠 해시가 없지만 HTTP 헤더에 따라 캐시됩니다. Google Fonts 서비스와 같은 CDN에 유용합니다. <br />  *(부정적인 glob 패턴은 지원되지 않으며 `?`는 문자 그대로 일치합니다; 즉, `?` 외의 다른 문자와 일치하지 않습니다.)* |
 
 #### `cacheQueryOptions`
 
-These options are used to modify the matching behavior of requests.
-They are passed to the browsers `Cache#match` function.
-See [MDN](https://developer.mozilla.org/docs/Web/API/Cache/match) for details.
-Currently, only the following options are supported:
+이 옵션들은 요청의 매칭 동작을 수정하는 데 사용됩니다.
+브라우저의 `Cache#match` 함수에 전달됩니다.
+자세한 내용은 [MDN](https://developer.mozilla.org/docs/Web/API/Cache/match)을 참조하십시오.
+현재 지원되는 옵션은 다음과 같습니다:
 
-| Options        | Details |
-|:---            |:---     |
-| `ignoreSearch` | Ignore query parameters. Defaults to `false`. |
+| 옵션          | 세부사항                          |
+|:---          |:---                              |
+| `ignoreSearch` | 쿼리 매개변수를 무시합니다. 기본값은 `false`입니다. |
 
 ### `dataGroups`
 
-Unlike asset resources, data requests are not versioned along with the application.
-They're cached according to manually-configured policies that are more useful for situations such as API requests and other data dependencies.
+자산 리소스와 달리 데이터 요청은 애플리케이션과 함께 버전 관리되지 않습니다.
+이들은 API 요청 및 기타 데이터 종속성과 같은 상황에 더 유용한 수동 구성 정책에 따라 캐시됩니다.
 
-This field contains an array of data groups, each of which defines a set of data resources and the policy by which they are cached.
+이 필드는 각각 데이터 리소스를 정의하고 이를 캐시하는 정책을 포함하는 데이터 그룹의 배열을 포함합니다.
 
 <docs-code language="json">
 
@@ -179,13 +179,13 @@ This field contains an array of data groups, each of which defines a set of data
 
 </docs-code>
 
-HELPFUL: When the ServiceWorker handles a request, it checks data groups in the order in which they appear in `ngsw-config.json`.
-The first data group that matches the requested resource handles the request.
+도움이 됨: 서비스 워커가 요청을 처리할 때 `ngsw-config.json`에 나타나는 순서대로 데이터 그룹을 체크합니다.
+첫 번째로 요청된 리소스와 일치하는 데이터 그룹이 요청을 처리합니다.
 
-It is recommended that you put the more specific data groups higher in the list.
-For example, a data group that matches `/api/foo.json` should appear before one that matches `/api/*.json`.
+더 구체적인 데이터 그룹을 목록 상단에 배치하는 것이 좋습니다.
+예를 들어, `/api/foo.json`과 일치하는 데이터 그룹은 `/api/*.json`과 일치하는 그룹보다 위에 와야 합니다.
 
-Data groups follow this Typescript interface:
+데이터 그룹은 다음 Typescript 인터페이스를 따릅니다:
 
 <docs-code language="typescript">
 
@@ -207,175 +207,173 @@ export interface DataGroup {
 
 </docs-code>
 
-Each `DataGroup` is defined by the following data group properties.
+각 `DataGroup`은 다음 데이터 그룹 속성으로 정의됩니다.
 
 #### `name`
 
-Similar to `assetGroups`, every data group has a `name` which uniquely identifies it.
+`assetGroups`와 유사하게 각 데이터 그룹은 고유하게 식별하는 `name`을 가집니다.
 
 #### `urls`
 
-A list of URL patterns.
-URLs that match these patterns are cached according to this data group's policy.
-Only non-mutating requests (GET and HEAD) are cached.
+URL 패턴 목록입니다.
+이 패턴과 일치하는 URL는 이 데이터 그룹의 정책에 따라 캐시됩니다.
+오직 비변이 요청(GET 및 HEAD)만 캐시됩니다.
 
-* Negative glob patterns are not supported
-* `?` is matched literally; that is, it matches *only* the character `?`
+* 부정적인 glob 패턴은 지원되지 않습니다.
+* `?`는 문자 그대로일치합니다; 즉, `?` 문자와만 일치합니다.
 
 #### `version`
 
-Occasionally APIs change formats in a way that is not backward-compatible.
-A new version of the application might not be compatible with the old API format and thus might not be compatible with existing cached resources from that API.
+때때로 API는 이전 호환성과 호환되지 않는 방식으로 형식을 변경합니다. 
+애플리케이션의 새로운 버전은 이전 API 형식과 호환되지 않을 수 있으며, 그러므로 기존 캐시된 리소스와 호환되지 않을 수 있습니다.
 
-`version` provides a mechanism to indicate that the resources being cached have been updated in a backwards-incompatible way, and that the old cache entries —those from previous versions— should be discarded.
+`version`은 캐시되는 리소스가 이전 호환성과 호환되지 않게 업데이트되었음을 나타내는 메커니즘을 제공합니다.
+이전 버전의 캐시 항목은 폐기되어야 합니다.
 
-`version` is an integer field and defaults to `1`.
+`version`은 정수 필드이며, 기본값은 `1`입니다.
 
 #### `cacheConfig`
 
-The following properties define the policy by which matching requests are cached.
+아래 속성들은 요청이 매칭되는 방식을 정의합니다.
 
 ##### `maxSize`
 
-The maximum number of entries, or responses, in the cache.
+캐시에서 엔트리, 또는 응답의 최대 수입니다.
 
-CRITICAL: Open-ended caches can grow in unbounded ways and eventually exceed storage quotas, resulting in eviction.
+중요: 무한 캐시는 무제한으로 성장할 수 있으며 결국 저장소 쿼터를 초과하여 제거될 수 있습니다.
 
 ##### `maxAge`
 
-The `maxAge` parameter indicates how long responses are allowed to remain in the cache before being considered invalid and evicted. `maxAge` is a duration string, using the following unit suffixes:
+`maxAge` 매개변수는 응답이 유효하지 않도록 간주되어 제거되기까지 캐시에서 얼마나 오랫동안 유지될 수 있는지를 나타냅니다. `maxAge`는 다음 단위 접미사를 사용하는 기간 문자열입니다:
 
-| Suffixes | Details |
-|:---      |:---     |
-| `d`      | Days         |
-| `h`      | Hours        |
-| `m`      | Minutes      |
-| `s`      | Seconds      |
-| `u`      | Milliseconds |
+| 접미사 | 세부사항                  |
+|:---     |:---                      |
+| `d`     | 일                       |
+| `h`     | 시간                     |
+| `m`     | 분                       |
+| `s`     | 초                       |
+| `u`     | 밀리초                   |
 
-For example, the string `3d12h` caches content for up to three and a half days.
+예를 들어, 문자열 `3d12h`는 콘텐츠를 최대 3일 반 동안 캐시합니다.
 
 ##### `timeout`
 
-This duration string specifies the network timeout.
-The network timeout is how long the Angular service worker waits for the network to respond before using a cached response, if configured to do so.
-`timeout` is a duration string, using the following unit suffixes:
+이 기간 문자열은 네트워크 시간 초과를 지정합니다.
+네트워크 시간 초과는 Angular 서비스 워커가 응답하기 이전에 네트워크가 응답하기를 얼마 동안 기다리는지를 결정합니다. 
+`timeout`은 기간 문자열로, 다음 단위 접미사를 사용합니다:
 
-| Suffixes | Details |
-|:---      |:---     |
-| `d`      | Days         |
-| `h`      | Hours        |
-| `m`      | Minutes      |
-| `s`      | Seconds      |
-| `u`      | Milliseconds |
+| 접미사 | 세부사항                  |
+|:---     |:---                      |
+| `d`     | 일                       |
+| `h`     | 시간                     |
+| `m`     | 분                       |
+| `s`     | 초                       |
+| `u`     | 밀리초                   |
 
-For example, the string `5s30u` translates to five seconds and 30 milliseconds of network timeout.
+예를 들어, 문자열 `5s30u`는 5초와 30밀리초의 네트워크 시간 초과를 나타냅니다.
 
 
 ##### `refreshAhead`
 
-This duration string specifies the time ahead of the expiration of a cached resource when the Angular service worker should proactively attempt to refresh the resource from the network.
-The `refreshAhead` duration is an optional configuration that determines how much time before the expiration of a cached response the service worker should initiate a request to refresh the resource from the network.
+이 기간 문자열은 Angular 서비스 워커가 캐시된 리소스의 유효 기간 만료 이전에 네트워크에서 리소스를 업데이트하기 위해 시도해야 하는 시간을 지정합니다.
+`refreshAhead` 기간은 선택적 구성으로, 캐시된 응답의 유효 기간 만료 이전에 서비스 워커가 네트워크에서 리소스를 업데이트하기 위해 요청해야 하는 시간을 결정합니다.
 
-| Suffixes | Details |
-|:---      |:---     |
-| `d`      | Days         |
-| `h`      | Hours        |
-| `m`      | Minutes      |
-| `s`      | Seconds      |
-| `u`      | Milliseconds |
+| 접미사 | 세부사항                  |
+|:---     |:---                      |
+| `d`     | 일                       |
+| `h`     | 시간                     |
+| `m`     | 분                       |
+| `s`     | 초                       |
+| `u`     | 밀리초                   |
 
-For example, the string `1h30m` translates to one hour and 30 minutes ahead of the expiration time.
+예를 들어, 문자열 `1h30m`는 만료 시간의 1시간 30분 전을 나타냅니다.
 
 ##### `strategy`
 
-The Angular service worker can use either of two caching strategies for data resources.
+Angular 서비스 워커는 데이터 리소스를 위해 두 가지 캐싱 전략 중 하나를 사용할 수 있습니다.
 
-| Caching strategies | Details |
-|:---                |:---     |
-| `performance`      | The default, optimizes for responses that are as fast as possible. If a resource exists in the cache, the cached version is used, and no network request is made. This allows for some staleness, depending on the `maxAge`, in exchange for better performance. This is suitable for resources that don't change often; for example, user avatar images. |
-| `freshness`        | Optimizes for currency of data, preferentially fetching requested data from the network. Only if the network times out, according to `timeout`, does the request fall back to the cache. This is useful for resources that change frequently; for example, account balances.                                                                              |
+| 캐싱 전략        | 세부사항                                                                                                          |
+|:---              |:---                                                                                                          |
+| `performance`    | 기본값으로, 가능한 한 빨리 응답을 최적화합니다. 리소스가 캐시되어 있다면 캐시된 버전을 사용하며 네트워크 요청이 이루어지지 않습니다. 이는 `maxAge`에 따라 다소 오래된 자료를 허용하는 대신 더 나은 성능을 제공합니다. | 
+| `freshness`      | 데이터의 최신성을 최적화하여, 요청된 데이터를 네트워크에서 우선적으로 가져옵니다. 네트워크가 시간 초과되면 요청이 캐시로 되돌아갑니다. 이는 자주 변경되는 리소스(예: 계좌 잔액)에 유용합니다.                                          |
 
-HELPFUL: You can also emulate a third strategy, [staleWhileRevalidate](https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/#stale-while-revalidate), which returns cached data if it is available, but also fetches fresh data from the network in the background for next time.
-To use this strategy set `strategy` to `freshness` and `timeout` to `0u` in `cacheConfig`.
+도움이 됨: 또한 세 번째 전략인 [staleWhileRevalidate](https://developers.google.com/web/fundamentals/instant-and-offline/offline-cookbook/#stale-while-revalidate)를 에뮬레이트할 수 있습니다. 이 전략은 사용 가능한 경우 캐시된 데이터를 반환하지만, 다음 번을 위해 네트워크에서 최신 데이터를 배경으로 가져옵니다.
+이 전략을 사용하려면 `cacheConfig`에서 `strategy`를 `freshness`로 설정하고 `timeout`을 `0u`로 설정하십시오.
 
-This essentially does the following:
+이는 기본적으로 다음과 같은 조치를 취합니다:
 
-1. Try to fetch from the network first.
-2. If the network request does not complete immediately, that is after a timeout of 0&nbsp;ms, ignore the cache age and fall back to the cached value.
-3. Once the network request completes, update the cache for future requests.
-4. If the resource does not exist in the cache, wait for the network request anyway.
+1. 먼저 네트워크에서 가져오기를 시도합니다.
+2. 네트워크 요청이 즉시 완료되지 않는 경우, 즉 0ms의 시간 초과 후, 캐시의 연령을 무시하고 캐시된 값을 반환합니다.
+3. 네트워크 요청이 완료되면 향후 요청을 위해 캐시를 업데이트합니다.
+4. 캐시에 리소스가 존재하지 않는 경우에도 네트워크 요청을 기다립니다.
 
 ##### `cacheOpaqueResponses`
 
-Whether the Angular service worker should cache opaque responses or not.
+Angular 서비스 워커가 불투명 응답을 캐시해야 하는지 여부입니다.
 
-If not specified, the default value depends on the data group's configured strategy:
+지정하지 않으면 기본값은 데이터 그룹의 구성된 전략에 따라 다릅니다:
 
-| Strategies                             | Details |
-|:---                                    |:---     |
-| Groups with the `freshness` strategy   | The default value is `true` and the service worker caches opaque responses. These groups will request the data every time and only fall back to the cached response when offline or on a slow network. Therefore, it doesn't matter if the service worker caches an error response. |
-| Groups with the `performance` strategy | The default value is `false` and the service worker doesn't cache opaque responses. These groups would continue to return a cached response until `maxAge` expires, even if the error was due to a temporary network or server issue. Therefore, it would be problematic for the service worker to cache an error response. |
+| 전략                              | 세부사항                                                                                                                                           |
+|:---                               |:---                                                                                                                                           |
+| `freshness` 전략을 가진 그룹      | 기본값은 `true`이며, 서비스 워커가 불투명 응답을 캐시합니다. 이러한 그룹은 매번 데이터를 요청하며 오프라인이거나 느린 네트워크에서만 캐시된 응답으로 돌아갑니다. 따라서 서비스 워커가 오류 응답을 캐시하는 것은 중요하지 않습니다. |
+| `performance` 전략을 가진 그룹    | 기본값은 `false`이며, 서비스 워커는 불투명 응답을 캐시하지 않습니다. 이러한 그룹은 `maxAge`가 만료될 때까지 캐시된 응답을 반환할 것입니다. 오류가 일시적인 네트워크 또는 서버 문제로 인해 발생했다 하더라도 문제가 됩니다. |
 
-<docs-callout title="Comment on opaque responses">
+<docs-callout title="불투명 응답에 대한 주석">
+불투명 응답이 무엇인지 잘 모른다면, [불투명 응답](https://fetch.spec.whatwg.org#concept-filtered-response-opaque)은 CORS 헤더를 반환하지 않는 다른 출처에서 요청된 리소스를 반환할 때 반환되는 특별한 응답 유형입니다.
+불투명 응답의 특징 중 하나는 서비스 워커가 상태를 읽을 수 없으며, 요청이 성공적이었는지 확인할 수 없습니다.
+자세한 내용은 [fetch() 소개](https://developers.google.com/web/updates/2015/03/introduction-to-fetch#response_types)를 참조하십시오.
 
-In case you are not familiar, an [opaque response](https://fetch.spec.whatwg.org#concept-filtered-response-opaque) is a special type of response returned when requesting a resource that is on a different origin which doesn't return CORS headers.
-One of the characteristics of an opaque response is that the service worker is not allowed to read its status, meaning it can't check if the request was successful or not.
-See [Introduction to `fetch()`](https://developers.google.com/web/updates/2015/03/introduction-to-fetch#response_types) for more details.
-
-If you are not able to implement CORS — for example, if you don't control the origin — prefer using the `freshness` strategy for resources that result in opaque responses.
-
+CORS를 구현할 수 없는 경우(예: 출처를 제어할 수 없는 경우) 불투명 응답을 초래하는 리소스의 경우 `freshness` 전략을 사용하는 것이 좋습니다.
 </docs-callout>
 
 #### `cacheQueryOptions`
 
-See [assetGroups](#assetgroups) for details.
+자세한 정보는 [assetGroups](#assetgroups)를 참조하십시오.
 
 ### `navigationUrls`
 
-This optional section enables you to specify a custom list of URLs that will be redirected to the index file.
+이 선택적 섹션은 인덱스 파일로 리디렉션될 사용자 정의 URL 목록을 지정할 수 있게 해줍니다.
 
-#### Handling navigation requests
+#### 탐색 요청 처리
 
-The ServiceWorker redirects navigation requests that don't match any `asset` or `data` group to the specified [index file](#index).
-A request is considered to be a navigation request if:
+서비스 워커는 `asset` 또는 `data` 그룹과 일치하지 않는 탐색 요청을 지정된 [인덱스 파일](#index)로 리디렉션합니다.
+요청이 탐색 요청으로 간주되려면:
 
-* Its [method](https://developer.mozilla.org/docs/Web/API/Request/method) is `GET`
-* Its [mode](https://developer.mozilla.org/docs/Web/API/Request/mode) is `navigation`
-* It accepts a `text/html` response as determined by the value of the `Accept` header
-* Its URL matches the following criteria:
-  * The URL must not contain a file extension (that is, a `.`) in the last path segment
-  * The URL must not contain `__`
+* [메서드](https://developer.mozilla.org/docs/Web/API/Request/method)가 `GET`이어야 합니다.
+* [모드](https://developer.mozilla.org/docs/Web/API/Request/mode)가 `navigation`이어야 합니다.
+* `Accept` 헤더의 값에 따라 `text/html` 응답을 받아들여야 합니다.
+* URL은 다음 기준을 충족해야 합니다: 
+  * URL의 마지막 경로 세그먼트에 파일 확장자(즉, `.`)가 포함되어서는 안 됩니다.
+  * URL은 `__`를 포함해서는 안 됩니다.
 
-HELPFUL: To configure whether navigation requests are sent through to the network or not, see the [navigationRequestStrategy](#navigationrequeststrategy) section and [applicationMaxAge](#application-max-age) sections.
+도움이 됨: 탐색 요청이 네트워크를 통해 전송되는지 여부를 구성하려면 [navigationRequestStrategy](#navigationrequeststrategy) 섹션과 [applicationMaxAge](#application-max-age) 섹션을 참조하십시오.
 
-#### Matching navigation request URLs
+#### 탐색 요청 URL와 일치시키기
 
-While these default criteria are fine in most cases, it is sometimes desirable to configure different rules.
-For example, you might want to ignore specific routes, such as those that are not part of the Angular app, and pass them through to the server.
+이러한 기본 기준은 대부분의 경우 괜찮지만, 때때로 다양한 규칙을 구성하는 것이 바람직할 수 있습니다. 예를 들어, Angular 앱의 일부가 아닌 특정 경로를 무시하고 서버로 전달하고 싶을 수 있습니다.
 
-This field contains an array of URLs and [glob-like](#modifying-the-configuration) URL patterns that are matched at runtime.
-It can contain both negative patterns (that is, patterns starting with `!`) and non-negative patterns and URLs.
+이 필드는 런타임에서 일치되는 URL과 [glob와 유사한](#modifying-the-configuration) URL 패턴의 배열을 포함합니다.
+부정적인 패턴(즉, `!`로 시작하는 패턴)과 비부정 패턴 및 URL을 모두 포함할 수 있습니다.
 
-Only requests whose URLs match *any* of the non-negative URLs/patterns and *none* of the negative ones are considered navigation requests.
-The URL query is ignored when matching.
+비부정 URL/패턴 중에서 *어느 것*이라도 일치하고, *부정적인 것에는* 전혀 일치하지 않는 요청만 탐색 요청으로 간주됩니다.
+URL 쿼리는 일치할 때 무시됩니다.
 
-If the field is omitted, it defaults to:
+이 필드가 생략되면 기본값은 다음과 같습니다:
 
 <docs-code language="typescript">
 
 [
-  '/**',           // Include all URLs.
-  '!/**/*.*',      // Exclude URLs to files (containing a file extension in the last segment).
-  '!/**/*__*',     // Exclude URLs containing `__` in the last segment.
-  '!/**/*__*/**',  // Exclude URLs containing `__` in any other segment.
+  '/**',             // 모든 URL 포함.
+  '!/**/*.*',        // 파일(URL의 마지막 세그먼트에 파일 확장자가 있는) URL 제외.
+  '!/**/*__*',       // 마지막 세그먼트에 `__`가 포함된 URL 제외.
+  '!/**/*__*/**',     // 다른 세그먼트에 `__`가 포함된 URL 제외.
 ]
 
 </docs-code>
 
 ### `navigationRequestStrategy`
 
-This optional property enables you to configure how the service worker handles navigation requests:
+이 선택적 속성은 서비스 워커가 탐색 요청을 처리하는 방법을 구성할 수 있게 해줍니다:
 
 <docs-code language="json">
 
@@ -385,13 +383,13 @@ This optional property enables you to configure how the service worker handles n
 
 </docs-code>
 
-| Possible values | Details |
-|:---             |:---     |
-| `'performance'` | The default setting. Serves the specified [index file](#index-file), which is typically cached. |
-| `'freshness'`   | Passes the requests through to the network and falls back to the `performance` behavior when offline. This value is useful when the server redirects the navigation requests elsewhere using a `3xx` HTTP redirect status code. Reasons for using this value include: <ul> <li> Redirecting to an authentication website when authentication is not handled by the application </li> <li> Redirecting specific URLs to avoid breaking existing links/bookmarks after a website redesign </li> <li> Redirecting to a different website, such as a server-status page, while a page is temporarily down </li> </ul> |
+| 가능한 값     | 세부사항                                                                                  |
+|:---           |:---                                                                                       |
+| `'performance'` | 기본 설정입니다. 지정된 [인덱스 파일](#index-file)을 제공합니다. 일반적으로 캐시됩니다.                                   |
+| `'freshness'`   | 요청을 네트워크로 전달하고 오프라인일 때는 `performance` 동작으로 되돌아갑니다. 이 값은 서버가 3xx HTTP 리디렉션 상태 코드를 사용하여 탐색 요청을 다른 곳으로 리디렉션할 때 유용합니다. 이 값을 사용하는 이유는 다음과 같습니다: <ul> <li> 애플리케이션에서 인증을 처리하지 않거나 인증 웹사이트로 리디렉션하는 것 </li> <li> 웹사이트 디자인 변경 후 기존 링크/북마크가 깨지지 않도록 특정 URL 리디렉션하는 것 </li> <li> 페이지가 일시적으로 다운되어 있을 때 다른 웹사이트(예: 서버 상태 페이지)로 리디렉션하는 것 </li> </ul> |
 
-IMPORTANT: The `freshness` strategy usually results in more requests sent to the server, which can increase response latency. It is recommended that you use the default performance strategy whenever possible.
+중요: `freshness` 전략은 일반적으로 서버에 더 많은 요청을 전송하게 되어 응답 대기 시간이 증가할 수 있습니다. 가능한 경우 기본 성능 전략을 사용하는 것이 좋습니다.
 
 ### `applicationMaxAge`
 
-This optional property enables you to configure how long the service worker will cache any requests. Within the `maxAge`, files will be served from cache. Beyond it, all requests will only be served from the network, including asset and data requests.
+이 선택적 속성은 서비스 워커가 요청을 캐시하는 기간을 구성할 수 있게 해줍니다. `maxAge` 내에서는 파일이 캐시에서 제공됩니다. 이를 초과하면 모든 요청은 네트워크에서만 제공되며, 자산 및 데이터 요청이 포함됩니다.

@@ -15,5 +15,5 @@ export default {
     apiKey: 'dfca7ed184db27927a512e5c6668b968',
     indexName: 'angular_v17',
   },
-  googleAnalyticsId: 'G-XB6NEVW32B',
+  googleAnalyticsId: 'G-42J4L8B4YZ',
 };

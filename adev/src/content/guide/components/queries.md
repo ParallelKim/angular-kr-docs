@@ -1,19 +1,18 @@
-# Referencing component children with queries
+# 자식 컴포넌트 참조하기
 
-Tip: This guide assumes you've already read the [Essentials Guide](essentials). Read that first if you're new to Angular.
+팁: 이 가이드는 당신이 이미 [기본 가이드](essentials)를 읽었음을 가정합니다. Angular에 처음이라면, 먼저 그것을 읽으세요.
 
-A component can define **queries** that find child elements and read values from their injectors.
+컴포넌트는 자식 요소를 찾고 인젝터에서 값을 읽어오는 **쿼리**를 정의할 수 있습니다.
 
-Developers most commonly use queries to retrieve references to child components, directives, DOM elements, and more.
+개발자는 일반적으로 쿼리를 사용하여 자식 컴포넌트, 지시자, DOM 요소 등의 참조를 가져옵니다.
 
-All query functions return signals that reflect the most up-to-date results. You can read the
-result by calling the signal function, including in reactive contexts like `computed` and `effect`.
+모든 쿼리 함수는 가장 최신의 결과를 반영하는 신호를 반환합니다. 신호 함수를 호출하여 결과를 읽을 수 있으며, `computed`나 `effect`와 같은 반응형 컨텍스트에서도 가능합니다.
 
-There are two categories of query: **view queries** and **content queries.**
+쿼리는 두 가지 범주가 있습니다: **뷰 쿼리**와 **콘텐츠 쿼리**.
 
-## View queries
+## 뷰 쿼리
 
-View queries retrieve results from the elements in the component's _view_ — the elements defined in the component's own template. You can query for a single result with the `viewChild` function.
+뷰 쿼리는 컴포넌트의 _뷰_에 있는 요소로부터 결과를 검색합니다 — 컴포넌트의 자체 템플릿에서 정의된 요소입니다. `viewChild` 함수를 사용하여 단일 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 15]">
 @Component({
@@ -34,11 +33,11 @@ export class CustomCard {
 }
 </docs-code>
 
-In this example, the `CustomCard` component queries for a child `CustomCardHeader` and uses the result in a `computed`.
+이 예제에서 `CustomCard` 컴포넌트는 자식 `CustomCardHeader`를 쿼리하고 `computed`에서 결과를 사용합니다.
 
-If the query does not find a result, its value is `undefined`. This may occur if the target element is hidden by `@if`. Angular keeps the result of `viewChild` up to date as your application state changes.
+쿼리가 결과를 찾지 못하면, 그 값은 `undefined`가 됩니다. 이는 대상 요소가 `@if`로 숨겨져 있을 때 발생할 수 있습니다. Angular는 애플리케이션 상태가 변화함에 따라 `viewChild`의 결과를 최신 상태로 유지합니다.
 
-You can also query for multiple results with the `viewChildren` function.
+또한 `viewChildren` 함수를 사용하여 여러 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[17, 19, 20, 21, 22, 23]">
 @Component({
@@ -58,17 +57,17 @@ export class CustomCardAction {
 })
 export class CustomCard {
   actions = viewChildren(CustomCardAction);
-  actionsTexts = computed(() => this.actions().map(action => action.text);
+  actionsTexts = computed(() => this.actions().map(action => action.text));
 }
 </docs-code>
 
-`viewChildren` creates a signal with an `Array` of the query results.
+`viewChildren`는 쿼리 결과의 `Array`로 신호를 생성합니다.
 
-**Queries never pierce through component boundaries.** View queries can only retrieve results from the component's template.
+**쿼리는 컴포넌트 경계를 넘을 수 없습니다.** 뷰 쿼리는 컴포넌트의 템플릿에서만 결과를 검색할 수 있습니다.
 
-## Content queries
+## 콘텐츠 쿼리
 
-Content queries retrieve results from the elements in the component's _content_— the elements nested inside the component in the template where it's used. You can query for a single result with the `contentChild` function.
+콘텐츠 쿼리는 컴포넌트의 _내용_에 있는 요소로부터 결과를 검색합니다 — 사용될 템플릿 내에 컴포넌트 내부에 중첩된 요소입니다. `contentChild` 함수를 사용하여 단일 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 15]">
 @Component({
@@ -90,7 +89,7 @@ export class CustomExpando {
 
 @Component({ 
   /* ... */
-  // CustomToggle is used inside CustomExpando as content.  
+  // CustomToggle는 CustomExpando 내부에서 내용으로 사용됩니다.  
   template: `
     <custom-expando>
       <custom-toggle>Show</custom-toggle>
@@ -100,13 +99,13 @@ export class CustomExpando {
 export class UserProfile { }
 </docs-code>
 
-In this example, the `CustomExpando` component queries for a child `CustomToggle` and accesses the result in a `computed`.
+이 예제에서 `CustomExpando` 컴포넌트는 자식 `CustomToggle`을 쿼리하고 `computed`에서 결과에 접근합니다.
 
-If the query does not find a result, its value is `undefined`. This may occur if the target element is absent or hidden by `@if`. Angular keeps the result of `contentChild` up to date as your application state changes.
+쿼리가 결과를 찾지 못하면, 그 값은 `undefined`가 됩니다. 이는 대상 요소가 존재하지 않거나 `@if`로 숨겨져 있을 때 발생할 수 있습니다. Angular는 애플리케이션 상태가 변화함에 따라 `contentChild`의 결과를 최신 상태로 유지합니다.
 
-By default, content queries find only _direct_ children of the component and do not traverse into descendants.
+기본적으로 콘텐츠 쿼리는 컴포넌트의 _직접_ 자식만 찾으며, 자손으로는 탐색하지 않습니다.
 
-You can also query for multiple results with the `contentChildren` function.
+또한 `contentChildren` 함수를 사용하여 여러 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 16, 17, 18, 19, 20]">
 @Component({
@@ -138,15 +137,15 @@ export class CustomMenu {
 export class UserProfile { }
 </docs-code>
 
-`contentChildren` creates a signal with an `Array` of the query results.
+`contentChildren`는 쿼리 결과의 `Array`로 신호를 생성합니다.
 
-**Queries never pierce through component boundaries.** Content queries can only retrieve results from the same template as the component itself.
+**쿼리는 컴포넌트 경계를 넘을 수 없습니다.** 콘텐츠 쿼리는 컴포넌트 자체와 동일한 템플릿에서만 결과를 검색할 수 있습니다.
 
-## Required queries
+## 필수 쿼리
 
-If a child query (`viewChild` or `contentChild`) does not find a result, its value is `undefined`. This may occur if the target element is hidden by a control flow statement like `@if` or `@for`. Because of this, the child queries return a signal that include `undefined` in their value type.
+자식 쿼리(`viewChild` 또는 `contentChild`)가 결과를 찾지 못하면, 그 값은 `undefined`가 됩니다. 이는 대상 요소가 `@if` 또는 `@for`와 같은 제어 흐름 문으로 숨겨져 있을 수 있습니다. 이로 인해 자식 쿼리는 값 유형에 `undefined`가 포함된 신호를 반환합니다.
 
-If some cases, especially with `viewChild`, you know with certainty that a specific child is always available. In other cases, you may want to strictly enforce that a specific child is present. For these cases, you can use a *required query*.
+특히 `viewChild`와 관련하여, 특정 자식이 항상 사용 가능하다는 확신이 있는 경우가 있습니다. 다른 경우에는 특정 자식이 반드시 존재하도록 엄격히 enforce하고 싶을 수도 있습니다. 이러한 경우, *필수 쿼리*를 사용할 수 있습니다.
 
 ```angular-ts
 @Component({/* ... */})
@@ -156,16 +155,15 @@ export class CustomCard {
 }
 ```
 
-If a required query does not find a matching result, Angular reports an error. Because this guarantees that a result is available, require queries do not automatically include `undefined` in the signal's value type.
+필수 쿼리가 일치하는 결과를 찾지 못하면, Angular는 오류를 보고합니다. 결과가 항상 사용 가능하다는 보장을 제공하므로, 필수 쿼리는 신호의 값 유형에 자동으로 `undefined`를 포함하지 않습니다.
 
-## Query locators
+## 쿼리 로케이터
 
-This first parameter for each query decorator is its **locator**.
+각 쿼리 데코레이터의 첫 번째 매개변수는 그 **로케이터**입니다.
 
-Most of the time, you want to use a component or directive as your locator.
+대부분의 경우, 컴포넌트나 지시자를 로케이터로 사용하고 싶습니다.
 
-You can alternatively specify a string locator corresponding to
-a [template reference variable](guide/templates/variables#template-reference-variables).
+대안으로, [템플릿 참조 변수](guide/templates/variables#template-reference-variables)에 해당하는 문자열 로케이터를 지정할 수 있습니다.
 
 ```angular-ts
 @Component({
@@ -180,15 +178,15 @@ export class ActionBar {
 }
 ```
 
-If more than one element defines the same template reference variable, the query retrieves the first matching element.
+하나 이상의 요소가 동일한 템플릿 참조 변수를 정의하는 경우, 쿼리는 첫 번째 일치하는 요소를 가져옵니다.
 
-Angular does not support CSS selectors as query locators.
+Angular는 쿼리 로케이터로 CSS 선택기를 지원하지 않습니다.
 
-### Queries and the injector tree
+### 쿼리와 인젝터 트리
 
-Tip: See [Dependency Injection](guide/di) for background on providers and Angular's injection tree.
+팁: 제공자와 Angular의 인젝션 트리에 대한 배경을 보려면 [의존성 주입](guide/di)을 참조하세요.
 
-For more advanced cases, you can use any `ProviderToken` as a locator. This lets you locate elements based on component and directive providers.
+더 발전된 경우, `ProviderToken`을 로케이터로 사용할 수 있습니다. 이렇게 하면 컴포넌트 및 지시자 제공자를 기반으로 요소를 찾을 수 있습니다.
 
 ```angular-ts
 const SUB_ITEM = new InjectionToken<string>('sub-item');
@@ -205,15 +203,15 @@ export class CustomList {
 }
 ```
 
-The above example uses an `InjectionToken` as a locator, but you can use any `ProviderToken` to locate specific elements.
+위의 예제는 로케이터로 `InjectionToken`을 사용하지만, 특정 요소를 찾기 위해 어떤 `ProviderToken`도 사용할 수 있습니다.
 
-## Query options
+## 쿼리 옵션
 
-All query functions accept an options object as a second parameter. These options control how the query finds its results.
+모든 쿼리 함수는 두 번째 매개변수로 옵션 객체를 허용합니다. 이러한 옵션은 쿼리가 결과를 찾는 방식을 제어합니다.
 
-### Reading specific values from an element's injector
+### 요소의 인젝터에서 특정 값 읽기
 
-By default, the query locator indicates both the element you're searching for and the value retrieved. You can alternatively specify the `read` option to retrieve a different value from the element matched by the locator.
+기본적으로, 쿼리 로케이터는 검색 중인 요소와 검색된 값을 모두 나타냅니다. 대신 로케이터에 의해 일치하는 요소에서 다른 값을 검색하기 위해 `read` 옵션을 지정할 수 있습니다.
 
 ```ts
 @Component({/*...*/})
@@ -222,14 +220,13 @@ export class CustomExpando {
 }
 ```
 
-The above example, locates an element with the directive `ExpandoContent` and retrieves
-the `TemplateRef` associated with that element.
+위의 예제는 `ExpandoContent` 지시어를 가진 요소를 찾고 해당 요소와 연결된 `TemplateRef`를 검색합니다.
 
-Developers most commonly use `read` to retrieve `ElementRef` and `TemplateRef`.
+개발자는 일반적으로 `read`를 사용하여 `ElementRef`와 `TemplateRef`를 검색합니다.
 
-### Content descendants
+### 콘텐츠 자손
 
-By default, content queries find only _direct_ children of the component and do not traverse into descendants.
+기본적으로 콘텐츠 쿼리는 컴포넌트의 _직접_ 자식만 찾으며, 자손으로는 탐색하지 않습니다.
 
 <docs-code language="angular-ts" highlight="[13, 14, 15, 16]">
 @Component({
@@ -245,7 +242,7 @@ export class CustomExpando {
   template: `
     <custom-expando>
       <some-other-component>
-        <!-- custom-toggle will not be found! -->
+        <!-- custom-toggle는 발견되지 않습니다! -->
         <custom-toggle>Show</custom-toggle>
       </some-other-component>
     </custom-expando>
@@ -254,19 +251,18 @@ export class CustomExpando {
 export class UserProfile { }
 </docs-code>
 
-In the example above, `CustomExpando` cannot find `<custom-toggle>` because it is not a direct child of `<custom-expando>`. By setting `descendants: true`, you configure the query to traverse all descendants in the same template. Queries, however, _never_ pierce into components to traverse elements in other templates.
+위의 예제에서 `CustomExpando`는 `<custom-toggle>`을 찾을 수 없습니다. 이는 `<custom-expando>`의 직접 자식이 아니기 때문입니다. `descendants: true`를 설정하면 쿼리가 동일한 템플릿 내의 모든 자손을 탐색하도록 구성할 수 있습니다. 그러나 쿼리는 _절대_ 다른 템플릿의 요소를 탐색하기 위해 컴포넌트 내부로 뚫고 들어가지는 않습니다.
 
-View queries do not have this option because they _always_ traverse into descendants.
+뷰 쿼리에는 이 옵션이 없습니다. 왜냐하면 뷰 쿼리는 _항상_ 자손으로 들어가기 때문입니다.
 
-## Decorator-based queries
-Tip: While the Angular team recommends using the signal-based query function for new projects, the
-original decorator-based query APIs remain fully supported.
+## 데코레이터 기반 쿼리 
+팁: Angular 팀은 새로운 프로젝트에 신호 기반 쿼리 함수를 사용할 것을 권장하지만, 원래의 데코레이터 기반 쿼리 API는 여전히 완전히 지원됩니다.
 
-You can alternatively declare queries by adding the corresponding decorator to a property. Decorator-based queries behave the same way as signal-based queries except as described below.
+속성에 해당하는 데코레이터를 추가하여 쿼리를 선언할 수 있습니다. 데코레이터 기반 쿼리는 아래에서 설명하는 것을 제외하고 신호 기반 쿼리와 동일하게 작동합니다.
 
-### View queries
+### 뷰 쿼리
 
-You can query for a single result with the `@ViewChild` decorator.
+`@ViewChild` 데코레이터를 사용하여 단일 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 16, 17, 18]">
 @Component({
@@ -290,13 +286,13 @@ export class CustomCard {
 }
 </docs-code>
 
-In this example, the `CustomCard` component queries for a child `CustomCardHeader` and accesses the result in `ngAfterViewInit`.
+이 예제에서 `CustomCard` 컴포넌트는 자식 `CustomCardHeader`를 쿼리하고 `ngAfterViewInit`에서 결과에 접근합니다.
 
-Angular keeps the result of `@ViewChild` up to date as your application state changes.
+Angular는 애플리케이션 상태가 변화함에 따라 `@ViewChild`의 결과를 최신 상태로 유지합니다.
 
-**View query results become available in the `ngAfterViewInit` lifecycle method**. Before this point, the value is `undefined`. See the [Lifecycle](guide/components/lifecycle) section for details on the component lifecycle.
+**뷰 쿼리 결과는 `ngAfterViewInit` 생명주기 메서드에서 사용할 수 있게 됩니다**. 이 시점 이전에는 값이 `undefined`입니다. 컴포넌트 생명 주기에 대한 자세한 내용은 [Lifecycle](guide/components/lifecycle) 섹션을 참조하세요.
 
-You can also query for multiple results with the `@ViewChildren` decorator.
+`@ViewChildren` 데코레이터를 사용하여 여러 결과를 쿼리할 수도 있습니다.
 
 <docs-code language="angular-ts" highlight="[17, 19, 20, 21, 22, 23]">
 @Component({
@@ -325,11 +321,11 @@ export class CustomCard {
 }
 </docs-code>
 
-`@ViewChildren` creates a `QueryList` object that contains the query results. You can subscribe to changes to the query results over time via the `changes` property.
+`@ViewChildren`는 쿼리 결과가 포함된 `QueryList` 객체를 생성합니다. 시간 경과에 따른 쿼리 결과의 변경 사항을 `changes` 속성을 통해 구독할 수 있습니다.
 
-### Content queries
+### 콘텐츠 쿼리
 
-You can query for a single result with the `@ContentChild` decorator.
+`@ContentChild` 데코레이터를 사용하여 단일 결과를 쿼리할 수 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 16, 17, 18, 25]">
 @Component({
@@ -363,13 +359,13 @@ export class CustomExpando {
 export class UserProfile { }
 </docs-code>
 
-In this example, the `CustomExpando` component queries for a child `CustomToggle` and accesses the result in `ngAfterContentInit`.
+이 예제에서 `CustomExpando` 컴포넌트는 자식 `CustomToggle`를 쿼리하고 `ngAfterContentInit`에서 결과에 접근합니다.
 
-Angular keeps the result of `@ContentChild` up to date as your application state changes.
+Angular는 애플리케이션 상태가 변화함에 따라 `@ContentChild`의 결과를 최신 상태로 유지합니다.
 
-**Content query results become available in the `ngAfterContentInit` lifecycle method**. Before this point, the value is `undefined`. See the [Lifecycle](guide/components/lifecycle) section for details on the component lifecycle.
+**콘텐츠 쿼리 결과는 `ngAfterContentInit` 생명주기 메서드에서 사용할 수 있게 됩니다**. 이 시점 이전에는 값이 `undefined`입니다. 컴포넌트 생명 주기에 대한 자세한 내용은 [Lifecycle](guide/components/lifecycle) 섹션을 참조하세요.
 
-You can also query for multiple results with the `@ContentChildren` decorator.
+`@ContentChildren` 데코레이터를 사용하여 여러 결과를 쿼리할 수도 있습니다.
 
 <docs-code language="angular-ts" highlight="[14, 16, 17, 18, 19, 20]">
 @Component({
@@ -406,15 +402,15 @@ export class CustomMenu {
 export class UserProfile { }
 </docs-code>
 
-`@ContentChildren` creates a `QueryList` object that contains the query results. You can subscribe to changes to the query results over time via the `changes` property.
+`@ContentChildren`는 쿼리 결과가 포함된 `QueryList` 객체를 생성합니다. 시간 경과에 따른 쿼리 결과의 변경 사항을 `changes` 속성을 통해 구독할 수 있습니다.
 
-### Decorator-based query options
+### 데코레이터 기반 쿼리 옵션
 
-All query decorators accept an options object as a second parameter. These options work the same way as signal-based queries except where described below.
+모든 쿼리 데코레이터는 두 번째 매개변수로 옵션 객체를 허용합니다. 이러한 옵션은 아래에서 설명하는 곳을 제외하고 신호 기반 쿼리와 동일하게 작동합니다.
 
-### Static queries
+### 정적 쿼리
 
-`@ViewChild` and `@ContentChild` decorators accept the `static` option.
+`@ViewChild` 및 `@ContentChild` 데코레이터는 `static` 옵션을 허용합니다.
 
 ```angular-ts
 @Component({
@@ -430,26 +426,26 @@ export class CustomCard {
 }
 ```
 
-By setting `static: true`, you guarantee to Angular that the target of this query is _always_ present and is not conditionally rendered. This makes the result available earlier, in the `ngOnInit` lifecycle method.
+`static: true`를 설정하면 Angular에 이 쿼리의 대상이 _항상_ 존재하고 조건부 렌더링되지 않음을 보장합니다. 이로 인해 결과를 `ngOnInit` 생명주기 메서드에서 더 일찍 사용할 수 있게 됩니다.
 
-Static query results do not update after initialization.
+정적 쿼리 결과는 초기화 후 업데이트되지 않습니다.
 
-The `static` option is not available for `@ViewChildren` and `@ContentChildren` queries.
+`@ViewChildren` 및 `@ContentChildren` 쿼리에는 `static` 옵션이 없습니다.
 
-### Using QueryList
+### QueryList 사용하기
 
-`@ViewChildren` and `@ContentChildren` both provide a `QueryList` object that contains a list of results.
+`@ViewChildren` 및 `@ContentChildren`는 모두 결과 목록이 포함된 `QueryList` 객체를 제공합니다.
 
-`QueryList` offers a number of convenience APIs for working with results in an array-like manner, such as `map`, `reduce`, and `forEach`. You can get an array of the current results by calling `toArray`.
+`QueryList`는 `map`, `reduce`, `forEach`와 같이 배열과 유사하게 결과를 처리하는 여러 편리한 API를 제공합니다. 현재 결과의 배열을 얻으려면 `toArray`를 호출하면 됩니다.
 
-You can subscribe to the `changes` property to do something any time the results change.
+결과가 변경될 때마다 수행할 작업이 있으면 `changes` 속성을 구독할 수 있습니다.
 
-## Common query pitfalls
+## 일반적인 쿼리 함정
 
-When using queries, common pitfalls can make your code harder to understand and maintain.
+쿼리를 사용할 때, 일반적인 함정은 코드를 이해하고 유지관리하기 어렵게 만들 수 있습니다.
 
-Always maintain a single source of truth for state shared between multiple components. This avoids scenarios where repeated state in different components becomes out of sync.
+여러 컴포넌트 간에 공유되는 상태의 단일 진실 소스를 항상 유지하세요. 이는 서로 다른 컴포넌트에서 반복된 상태가 동기화되지 않는 시나리오를 피하는 데 도움이 됩니다.
 
-Avoid directly writing state to child components. This pattern can lead to brittle code that is hard to understand and is prone to [ExpressionChangedAfterItHasBeenChecked](errors/NG0100) errors.
+자식 컴포넌트에 상태를 직접 작성하는 것을 피하세요. 이 패턴은 이해하기 어려운 깨지기 쉬운 코드를 초래할 수 있으며, [ExpressionChangedAfterItHasBeenChecked](errors/NG0100) 오류에 취약합니다.
 
-Never directly write state to parent or ancestor components. This pattern can lead to brittle code that is hard to understand and is prone to [ExpressionChangedAfterItHasBeenChecked](errors/NG0100) errors.
+부모 또는 조상 컴포넌트에 상태를 직접 작성하지 마세요. 이 패턴은 이해하기 어려운 깨지기 쉬운 코드를 초래할 수 있으며, [ExpressionChangedAfterItHasBeenChecked](errors/NG0100) 오류에 취약합니다.

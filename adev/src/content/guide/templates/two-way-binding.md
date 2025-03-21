@@ -1,16 +1,16 @@
-# Two-way binding
+# 양방향 바인딩
 
-**Two way binding** is a shorthand to simultaneously bind a value into an element, while also giving that element the ability to propagate changes back through this binding.
+**양방향 바인딩**은 값을 요소에 동시에 바인딩하고, 해당 요소가 이 바인딩을 통해 변경 사항을 전파할 수 있는 기능을 부여하는 약어입니다.
 
-## Syntax
+## 문법
 
-The syntax for two-way binding is a combination of square brackets and parentheses, `[()]`. It combines the syntax from property binding, `[]`, and the syntax from event binding, `()`. The Angular community informally refers to this syntax as "banana-in-a-box".
+양방향 바인딩의 문법은 대괄호와 괄호의 조합인 `[()]`입니다. 이는 속성 바인딩의 문법인 `[]`와 이벤트 바인딩의 문법인 `()`를 조합한 것입니다. Angular 커뮤니티에서는 이 문법을 비공식적으로 "바나나 인 박스"라고 부릅니다.
 
-## Two-way binding with form controls
+## 양방향 바인딩을 이용한 폼 컨트롤
 
-Developers commonly use two-way binding to keep component data in sync with a form control as a user interacts with the control. For example, when a user fills out a text input, it should update the state in the component.
+개발자들은 일반적으로 사용자가 폼 컨트롤과 상호작용할 때 컴포넌트 데이터를 동기화하기 위해 양방향 바인딩을 사용합니다. 예를 들어, 사용자가 텍스트 입력을 작성하면 컴포넌트의 상태가 업데이트되어야 합니다.
 
-The following example dynamically updates the `firstName` attribute on the page:
+다음 예는 페이지에서 `firstName` 속성을 동적으로 업데이트합니다:
 
 ```angular-ts
 import { Component } from '@angular/core';
@@ -30,21 +30,21 @@ export class AppComponent {
 }
 ```
 
-To use two-way binding with native form controls, you need to:
+네이티브 폼 컨트롤과 함께 양방향 바인딩을 사용하려면 다음이 필요합니다:
 
-1. Import the `FormsModule` from `@angular/forms`
-1. Use the `ngModel` directive with the two-way binding syntax (e.g., `[(ngModel)]`)
-1. Assign it the state that you want it to update (e.g., `firstName`)
+1. `@angular/forms`에서 `FormsModule`을 가져옵니다.
+2. 양방향 바인딩 문법을 사용하여 `ngModel` 지시어를 사용합니다 (예: `[(ngModel)]`).
+3. 업데이트할 상태를 할당합니다 (예: `firstName`).
 
-Once that is set up, Angular will ensure that any updates in the text input will reflect correctly inside of the component state!
+이 설정이 완료되면 Angular는 텍스트 입력의 모든 업데이트가 컴포넌트 상태에 올바르게 반영되도록 보장합니다!
 
-Learn more about [`NgModel`](guide/directives#displaying-and-updating-properties-with-ngmodel) in the official docs.
+공식 문서에서 [`NgModel`](guide/directives#displaying-and-updating-properties-with-ngmodel)에 대해 더 알아보세요.
 
-## Two-way binding between components
+## 컴포넌트 간 양방향 바인딩
 
-Leveraging two-way binding between a parent and child component requires more configuration compared to form elements.
+부모 컴포넌트와 자식 컴포넌트 간의 양방향 바인딩은 폼 요소에 비해 더 많은 구성이 필요합니다.
 
-Here is an example where the `AppComponent` is responsible for setting the initial count state, but the logic for updating and rendering the UI for the counter primarily resides inside its child `CounterComponent`.
+다음 예에서는 `AppComponent`가 초기 카운트 상태를 설정하는 책임이 있지만, 카운터의 UI를 업데이트하고 렌더링하는 로직은 주로 자식 `CounterComponent` 내에 존재합니다.
 
 ```angular-ts
 // ./app.component.ts
@@ -87,19 +87,19 @@ export class CounterComponent {
 }
 ```
 
-### Enabling two-way binding between components
+### 컴포넌트 간 양방향 바인딩 활성화
 
-If we break down the example above to its core, each two-way binding for components requires the following:
+위의 예제를 핵심으로 나누면, 각 컴포넌트에 대한 양방향 바인딩은 다음을 요구합니다:
 
-The child component must contain a `model` property.
+자식 컴포넌트는 `model` 속성을 포함해야 합니다.
 
-Here is a simplified example:
+여기 간단한 예가 있습니다:
 
 ```angular-ts
 // './counter/counter.component.ts';
 import { Component, model } from '@angular/core';
 
-@Component({ // Omitted for brevity })
+@Component({ // 간결함을 위해 생략됨 })
 export class CounterComponent {
   count = model<number>(0);
 
@@ -109,12 +109,12 @@ export class CounterComponent {
 }
 ```
 
-The parent component must:
+부모 컴포넌트는 다음을 수행해야 합니다:
 
-1. Wrap the `model` property name in the two-way binding syntax.
-1. Assign a property or a signal to the `model` property.
+1. 양방향 바인딩 문법으로 `model` 속성 이름을 감쌉니다.
+2. `model` 속성에 속성 또는 신호를 할당합니다.
 
-Here is a simplified example:
+여기 간단한 예가 있습니다:
 
 ```angular-ts
 // ./app.component.ts
@@ -133,4 +133,3 @@ import { CounterComponent } from './counter/counter.component';
 export class AppComponent {
   initialCount = 18;
 }
-```

@@ -1,11 +1,10 @@
-# Version compatibility
+# 버전 호환성
 
-The following tables describe the versions of Node.js, TypeScript, and RxJS that each version of
-Angular requires.
+다음 표는 각 Angular 버전이 요구하는 Node.js, TypeScript 및 RxJS의 버전을 설명합니다.
 
-## Actively supported versions
+## 적극적으로 지원되는 버전
 
-This table covers [Angular versions under active support](reference/releases#actively-supported-versions).
+이 표는 [적극적으로 지원되는 Angular 버전](reference/releases#actively-supported-versions)을 포함합니다.
 
 | Angular            | Node.js                              | TypeScript     | RxJS               |
 | ------------------ | ------------------------------------ | -------------- | ------------------ |
@@ -18,11 +17,9 @@ This table covers [Angular versions under active support](reference/releases#act
 | 17.1.x \|\| 17.2.x | ^18.13.0 \|\| ^20.9.0                | >=5.2.0 <5.4.0 | ^6.5.3 \|\| ^7.4.0 |
 | 17.0.x             | ^18.13.0 \|\| ^20.9.0                | >=5.2.0 <5.3.0 | ^6.5.3 \|\| ^7.4.0 |
 
-## Unsupported Angular versions
+## 지원되지 않는 Angular 버전
 
-This table covers Angular versions that are no longer under long-term support (LTS). This
-information was correct when each version went out of LTS and is provided without any further
-guarantees. It is listed here for historical reference.
+이 표는 더 이상 장기 지원(LTS)을 받지 않는 Angular 버전을 포함합니다. 각 버전이 LTS를 종료했을 때 이 정보가 정확하며, 추가적인 보장을 제공하지 않습니다. 역사적 참조를 위해 여기에 나열됩니다.
 
 | Angular            | Node.js                              | TypeScript     | RxJS               |
 | ------------------ | ------------------------------------ | -------------- | ------------------ |
@@ -47,9 +44,9 @@ guarantees. It is listed here for historical reference.
 | 9.1.x              | ^10.13.0 \|\| ^12.11.0               | >=3.6.0 <3.9.0 | ^6.5.3             |
 | 9.0.x              | ^10.13.0 \|\| ^12.11.0               | >=3.6.0 <3.8.0 | ^6.5.3             |
 
-### Before v9
+### v9 이전
 
-Until Angular v9, Angular and Angular CLI versions were not synced.
+Angular v9까지, Angular 및 Angular CLI 버전은 동기화되지 않았습니다.
 
 | Angular                     | Angular CLI                 | Node.js             | TypeScript     | RxJS   |
 | --------------------------- | --------------------------- | ------------------- | -------------- | ------ |
@@ -66,43 +63,43 @@ Until Angular v9, Angular and Angular CLI versions were not synced.
 | 4.0.x \|\| 4.1.x            | 1.0.x \|\| 1.1.x \|\| 1.2.x | ^6.9.0              | >=2.1.6 <2.4.0 | ^5.0.1 |
 | 2.x                         | -                           | ^6.9.0              | >=1.8.0 <2.2.0 | ^5.0.1 |
 
-## Browser support
+## 브라우저 지원
 
-Angular supports most recent browsers.
-This includes the following specific versions:
+Angular는 최신 브라우저를 대부분 지원합니다. 
+여기에는 다음 특정 버전이 포함됩니다:
 
-| Browser | Supported versions                          |
+| 브라우저 | 지원되는 버전                          |
 | :------ | :------------------------------------------ |
-| Chrome  | 2 most recent versions                      |
-| Firefox | latest and extended support release \(ESR\) |
-| Edge    | 2 most recent major versions                |
-| Safari  | 2 most recent major versions                |
-| iOS     | 2 most recent major versions                |
-| Android | 2 most recent major versions                |
+| Chrome  | 2개의 최신 버전                      |
+| Firefox | 최신 및 확장 지원 릴리스 \(ESR\) |
+| Edge    | 2개의 최신 주요 버전                |
+| Safari  | 2개의 최신 주요 버전                |
+| iOS     | 2개의 최신 주요 버전                |
+| Android | 2개의 최신 주요 버전                |
 
-HELPFUL: Angular's continuous integration process runs unit tests of the framework on all of these browsers for every pull request, using [Sauce Labs](https://saucelabs.com).
+도움: Angular의 지속적인 통합 프로세스는 이러한 브라우저에서 모든 풀 리퀘스트에 대해 프레임워크의 단위 테스트를 실행합니다. [Sauce Labs](https://saucelabs.com)를 사용합니다.
 
-## Polyfills
+## 폴리필
 
-Angular is built on the latest standards of the web platform.
-Targeting such a wide range of browsers is challenging because they do not support all features of modern browsers.
-You compensate by loading polyfill scripts \("polyfills"\) for the browsers that you must support.
-See instructions on how to include polyfills into your project below.
+Angular는 웹 플랫폼의 최신 표준을 기반으로 구축되었습니다. 
+이처럼 다양한 브라우저를 목표로 하는 것은 도전적이며, 모든 현대 브라우저의 기능을 지원하지 않습니다. 
+지원해야 하는 브라우저를 위해 폴리필 스크립트(“폴리필”)를 로드하여 보완합니다. 
+아래에서 프로젝트에 폴리필을 포함하는 방법에 대한 지침을 참조하십시오.
 
-IMPORTANT: The suggested polyfills are the ones that run full Angular applications.
-You might need additional polyfills to support features not covered by this list.
+중요: 제안된 폴리필은 전체 Angular 애플리케이션을 실행하는 것들입니다. 
+이 목록에 포함되지 않은 기능을 지원하기 위해 추가 폴리필이 필요할 수 있습니다.
 
-HELPFUL: Polyfills cannot magically transform an old, slow browser into a modern, fast one.
+도움: 폴리필은 오래되고 느린 브라우저를 현대적이고 빠른 브라우저로 마법처럼 변환할 수는 없습니다.
 
-## Enabling polyfills with CLI projects
+## CLI 프로젝트로 폴리필 활성화
 
-The [Angular CLI](tools/cli) provides support for polyfills.
-If you are not using the CLI to create your projects, see [Polyfill instructions for non-CLI users](#polyfills-for-non-cli-users).
+[Angular CLI](tools/cli)는 폴리필에 대한 지원을 제공합니다. 
+프로젝트를 생성할 때 CLI를 사용하지 않는 경우, [비 CLI 사용자에 대한 폴리필 지침](#polyfills-for-non-cli-users)을 참조하십시오.
 
-The `polyfills` options of the [browser and test builder](tools/cli/cli-builder) can be a full path for a file \(Example: `src/polyfills.ts`\) or,
-relative to the current workspace or module specifier \(Example: `zone.js`\).
+[브라우저 및 테스트 빌더](tools/cli/cli-builder)의 `polyfills` 옵션은 파일의 전체 경로(예: `src/polyfills.ts`)가 될 수 있으며,
+현재 작업 공간 또는 모듈 지정자(예: `zone.js`)에 상대적인 경로일 수 있습니다.
 
-If you create a TypeScript file, make sure to include it in the `files` property of your `tsconfig` file.
+TypeScript 파일을 생성한 경우, `tsconfig` 파일의 `files` 속성에 포함되도록 하십시오.
 
 <docs-code language="json">
 {
@@ -118,31 +115,31 @@ If you create a TypeScript file, make sure to include it in the `files` property
 }
 </docs-code>
 
-## Polyfills for non-CLI users
+## 비 CLI 사용자에 대한 폴리필
 
-If you are not using the CLI, add your polyfill scripts directly to the host web page \(`index.html`\).
+CLI를 사용하지 않는 경우, 폴리필 스크립트를 호스트 웹 페이지(`index.html`)에 직접 추가하십시오.
 
-For example:
+예를 들어:
 
 <docs-code header="src/index.html" language="html">
-<!-- pre-zone polyfills -->
+<!-- pre-zone 폴리필 -->
 <script src="node_modules/core-js/client/shim.min.js"></script>
 <script>
   /**
-   * you can configure some zone flags which can disable zone interception for some
-   * asynchronous activities to improve startup performance - use these options only
-   * if you know what you are doing as it could result in hard to trace down bugs.
+   * 일부 비동기 활동에 대한 영역 간섭을 비활성화하는 지점 플래그를 설정할 수 있으며, 
+   * 시작 성능을 개선할 수 있습니다 - 이러한 옵션은 반드시 필요한 경우에만 사용하십시오. 
+   * 이로 인해 추적하기 어려운 버그가 발생할 수 있습니다.
    */
-  // &lowbar;&lowbar;Zone_disable_requestAnimationFrame = true; // disable patch requestAnimationFrame
-  // &lowbar;&lowbar;Zone_disable_on_property = true; // disable patch onProperty such as onclick
-  // &lowbar;&lowbar;zone_symbol__UNPATCHED_EVENTS = ['scroll', 'mousemove']; // disable patch specified eventNames
+  // &lowbar;&lowbar;Zone_disable_requestAnimationFrame = true; // requestAnimationFrame 패치 비활성화
+  // &lowbar;&lowbar;Zone_disable_on_property = true; // onclick과 같은 onProperty 패치 비활성화
+  // &lowbar;&lowbar;zone_symbol__UNPATCHED_EVENTS = ['scroll', 'mousemove']; // 특정 eventNames 패치 비활성화
   /*
-   * in Edge developer tools, the addEventListener will also be wrapped by zone.js
-   * with the following flag, it will bypass `zone.js` patch for Edge.
+   * Edge 개발자 도구에서 addEventListener는 zone.js에 의해 래핑됩니다.
+   * 다음 플래그를 추가하면 Edge에 대한 `zone.js` 패치를 우회하게 됩니다.
    */
   // &lowbar;&lowbar;Zone_enable_cross_context_check = true;
 </script>
-<!-- zone.js required by Angular -->
+<!-- Angular에 필요한 zone.js -->
 <script src="node_modules/zone.js/bundles/zone.umd.js"></script>
-<!-- application polyfills -->
+<!-- 애플리케이션 폴리필 -->
 </docs-code>

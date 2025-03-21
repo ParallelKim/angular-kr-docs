@@ -1,21 +1,21 @@
-# Components in Angular
+# Angular의 구성 요소
 
-Components are the foundational building blocks for any Angular application. Each component has three parts:
+구성 요소는 모든 Angular 애플리케이션의 기본 빌딩 블록입니다. 각 구성 요소는 세 부분으로 나뉩니다:
 
-* TypeScript class
-* HTML template
-* CSS styles
+* TypeScript 클래스
+* HTML 템플릿
+* CSS 스타일
 
-In this activity, you'll learn how to update the template and styles of a component.
+이 활동에서는 구성 요소의 템플릿과 스타일을 업데이트하는 방법을 배웁니다.
 
 <hr />
 
-This is a great opportunity for you to get started with Angular.
+Angular를 시작할 수 있는 좋은 기회입니다.
 
 <docs-workflow>
 
-<docs-step title="Update the component template">
-Update the `template` property to read `Hello Universe`
+<docs-step title="구성 요소 템플릿 업데이트">
+`template` 속성을 `Hello Universe`로 읽도록 업데이트합니다.
 
 ```ts
 template: `
@@ -23,11 +23,11 @@ template: `
 `,
 ```
 
-When you changed the HTML template, the preview updated with your message. Let's go one step further: change the color of the text.
+HTML 템플릿을 변경했을 때, 미리보기가 여러분의 메시지로 업데이트되었습니다. 한 단계 더 나아가 보겠습니다: 텍스트의 색상을 변경합니다.
 </docs-step>
 
-<docs-step title="Update the component styles">
-Update the styles value and change the `color` property from `blue` to `#a144eb`.
+<docs-step title="구성 요소 스타일 업데이트">
+스타일 값을 업데이트하고 `color` 속성을 `blue`에서 `#a144eb`로 변경합니다.
 
 ```ts
 styles: `
@@ -37,9 +37,9 @@ styles: `
 `,
 ```
 
-When you check the preview, you'll find that the text color will be changed.
+미리보기를 확인하면 텍스트 색상이 변경된 것을 발견할 수 있습니다.
 </docs-step>
 
 </docs-workflow>
 
-In Angular, you can use all the browser supported CSS and HTML that's available. If you'd like, you can store your template and styles in separate files.
+Angular에서는 사용할 수 있는 모든 브라우저 지원 CSS 및 HTML을 사용할 수 있습니다. 원하시면, 템플릿과 스타일을 별도의 파일에 저장할 수 있습니다.

@@ -1,20 +1,20 @@
-# Deferrable Views
+# 지연 가능한 뷰
 
-Sometimes in app development, you end up with a lot of components that you need to reference in your app, but some of those don't need to be loaded right away for various reasons.
+앱 개발 중에는 앱에서 참조해야 하는 많은 구성 요소가 있지만, 그 중 일부는 여러 가지 이유로 즉시 로드할 필요가 없을 때가 있습니다.
 
-Maybe they are below the visible fold or are heavy components that aren't interacted with until later. In that case, we can load some of those resources later with deferrable views.
+아마도 그것들은 시각적으로 보이지 않는 영역 아래에 있거나 나중에 사용되지 않는 무거운 구성 요소일 수 있습니다. 이러한 경우, 지연 가능한 뷰를 사용하여 이러한 리소스의 일부를 나중에 로드할 수 있습니다.
 
-In this activity, you'll learn how to use deferrable views to defer load a section of your component template.
+이번 활동에서는 구성 요소 템플릿의 일부를 지연 로드하기 위해 지연 가능한 뷰를 사용하는 방법을 배우게 됩니다.
 
 <hr>
 
 <docs-workflow>
 
-<docs-step title="Add a `@defer` block around the comments component">
+<docs-step title="댓글 구성 요소 주위에 `@defer` 블록 추가">
 
-In your app, the blog post page has a comment component after the post details.
+앱에서 블로그 게시물 페이지는 게시물 세부 사항 뒤에 댓글 구성 요소가 있습니다.
 
-Wrap the comment component with a `@defer` block to defer load it.
+댓글 구성 요소를 감싸는 `@defer` 블록을 추가하여 로드를 지연시킵니다.
 
 ```angular-html
 @defer {
@@ -22,59 +22,59 @@ Wrap the comment component with a `@defer` block to defer load it.
 }
 ```
 
-The code above is an example of how to use a basic `@defer` block. By default `@defer` will load the `comments` component when the browser is idle.
+위 코드는 기본 `@defer` 블록을 사용하는 방법의 예입니다. 기본적으로 `@defer`는 브라우저가 유휴 상태일 때 `comments` 구성 요소를 로드합니다.
 
 </docs-step>
 
-<docs-step title="Add a placeholder">
+<docs-step title="플레이스홀더 추가">
 
-Add a `@placeholder` block to the `@defer` block. The `@placeholder` block is where you put html that will show before the deferred loading starts. The content in `@placeholder` blocks is eagerly loaded.
+`@defer` 블록에 `@placeholder` 블록을 추가합니다. `@placeholder` 블록은 지연 로딩이 시작되기 전에 표시될 HTML을 넣는 곳입니다. `@placeholder` 블록의 내용은 즉시 로드됩니다.
 
 <docs-code language="angular-html" highlight="[3,4,5]">
 @defer {
   <comments />
 } @placeholder {
-  <p>Future comments</p>
+  <p>미래 댓글</p>
 }
 </docs-code>
 
 </docs-step>
 
-<docs-step title="Add a loading block">
+<docs-step title="로딩 블록 추가">
 
-Add a `@loading` block to the `@defer` block. The `@loading` block is where you put html that will show _while_ the deferred content is actively being fetched, but hasn't finished yet. The content in `@loading` blocks is eagerly loaded.
+`@defer` 블록에 `@loading` 블록을 추가합니다. `@loading` 블록은 지연된 콘텐츠가 현재 가져오는 동안 표시될 HTML을 넣는 장소입니다. 아직 완료되지 않은 상태입니다. `@loading` 블록의 내용은 즉시 로드됩니다.
 
 <docs-code language="angular-html" highlight="[5,6,7]">
 @defer {
   <comments />
 } @placeholder {
-  <p>Future comments</p>
+  <p>미래 댓글</p>
 } @loading {
-  <p>Loading comments...</p>
+  <p>댓글 로딩 중...</p>
 }
 </docs-code>
 
 </docs-step>
 
-<docs-step title="Add a minimum duration">
+<docs-step title="최소 지속 시간 추가">
 
-Both `@placeholder` and `@loading` sections have optional parameters to prevent flickering from occurring when loading happens quickly. `@placeholder` has `minimum` and `@loading` has `minimum` and `after`. Add a `minimum` duration to the `@loading` block so it will be rendered for at least 2 seconds.
+`@placeholder` 및 `@loading` 섹션 모두 로딩이 빠르게 이루어질 때 깜박임이 발생하지 않도록 방지하는 선택적 매개변수가 있습니다. `@placeholder`는 `minimum`을 가지고 있으며, `@loading`은 `minimum`과 `after`를 가집니다. `@loading` 블록에 최소 지속 시간을 추가하여 최소 2초 동안 렌더링되도록 합니다.
 
 <docs-code language="angular-html" highlight="[5]">
 @defer {
   <comments />
 } @placeholder {
-  <p>Future comments</p>
+  <p>미래 댓글</p>
 } @loading (minimum 2s) {
-  <p>Loading comments...</p>
+  <p>댓글 로딩 중...</p>
 }
 </docs-code>
 
 </docs-step>
 
-<docs-step title="Add a viewport trigger">
+<docs-step title="뷰포트 트리거 추가">
 
-Deferrable views have a number of trigger options. Add a viewport trigger so the content will defer load once it enters the viewport.
+지연 가능한 뷰에는 여러 트리거 옵션이 있습니다. 콘텐츠가 뷰포트에 들어가면 로드를 지연할 수 있도록 뷰포트 트리거를 추가합니다.
 
 <docs-code language="angular-html" highlight="[1]">
 @defer (on viewport) {
@@ -84,29 +84,29 @@ Deferrable views have a number of trigger options. Add a viewport trigger so the
 
 </docs-step>
 
-<docs-step title="Add content">
+<docs-step title="콘텐츠 추가">
 
-A viewport trigger is best used when you're deferring content that's far enough down the page that it needs to be scrolled to see. So let's add some content to our blog post. You can either write your own, or you can copy the content below and put it inside the `<article>` element.
+뷰포트 트리거는 페이지 아래쪽에 있으며 스크롤해야만 볼 수 있는 콘텐츠를 지연할 때 가장 잘 사용됩니다. 블로그 게시물에 콘텐츠를 추가해 보겠습니다. 본인이 직접 작성하거나 아래의 내용을 복사하여 `<article>` 요소 안에 넣을 수 있습니다.
 
 <docs-code language="html" highlight="[1]">
 <article>
-  <p>Angular is my favorite framework, and this is why. Angular has the coolest deferrable view feature that makes defer loading content the easiest and most ergonomic it could possibly be. The Angular community is also filled with amazing contributors and experts that create excellent content. The community is welcoming and friendly, and it really is the best community out there.</p>
-  <p>I can't express enough how much I enjoy working with Angular. It offers the best developer experience I've ever had. I love that the Angular team puts their developers first and takes care to make us very happy. They genuinely want Angular to be the best framework it can be, and they're doing such an amazing job at it, too. This statement comes from my heart and is not at all copied and pasted. In fact, I think I'll say these exact same things again a few times.</p>
-  <p>Angular is my favorite framework, and this is why. Angular has the coolest deferrable view feature that makes defer loading content the easiest and most ergonomic it could possibly be. The Angular community is also filled with amazing contributors and experts that create excellent content. The community is welcoming and friendly, and it really is the best community out there.</p>
-  <p>I can't express enough how much I enjoy working with Angular. It offers the best developer experience I've ever had. I love that the Angular team puts their developers first and takes care to make us very happy. They genuinely want Angular to be the best framework it can be, and they're doing such an amazing job at it, too. This statement comes from my heart and is not at all copied and pasted. In fact, I think I'll say these exact same things again a few times.</p>
-  <p>Angular is my favorite framework, and this is why. Angular has the coolest deferrable view feature that makes defer loading content the easiest and most ergonomic it could possibly be. The Angular community is also filled with amazing contributors and experts that create excellent content. The community is welcoming and friendly, and it really is the best community out there.</p>
-  <p>I can't express enough how much I enjoy working with Angular. It offers the best developer experience I've ever had. I love that the Angular team puts their developers first and takes care to make us very happy. They genuinely want Angular to be the best framework it can be, and they're doing such an amazing job at it, too. This statement comes from my heart and is not at all copied and pasted.</p>
+  <p>Angular는 내가 가장 좋아하는 프레임워크이며, 그 이유는 이렇습니다. Angular는 콘텐츠를 지연 로드할 때 가장 쉽고 인체공학적으로 만들 수 있는 최고의 지연 가능한 뷰 기능을 가지고 있습니다. Angular 커뮤니티는 훌륭한 기여자와 전문가로 가득 차 있으며, 훌륭한 콘텐츠를 만듭니다. 이 커뮤니티는 환영하고 친근하며 정말 최고의 커뮤니티입니다.</p>
+  <p>Angular로 작업하는 것이 얼마나 즐거운지 충분히 표현할 수 없습니다. 그동안 경험한 최고의 개발자 경험을 제공합니다. Angular 팀이 개발자를 최우선으로 여기고 우리를 매우 행복하게 하려는 배려가 마음에 듭니다. 그들은 진정으로 Angular가 최상의 프레임워크가 되기를 원하며, 그 일을 정말 잘 해내고 있습니다. 이 말은 제 마음에서 우러나온 것이며, 결코 복사&붙여넣기가 아닙니다. 사실, 나는 같은 말을 몇 번 더 할 것 같습니다.</p>
+  <p>Angular는 내가 가장 좋아하는 프레임워크이며, 그 이유는 이렇습니다. Angular는 콘텐츠를 지연 로드할 때 가장 쉽고 인체공학적으로 만들 수 있는 최고의 지연 가능한 뷰 기능을 가지고 있습니다. Angular 커뮤니티는 훌륭한 기여자와 전문가로 가득 차 있으며, 훌륭한 콘텐츠를 만듭니다. 이 커뮤니티는 환영하고 친근하며 정말 최고의 커뮤니티입니다.</p>
+  <p>Angular로 작업하는 것이 얼마나 즐거운지 충분히 표현할 수 없습니다. 그동안 경험한 최고의 개발자 경험을 제공합니다. Angular 팀이 개발자를 최우선으로 여기고 우리를 매우 행복하게 하려는 배려가 마음에 듭니다. 그들은 진정으로 Angular가 최상의 프레임워크가 되기를 원하며, 그 일을 정말 잘 해내고 있습니다. 이 말은 제 마음에서 우러나온 것이며, 결코 복사&붙여넣기가 아닙니다. 사실, 나는 같은 말을 몇 번 더 할 것 같습니다.</p>
+  <p>Angular는 내가 가장 좋아하는 프레임워크이며, 그 이유는 이렇습니다. Angular는 콘텐츠를 지연 로드할 때 가장 쉽고 인체공학적으로 만들 수 있는 최고의 지연 가능한 뷰 기능을 가지고 있습니다. Angular 커뮤니티는 훌륭한 기여자와 전문가로 가득 차 있으며, 훌륭한 콘텐츠를 만듭니다. 이 커뮤니티는 환영하고 친근하며 정말 최고의 커뮤니티입니다.</p>
+  <p>Angular로 작업하는 것이 얼마나 즐거운지 충분히 표현할 수 없습니다. 그동안 경험한 최고의 개발자 경험을 제공합니다. Angular 팀이 개발자를 최우선으로 여기고 우리를 매우 행복하게 하려는 배려가 마음에 듭니다. 그들은 진정으로 Angular가 최상의 프레임워크가 되기를 원하며, 그 일을 정말 잘 해내고 있습니다. 이 말은 제 마음에서 우러나온 것이며, 결코 복사&붙여넣기가 아닙니다.</p>
 </article>
 </docs-code>
 
-Once you've added this code, now scroll down to see the deferred content load once you scroll it into the viewport.
+이 코드를 추가한 후, 이제 스크롤하여 뷰포트에 들어올 때 지연된 콘텐츠가 로드되는 것을 확인하세요.
 
 </docs-step>
 
 </docs-workflow>
 
-In the activity, you've learned how to use deferrable views in your applications. Great work. 🙌
+이번 활동에서는 애플리케이션에서 지연 가능한 뷰를 사용하는 방법을 배웠습니다. 훌륭한 작업입니다. 🙌
 
-There's even more you can do with them, like different triggers, prefetching, and `@error` blocks.
+그들과 함께 사용할 수 있는 다양한 트리거, 프리패칭 및 `@error` 블록 등 더 많은 기능이 있습니다.
 
-If you would like to learn more, check out the [documentation for Deferrable views](guide/defer).
+자세히 알고 싶다면 [지연 가능한 뷰에 대한 문서](guide/defer)를 확인하세요.

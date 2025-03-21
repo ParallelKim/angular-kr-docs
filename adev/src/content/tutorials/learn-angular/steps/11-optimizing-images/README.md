@@ -1,16 +1,16 @@
-# Optimizing images
+# 이미지 최적화
 
-Images are a big part of many applications, and can be a major contributor to application performance problems, including low [Core Web Vitals](https://web.dev/explore/learn-core-web-vitals) scores.
+이미지는 많은 애플리케이션에서 중요한 부분을 차지하며, 낮은 [Core Web Vitals](https://web.dev/explore/learn-core-web-vitals) 점수를 포함하여 애플리케이션 성능 문제에 주요한 기여자가 될 수 있습니다.
 
-Image optimization can be a complex topic, but Angular handles most of it for you, with the `NgOptimizedImage` directive. In this activity, you'll learn how to use `NgOptimizedImage` to ensure your images are loaded efficiently.
+이미지 최적화는 복잡한 주제가 될 수 있지만, Angular는 `NgOptimizedImage` 지시어를 사용하여 대부분의 작업을 처리합니다. 이 활동에서는 `NgOptimizedImage`를 사용하여 이미지를 효율적으로 로드하는 방법을 배웁니다.
 
 <hr>
 
 <docs-workflow>
 
-<docs-step title="Import the NgOptimizedImage directive">
+<docs-step title="NgOptimizedImage 지시어 가져오기">
 
-In order to leverage the `NgOptimizedImage` directive, first import it from the `@angular/common` library and add it to the component `imports` array.
+`NgOptimizedImage` 지시어를 활용하기 위해서는 먼저 `@angular/common` 라이브러리에서 가져오고 컴포넌트의 `imports` 배열에 추가해야 합니다.
 
 ```ts
 import { NgOptimizedImage } from '@angular/common';
@@ -23,9 +23,9 @@ import { NgOptimizedImage } from '@angular/common';
 
 </docs-step>
 
-<docs-step title="Update the src attribute to be ngSrc">
+<docs-step title="src 속성을 ngSrc로 업데이트">
 
-To enable the `NgOptimizedImage` directive, swap out the `src` attribute for `ngSrc`. This applies for both static image sources (i.e., `src`) and dynamic image sources (i.e., `[src]`).
+`NgOptimizedImage` 지시어를 사용하려면 `src` 속성을 `ngSrc`로 바꿔야 합니다. 이는 정적 이미지 소스(즉, `src`)와 동적 이미지 소스(즉, `[src]`) 모두에 해당합니다.
 
 <docs-code language="angular-ts" highlight="[[9], [13]]">
 import { NgOptimizedImage } from '@angular/common';
@@ -34,11 +34,11 @@ import { NgOptimizedImage } from '@angular/common';
   template: `
     ...
     <li>
-      Static Image:
+      정적 이미지:
       <img ngSrc="/assets/logo.svg" alt="Angular logo" width="32" height="32" />
     </li>
     <li>
-      Dynamic Image:
+      동적 이미지:
       <img [ngSrc]="logoUrl" [alt]="logoAlt" width="32" height="32" />
     </li>
     ...
@@ -49,11 +49,11 @@ import { NgOptimizedImage } from '@angular/common';
 
 </docs-step>
 
-<docs-step title="Add width and height attributes">
+<docs-step title="width와 height 속성 추가">
 
-Note that in the above code example, each image has both `width` and `height` attributes. In order to prevent [layout shift](https://web.dev/articles/cls), the `NgOptimizedImage` directive requires both size attributes on each image.
+위 코드 예제에서 각 이미지에는 `width`와 `height` 속성이 모두 있어야 합니다. [레이아웃 이동](https://web.dev/articles/cls)을 방지하기 위해 `NgOptimizedImage` 지시어는 각 이미지에 대해 두 개의 크기 속성이 필요합니다.
 
-In situations where you can't or don't want to specify a static `height` and `width` for images, you can use [the `fill` attribute](https://web.dev/articles/cls) to tell the image to act like a "background image", filling its containing element:
+정적 `height`와 `width`를 정의할 수 없거나 원하지 않는 경우, 이미지를 "배경 이미지"처럼 작동하도록 요청하는 [`fill` 속성](https://web.dev/articles/cls)을 사용할 수 있습니다:
 
 ```angular-html
 <div class="image-container"> //Container div has 'position: "relative"'
@@ -61,13 +61,13 @@ In situations where you can't or don't want to specify a static `height` and `wi
 </div>
 ```
 
-Note: For the `fill` image to render properly, its parent element must be styled with `position: "relative"`, `position: "fixed"`, or `position: "absolute"`.
+참고: `fill` 이미지가 올바르게 렌더링되려면 부모 요소에 `position: "relative"`, `position: "fixed"`, 또는 `position: "absolute"` 스타일이 적용되어야 합니다.
 
 </docs-step>
 
-<docs-step title="Prioritize important images">
+<docs-step title="중요한 이미지 우선 순위 지정">
 
-One of the most important optimizations for loading performance is to prioritize any image which might be the ["LCP element"](https://web.dev/articles/optimize-lcp), which is the largest on-screen graphical element when the page loads. To optimize your loading times, make sure to add the `priority` attribute to your "hero image" or any other images that you think could be an LCP element.
+로딩 성능을 위한 가장 중요한 최적화 중 하나는 페이지가 로드될 때 가장 큰 화면 그래픽 요소인 ["LCP 요소"](https://web.dev/articles/optimize-lcp)로 간주될 수 있는 이미지를 우선적으로 처리하는 것입니다. 로딩 시간을 최적화하려면 "히어로 이미지" 또는 LCP 요소일 수 있다고 생각되는 이미지에 `priority` 속성을 추가해야 합니다.
 
 ```ts
 <img ngSrc="www.example.com/image.png" height="600" width="800" priority />
@@ -75,9 +75,9 @@ One of the most important optimizations for loading performance is to prioritize
 
 </docs-step>
 
-<docs-step title="Optional: Use an image loader">
+<docs-step title="선택 사항: 이미지 로더 사용">
 
-`NgOptimizedImage` allows you to specify an [image loader](guide/image-optimization#configuring-an-image-loader-for-ngoptimizedimage), which tells the directive how to format URLs for your images. Using a loader allows you to define your images with short, relative URLs:
+`NgOptimizedImage`는 지시어에 이미지의 URL 형식을 지정하는 [이미지 로더](guide/image-optimization#configuring-an-image-loader-for-ngoptimizedimage)를 정의할 수 있게 해줍니다. 로더를 사용하면 짧고 상대적인 URL로 이미지를 정의할 수 있습니다:
 
 ```ts
 providers: [
@@ -85,17 +85,17 @@ providers: [
 ]
 ```
 
-Final URL will be 'https://my.base.url/image.png'
+최종 URL은 'https://my.base.url/image.png'가 됩니다.
 ```angular-html
 <img ngSrc="image.png" height="600" width="800" />
 ```
 
-Image loaders are for more than just convenience--they allow you to use the full capabilities of `NgOptimizedImage`. Learn more about these optimizations and the built-in loaders for popular CDNs [here](guide/image-optimization#configuring-an-image-loader-for-ngoptimizedimage).
+이미지 로더는 편의성을 넘어서 `NgOptimizedImage`의 모든 기능을 활용할 수 있습니다. 이러한 최적화 및 인기 있는 CDN의 내장 로더에 대한 자세한 내용은 [여기](guide/image-optimization#configuring-an-image-loader-for-ngoptimizedimage)를 참조하세요.
 
 </docs-step>
 
 </docs-workflow>
 
-By adding this directive to your workflow, your images are now loading using best practices with the help of Angular 🎉
+이 지시어를 워크플로우에 추가함으로써 Angular의 도움으로 이제 최적의 방식으로 이미지를 로드하고 있습니다 🎉
 
-If you would like to learn more, check out the [documentation for `NgOptimizedImage`](guide/image-optimization). Keep up the great work and let's learn about routing next.
+더 배우고 싶다면 [NgOptimizedImage에 대한 문서](guide/image-optimization)를 확인하세요. 훌륭한 작업을 계속하고 다음에 라우팅에 대해 배우겠습니다.

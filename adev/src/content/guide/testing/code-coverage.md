@@ -1,19 +1,18 @@
+# 코드 테스트량 확인하기
 
-# Find out how much code you're testing
+Angular CLI는 단위 테스트를 실행하고 코드 커버리지 보고서를 생성할 수 있습니다.
+코드 커버리지 보고서는 단위 테스트가 제대로 테스트하지 않은 코드베이스의 부분을 보여줍니다.
 
-The Angular CLI can run unit tests and create code coverage reports.
-Code coverage reports show you any parts of your code base that might not be properly tested by your unit tests.
-
-To generate a coverage report run the following command in the root of your project.
+커버리지 보고서를 생성하려면 프로젝트 루트에서 다음 명령을 실행합니다.
 
 <docs-code language="shell">
 ng test --no-watch --code-coverage
 </docs-code>
 
-When the tests are complete, the command creates a new `/coverage` directory in the project.
-Open the `index.html` file to see a report with your source code and code coverage values.
+테스트가 완료되면 이 명령은 프로젝트 내에 새 `/coverage` 디렉토리를 생성합니다.
+`index.html` 파일을 열어 소스 코드와 코드 커버리지 값을 포함한 보고서를 확인하세요.
 
-If you want to create code-coverage reports every time you test, set the following option in the Angular CLI configuration file, `angular.json`:
+테스트할 때마다 코드 커버리지 보고서를 생성하려면 Angular CLI 구성 파일인 `angular.json`에 다음 옵션을 설정하세요:
 
 <docs-code language="json">
 "test": {
@@ -23,13 +22,13 @@ If you want to create code-coverage reports every time you test, set the followi
 }
 </docs-code>
 
-## Code coverage enforcement
+## 코드 커버리지 강제 실행
 
-The code coverage percentages let you estimate how much of your code is tested.
-If your team decides on a set minimum amount to be unit tested, enforce this minimum with the Angular CLI.
+코드 커버리지 비율은 테스트된 코드의 양을 추정하는 데 도움이 됩니다.
+팀이 설정한 최소 단위 테스트 양이 있다면, 이 최소값을 Angular CLI로 강제 적용하세요.
 
-For example, suppose you want the code base to have a minimum of 80% code coverage.
-To enable this, open the [Karma](https://karma-runner.github.io) test platform configuration file, `karma.conf.js`, and add the `check` property in the `coverageReporter:` key.
+예를 들어, 코드베이스에 최소 80% 코드 커버리지를 원한다고 가정합시다.
+이를 활성화하려면 [Karma](https://karma-runner.github.io) 테스트 플랫폼 구성 파일인 `karma.conf.js`를 열고 `coverageReporter:` 키에 `check` 속성을 추가하세요.
 
 <docs-code language="javascript">
 coverageReporter: {
@@ -50,8 +49,8 @@ coverageReporter: {
 }
 </docs-code>
 
-HELPFUL: Read more about creating and fine tuning Karma configuration in the [testing guide](guide/testing#configuration).
+도움말: [테스트 가이드](guide/testing#configuration)에서 Karma 구성 생성 및 조정에 대해 더 읽어보세요.
 
-The `check` property causes the tool to enforce a minimum of 80% code coverage when the unit tests are run in the project.
+`check` 속성은 프로젝트에서 단위 테스트가 실행될 때 최소 80% 코드 커버리지를 강제합니다.
 
-Read more on coverage configuration options in the [karma coverage documentation](https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md).
+코드 커버리지 구성 옵션에 대한 자세한 내용은 [karma coverage documentation](https://github.com/karma-runner/karma-coverage/blob/master/docs/configuration.md)에서 확인하세요.

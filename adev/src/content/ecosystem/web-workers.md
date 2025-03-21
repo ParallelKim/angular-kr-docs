@@ -1,13 +1,13 @@
-# Background processing using web workers
+# 백그라운드 처리를 위한 웹 워커 사용
 
-[Web workers](https://developer.mozilla.org/docs/Web/API/Web_Workers_API) let you run CPU-intensive computations in a background thread, freeing the main thread to update the user interface.
-Application's performing a lot of computations, like generating Computer-Aided Design \(CAD\) drawings or doing heavy geometric calculations, can use web workers to increase performance.
+[웹 워커](https://developer.mozilla.org/docs/Web/API/Web_Workers_API)는 CPU 집약적인 계산을 백그라운드 스레드에서 실행할 수 있게 하여, 메인 스레드가 사용자 인터페이스를 업데이트할 수 있도록 해줍니다.
+CAD(Computer-Aided Design) 도면 생성이나 복잡한 기하학적 계산과 같이 많은 계산을 수행하는 애플리케이션은 성능을 향상시키기 위해 웹 워커를 사용할 수 있습니다.
 
-HELPFUL: The Angular CLI does not support running itself in a web worker.
+도움말: Angular CLI는 웹 워커에서 자체적으로 실행되는 것을 지원하지 않습니다.
 
-## Adding a web worker
+## 웹 워커 추가
 
-To add a web worker to an existing project, use the Angular CLI `ng generate` command.
+기존 프로젝트에 웹 워커를 추가하려면, Angular CLI의 `ng generate` 명령을 사용하십시오.
 
 <docs-code language="shell">
 
@@ -15,8 +15,8 @@ ng generate web-worker <location>
 
 </docs-code>
 
-You can add a web worker anywhere in your application.
-For example, to add a web worker to the root component, `src/app/app.component.ts`, run the following command.
+애플리케이션의 어디에서나 웹 워커를 추가할 수 있습니다.
+예를 들어, 루트 컴포넌트인 `src/app/app.component.ts`에 웹 워커를 추가하려면, 다음 명령을 실행하십시오.
 
 <docs-code language="shell">
 
@@ -24,10 +24,10 @@ ng generate web-worker app
 
 </docs-code>
 
-The command performs the following actions.
+이 명령은 다음 작업을 수행합니다.
 
-1. Configures your project to use web workers, if it isn't already.
-1. Adds the following scaffold code to `src/app/app.worker.ts` to  receive messages.
+1. 프로젝트가 웹 워커를 사용할 수 있도록 구성합니다(아직 사용하지 않는 경우).
+1. 메시지를 수신하기 위해 `src/app/app.worker.ts`에 다음 스캐폴드 코드를 추가합니다.
 
     <docs-code language="typescript" header="src/app/app.worker.ts">
 
@@ -38,26 +38,26 @@ The command performs the following actions.
 
     </docs-code>
 
-1. Adds the following scaffold code to `src/app/app.component.ts` to use the worker.
+1. 워커를 사용하기 위해 `src/app/app.component.ts`에 다음 스캐폴드 코드를 추가합니다.
 
     <docs-code language="typescript" header="src/app/app.component.ts">
 
     if (typeof Worker !== 'undefined') {
-      // Create a new
+      // 새로운 워커 생성
       const worker = new Worker(new URL('./app.worker', import.meta.url));
       worker.onmessage = ({ data }) => {
-        console.log(`page got message: ${data}`);
+        console.log(`페이지가 메시지를 받았습니다: ${data}`);
       };
       worker.postMessage('hello');
     } else {
-      // Web workers are not supported in this environment.
-      // You should add a fallback so that your program still executes correctly.
+      // 이 환경에서는 웹 워커가 지원되지 않습니다.
+      // 프로그램이 여전히 올바르게 실행되도록 대체 방법을 추가해야 합니다.
     }
 
     </docs-code>
 
-After you create this initial scaffold, you must refactor your code to use the web worker by sending messages to and from the worker.
+이 초기 스캐폴드를 생성한 후, 워커를 통해 메시지를 주고받도록 코드를 리팩토링해야 합니다.
 
-IMPORTANT: Some environments or platforms, such as `@angular/platform-server` used in [Server-side Rendering](guide/ssr), don't support web workers.
+중요: [서버 측 렌더링](guide/ssr)에서 사용되는 `@angular/platform-server`와 같은 일부 환경 또는 플랫폼은 웹 워커를 지원하지 않습니다.
 
-To ensure that your application works in these environments, you must provide a fallback mechanism to perform the computations that the worker would otherwise perform.
+이러한 환경에서도 애플리케이션이 작동하도록 하려면, 워커가 수행할 수 있는 계산을 수행하기 위한 대체 메커니즘을 제공해야 합니다.

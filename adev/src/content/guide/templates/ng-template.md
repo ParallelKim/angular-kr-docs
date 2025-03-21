@@ -1,75 +1,75 @@
 # Create template fragments with ng-template
 
-Inspired by the [native `<template>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template), the `<ng-template>` element lets you declare a **template fragment** – a section of content that you can dynamically or programmatically render.
+네이티브 `<template>` 요소에서 영감을 받아 [native `<template>` element](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/template), `<ng-template>` 요소를 사용하면 **템플릿 조각**을 선언할 수 있습니다. 이는 동적으로 또는 프로그래밍적으로 렌더링할 수 있는 콘텐츠 섹션입니다.
 
 ## Creating a template fragment
 
-You can create a template fragment inside of any component template with the `<ng-template>` element:
+`<ng-template>` 요소로 모든 컴포넌트 템플릿 내에서 템플릿 조각을 생성할 수 있습니다:
 
 ```angular-html
-<p>This is a normal element</p>
+<p>일반 요소입니다</p>
 
 <ng-template>
-  <p>This is a template fragment</p>
+  <p>템플릿 조각입니다</p>
 </ng-template>
 ```
 
-When the above is rendered, the content of the `<ng-template>` element is not rendered on the page. Instead, you can get a reference to the template fragment and write code to dynamically render it.
+위 내용이 렌더링될 때, `<ng-template>` 요소의 콘텐츠는 페이지에 렌더링되지 않습니다. 대신, 템플릿 조각에 대한 참조를 얻고 이를 동적으로 렌더링하는 코드를 작성할 수 있습니다.
 
 ### Binding context for fragments
 
-Template fragments may contain bindings with dynamic expressions:
+템플릿 조각은 동적 표현식과 바인딩을 포함할 수 있습니다:
 
 ```angular-ts
 @Component({
   /* ... */,
-  template: `<ng-template>You've selected {{count}} items.</ng-template>`,
+  template: `<ng-template>선택한 항목 수: {{count}}입니다.</ng-template>`,
 })
 export class ItemCounter {
   count: number = 0;
 }
 ```
 
-Expressions or statements in a template fragment are evaluated against the component in which the fragment is declared, regardless of where the fragment is rendered.
+템플릿 조각 내의 표현식이나 문장은 조각이 선언된 컴포넌트를 기준으로 평가됩니다. 조각이 어디에 렌더링되든지 관계없이 적용됩니다.
 
 ## Getting a reference to a template fragment
 
-You can get a reference to a template fragment in one of three ways:
+템플릿 조각에 대한 참조를 얻는 방법은 세 가지가 있습니다:
 
-- By declaring a [template reference variable](/guide/templates/variables#template-reference-variables) on the `<ng-template>` element
-- By querying for the fragment with [a component or directive query](/guide/components/queries)
-- By injecting the fragment in a directive that's applied directly to an `<ng-template>` element.
+- `<ng-template>` 요소에 [템플릿 참조 변수](/guide/templates/variables#template-reference-variables)를 선언하여
+- [컴포넌트 또는 디렉티브 쿼리](/guide/components/queries)를 통해 조각을 조회하여
+- `<ng-template>` 요소에 직접 적용된 디렉티브에서 조각을 주입하여.
 
-In all three cases, the fragment is represented by a [TemplateRef](/api/core/TemplateRef) object.
+세 가지 경우 모두, 조각은 [TemplateRef](/api/core/TemplateRef) 객체로 표현됩니다.
 
 ### Referencing a template fragment with a template reference variable
 
-You can add a template reference variable to an `<ng-template>` element to reference that template fragment in other parts of the same template file:
+`<ng-template>` 요소에 템플릿 참조 변수를 추가하여 같은 템플릿 파일의 다른 부분에서 해당 템플릿 조각을 참조할 수 있습니다:
 
 ```angular-html
-<p>This is a normal element</p>
+<p>일반 요소입니다</p>
 
 <ng-template #myFragment>
-  <p>This is a template fragment</p>
+  <p>템플릿 조각입니다</p>
 </ng-template>
 ```
 
-You can then reference this fragment anywhere else in the template via the `myFragment` variable.
+이제 `myFragment` 변수를 통해 템플릿의 다른 곳에서 이 조각을 참조할 수 있습니다.
 
 ### Referencing a template fragment with queries
 
-You can get a reference to a template fragment using any [component or directive query API](/guide/components/queries).
+어떠한 [컴포넌트 또는 디렉티브 쿼리 API](/guide/components/queries)를 사용하여 템플릿 조각에 대한 참조를 얻을 수 있습니다.
 
-For example, if your template has exactly one template fragment, you can query directly for the `TemplateRef` object with a `@ViewChild` query:
+예를 들어, 템플릿에 정확히 하나의 템플릿 조각이 있는 경우, `@ViewChild` 쿼리를 사용하여 `TemplateRef` 객체를 직접 조회할 수 있습니다:
 
 ```angular-ts
 @Component({
   /* ... */,
   template: `
-    <p>This is a normal element</p>
+    <p>일반 요소입니다</p>
 
     <ng-template>
-      <p>This is a template fragment</p>
+      <p>템플릿 조각입니다</p>
     </ng-template>
   `,
 })
@@ -78,38 +78,37 @@ export class ComponentWithFragment {
 }
 ```
 
-You can then reference this fragment in your component code or the component's template like any other class member.
+그런 다음, 이 조각을 컴포넌트 코드나 컴포넌트의 템플릿에서 다른 클래스 멤버처럼 참조할 수 있습니다.
 
-If a template contains multiple fragments, you can assign a name to each fragment by adding a template reference variable to each `<ng-template>` element and querying for the fragments based on that name:
+템플릿에 여러 조각이 포함된 경우, 각 `<ng-template>` 요소에 템플릿 참조 변수를 추가하여 이름을 할당하고 해당 이름을 기반으로 조각을 조회할 수 있습니다:
 
 ```angular-ts
 @Component({
   /* ... */,
   template: `
-    <p>This is a normal element</p>
+    <p>일반 요소입니다</p>
 
     <ng-template #fragmentOne>
-      <p>This is one template fragment</p>
+      <p>하나의 템플릿 조각입니다</p>
     </ng-template>
 
     <ng-template #fragmentTwo>
-      <p>This is another template fragment</p>
+      <p>또 다른 템플릿 조각입니다</p>
     </ng-template>
   `,
 })
 export class ComponentWithFragment {
-  // When querying by name, you can use the `read` option to specify that you want to get the
-  // TemplateRef object associated with the element.
+  // 이름으로 조회할 때, 요소와 관련된 TemplateRef 객체를 가져오려면 'read' 옵션을 사용해야 합니다.
   @ViewChild('fragmentOne', {read: TemplateRef}) fragmentOne: TemplateRef<unknown> | undefined;
   @ViewChild('fragmentTwo', {read: TemplateRef}) fragmentTwo: TemplateRef<unknown> | undefined;
 }
 ```
 
-Again, you can then reference these fragments in your component code or the component's template like any other class members.
+다시 말해, 이 조각을 컴포넌트 코드나 컴포넌트 템플릿에서 다른 클래스 멤버처럼 참조할 수 있습니다.
 
 ### Injecting a template fragment
 
-A directive can inject a `TemplateRef` if that directive is applied directly to an `<ng-template>` element:
+디렉티브가 `<ng-template>` 요소에 직접 적용된 경우 `TemplateRef`를 주입할 수 있습니다:
 
 ```angular-ts
 @Directive({
@@ -122,60 +121,60 @@ export class MyDirective {
 
 ```angular-html
 <ng-template myDirective>
-  <p>This is one template fragment</p>
+  <p>하나의 템플릿 조각입니다</p>
 </ng-template>
 ```
 
-You can then reference this fragment in your directive code like any other class member.
+이제 이 조각을 디렉티브 코드에서 다른 클래스 멤버처럼 참조할 수 있습니다.
 
 ## Rendering a template fragment
 
-Once you have a reference to a template fragment's `TemplateRef` object, you can render a fragment in one of two ways: in your template with the `NgTemplateOutlet` directive or in your TypeScript code with `ViewContainerRef`.
+템플릿 조각의 `TemplateRef` 객체에 대한 참조를 얻은 후, 두 가지 방법 중 하나로 조각을 렌더링할 수 있습니다: `NgTemplateOutlet` 디렉티브를 사용하거나 TypeScript 코드에서 `ViewContainerRef`를 사용하는 것입니다.
 
 ### Using `NgTemplateOutlet`
 
-The `NgTemplateOutlet` directive from `@angular/common` accepts a `TemplateRef` and renders the fragment as a **sibling** to the element with the outlet. You should generally use `NgTemplateOutlet` on an [`<ng-container>` element](/guide/templates/ng-container).
+`@angular/common`의 `NgTemplateOutlet` 디렉티브는 `TemplateRef`를 받아들이고 조각을 아울렛이 있는 요소의 **형제**로 렌더링합니다. 일반적으로 이 디렉티브는 [`<ng-container>` 요소](/guide/templates/ng-container)에서 사용해야 합니다.
 
-First, import `NgTemplateOutlet`:
+먼저 `NgTemplateOutlet`을 가져옵니다:
 ```typescript
 import { NgTemplateOutlet } from '@angular/common';
 ```
 
-The following example declares a template fragment and renders that fragment to a `<ng-container>` element with `NgTemplateOutlet`:
+다음 예제는 템플릿 조각을 선언하고 해당 조각을 `NgTemplateOutlet`을 사용하여 `<ng-container>` 요소에 렌더링합니다:
 
 ```angular-html
-<p>This is a normal element</p>
+<p>일반 요소입니다</p>
 
 <ng-template #myFragment>
-  <p>This is a fragment</p>
+  <p>이것은 조각입니다</p>
 </ng-template>
 
 <ng-container *ngTemplateOutlet="myFragment"></ng-container>
 ```
 
-This example produces the following rendered DOM:
+이 예제는 다음과 같이 렌더링된 DOM을 생성합니다:
 
 ```angular-html
-<p>This is a normal element</p>
-<p>This is a fragment</p>
+<p>일반 요소입니다</p>
+<p>이것은 조각입니다</p>
 ```
 
 ### Using `ViewContainerRef`
 
-A **view container** is a node in Angular's component tree that can contain content. Any component or directive can inject `ViewContainerRef` to get a reference to a view container corresponding to that component or directive's location in the DOM.
+**뷰 컨테이너**는 Angular의 컴포넌트 트리 내에서 콘텐츠를 포함할 수 있는 노드입니다. 모든 컴포넌트나 디렉티브는 `ViewContainerRef`를 주입하여 해당 컴포넌트 또는 디렉티브의 DOM 내 위치에 대응하는 뷰 컨테이너에 대한 참조를 얻을 수 있습니다.
 
-You can use the `createEmbeddedView` method on `ViewContainerRef` to dynamically render a template fragment. When you render a fragment with a `ViewContainerRef`, Angular appends it into the DOM as the next sibling of the component or directive that injected the `ViewContainerRef`.
+`ViewContainerRef`의 `createEmbeddedView` 메서드를 사용하여 템플릿 조각을 동적으로 렌더링할 수 있습니다. `ViewContainerRef`를 사용하여 조각을 렌더링하면 Angular는 DOM에 컴포넌트 또는 디렉티브의 다음 형제 요소로 추가합니다.
 
-The following example shows a component that accepts a reference to a template fragment as an input and renders that fragment into the DOM on a button click.
+다음 예제는 템플릿 조각에 대한 참조를 입력으로 받아 해당 조각을 버튼 클릭 시 DOM에 렌더링하는 컴포넌트를 보여줍니다.
 
 ```angular-ts
 @Component({
   /* ... */,
   selector: 'component-with-fragment',
   template: `
-    <h2>Component with a fragment</h2>
+    <h2>조각이 있는 컴포넌트</h2>
     <ng-template #myFragment>
-      <p>This is the fragment</p>
+      <p>이것은 조각입니다</p>
     </ng-template>
     <my-outlet [fragment]="myFragment" />
   `,
@@ -185,7 +184,7 @@ export class ComponentWithFragment { }
 @Component({
   /* ... */,
   selector: 'my-outlet',
-  template: `<button (click)="showFragment()">Show</button>`,
+  template: `<button (click)="showFragment()">보여주기</button>`,
 })
 export class MyOutlet {
   private viewContainer = inject(ViewContainerRef);
@@ -199,85 +198,85 @@ export class MyOutlet {
 }
 ```
 
-In the example above, clicking the "Show" button results in the following output:
+위 예제에서 "보여주기" 버튼을 클릭하면 다음과 같은 출력이 생성됩니다:
 
 ```angular-html
 <component-with-fragment>
-  <h2>Component with a fragment>
+  <h2>조각이 있는 컴포넌트</h2>
   <my-outlet>
-    <button>Show</button>
+    <button>보여주기</button>
   </my-outlet>
-  <p>This is the fragment</p>
+  <p>이것은 조각입니다</p>
 </component-with-fragment>
 ```
 
 ## Passing parameters when rendering a template fragment
 
-When declaring a template fragment with `<ng-template>`, you can additionally declare parameters accepted by the fragment. When you render a fragment, you can optimally pass a `context` object corresponding to these parameters. You can use data from this context object in binding expressions and statements, in addition to referencing data from the component in which the fragment is declared.
+`<ng-template>`로 템플릿 조각을 선언할 때, 추가로 조각이 수용하는 매개변수를 선언할 수 있습니다. 조각을 렌더링할 때, 이러한 매개변서에 해당하는 `context` 객체를 최적으로 전달할 수 있습니다. 이 컨텍스트 객체의 데이터를 바인딩 표현식이나 문장에서 사용할 수 있으며, 조각이 선언된 컴포넌트의 데이터도 참조할 수 있습니다.
 
-Each parameter is written as an attribute prefixed with `let-` with a value matching a property name in the context object:
+각 매개변수는 `let-`으로 시작하는 속성으로 쓰여지며, 값은 컨텍스트 객체의 속성 이름과 일치해야 합니다:
 
 ```angular-html
 <ng-template let-pizzaTopping="topping">
-  <p>You selected: {{pizzaTopping}}</p>
+  <p>선택한 토핑: {{pizzaTopping}}</p>
 </ng-template>
 ```
 
 ### Using `NgTemplateOutlet`
 
-You can bind a context object to the `ngTemplateOutletContext` input:
+`ngTemplateOutletContext` 입력에 컨텍스트 객체를 바인딩할 수 있습니다:
 
 ```angular-html
 <ng-template #myFragment let-pizzaTopping="topping">
-  <p>You selected: {{pizzaTopping}}</p>
+  <p>선택한 토핑: {{pizzaTopping}}</p>
 </ng-template>
 
 <ng-container
   [ngTemplateOutlet]="myFragment"
-  [ngTemplateOutletContext]="{topping: 'onion'}"
+  [ngTemplateOutletContext]="{topping: '양파'}"
 />
 ```
 
 ### Using `ViewContainerRef`
 
-You can pass a context object as the second argument to `createEmbeddedView`:
+컨텍스트 객체를 `createEmbeddedView`의 두 번째 인수로 전달할 수 있습니다:
 
 ```angular-ts
-this.viewContainer.createEmbeddedView(this.myFragment, {topping: 'onion'});
+this.viewContainer.createEmbeddedView(this.myFragment, {topping: '양파'});
 ```
 
 ## Structural directives
 
-A **structural directive** is any directive that:
+**구조적 디렉티브**는 다음의 디렉티브입니다:
 
-- Injects `TemplateRef`
-- Injects `ViewContainerRef` and programmatically renders the injected `TemplateRef`
+- `TemplateRef`를 주입하고
+- `ViewContainerRef`를 주입하여 주입된 `TemplateRef`를 프로그래밍적으로 렌더링합니다.
 
-Angular supports a special convenience syntax for structural directives. If you apply the directive to an element and prefix the directive's selector with an asterisk (`*`) character, Angular interprets the entire element and all of its content as a template fragment:
+Angular는 구조적 디렉티브에 대한 특별한 편의 구문을 지원합니다. 디렉티브를 요소에 적용하고 디렉티브 선택자 앞에 별표(`*`) 문자를 접두사로 붙이면 Angular는 전체 요소와 그 모든 내용을 템플릿 조각으로 해석합니다:
 
 ```angular-html
 <section *myDirective>
-  <p>This is a fragment</p>
+  <p>이것은 조각입니다</p>
 </section>
 ```
 
-This is equivalent to:
+이는 다음과 같습니다:
 
 ```angular-html
 <ng-template myDirective>
   <section>
-    <p>This is a fragment</p>
+    <p>이것은 조각입니다</p>
   </section>
 </ng-template>
 ```
 
-Developers typically use structural directives to conditionally render fragments or render fragments multiple times.
+개발자들은 일반적으로 구조적 디렉티브를 사용하여 조각을 조건부로 렌더링하거나 조각을 여러 번 렌더링합니다.
 
-For more details, see [Structural Directives](/guide/directives/structural-directives).
+자세한 내용은 [구조적 디렉티브](/guide/directives/structural-directives)를 참조하세요.
 
 ## Additional resources
 
-For examples of how `ng-template` is used in other libraries, check out:
+`ng-template`이 다른 라이브러리에서 어떻게 사용되는지에 대한 예시를 보려면 다음을 확인하세요:
 
-- [Tabs from Angular Material](https://material.angular.io/components/tabs/overview) - nothing gets rendered into the DOM until the tab is activated
-- [Table from Angular Material](https://material.angular.io/components/table/overview) - allows developers to define different ways to render data
+- [Angular Material의 탭](https://material.angular.io/components/tabs/overview) - 탭이 활성화될 때까지 DOM에 아무것도 렌더링되지 않습니다.
+- [Angular Material의 테이블](https://material.angular.io/components/table/overview) - 개발자가 데이터를 렌더링하는 다양한 방법을 정의할 수 있게 합니다.

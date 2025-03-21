@@ -1,38 +1,38 @@
 # NgModules
 
-IMPORTANT: The Angular team recommends using [standalone components](guide/components/anatomy-of-components#-imports-in-the-component-decorator) instead of `NgModule` for all new code. Use this guide to understand existing code built with `@NgModule`.
+중요: Angular 팀은 모든 새로운 코드에 대해 `NgModule` 대신 [독립 구성 요소](guide/components/anatomy-of-components#-imports-in-the-component-decorator)를 사용하는 것을 권장합니다. 이 가이드는 `@NgModule`로 작성된 기존 코드를 이해하는 데 도움이 됩니다.
 
-An NgModule is a class marked by the `@NgModule` decorator. This decorator accepts *metadata* that tells Angular how to compile component templates and configure dependency injection.
+NgModule은 `@NgModule` 데코레이터로 표시된 클래스입니다. 이 데코레이터는 Angular가 구성 요소 템플릿을 컴파일하고 종속성 주입을 구성하는 방법을 알려주는 *메타데이터*를 수락합니다.
 
 ```typescript
 import {NgModule} from '@angular/core';
 
 @NgModule({
-  // Metadata goes here
+  // 메타데이터가 여기에 옵니다
 })
 export class CustomMenuModule { }
 ```
 
-An NgModule has two main responsibilities:
-* Declaring components, directives, and pipes that belong to the NgModule
-* Add providers to the injector for components, directives, and pipes that import the NgModule
+NgModule은 두 가지 주요 책임이 있습니다:
+* NgModule에 속하는 구성 요소, 지시자 및 파이프를 선언하는 것
+* NgModule을 가져오는 구성 요소, 지시자 및 파이프에 대한 공급자를 주입기에 추가하는 것
 
-## Declarations
+## 선언
 
-The `declarations` property of the `@NgModule` metadata declares the components, directives, and pipes that belong to the NgModule.
+`@NgModule` 메타데이터의 `declarations` 속성은 NgModule에 속하는 구성 요소, 지시자 및 파이프를 선언합니다.
 
 ```typescript
 @NgModule({
   /* ... */
-  // CustomMenu and CustomMenuItem are components.
+  // CustomMenu와 CustomMenuItem은 구성 요소입니다.
   declarations: [CustomMenu, CustomMenuItem],
 })
 export class CustomMenuModule { }
 ```
 
-In the example above, the components `CustomMenu` and `CustomMenuItem` belong to `CustomMenuModule`.
+위의 예에서 `CustomMenu`와 `CustomMenuItem` 구성 요소는 `CustomMenuModule`에 속합니다.
 
-The `declarations` property additionally accepts _arrays_ of components, directives, and pipes. These arrays, in turn, may also contain other arrays.
+`declarations` 속성은 또한 구성 요소, 지시자 및 파이프의 _배열_을 수락합니다. 이러한 배열은 다른 배열을 포함할 수도 있습니다.
 
 ```typescript
 const MENU_COMPONENTS = [CustomMenu, CustomMenuItem];
@@ -40,85 +40,85 @@ const WIDGETS = [MENU_COMPONENTS, CustomSlider];
 
 @NgModule({
   /* ... */
-  // This NgModule declares all of CustomMenu, CustomMenuItem,
-  // CustomSlider, and CustomCheckbox.
+  // 이 NgModule은 CustomMenu, CustomMenuItem,
+  // CustomSlider 및 CustomCheckbox를 선언합니다.
   declarations: [WIDGETS, CustomCheckbox],
 })
 export class CustomMenuModule { }
 ```
 
-If Angular discovers any components, directives, or pipes declared in more than one NgModule, it reports an error.
+Angular가 두 개 이상의 NgModule에서 선언된 구성 요소, 지시자 또는 파이프를 발견하면 오류를 보고합니다.
 
-Any components, directives, or pipes must be explicitly marked as `standalone: false` in order to be declared in an NgModule.
+모든 구성 요소, 지시자 또는 파이프는 NgModule에 선언되기 위해 명시적으로 `standalone: false`로 표시되어야 합니다.
 
 ```typescript
 @Component({
-  // Mark this component as `standalone: false` so that it can be declared in an NgModule.
+  // 이 구성 요소를 `standalone: false`로 표시하여 NgModule에 선언할 수 있도록 합니다.
   standalone: false,
   /* ... */
 })
 export class CustomMenu { /* ... */ }
 ```
 
-### imports
+### 가져오기
 
-Components declared in an NgModule may depend on other components, directives, and pipes. Add these dependencies to the `imports` property of the `@NgModule` metadata.
+NgModule에서 선언된 구성 요소는 다른 구성 요소, 지시자 및 파이프에 의존할 수 있습니다. 이러한 의존성을 `@NgModule` 메타데이터의 `imports` 속성에 추가합니다.
 
 ```typescript
 @NgModule({
   /* ... */
-  // CustomMenu and CustomMenuItem depend on the PopupTrigger and SelectorIndicator components.
+  // CustomMenu와 CustomMenuItem은 PopupTrigger 및 SelectorIndicator 구성 요소에 의존합니다.
   imports: [PopupTrigger, SelectionIndicator],
   declarations: [CustomMenu, CustomMenuItem],
 })
 export class CustomMenuModule { }
 ```
 
-The `imports` array accepts other NgModules, as well as standalone components, directives, and pipes.
+`imports` 배열은 다른 NgModule은 물론 독립 구성 요소, 지시자 및 파이프도 수용합니다.
 
-### exports
+### 내보내기
 
-An NgModule can _export_ its declared components, directives, and pipes such that they're available to other components and NgModules.
+NgModule은 선언한 구성 요소, 지시자 및 파이프를 _내보낼_ 수 있어 다른 구성 요소 및 NgModule에서 사용할 수 있게 합니다.
 
  ```typescript
 @NgModule({
   imports: [PopupTrigger, SelectionIndicator],
   declarations: [CustomMenu, CustomMenuItem],
 
-  // Make CustomMenu and CustomMenuItem available to
-  // components and NgModules that import CustomMenuModule.
+  // CustomMenu와 CustomMenuItem을 사용할 수 있게 하여
+  // CustomMenuModule을 가져오는 구성 요소 및 NgModule에서 사용합니다.
   exports: [CustomMenu, CustomMenuItem],
 })
 export class CustomMenuModule { }
 ```
 
-The `exports` property is not limited to declarations, however. An NgModule can also export any other components, directives, pipes, and NgModules that it imports.
+`exports` 속성은 선언에 한정되지 않습니다. NgModule은 또한 가져오는 다른 구성 요소, 지시자, 파이프 및 NgModule을 내보낼 수 있습니다.
 
  ```typescript
 @NgModule({
   imports: [PopupTrigger, SelectionIndicator],
   declarations: [CustomMenu, CustomMenuItem],
 
-  // Also make PopupTrigger available to any component or NgModule that imports CustomMenuModule.
+  // 또한 CustomMenuModule을 가져오는 모든 구성 요소 또는 NgModule에서 PopupTrigger를 사용할 수 있게 합니다.
   exports: [CustomMenu, CustomMenuItem, PopupTrigger],
 })
 export class CustomMenuModule { }
 ```
 
-## `NgModule` providers
+## `NgModule` 공급자
 
-Tip: See the [Dependency Injection guide](guide/di) for information on dependency injection and providers.
+팁: 종속성 주입 및 공급자에 대한 정보는 [종속성 주입 가이드](guide/di)를 참조하세요.
 
-An `NgModule` can specify `providers` for injected dependencies. These providers are available to:
-* Any standalone component, directive, or pipe that imports the NgModule, and
-* The `declarations` and `providers` of any _other_ NgModule that imports the NgModule.
+`NgModule`은 주입된 종속성에 대한 `providers`를 지정할 수 있습니다. 이러한 공급자는 다음에 사용할 수 있습니다:
+* NgModule을 가져오는 모든 독립 구성 요소, 지시자 또는 파이프
+* NgModule을 가져오는 모든 _다른_ NgModule의 `declarations` 및 `providers`
 
 ```typescript
 @NgModule({
   imports: [PopupTrigger, SelectionIndicator],
   declarations: [CustomMenu, CustomMenuItem],
 
-  // Provide the OverlayManager service
+  // OverlayManager 서비스를 제공합니다
   providers: [OverlayManager],
   /* ... */
 })
@@ -132,17 +132,17 @@ export class CustomMenuModule { }
 export class UserProfileModule { }
 ```
 
-In the example above:
-* The `CustomMenuModule` provides `OverlayManager`.
-* The `CustomMenu` and `CustomMenuItem` components can inject `OverlayManager` because they're declared in `CustomMenuModule`.
-* `UserProfile` can inject `OverlayManager` because its NgModule imports `CustomMenuModule`.
-* `UserDataClient` can inject `OverlayManager` because its NgModule imports `CustomMenuModule`.
+위의 예에서:
+* `CustomMenuModule`은 `OverlayManager`를 제공합니다.
+* `CustomMenu` 및 `CustomMenuItem` 구성 요소는 `CustomMenuModule`에 선언되었기 때문에 `OverlayManager`를 주입할 수 있습니다.
+* `UserProfile`은 자신의 NgModule이 `CustomMenuModule`을 가져오기 때문에 `OverlayManager`를 주입할 수 있습니다.
+* `UserDataClient`는 자신의 NgModule이 `CustomMenuModule`을 가져오기 때문에 `OverlayManager`를 주입할 수 있습니다.
 
-### The `forRoot` and `forChild` pattern
+### `forRoot` 및 `forChild` 패턴
 
-Some NgModules define a static `forRoot` method that accepts some configuration and returns an array of providers. The name "`forRoot`" is a convention that indicates that these providers are intended to be added exclusively to the _root_ of your application during bootstrap.
+일부 NgModule은 구성을 수락하고 공급자 배열을 반환하는 정적 `forRoot` 메서드를 정의합니다. "`forRoot`"라는 이름은 이러한 공급자가 부트스트랩 중에 애플리케이션의 _루트_에만 추가되도록 의도되었음을 나타내는 관례입니다.
 
-Any providers included in this way are eagerly loaded, increasing the JavaScript bundle size of your initial page load.
+이 방식으로 포함된 모든 공급자는 즉시 로드되며, 초기 페이지 로드의 JavaScript 번들 크기를 증가시킵니다.
 
 ```typescript
 boorstrapApplication(MyApplicationRoot, {
@@ -152,7 +152,7 @@ boorstrapApplication(MyApplicationRoot, {
 });
 ```
 
-Similarly, some NgModules may define a static `forChild` that indicates the providers are intended to be added to components within your application hierarchy.
+유사하게, 일부 NgModule은 구성 요소 내에서 추가하도록 의도된 공급자를 나타내는 정적 `forChild`를 정의할 수 있습니다.
 
 ```typescript
 @Component({
@@ -164,13 +164,13 @@ Similarly, some NgModules may define a static `forChild` that indicates the prov
 export class UserProfile { /* ... */ }
 ```
 
-## Bootstrapping an application
+## 애플리케이션 부트스트랩
 
-IMPORTANT: The Angular team recommends using [bootstrapApplication](api/platform-browser/bootstrapApplication) instead of `bootstrapModule` for all new code. Use this guide to understand existing applications bootstrapped with `@NgModule`.
+중요: Angular 팀은 모든 새로운 코드를 위해 `bootstrapModule` 대신 [bootstrapApplication](api/platform-browser/bootstrapApplication)을 사용하는 것을 권장합니다. 이 가이드는 `@NgModule`로 부트스트랩된 기존 애플리케이션을 이해하는 데 도움이 됩니다.
 
-The `@NgModule` decorator accepts an optional `bootstrap` array that may contain one or more components.
+`@NgModule` 데코레이터는 하나 이상의 구성 요소를 포함할 수 있는 선택적 `bootstrap` 배열을 수락합니다.
 
-You can use the [`bootstrapModule`](https://angular.dev/api/core/PlatformRef#bootstrapModule) method from either [`platformBrowser`](api/platform-browser/platformBrowser) or [`platformServer`](api/platform-server/platformServer) to start an Angular application. When run, this function locates any elements on the page with a CSS selector that matches the listed componet(s) and renders those components on the page.
+Angular 애플리케이션을 시작하려면 [`platformBrowser`](api/platform-browser/platformBrowser) 또는 [`platformServer`](api/platform-server/platformServer)에서 [`bootstrapModule`](https://angular.dev/api/core/PlatformRef#bootstrapModule) 메서드를 사용할 수 있습니다. 이 함수가 실행되면 페이지에서 나열된 구성 요소의 CSS 선택자와 일치하는 요소를 찾고 해당 구성 요소를 페이지에 렌더링합니다.
 
 ```typescript
 import {platformBrowser} from '@angular/platform-browser';
@@ -183,6 +183,6 @@ export class MyApplicationModule { }
 platformBrowser().bootstrapModule(MyApplicationModule);
 ```
 
-Components listed in `bootstrap` are automatically included in the NgModule's declarations.
+`bootstrap`에 나열된 구성 요소는 NgModule의 선언에 자동으로 포함됩니다.
 
-When you bootstrap an application from an NgModule, the collected `providers` of this module and all of the `providers` of its `imports` are eagerly loaded and available to inject for the entire application.
+NgModule에서 애플리케이션을 부트스트랩할 때 이 모듈의 수집된 `providers`와 모든 `imports`의 `providers`가 즉시 로드되고 애플리케이션 전체에 주입할 수 있게 됩니다.

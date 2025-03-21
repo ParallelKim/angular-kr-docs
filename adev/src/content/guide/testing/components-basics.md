@@ -1,38 +1,38 @@
-# Basics of testing components
+# 컴포넌트 테스트의 기초
 
-A component, unlike all other parts of an Angular application, combines an HTML template and a TypeScript class.
-The component truly is the template and the class *working together*.
-To adequately test a component, you should test that they work together as intended.
+컴포넌트는 Angular 애플리케이션의 다른 모든 부분과 달리 HTML 템플릿과 TypeScript 클래스를 결합합니다.  
+컴포넌트는 실제로 템플릿과 클래스가 *협력하여* 작동하는 것입니다.  
+컴포넌트를 적절하게 테스트하려면 이들이 의도한 대로 함께 작동하는지를 테스트해야 합니다.
 
-Such tests require creating the component's host element in the browser DOM, as Angular does, and investigating the component class's interaction with the DOM as described by its template.
+이러한 테스트는 Angular가 수행하는 것처럼 브라우저 DOM에서 컴포넌트의 호스트 요소를 생성하고, 템플릿에 의해 설명된 DOM과의 컴포넌트 클래스의 상호작용을 조사해야 합니다.
 
-The Angular `TestBed` facilitates this kind of testing as you'll see in the following sections.
-But in many cases, *testing the component class alone*, without DOM involvement, can validate much of the component's behavior in a straightforward, more obvious way.
+Angular의 `TestBed`는 다음 섹션에서 보게 될 이러한 종류의 테스트를 용이하게 합니다.  
+그러나 많은 경우 *DOM 참여 없이 컴포넌트 클래스를 단독으로 테스트하는 것*이 컴포넌트의 행동을 보다 직관적이고 명확하게 검증할 수 있습니다.
 
-## Component DOM testing
+## 컴포넌트 DOM 테스트
 
-A component is more than just its class.
-A component interacts with the DOM and with other components.
-Classes alone cannot tell you if the component is going to render properly, respond to user input and gestures, or integrate with its parent and child components.
+컴포넌트는 단순히 클래스만이 아닙니다.  
+컴포넌트는 DOM 및 다른 컴포넌트와 상호작용합니다.  
+클래스만으로는 컴포넌트가 제대로 렌더링될지, 사용자 입력 및 제스처에 반응할지, 부모 및 자식 컴포넌트와 통합될지를 알 수 없습니다.
 
-* Is `Lightswitch.clicked()` bound to anything such that the user can invoke it?
-* Is the `Lightswitch.message` displayed?
-* Can the user actually select the hero displayed by `DashboardHeroComponent`?
-* Is the hero name displayed as expected \(such as uppercase\)?
-* Is the welcome message displayed by the template of `WelcomeComponent`?
+* `Lightswitch.clicked()`가 사용자가 호출할 수 있도록 바인딩되어 있습니까?  
+* `Lightswitch.message`가 표시됩니까?  
+* 사용자가 실제로 `DashboardHeroComponent`에서 표시되는 영웅을 선택할 수 있습니까?  
+* 영웅 이름이 예상대로 표시됩니까 (예: 대문자)?  
+* `WelcomeComponent`의 템플릿에서 환영 메시지가 표시됩니까?  
 
-These might not be troubling questions for the preceding simple components illustrated.
-But many components have complex interactions with the DOM elements described in their templates, causing HTML to appear and disappear as the component state changes.
+이 질문들은 이전의 간단한 컴포넌트들에는 큰 문제가 아닐 수 있습니다.  
+그러나 많은 컴포넌트는 상태가 변경됨에 따라 HTML이 나타나고 사라지는 복잡한 DOM 요소와 상호작용합니다.
 
-To answer these kinds of questions, you have to create the DOM elements associated with the components, you must examine the DOM to confirm that component state displays properly at the appropriate times, and you must simulate user interaction with the screen to determine whether those interactions cause the component to behave as expected.
+이러한 질문에 답하기 위해서는 컴포넌트와 연관된 DOM 요소를 생성해야 하고, 컴포넌트 상태가 적절한 시기에 올바르게 표시되는지 확인하기 위해 DOM을 검사해야 하며, 화면과 사용자 상호작용을 시뮬레이션하여 이러한 상호작용이 컴포넌트를 예상한 대로 동작하게 하는지를 확인해야 합니다.
 
-To write these kinds of test, you'll use additional features of the `TestBed` as well as other testing helpers.
+이러한 종류의 테스트를 작성하려면 `TestBed`의 추가 기능과 기타 테스트 도우미를 사용해야 합니다.
 
-### CLI-generated tests
+### CLI로 생성된 테스트
 
-The CLI creates an initial test file for you by default when you ask it to generate a new component.
+CLI는 새로운 컴포넌트를 생성하라고 요청할 때 기본적으로 초기 테스트 파일을 생성합니다.
 
-For example, the following CLI command generates a `BannerComponent` in the `app/banner` folder \(with inline template and styles\):
+예를 들어, 다음 CLI 명령은 `app/banner` 폴더에 `BannerComponent`를 생성합니다(인라인 템플릿 및 스타일 포함):
 
 <docs-code language="shell">
 
@@ -40,142 +40,142 @@ ng generate component banner --inline-template --inline-style --module app
 
 </docs-code>
 
-It also generates an initial test file for the component, `banner-external.component.spec.ts`, that looks like this:
+또한 해당 컴포넌트에 대한 초기 테스트 파일인 `banner-external.component.spec.ts`도 생성되며, 다음과 같습니다:
 
 <docs-code header="app/banner/banner-external.component.spec.ts (initial)" path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v1"/>
 
-HELPFUL: Because `compileComponents` is asynchronous, it uses the [`waitForAsync`](api/core/testing/waitForAsync) utility function imported from `@angular/core/testing`.
+도움말: `compileComponents`는 비동기이므로 `@angular/core/testing`에서 가져온 [`waitForAsync`](api/core/testing/waitForAsync) 유틸리티 함수를 사용합니다.
 
-Refer to the [waitForAsync](guide/testing/components-scenarios#waitForAsync) section for more details.
+자세한 내용은 [waitForAsync](guide/testing/components-scenarios#waitForAsync) 섹션을 참조하십시오.
 
-### Reduce the setup
+### 설정 줄이기
 
-Only the last three lines of this file actually test the component and all they do is assert that Angular can create the component.
+이 파일의 마지막 세 줄만 실제로 컴포넌트를 테스트하며, Angular가 컴포넌트를 생성할 수 있음을 단언하는 것만 합니다.
 
-The rest of the file is boilerplate setup code anticipating more advanced tests that *might* become necessary if the component evolves into something substantial.
+파일의 나머지 부분은 컴포넌트가 본질적으로 발전하게 될 경우 더 고급 테스트를 예상하는 보일러플레이트 설정 코드입니다.
 
-You'll learn about these advanced test features in the following sections.
-For now, you can radically reduce this test file to a more manageable size:
+이러한 고급 테스트 기능에 대해서는 다음 섹션에서 배울 수 있습니다.  
+현재는 이 테스트 파일을 더 관리하기 쉬운 크기로 극적으로 줄일 수 있습니다:
 
 <docs-code header="app/banner/banner-initial.component.spec.ts (minimal)" path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v2"/>
 
-In this example, the metadata object passed to `TestBed.configureTestingModule` simply declares `BannerComponent`, the component to test.
+이 예제에서 `TestBed.configureTestingModule`에 전달된 메타데이터 객체는 단순히 테스트할 컴포넌트인 `BannerComponent`를 선언합니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="configureTestingModule"/>
 
-HELPFUL: There's no need to declare or import anything else.
-The default test module is pre-configured with something like the `BrowserModule` from `@angular/platform-browser`.
+도움말: 다른 항목을 선언하거나 가져올 필요가 없습니다.  
+기본 테스트 모듈은 `@angular/platform-browser`의 `BrowserModule`과 유사하게 사전 구성되어 있습니다.
 
-Later you'll call `TestBed.configureTestingModule()` with imports, providers, and more declarations to suit your testing needs.
-Optional `override` methods can further fine-tune aspects of the configuration.
+이후에는 테스트 요구에 맞게 가져오고 제공자 및 더 많은 선언을 할 수 있도록 `TestBed.configureTestingModule()`을 호출할 것입니다.  
+선택적 `override` 메서드는 구성의 여러 측면을 추가로 세부 조정할 수 있습니다.
 
 ### `createComponent()`
 
-After configuring `TestBed`, you call its `createComponent()` method.
+`TestBed`를 구성한 후, `createComponent()` 메서드를 호출합니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="createComponent"/>
 
-`TestBed.createComponent()` creates an instance of the `BannerComponent`, adds a corresponding element to the test-runner DOM, and returns a [`ComponentFixture`](#componentfixture).
+`TestBed.createComponent()`는 `BannerComponent`의 인스턴스를 생성하고, 테스트 실행기 DOM에 해당 요소를 추가하며, [`ComponentFixture`](#componentfixture)를 반환합니다.
 
-IMPORTANT: Do not re-configure `TestBed` after calling `createComponent`.
+중요: `createComponent`를 호출한 후에는 `TestBed`를 재구성하지 마십시오.
 
-The `createComponent` method freezes the current `TestBed` definition, closing it to further configuration.
+`createComponent` 메서드는 현재 `TestBed` 정의를 동결하여 추가 구성을 종료합니다.
 
-You cannot call any more `TestBed` configuration methods, not `configureTestingModule()`, nor `get()`, nor any of the `override...` methods.
-If you try, `TestBed` throws an error.
+이후 더 이상 `TestBed` 구성 메서드를 호출할 수 없으며 `configureTestingModule()`, `get()` 또는 `override...` 메서드도 호출할 수 없습니다.  
+만약 호출하면 `TestBed`가 오류를 발생시킵니다.
 
 ### `ComponentFixture`
 
-The [ComponentFixture](api/core/testing/ComponentFixture) is a test harness for interacting with the created component and its corresponding element.
+[ComponentFixture](api/core/testing/ComponentFixture)는 생성된 컴포넌트와 해당 요소와 상호작용하기 위한 테스트 하네스입니다.
 
-Access the component instance through the fixture and confirm it exists with a Jasmine expectation:
+픽스처를 통해 컴포넌트 인스턴스에 접근하고 존재하는지 Jasmine 기대값으로 확인합니다:
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="componentInstance"/>
 
 ### `beforeEach()`
 
-You will add more tests as this component evolves.
-Rather than duplicate the `TestBed` configuration for each test, you refactor to pull the setup into a Jasmine `beforeEach()` and some supporting variables:
+이 컴포넌트가 발전함에 따라 더 많은 테스트를 추가할 것입니다.  
+각 테스트에 대해 `TestBed` 구성을 중복하는 대신, Jasmine `beforeEach()`와 몇 가지 지원 변수를 통해 설정을 리팩토링합니다:
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v3"/>
 
-Now add a test that gets the component's element from `fixture.nativeElement` and looks for the expected text.
+이제 `fixture.nativeElement`에서 컴포넌트의 요소를 가져와서 예상되는 텍스트를 찾는 테스트를 추가합니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v4-test-2"/>
 
 ### `nativeElement`
 
-The value of `ComponentFixture.nativeElement` has the `any` type.
-Later you'll encounter the `DebugElement.nativeElement` and it too has the `any` type.
+`ComponentFixture.nativeElement`의 값은 `any` 타입입니다.  
+나중에 `DebugElement.nativeElement`를 접하게 될 것이며, 이것도 `any` 타입입니다.
 
-Angular can't know at compile time what kind of HTML element the `nativeElement` is or if it even is an HTML element.
-The application might be running on a *non-browser platform*, such as the server or a [Web Worker](https://developer.mozilla.org/docs/Web/API/Web_Workers_API), where the element might have a diminished API or not exist at all.
+Angular는 컴파일 타임에 `nativeElement`가 어떤 종류의 HTML 요소인지 또는 HTML 요소인지조차 알 수 없습니다.  
+애플리케이션은 서버나 [Web Worker](https://developer.mozilla.org/docs/Web/API/Web_Workers_API)와 같은 *비브라우저 플랫폼*에서 실행되고 있을 수 있으며, 이곳에서는 요소의 API가 제한되거나 아예 존재하지 않을 수 있습니다.
 
-The tests in this guide are designed to run in a browser so a `nativeElement` value will always be an `HTMLElement` or one of its derived classes.
+이 가이드의 테스트는 브라우저에서 실행되도록 설계되었으므로 `nativeElement` 값은 항상 `HTMLElement` 또는 그 파생 클래스 중 하나입니다.
 
-Knowing that it is an `HTMLElement` of some sort, use the standard HTML `querySelector` to dive deeper into the element tree.
+어떤 종류의 `HTMLElement`인지 알기 때문에, 표준 HTML `querySelector`를 사용하여 요소 트리를 더 깊이 파고들 수 있습니다.
 
-Here's another test that calls `HTMLElement.querySelector` to get the paragraph element and look for the banner text:
+여기에는 `HTMLElement.querySelector`를 호출하여 단락 요소를 가져오고 배너 텍스트를 찾는 또 다른 테스트가 있습니다:
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v4-test-3"/>
 
 ### `DebugElement`
 
-The Angular *fixture* provides the component's element directly through the `fixture.nativeElement`.
+Angular *fixture*는 `fixture.nativeElement`를 통해 컴포넌트의 요소를 직접 제공합니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="nativeElement"/>
 
-This is actually a convenience method, implemented as `fixture.debugElement.nativeElement`.
+이는 실제로 `fixture.debugElement.nativeElement`로 구현된 편의 메서드입니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="debugElement-nativeElement"/>
 
-There's a good reason for this circuitous path to the element.
+이러한 복잡한 경로로 요소에 접근하는 데는 좋은 이유가 있습니다.
 
-The properties of the `nativeElement` depend upon the runtime environment.
-You could be running these tests on a *non-browser* platform that doesn't have a DOM or whose DOM-emulation doesn't support the full `HTMLElement` API.
+`nativeElement`의 속성은 런타임 환경에 따라 달라집니다.  
+이 테스트를 *비브라우저* 플랫폼에서 실행하고 있다면 DOM이 없거나 DOM 에뮬레이션이 전체 `HTMLElement` API를 지원하지 않을 수 있습니다.
 
-Angular relies on the `DebugElement` abstraction to work safely across *all supported platforms*.
-Instead of creating an HTML element tree, Angular creates a `DebugElement` tree that wraps the *native elements* for the runtime platform.
-The `nativeElement` property unwraps the `DebugElement` and returns the platform-specific element object.
+Angular는 모든 지원 플랫폼에서 안전하게 작동하기 위해 `DebugElement` 추상화를 신뢰합니다.  
+HTML 요소 트리를 만드는 대신, Angular는 런타임 플랫폼에 대한 *네이티브 요소*를 래핑하는 `DebugElement` 트리를 생성합니다.  
+`nativeElement` 속성은 `DebugElement`의 래핑을 풀고 플랫폼별 요소 객체를 반환합니다.
 
-Because the sample tests for this guide are designed to run only in a browser, a `nativeElement` in these tests is always an `HTMLElement` whose familiar methods and properties you can explore within a test.
+이 가이드의 샘플 테스트는 브라우저에서만 실행되도록 설계되었기 때문에, 이 테스트의 `nativeElement`는 항상 테스트 내에서 탐색할 수 있는 친숙한 메서드와 속성을 가진 `HTMLElement`입니다.
 
-Here's the previous test, re-implemented with `fixture.debugElement.nativeElement`:
+다음은 `fixture.debugElement.nativeElement`로 다시 구현된 이전 테스트입니다:
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v4-test-4"/>
 
-The `DebugElement` has other methods and properties that are useful in tests, as you'll see elsewhere in this guide.
+`DebugElement`에는 테스트에서 유용한 다른 메서드와 속성도 있으며, 이 가이드의 다른 곳에서 살펴볼 수 있습니다.
 
-You import the `DebugElement` symbol from the Angular core library.
+`DebugElement` 기호를 Angular 핵심 라이브러리에서 가져옵니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="import-debug-element"/>
 
 ### `By.css()`
 
-Although the tests in this guide all run in the browser, some applications might run on a different platform at least some of the time.
+이 가이드의 모든 테스트는 브라우저에서 실행되지만, 일부 애플리케이션은 적어도 일부 시간에 다른 플랫폼에서 실행될 수 있습니다.
 
-For example, the component might render first on the server as part of a strategy to make the application launch faster on poorly connected devices.
-The server-side renderer might not support the full HTML element API.
-If it doesn't support `querySelector`, the previous test could fail.
+예를 들어, 이 컴포넌트는 애플리케이션을 느린 연결 장치에서 더 빠르게 시작할 수 있도록 서버에서 먼저 렌더링될 수 있습니다.  
+서버 측 렌더러는 전체 HTML 요소 API를 지원하지 않을 수 있습니다.  
+만약 `querySelector`를 지원하지 않는다면 이전 테스트는 실패할 수 있습니다.
 
-The `DebugElement` offers query methods that work for all supported platforms.
-These query methods take a *predicate* function that returns `true` when a node in the `DebugElement` tree matches the selection criteria.
+`DebugElement`는 모든 지원 플랫폼에서 작동하는 쿼리 메서드를 제공합니다.  
+이러한 쿼리 메서드는 `DebugElement` 트리에서 노드가 선택 기준과 일치할 때 `true`를 반환하는 *프레디케이트* 함수를 받습니다.
 
-You create a *predicate* with the help of a `By` class imported from a library for the runtime platform.
-Here's the `By` import for the browser platform:
+런타임 플랫폼을 위한 라이브러리에서 가져온 `By` 클래스를 도움으로 *프레디케이트*를 생성합니다.  
+다음은 브라우저 플랫폼에 대한 `By` 가져오기입니다:
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="import-by"/>
 
-The following example re-implements the previous test with `DebugElement.query()` and the browser's `By.css` method.
+다음 예제는 이전 테스트를 `DebugElement.query()`와 브라우저의 `By.css` 메서드로 다시 구현합니다.
 
 <docs-code path="adev/src/content/examples/testing/src/app/banner/banner-initial.component.spec.ts" visibleRegion="v4-test-5"/>
 
-Some noteworthy observations:
+주목할 만한 점은 다음과 같습니다:
 
-* The `By.css()` static method selects `DebugElement` nodes with a [standard CSS selector](https://developer.mozilla.org/docs/Learn/CSS/Building_blocks/Selectors 'CSS selectors').
-* The query returns a `DebugElement` for the paragraph.
-* You must unwrap that result to get the paragraph element.
+* `By.css()` 정적 메서드는 [표준 CSS 선택자](https://developer.mozilla.org/docs/Learn/CSS/Building_blocks/Selectors 'CSS 선택자')로 `DebugElement` 노드를 선택합니다.  
+* 쿼리는 단락에 대한 `DebugElement`를 반환합니다.  
+* 결과를 풀어내야 단락 요소를 얻을 수 있습니다.
 
-When you're filtering by CSS selector and only testing properties of a browser's *native element*, the `By.css` approach might be overkill.
+CSS 선택자로 필터링하고 브라우저의 *네이티브 요소*의 속성만 테스트하는 경우 `By.css` 접근 방식이 과할 수 있습니다.
 
-It's often more straightforward and clear to filter with a standard `HTMLElement` method such as `querySelector()` or `querySelectorAll()`.
+종종 `querySelector()` 또는 `querySelectorAll()`과 같은 표준 `HTMLElement` 메서드로 필터링하는 것이 명확하고 간단할 수 있습니다.

@@ -1,3 +1,1 @@
-```typescript
-this is a code block
-```
+이것은 코드 블록입니다

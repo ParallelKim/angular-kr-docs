@@ -1,12 +1,12 @@
-# Attribute directives
+# 속성 지시자
 
-Change the appearance or behavior of DOM elements and Angular components with attribute directives.
+속성 지시자를 사용하여 DOM 요소와 Angular 구성 요소의 모양이나 동작을 변경합니다.
 
-## Building an attribute directive
+## 속성 지시자 만들기
 
-This section walks you through creating a highlight directive that sets the background color of the host element to yellow.
+이 섹션에서는 호스트 요소의 배경 색상을 노란색으로 설정하는 하이라이트 지시자를 생성하는 과정을 안내합니다.
 
-1. To create a directive, use the CLI command [`ng generate directive`](tools/cli/schematics).
+1. 지시자를 만들려면 CLI 명령어 [`ng generate directive`](tools/cli/schematics)를 사용합니다.
 
     <docs-code language="shell">
 
@@ -14,141 +14,141 @@ This section walks you through creating a highlight directive that sets the back
 
     </docs-code>
 
-    The CLI creates `src/app/highlight.directive.ts`, a corresponding test file `src/app/highlight.directive.spec.ts`.
+    CLI는 `src/app/highlight.directive.ts`와 해당하는 테스트 파일 `src/app/highlight.directive.spec.ts`를 생성합니다.
 
     <docs-code header="src/app/highlight.directive.ts" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.0.ts"/>
 
-    The `@Directive()` decorator's configuration property specifies the directive's CSS attribute selector, `[appHighlight]`.
+    `@Directive()` 데코레이터의 구성 속성은 지시자의 CSS 속성 선택기인 `[appHighlight]`를 지정합니다.
 
-1. Import `ElementRef` from `@angular/core`.
-    `ElementRef` grants direct access to the host DOM element through its `nativeElement` property.
+1. `@angular/core`에서 `ElementRef`를 가져옵니다.
+    `ElementRef`는 호스트 DOM 요소에 대한 직접 액세스를 `nativeElement` 속성을 통해 제공합니다.
 
-1. Add `ElementRef` in the directive's `constructor()` to [inject](guide/di) a reference to the host DOM element, the element to which you apply `appHighlight`.
+1. 지시자의 `constructor()`에서 `ElementRef`를 추가하여 `appHighlight`를 적용하는 호스트 DOM 요소에 대한 참조를 [주입](guide/di)합니다.
 
-1. Add logic to the `HighlightDirective` class that sets the background to yellow.
+1. 배경을 노란색으로 설정하는 로직을 `HighlightDirective` 클래스에 추가합니다.
 
     <docs-code header="src/app/highlight.directive.ts" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.1.ts"/>
 
-HELPFUL: Directives *do not* support namespaces.
+도움말: 지시자는 *이름 공간*을 지원하지 않습니다.
 
 <docs-code header="src/app/app.component.avoid.html (unsupported)" path="adev/src/content/examples/attribute-directives/src/app/app.component.avoid.html" visibleRegion="unsupported"/>
 
-## Applying an attribute directive
+## 속성 지시자 적용하기
 
-1. To use the `HighlightDirective`, add a `<p>` element to the HTML template with the directive as an attribute.
+1. `HighlightDirective`를 사용하려면 HTML 템플릿에 지시자를 속성으로 가진 `<p>` 요소를 추가합니다.
 
     <docs-code header="src/app/app.component.html" path="adev/src/content/examples/attribute-directives/src/app/app.component.1.html" visibleRegion="applied"/>
 
-Angular creates an instance of the `HighlightDirective` class and injects a reference to the `<p>` element into the directive's constructor, which sets the `<p>` element's background style to yellow.
+Angular는 `HighlightDirective` 클래스의 인스턴스를 생성하고 지시자의 생성자에 `<p>` 요소에 대한 참조를 주입하여 `<p>` 요소의 배경 스타일을 노란색으로 설정합니다.
 
-## Handling user events
+## 사용자 이벤트 처리
 
-This section shows you how to detect when a user mouses into or out of the element and to respond by setting or clearing the highlight color.
+이 섹션에서는 사용자가 요소로 마우스를 들어가거나 나갈 때 감지하고 하이라이트 색상을 설정하거나 지우는 방법을 보여줍니다.
 
-1. Import `HostListener` from '@angular/core'.
+1. `@angular/core`에서 `HostListener`를 가져옵니다.
 
     <docs-code header="src/app/highlight.directive.ts (imports)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.2.ts" visibleRegion="imports"/>
 
-1. Add two event handlers that respond when the mouse enters or leaves, each with the `@HostListener()` decorator.
+1. 마우스가 들어오거나 나갈 때 반응하는 두 개의 이벤트 핸들러를 추가하고 각각에 `@HostListener()` 데코레이터를 추가합니다.
 
     <docs-code header="src/app/highlight.directive.ts (mouse-methods)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.2.ts" visibleRegion="mouse-methods"/>
 
-Subscribe to events of the DOM element that hosts an attribute directive, the `<p>` in this case, with the `@HostListener()` decorator.
+속성 지시자를 호스팅하는 DOM 요소의 이벤트에 구독합니다. 이 경우 `<p>`에서 `@HostListener()` 데코레이터를 사용합니다.
 
-HELPFUL: The handlers delegate to a helper method, `highlight()`, that sets the color on the host DOM element, `el`.
+도움말: 핸들러는 호스트 DOM 요소 `el`에서 색상을 설정하는 도우미 메서드인 `highlight()`에 위임합니다.
 
-The complete directive is as follows:
+전체 지시자는 다음과 같습니다.
 
 <docs-code header="src/app/highlight.directive.ts" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.2.ts"/>
 
-The background color appears when the pointer hovers over the paragraph element and disappears as the pointer moves out.
+배경 색상은 포인터가 단락 요소 위에 있을 때 나타나고 포인터가 나가면 사라집니다.
 
 <img alt="Second Highlight" src="assets/images/guide/attribute-directives/highlight-directive-anim.gif">
 
-## Passing values into an attribute directive
+## 속성 지시자에 값 전달하기
 
-This section walks you through setting the highlight color while applying the `HighlightDirective`.
+이 섹션에서는 `HighlightDirective`를 적용하면서 하이라이트 색상을 설정하는 과정을 안내합니다.
 
-1. In `highlight.directive.ts`, import `Input` from `@angular/core`.
+1. `highlight.directive.ts`에서 `@angular/core`에서 `Input`을 가져옵니다.
 
     <docs-code header="src/app/highlight.directive.ts (imports)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.3.ts" visibleRegion="imports"/>
 
-1. Add an `appHighlight` `@Input()` property.
+1. `appHighlight` `@Input()` 속성을 추가합니다.
 
     <docs-code header="src/app/highlight.directive.ts" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.3.ts" visibleRegion="input"/>
 
-    The `@Input()` decorator adds metadata to the class that makes the directive's `appHighlight` property available for binding.
+    `@Input()` 데코레이터는 클래스에 메타데이터를 추가하여 지시자의 `appHighlight` 속성을 바인딩 가능하게 만듭니다.
 
-1. In `app.component.ts`, add a `color` property to the `AppComponent`.
+1. `app.component.ts`에서 `AppComponent`에 `color` 속성을 추가합니다.
 
     <docs-code header="src/app/app.component.ts (class)" path="adev/src/content/examples/attribute-directives/src/app/app.component.1.ts" visibleRegion="class"/>
 
-1. To simultaneously apply the directive and the color, use property binding with the `appHighlight` directive selector, setting it equal to `color`.
+1. 지시자와 색상을 동시에 적용하려면 `appHighlight` 지시자 선택기를 사용하여 속성 바인딩을 수행하고 `color`와 동일하게 설정합니다.
 
     <docs-code header="src/app/app.component.html (color)" path="adev/src/content/examples/attribute-directives/src/app/app.component.html" visibleRegion="color"/>
 
-    The `[appHighlight]` attribute binding performs two tasks:
+    `[appHighlight]` 속성 바인딩은 두 가지 작업을 수행합니다:
 
-    * Applies the highlighting directive to the `<p>` element
-    * Sets the directive's highlight color with a property binding
+    * `<p>` 요소에 하이라이팅 지시자를 적용합니다.
+    * 속성 바인딩으로 지시자의 하이라이트 색상을 설정합니다.
 
-### Setting the value with user input
+### 사용자 입력으로 값 설정
 
-This section guides you through adding radio buttons to bind your color choice to the `appHighlight` directive.
+이 섹션에서는 색상 선택을 `appHighlight` 지시자에 바인딩하기 위해 라디오 버튼을 추가하는 방법을 안내합니다.
 
-1. Add markup to `app.component.html` for choosing a color as follows:
+1. 색상을 선택하기 위한 마크업을 `app.component.html`에 추가합니다:
 
     <docs-code header="src/app/app.component.html (v2)" path="adev/src/content/examples/attribute-directives/src/app/app.component.html" visibleRegion="v2"/>
 
-1. Revise the `AppComponent.color` so that it has no initial value.
+1. `AppComponent.color`를 수정하여 초기값이 없도록 합니다.
 
     <docs-code header="src/app/app.component.ts (class)" path="adev/src/content/examples/attribute-directives/src/app/app.component.ts" visibleRegion="class"/>
 
-1. In `highlight.directive.ts`, revise `onMouseEnter` method so that it first tries to highlight with `appHighlight` and falls back to `red` if `appHighlight` is `undefined`.
+1. `highlight.directive.ts`에서 `onMouseEnter` 메서드를 수정하여 먼저 `appHighlight`로 하이라이트를 시도하고 `appHighlight`가 `undefined`인 경우 `red`로 대체합니다.
 
     <docs-code header="src/app/highlight.directive.ts (mouse-enter)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.3.ts" visibleRegion="mouse-enter"/>
 
-1. Serve your application to verify that the user can choose the color with the radio buttons.
+1. 애플리케이션을 제공하여 사용자가 라디오 버튼으로 색상을 선택할 수 있는지 확인합니다.
 
     <img alt="Animated gif of the refactored highlight directive changing color according to the radio button the user selects" src="assets/images/guide/attribute-directives/highlight-directive-v2-anim.gif">
 
-## Binding to a second property
+## 두 번째 속성에 바인딩하기
 
-This section guides you through configuring your application so the developer can set the default color.
+이 섹션에서는 개발자가 기본 색상을 설정할 수 있도록 애플리케이션을 구성하는 방법을 안내합니다.
 
-1. Add a second `Input()` property to `HighlightDirective` called `defaultColor`.
+1. `HighlightDirective`에 두 번째 `Input()` 속성인 `defaultColor`를 추가합니다.
 
     <docs-code header="src/app/highlight.directive.ts (defaultColor)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.ts" visibleRegion="defaultColor"/>
 
-1. Revise the directive's `onMouseEnter` so that it first tries to highlight with the `appHighlight`, then with the `defaultColor`, and falls back to `red` if both properties are `undefined`.
+1. 지시자의 `onMouseEnter`를 수정하여 먼저 `appHighlight`로 하이라이트하고, 다음으로 `defaultColor`로 하이라이트하며, 두 속성이 모두 `undefined`인 경우 `red`로 대체합니다.
 
     <docs-code header="src/app/highlight.directive.ts (mouse-enter)" path="adev/src/content/examples/attribute-directives/src/app/highlight.directive.ts" visibleRegion="mouse-enter"/>
 
-1. To bind to the `AppComponent.color` and fall back to "violet" as the default color, add the following HTML.
-    In this case,  the `defaultColor` binding doesn't use square brackets, `[]`, because it is static.
+1. `AppComponent.color`에 바인딩하고 기본 색상을 "violet"으로 설정하려면 다음 HTML을 추가합니다.
+    이 경우 `defaultColor` 바인딩은 정적이므로 대괄호 `[]`를 사용하지 않습니다.
 
     <docs-code header="src/app/app.component.html (defaultColor)" path="adev/src/content/examples/attribute-directives/src/app/app.component.html" visibleRegion="defaultColor"/>
 
-    As with components, you can add multiple directive property bindings to a host element.
+    구성 요소와 마찬가지로 호스트 요소에 여러 지시자 속성 바인딩을 추가할 수 있습니다.
 
-The default color is red if there is no default color binding.
-When the user chooses a color the selected color becomes the active highlight color.
+기본 색상이 없으면 기본 색상은 빨강입니다.
+사용자가 색상을 선택하면 선택한 색상이 활성 하이라이트 색상이 됩니다.
 
 <img alt="Animated gif of final highlight directive that shows red color with no binding and violet with the default color set. When user selects color, the selection takes precedence." src="assets/images/guide/attribute-directives/highlight-directive-final-anim.gif">
 
-## Deactivating Angular processing with `NgNonBindable`
+## `NgNonBindable`로 Angular 처리 비활성화하기
 
-To prevent expression evaluation in the browser, add `ngNonBindable` to the host element.
-`ngNonBindable` deactivates interpolation, directives, and binding in templates.
+브라우저에서 표현식 평가를 방지하려면 호스트 요소에 `ngNonBindable`을 추가합니다.
+`ngNonBindable`은 템플릿에서 보간, 지시자 및 바인을딩을 비활성화합니다.
 
-In the following example, the expression `{{ 1 + 1 }}` renders just as it does in your code editor, and does not display `2`.
+다음 예제에서 표현식 `{{ 1 + 1 }}`는 코드 편집기와 동일하게 렌더링되며, `2`를 표시하지 않습니다.
 
 <docs-code header="src/app/app.component.html" path="adev/src/content/examples/attribute-directives/src/app/app.component.html" visibleRegion="ngNonBindable"/>
 
-Applying `ngNonBindable` to an element stops binding for that element's child elements.
-However, `ngNonBindable` still lets directives work on the element where you apply `ngNonBindable`.
-In the following example, the `appHighlight` directive is still active but Angular does not evaluate the expression `{{ 1 + 1 }}`.
+요소에 `ngNonBindable`을 적용하면 해당 요소의 자식 요소에 대한 바인딩이 중단됩니다.
+그러나 `ngNonBindable`은 `ngNonBindable`을 적용한 요소에서 지시자가 작동하도록 허용합니다.
+다음 예제에서 `appHighlight` 지시자는 여전히 활성 상태이지만 Angular는 표현식 `{{ 1 + 1 }}`를 평가하지 않습니다.
 
 <docs-code header="src/app/app.component.html" path="adev/src/content/examples/attribute-directives/src/app/app.component.html" visibleRegion="ngNonBindable-with-directive"/>
 
-If you apply `ngNonBindable` to a parent element, Angular disables interpolation and binding of any sort, such as property binding or event binding, for the element's children.
+부모 요소에 `ngNonBindable`을 적용하면 Angular는 해당 요소의 자식에 대한 모든 종류의 보간 및 바인딩, 즉 속성 바인딩이나 이벤트 바인딩을 비활성화합니다.

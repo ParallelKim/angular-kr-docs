@@ -1,14 +1,14 @@
-# Extended Diagnostics
+# 확장 진단
 
-There are many coding patterns that are technically valid to the compiler or runtime, but which may have complex nuances or caveats.
-These patterns may not have the intended effect expected by a developer, which often leads to bugs.
-The Angular compiler includes "extended diagnostics" which identify many of these patterns, in order to warn developers about the potential issues and enforce common best practices within a codebase.
+컴파일러나 런타임에 기술적으로 유효하지만 복잡한 뉘앙스나 주의 사항이 있는 많은 코딩 패턴이 있습니다.  
+이러한 패턴은 개발자가 기대하는 의도된 효과를 내지 못할 수 있으며, 이로 인해 버그가 발생하는 경우가 많습니다.  
+Angular 컴파일러는 이러한 패턴의 많은 부분을 식별하여 개발자에게 잠재적인 문제를 경고하고 코드베이스 내에서 일반적인 모범 사례를 강제하기 위해 "확장 진단"을 포함하고 있습니다.
 
-## Diagnostics
+## 진단
 
-Currently, Angular supports the following extended diagnostics:
+현재 Angular는 다음과 같은 확장 진단을 지원합니다:
 
-| Code     | Name                                                              |
+| 코드     | 이름                                                              |
 | :------- | :---------------------------------------------------------------- |
 | `NG8101` | [`invalidBananaInBox`](extended-diagnostics/NG8101)               |
 | `NG8102` | [`nullishCoalescingNotNullable`](extended-diagnostics/NG8102)     |
@@ -23,68 +23,66 @@ Currently, Angular supports the following extended diagnostics:
 | `NG8113` | [`unusedStandaloneImports`](extended-diagnostics/NG8113)          |
 | `NG8114` | [`unparenthesizedNullishCoalescing`](extended-diagnostics/NG8114) |
 
-## Configuration
+## 구성
 
-Extended diagnostics are warnings by default and do not block compilation.
-Each diagnostic can be configured as either:
+확장 진단은 기본적으로 경고이며 컴파일을 차단하지 않습니다.  
+각 진단은 다음 중 하나로 구성할 수 있습니다:
 
-| Error category | Effect                                                                                                                                                                   |
+| 오류 카테고리 | 효과                                                                                                                                                                    |
 | :------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `warning`      | Default - The compiler emits the diagnostic as a warning but does not block compilation. The compiler will still exist with status code 0, even if warnings are emitted. |
-| `error`        | The compiler emits the diagnostic as an error and fails the compilation. The compiler will exit with a non-zero status code if one or more errors are emitted.           |
-| `suppress`     | The compiler does _not_ emit the diagnostic at all.                                                                                                                      |
+| `warning`      | 기본값 - 컴파일러는 진단을 경고로 출력하지만 컴파일을 차단하지 않습니다. 경고가 발생하더라도 컴파일러는 여전히 상태 코드 0으로 존재합니다.                                   |
+| `error`        | 컴파일러는 진단을 오류로 출력하고 컴파일에 실패합니다. 하나 이상의 오류가 발생하면 컴파일러는 비제로 상태 코드로 종료됩니다.                                    |
+| `suppress`     | 컴파일러는 진단을 전혀 출력하지 않습니다.                                                                                                                              |
 
-Check severity can be configured as an [Angular compiler option](reference/configs/angular-compiler-options):
+점검의 심각도는 [Angular 컴파일러 옵션](reference/configs/angular-compiler-options)으로 구성할 수 있습니다:
 
 <docs-code language="json">
 {
   "angularCompilerOptions": {
     "extendedDiagnostics": {
-      // The categories to use for specific diagnostics.
+      // 특정 진단에 사용할 카테고리입니다.
       "checks": {
-        // Maps check name to its category.
+        // 점검 이름을 해당 카테고리에 매핑합니다.
         "invalidBananaInBox": "suppress"
       },
 
-      // The category to use for any diagnostics not listed in `checks` above.
+      // 위의 `checks`에 나열되지 않은 진단에 사용할 카테고리입니다.
       "defaultCategory": "error"
     }
-
-}
+  }
 }
 </docs-code>
 
-The `checks` field maps the name of individual diagnostics to their associated category.
-See [Diagnostics](#diagnostics) for a complete list of extended diagnostics and the name to use for configuring them.
+`checks` 필드는 개별 진단의 이름을 해당 카테고리에 매핑합니다.  
+자세한 확장 진단 및 구성에 사용할 이름의 전체 목록은 [진단](#진단)을 참조하십시오.
 
-The `defaultCategory` field is used for any diagnostics that are not explicitly listed under `checks`.
-If not set, such diagnostics will be treated as `warning`.
+`defaultCategory` 필드는 `checks` 아래에 명시적으로 나열되지 않은 진단에 사용됩니다.  
+설정되지 않은 경우, 이러한 진단은 `warning`으로 간주됩니다.
 
-Extended diagnostics will emit when [`strictTemplates`](tools/cli/template-typecheck#strict-mode) is enabled.
-This is required to allow the compiler to better understand Angular template types and provide accurate and meaningful diagnostics.
+확장 진단은 [`strictTemplates`](tools/cli/template-typecheck#strict-mode)가 활성화되면 발생합니다.  
+이는 컴파일러가 Angular 템플릿 유형을 더 잘 이해하고 정확하고 의미 있는 진단을 제공하기 위해 필요합니다.
 
-## Semantic Versioning
+## 의미 있는 버전 관리
 
-The Angular team intends to add or enable new extended diagnostics in **minor** versions of Angular (see [semver](https://docs.npmjs.com/about-semantic-versioning)).
-This means that upgrading Angular may show new warnings in your existing codebase.
-This enables the team to deliver features more quickly and to make extended diagnostics more accessible to developers.
+Angular 팀은 Angular의 **마이너** 버전에 새 확장 진단을 추가하거나 활성화할 계획입니다 (자세한 내용은 [semver](https://docs.npmjs.com/about-semantic-versioning) 참조).  
+이는 Angular를 업그레이드하면 기존 코드베이스에 새로운 경고가 표시될 수 있음을 의미합니다.  
+이는 팀이 기능을 더 빠르게 제공하고 확장 진단을 개발자에게 더 쉽게 접근할 수 있도록 만듭니다.
 
-However, setting `"defaultCategory": "error"` will promote such warnings to hard errors.
-This can cause a minor version upgrade to introduce compilation errors, which may be seen as a semver non-compliant breaking change.
-Any new diagnostics can be suppressed or demoted to warnings via the above [configuration](#configuration), so the impact of a new diagnostic should be minimal to
-projects that treat extended diagnostics as errors by default.
-Defaulting to error is a very powerful tool; just be aware of this semver caveat when deciding if `error` is the right default for your project.
+그러나 `"defaultCategory": "error"`로 설정하면 이러한 경고가 심각한 오류로 승격됩니다.  
+이로 인해 마이너 버전 업그레이드가 컴파일 오류를 도입할 수 있으며, 이는 semver 비준수의 브레이킹 변경으로 간주될 수 있습니다.  
+새로운 진단은 위의 [구성](#구성)을 통해 숨기거나 경고로 낮출 수 있으므로 새로운 진단의 영향은 기본적으로 확장 진단을 오류로 처리하는 프로젝트에는 최소한이 될 것입니다.  
+기본값을 오류로 설정하는 것은 매우 강력한 도구입니다. `error`가 귀하의 프로젝트에 적합한 기본값인지 결정할 때 이 semver 경고 사항을 인식하십시오.
 
-## New Diagnostics
+## 새로운 진단
 
-The Angular team is always open to suggestions about new diagnostics that could be added.
-Extended diagnostics should generally:
+Angular 팀은 추가할 수 있는 새로운 진단에 대한 제안을 항상 열어두고 있습니다.  
+확장 진단은 일반적으로 다음을 수행해야 합니다:
 
-- Detect a common, non-obvious developer mistake with Angular templates
-- Clearly articulate why this pattern can lead to bugs or unintended behavior
-- Suggest one or more clear solutions
-- Have a low, preferably zero, false-positive rate
-- Apply to the vast majority of Angular applications (not specific to an unofficial library)
-- Improve program correctness or performance (not style, that responsibility falls to a linter)
+- Angular 템플릿에서 흔히 발생하는 비직관적인 개발자 실수를 감지합니다.
+- 이 패턴이 버그나 원치 않는 동작으로 이어질 수 있는 이유를 명확하게 설명합니다.
+- 하나 이상의 명확한 해결책을 제안합니다.
+- 낮거나 바람직하게는 제로의 오탐률을 가집니다.
+- 대부분의 Angular 애플리케이션에 적용됩니다 (비공식 라이브러리에 특정하지 않음).
+- 프로그램의 정확성이나 성능을 향상시킵니다 (스타일이 아니라, 그 책임은 린터에게 있습니다).
 
-If you have an idea for an extended diagnostic which fits these criteria, consider filing a [feature request](https://github.com/angular/angular/issues/new?template=2-feature-request.yaml).
+이 기준에 맞는 확장 진단에 대한 아이디어가 있다면 [기능 요청](https://github.com/angular/angular/issues/new?template=2-feature-request.yaml)을 제출하는 것을 고려해 보십시오.
