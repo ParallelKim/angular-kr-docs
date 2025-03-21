@@ -51,17 +51,17 @@ export const serverRoutes: ServerRoute[] = [
 ];
 ```
 
-[`provideServerRouting`](api/ssr/provideServerRouting 'API reference') 함수를 사용하여 이 구성을 애플리케이션에 추가할 수 있습니다.
+[`withRoutes`](api/ssr/withRoutes 'API reference') 함수를 사용하여 [`provideServerRendering`](api/ssr/provideServerRendering 'API reference') 구성을 애플리케이션에 추가할 수 있습니다.
+
 
 ```typescript
-import { provideServerRouting } from '@angular/ssr';
+import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { serverRoutes } from './app.routes.server';
 
 // app.config.server.ts
 const serverConfig: ApplicationConfig = {
   providers: [
-    provideServerRendering(),
-    provideServerRouting(serverRoutes),
+    provideServerRendering(withRoutes(serverRoutes)),
     // ... 기타 공급자 ...
   ]
 };
@@ -70,12 +70,15 @@ const serverConfig: ApplicationConfig = {
 [App shell 패턴](ecosystem/service-workers/app-shell)을 사용할 때, 클라이언트 사이드 렌더링 라우트에 사용할 컴포넌트를 지정해야 합니다. 이를 위해 [`withAppShell`](api/ssr/withAppShell 'API reference') 기능을 사용합니다:
 
 ```typescript
-import { provideServerRouting, withAppShell } from '@angular/ssr';
+import { provideServerRendering, withRoutes, withAppShell } from '@angular/ssr';
 import { AppShellComponent } from './app-shell/app-shell.component';
 
 const serverConfig: ApplicationConfig = {
   providers: [
-    provideServerRouting(serverRoutes, withAppShell(AppShellComponent)),
+    provideServerRendering(
+      withRoutes(serverRoutes),
+      withAppShell(AppShellComponent),
+    ),
     // ... 기타 공급자 ...
   ]
 };
