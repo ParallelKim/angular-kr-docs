@@ -1,8 +1,13 @@
-<button (click)="focusFirstHeading()" class="adev-skip">Skip to main content</button>
+<button (click)="focusFirstHeading()" class="adev-skip">메인 콘텐츠로 건너뛰기</button>
 
 @defer (when isBrowser) {
   <adev-progress-bar />
-  <docs-top-level-banner expiry="2024-12-10" id="state-of-js-2024" link="https://survey.devographics.com/en-US/survey/state-of-js/2024?source=angular_homepage" text="Share your experience with Angular in The State of JavaScript 2024 survey"  />
+  <docs-top-level-banner
+    expiry="2024-12-10"
+    id="state-of-js-2024"
+    link="https://survey.devographics.com/en-US/survey/state-of-js/2024?source=angular_homepage"
+    text="The State of JavaScript 2024 설문조사에서 Angular에 대한 경험을 공유해주세요"
+  />
 }
 
 <div class="adev-nav"></div>
