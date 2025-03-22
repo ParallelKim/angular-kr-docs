@@ -73,7 +73,7 @@
 }
 </docs-code>
 
-참고: [템플릿 변수에 대한 더 많은 정보는 문서를 확인하세요](https://angular.dev/guide/templates/reference-variables#).
+참고: [템플릿 변수에 대한 더 많은 정보는 문서를 확인하세요](https://angular-kr-docs.web.app/guide/templates/reference-variables#).
 
 </docs-step>
 
@@ -95,6 +95,7 @@
 </docs-code>
 
 이러한 변경 사항으로 인해 페이지는 댓글 섹션을 렌더링하기 전에 다음 조건 중 하나를 기다립니다:
+
 * 사용자가 댓글 섹션의 플레이스홀더에 마우스를 올림
 * 사용자가 "모든 댓글 보기" 버튼을 클릭함
 
@@ -102,5 +103,5 @@
 </docs-step>
 </docs-workflow>
 
-더 알아보려면 [지연 가능한 뷰](https://angular.dev/guide/defer)에 대한 문서를 확인하세요.
+더 알아보려면 [지연 가능한 뷰](https://angular-kr-docs.web.app/guide/defer)에 대한 문서를 확인하세요.
 Angular의 훌륭한 기능을 더 많이 잠금 해제하려면 계속 배우세요.

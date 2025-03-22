@@ -3,13 +3,13 @@
  * Copyright Google LLC All Rights Reserved.
  *
  * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * found in the LICENSE file at https:/angular-kr-docs.web.app/license
  */
 
 import {DOCUMENT} from '@angular/common';
 import {Injectable, inject} from '@angular/core';
 
-const ANGULAR_DEV = 'https://angular.dev';
+const ANGULAR_DEV = 'https:/angular-kr-docs.web.app';
 
 /**
  * Information about the deployment of this application.

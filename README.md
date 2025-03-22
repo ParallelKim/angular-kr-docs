@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">
-  <a href="https://angular.dev/"><strong>angular.dev</strong></a>
+  <a href="https://angular-kr-docs.web.app/"><strong>angular-kr-docs.web.app</strong></a>
   <br>
 </p>
 
@@ -130,7 +130,7 @@ Angular는 크로스 플랫폼이며, 빠르고 확장 가능하며, 다양한 �
 
 ## 업그레이드
 
-프로젝트 업그레이드를 위한 최적의 방법은 [업그레이드 가이드](https://angular.dev/update-guide/)를 확인하세요.
+프로젝트 업그레이드를 위한 최적의 방법은 [업그레이드 가이드](https://angular-kr-docs.web.app/update-guide/)를 확인하세요.
 
 ## 기여하기
 
@@ -163,18 +163,18 @@ Angular를 개방적이고 포용적인 커뮤니티로 유지할 수 있도록 
 **Angular를 좋아하시나요? 저장소에 별표를 눌러주세요! :star: :arrow_up:**
 
 [contributing]: CONTRIBUTING.md
-[quickstart]: https://angular.dev/tutorials/learn-angular
+[quickstart]: https://angular-kr-docs.web.app/tutorials/learn-angular
 [changelog]: CHANGELOG.md
 [angularmaterial]: https://material.angular.io/
-[cli]: https://angular.dev/tools/cli
-[architecture]: https://angular.dev/essentials
-[componentstemplates]: https://angular.dev/tutorials/learn-angular/1-components-in-angular
-[forms]: https://angular.dev/tutorials/learn-angular/15-forms
-[api]: https://angular.dev/api
-[angularelements]: https://angular.dev/guide/elements
-[ssr]: https://angular.dev/guide/ssr
-[schematics]: https://angular.dev/tools/cli/schematics
-[lazyloading]: https://angular.dev/guide/ngmodules/lazy-loading
+[cli]: https://angular-kr-docs.web.app/tools/cli
+[architecture]: https://angular-kr-docs.web.app/essentials
+[componentstemplates]: https://angular-kr-docs.web.app/tutorials/learn-angular/1-components-in-angular
+[forms]: https://angular-kr-docs.web.app/tutorials/learn-angular/15-forms
+[api]: https://angular-kr-docs.web.app/api
+[angularelements]: https://angular-kr-docs.web.app/guide/elements
+[ssr]: https://angular-kr-docs.web.app/guide/ssr
+[schematics]: https://angular-kr-docs.web.app/tools/cli/schematics
+[lazyloading]: https://angular-kr-docs.web.app/guide/ngmodules/lazy-loading
 [node.js]: https://nodejs.org/
 [npm]: https://www.npmjs.com/get-npm
 [codeofconduct]: CODE_OF_CONDUCT.md
@@ -185,4 +185,4 @@ Angular를 개방적이고 포용적인 커뮤니티로 유지할 수 있도록 
 [stackoverflow]: https://stackoverflow.com/questions/tagged/angular
 [youtube]: https://youtube.com/angular
 [meetup]: https://www.meetup.com/find/?keywords=angular
-[animations]: https://angular.dev/guide/animations
+[animations]: https://angular-kr-docs.web.app/guide/animations

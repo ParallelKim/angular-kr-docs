@@ -60,11 +60,11 @@ describe('jsdoc transforms', () => {
         },
         {
           name: 'see',
-          comment: '{@link https://angular.dev/api/core/ApplicationRef}',
+          comment: '{@link https://angular-kr-docs.web.app/api/core/ApplicationRef}',
         },
         {
           name: 'see',
-          comment: '{@link https://angular.dev}',
+          comment: '{@link https://angular-kr-docs.web.app}',
         },
         {
           name: 'see',
@@ -119,11 +119,11 @@ describe('jsdoc transforms', () => {
 
     expect(entry.additionalLinks[8]).toEqual({
       label: 'ApplicationRef',
-      url: 'https://angular.dev/api/core/ApplicationRef',
+      url: 'https://angular-kr-docs.web.app/api/core/ApplicationRef',
     });
     expect(entry.additionalLinks[9]).toEqual({
-      label: 'angular.dev',
-      url: 'https://angular.dev',
+      label: 'angular-kr-docs.web.app',
+      url: 'https://angular-kr-docs.web.app',
     });
 
     expect(entry.additionalLinks[10]).toEqual({

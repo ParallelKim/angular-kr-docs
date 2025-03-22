@@ -1,4 +1,4 @@
-# [Angular.dev](https://www.angular.dev)
+# [angular-kr-docs.web.app](https://www.angular-kr-docs.web.app)
 
 이 사이트는 Angular로 구축되었습니다.
 
@@ -39,7 +39,7 @@ Angular를 개방적이고 포용적으로 유지하는 데 도움을 주세요.
 
 ## 자주 묻는 질문(FAQs)
 
-### 빌드에 실패하고 `bazel:bazel failed: missing input file` 메시지가 표시됩니다.
+### 빌드에 실패하고 `bazel:bazel failed: missing input file` 메시지가 표시됩니다
 
 이는 대부분 bazel 의존성 / 캐싱 문제 때문일 가능성이 높습니다. 이를 해결하려면 다음 명령어를 실행하세요:
 

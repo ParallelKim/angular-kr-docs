@@ -21,7 +21,7 @@ describe('markdown to html', () => {
 
   it('should render external links with _blank target', () => {
     expect(parsedMarkdown).toContain(
-      '<a href="https://angular.dev" target="_blank">Angular Site</a>',
+      '<a href="https://angular-kr-docs.web.app" target="_blank">Angular Site</a>',
     );
   });
 

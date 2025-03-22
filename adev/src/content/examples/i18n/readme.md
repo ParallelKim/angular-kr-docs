@@ -1,6 +1,6 @@
 # Angular i18n 국제화 예제
 
-이 샘플은 Angular 문서의 "[예제 Angular 국제화 애플리케이션](https://angular.dev/guide/i18n/example)" 페이지에서 가져온 것입니다.
+이 샘플은 Angular 문서의 "[예제 Angular 국제화 애플리케이션](https://angular-kr-docs.web.app/guide/i18n/example)" 페이지에서 가져온 것입니다.
 
 ## 다운로드 및 실행
 

@@ -20,7 +20,7 @@ import {PreviewError} from './preview-error.component';
 describe('Preview', () => {
   // Before each is used as a callable function to prevent conflicts between tests
   const beforeEach = () => {
-    const PREVIEW_URL = 'https://angular.dev/';
+    const PREVIEW_URL = 'https:/angular-kr-docs.web.app/';
 
     const fakeNodeRuntimeSandbox: Partial<NodeRuntimeSandbox> = {
       previewUrl$: of(PREVIEW_URL),

@@ -25,7 +25,7 @@ describe('HeaderService', () => {
 
     service.setCanonical('/some/link');
     expect(document.querySelector('link[rel=canonical]')!.getAttribute('href')).toBe(
-      'https://angular.dev/some/link',
+      'https:/angular-kr-docs.web.app/some/link',
     );
   });
 });

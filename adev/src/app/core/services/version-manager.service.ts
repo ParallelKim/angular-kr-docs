@@ -68,7 +68,7 @@ export class VersionManager {
       //   version: 'rc',
       // },
       {
-        url: 'https://angular.dev/',
+        url: 'https:/angular-kr-docs.web.app/',
         displayName: this.getVersion(this.currentMajorVersion),
         version: this.currentVersionMode,
       },

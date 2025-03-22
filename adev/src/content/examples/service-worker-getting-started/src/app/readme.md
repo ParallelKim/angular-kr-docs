@@ -1,6 +1,6 @@
 # Angular Universal 예제 다운로드 지침
 
-이것은 [Angular Universal (Standalone) 가이드](https://angular.dev/guide/ssr)에 대한 다운로드된 샘플 코드입니다.
+이것은 [Angular Universal (Standalone) 가이드](https://angular-kr-docs.web.app/guide/ssr)에 대한 다운로드된 샘플 코드입니다.
 
 ## 설치 및 실행
 

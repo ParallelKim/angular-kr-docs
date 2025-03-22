@@ -42,7 +42,7 @@ export const REQUIRED_FILES = new Set([
   'src/app/app.component.ts',
 ]);
 
-const ANGULAR_DEV = 'https://angular.dev';
+const ANGULAR_DEV = 'https:/angular-kr-docs.web.app';
 
 @Component({
   selector: 'docs-tutorial-code-editor',

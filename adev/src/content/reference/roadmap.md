@@ -143,8 +143,8 @@ Angular 팀이 웹에서 어떻게 동력을 구축하고 있는지 알아보세
   <docs-card title="2차원 드래그 앤 드롭 지원" link="2024년 2분기에 완료됨" href="https://github.com/angular/components/issues/13372">
   이 프로젝트의 일환으로, Angular CDK 드래그 앤 드롭에 대한 혼합 방향 지원을 구현했습니다. 이는 저장소에서 가장 많은 요청을 받은 기능 중 하나입니다.
   </docs-card>
-  <docs-card title="SSR 및 미리 렌더링을 통한 이벤트 재생" link="2024년 4분기에 완료됨" href="https://angular.dev/api/platform-browser/withEventReplay">
-  v18에서 서버 사이드 렌더링 또는 미리 렌더링을 사용할 때 이벤트 재생 기능을 도입했습니다. 이 기능을 위해 Google.com에서 실행되는 이벤트 배치 기본 요소(이전에는 jsaction으로 알려짐)에 의존합니다.
+  <docs-card title="SSR 및 사전 렌더링을 통한 이벤트 재생" link="2024년 4분기에 완료됨" href="https://angular-kr-docs.web.app/api/platform-browser/withEventReplay">
+  v18에서 서버 사이드 렌더링 또는 사전 렌더링을 사용할 때 이벤트 재생 기능을 도입했습니다. 이 기능을 위해 Google.com에서 실행되는 이벤트 배치 기본 요소(이전에는 jsaction으로 알려짐)에 의존합니다.
 
   Angular v19에서 우리는 이벤트 재생을 안정적 상태로 졸업하고 모든 새로운 프로젝트에 대해 기본적으로 활성화했습니다.
   </docs-card>
@@ -155,7 +155,7 @@ Angular 팀이 웹에서 어떻게 동력을 구축하고 있는지 알아보세
   이 이니셔티브의 일환으로, 언어 서비스는 독립형 및 NgModule 기반 애플리케이션에서 자동으로 구성 요소 및 파이프를 가져옵니다. 또한, 우리는 독립형 구성 요소 내에서 사용하지 않는 가져오기를 강조하는 템플릿 진단을 추가하여 애플리케이션 번들을 더 작게 만드는 데 도움을 줄 것입니다.
   </docs-card>
   <docs-card title="로컬 템플릿 변수" link="2024년 3분기에 완료됨">
-  Angular의 로컬 템플릿 변수 지원을 출시했습니다. 추가 정보는 [`@let` 문서](https://angular.dev/api/core/@let)를 참조하세요.
+  Angular의 로컬 템플릿 변수 지원을 출시했습니다. 추가 정보는 [`@let` 문서](https://angular-kr-docs.web.app/api/core/@let)를 참조하세요.
   </docs-card>
   <docs-card title="Angular Material의 사용자 정의 가능성 확장" link="2024년 2분기에 완료됨" href="https://material.angular.io/guide/theming">
   Angular Material 구성 요소의 더 나은 사용자 정의를 제공하고 Material 3 기능을 가능하게 하기 위해 Google의 Material Design 팀과 협력하여 토큰 기반 테마 API를 정의할 것입니다.
@@ -174,11 +174,11 @@ Angular 팀이 웹에서 어떻게 동력을 구축하고 있는지 알아보세
   <docs-card title="Angular 개발자를 위한 공식 홈페이지로 Angular.dev 만들기" link="2024년 2분기에 완료됨" href="https://goo.gle/angular-dot-dev">
   Angular.dev는 Angular 개발을 위한 새 사이트, 도메인 및 홈입니다. 이 새 사이트는 Angular의 최신 기능으로 개발자가 빌드하는 데 도움이 되는 업데이트된 문서, 튜토리얼 및 지침을 포함하고 있습니다.
   </docs-card>
-  <docs-card title="내장 제어 흐름 도입" link="2024년 2분기에 완료됨" href="https://next.angular.dev/essentials/conditionals-and-loops">
+  <docs-card title="내장 제어 흐름 도입" link="2024년 2분기에 완료됨" href="https://next.angular-kr-docs.web.app/essentials/conditionals-and-loops">
   v17에서는 새로운 제어 흐름의 개발자 미리보기 버전을 출시했습니다. 이는 성능 개선과 템플릿 작성의 인체공학성을 크게 향상시킵니다. 또한 기존 `*ngIf`, `*ngFor`, 및 `*ngSwitch`의 마이그레이션을 제공하여 프로젝트를 새로운 구현으로 이동할 수 있도록 했습니다. v18부터 내장 제어 흐름은 이제 안정적입니다.
   </docs-card>
   <docs-card title="시작하기 튜토리얼 현대화" link="2023년 4분기에 완료됨" href="">
-  지난 두 분기 동안 우리는 독립형 구성 요소를 기반으로 하는 새로운 [비디오](https://www.youtube.com/watch?v=xAT0lHYhHMY&list=PL1w1q3fL4pmj9k1FrJ3Pe91EPub2_h4jF)와 [텍스트](https://angular.dev/tutorials/learn-angular) 튜토리얼을 개발했습니다.
+  지난 두 분기 동안 우리는 독립형 구성 요소를 기반으로 하는 새로운 [비디오](https://www.youtube.com/watch?v=xAT0lHYhHMY&list=PL1w1q3fL4pmj9k1FrJ3Pe91EPub2_h4jF)와 [텍스트](https://angular-kr-docs.web.app/tutorials/learn-angular) 튜토리얼을 개발했습니다.
   </docs-card>
   <docs-card title="현대 번들러 조사" link="2023년 4분기에 완료됨" href="guide/hydration">
   Angular v16에서는 `ng build` 및 `ng serve`를 지원하는 esbuild 기반 빌더의 개발자 미리보기를 출시했습니다. `ng serve` 개발 서버는 Vite와 esbuild 및 Angular 컴파일러의 다중 파일 컴파일을 사용합니다. v17에서는 이 빌드 도구를 개발자 미리보기에서 졸업하고 기본적으로 새로운 프로젝트에 대해 활성화했습니다.

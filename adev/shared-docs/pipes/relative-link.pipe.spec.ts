@@ -16,7 +16,7 @@ describe('RelativeLink', () => {
   });
 
   it('should transform absolute url to relative', () => {
-    const absoluteUrl = 'https://angular.dev/guide/directives#test';
+    const absoluteUrl = 'https://angular-kr-docs.web.app/guide/directives#test';
 
     const result = pipe.transform(absoluteUrl);
 
@@ -24,7 +24,7 @@ describe('RelativeLink', () => {
   });
 
   it('should return fragment once result param is equal to `hash`', () => {
-    const absoluteUrl = 'https://angular.dev/guide/directives#test';
+    const absoluteUrl = 'https://angular-kr-docs.web.app/guide/directives#test';
 
     const result = pipe.transform(absoluteUrl, 'hash');
 
@@ -32,7 +32,7 @@ describe('RelativeLink', () => {
   });
 
   it('should return relative url without fragment once result param is equal to `pathname`', () => {
-    const absoluteUrl = 'https://angular.dev/guide/directives#test';
+    const absoluteUrl = 'https://angular-kr-docs.web.app/guide/directives#test';
 
     const result = pipe.transform(absoluteUrl, 'pathname');
 

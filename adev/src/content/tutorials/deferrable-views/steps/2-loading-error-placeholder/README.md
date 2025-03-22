@@ -8,7 +8,7 @@ Deferrable views를 사용하면 다양한 로딩 상태에서 보여줄 내용�
       <td><code>@placeholder</code></td>
       <td>
         기본적으로 defer 블록은 트리거되기 전까지 아무 콘텐츠도 렌더링하지 않습니다. <code>@placeholder</code>는 지연된 콘텐츠가 로드되기 전에 보여줄 콘텐츠를 선언하는 선택적 블록입니다. Angular는 로딩이 완료된 후 자리 표시자를 지연된 콘텐츠로 교체합니다. 이 블록은 선택적이지만 Angular 팀에서는 항상 자리 표시자를 포함할 것을 권장합니다.
-        <a href="https://angular.dev/guide/defer#triggers" target="_blank">
+        <a href="https://angular-kr-docs.web.app/guide/defer#triggers" target="_blank">
           전체 deferable views 문서에서 자세히 알아보기
         </a>
       </td>

@@ -17,5 +17,5 @@
 | [`run`](cli/run)                  |        | 프로젝트에서 정의된 선택적 사용자 지정 빌더 구성으로 Architect 대상을 실행합니다. |
 | [`serve`](cli/serve)              | `s`, `dev`      | 애플리케이션을 빌드하고 제공하며, 파일 변경 시 재빌드합니다.          |
 | [`test`](cli/test)                | `t`      | 프로젝트에서 단위 테스트를 실행합니다.                               |
-| [`update`](cli/update)            |        | 작업 공간 및 그 종속성을 업데이트합니다. 자세한 내용은 https://angular.dev/update-guide/를 참조하세요.      |
+| [`update`](cli/update)            |        | 작업 공간 및 그 종속성을 업데이트합니다. 자세한 내용은 <https://angular-kr-docs.web.app/update-guide/를> 참조하세요.      |
 | [`version`](cli/version)          | `v`      | Angular CLI 버전을 출력합니다.                                     |

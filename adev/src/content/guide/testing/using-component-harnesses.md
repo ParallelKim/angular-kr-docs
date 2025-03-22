@@ -15,6 +15,7 @@
 ## 테스트 하네스 환경과 로더
 
 다양한 테스트 환경에서 컴포넌트 테스트 하네스를 사용할 수 있습니다. Angular CDK는 두 가지 기본 제공 환경을 지원합니다:
+
 - Angular의 `TestBed`를 이용한 단위 테스트
 - [WebDriver](https://developer.mozilla.org/en-US/docs/Web/WebDriver)를 이용한 종단 간 테스트
 
@@ -71,6 +72,7 @@ const myComponentHarnesses = await loader.getHarnesses(MyComponent);
 </docs-code>
 
 예를 들어, 클릭 시 다이얼로그를 여는 재사용 가능한 대화 상자 버튼 컴포넌트를 고려해 보십시오. 이 컴포넌트는 다음과 같은 구성 요소를 포함하며, 각각에 해당하는 하네스가 있습니다:
+
 - `MyDialogButton` (편리한 API로 `MyButton`과 `MyDialog`를 조합합니다)
 - `MyButton` (표준 버튼 컴포넌트)
 - `MyDialog` (클릭 시 `MyDialogButton`에 의해 `document.body`에 추가되는 다이얼로그)
@@ -126,6 +128,7 @@ const allChildLoaders = await myComponentHarness.getAllChildLoaders('.child');
 페이지에 특정 컴포넌트의 여러 인스턴스가 포함되어 있을 때, 특정 컴포넌트 인스턴스를 얻기 위해 컴포넌트의 일부 속성에 따라 필터링하고 싶을 수 있습니다. 이를 위해 하네스 프레디케이트를 사용할 수 있으며, 이는 `ComponentHarness` 클래스를 프레디케이트 함수와 연결하는 데 사용됩니다.
 
 `HarnessLoader`에 하네스를 요청할 때, 실제로는 HarnessQuery를 제공하는 것입니다. 쿼리는 두 가지 중 하나일 수 있습니다:
+
 - 하네스 생성자입니다. 이것은 해당 하네스를 얻습니다.
 - `HarnessPredicate`로, 하나 이상의 조건에 따라 필터링된 하네스를 얻습니다.
 
@@ -164,7 +167,7 @@ it('should get value of slider thumb', async () => {
 
 ## Angular 변경 감지와의 상호 운용성
 
-기본적으로, 테스트 하네스는 DOM 요소의 상태를 읽기 전에 Angular의 [변경 감지](https://angular.dev/best-practices/runtime-performance)를 실행하고, DOM 요소와 상호작용한 후에 실행합니다.
+기본적으로, 테스트 하네스는 DOM 요소의 상태를 읽기 전에 Angular의 [변경 감지](https://angular-kr-docs.web.app/best-practices/runtime-performance)를 실행하고, DOM 요소와 상호작용한 후에 실행합니다.
 
 테스트에서 변경 감지에 대해 더 세밀한 제어가 필요할 때가 있습니다. 예를 들어, 비동기 작업이 대기 중일 때 컴포넌트의 상태를 확인하는 경우입니다. 이러한 경우, 코드 블록에 대한 변경 감지의 자동 처리를 비활성화하기 위해 `manualChangeDetection` 함수를 사용하십시오.
 
@@ -184,6 +187,7 @@ it('checks state while async action is in progress', async () => {
 </docs-code>
 
 거의 모든 하네스 메서드는 비동기이며 다음을 지원하기 위해 `Promise`를 반환합니다:
+
 - 단위 테스트 지원
 - 종단 간 테스트 지원
 - 비동기 동작의 변경에 대한 테스트 보호

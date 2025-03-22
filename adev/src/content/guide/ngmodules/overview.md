@@ -14,6 +14,7 @@ export class CustomMenuModule { }
 ```
 
 NgModule은 두 가지 주요 책임이 있습니다:
+
 * NgModule에 속하는 구성 요소, 지시자 및 파이프를 선언하는 것
 * NgModule을 가져오는 구성 요소, 지시자 및 파이프에 대한 공급자를 주입기에 추가하는 것
 
@@ -78,7 +79,7 @@ export class CustomMenuModule { }
 
 ### 내보내기
 
-NgModule은 선언한 구성 요소, 지시자 및 파이프를 _내보낼_ 수 있어 다른 구성 요소 및 NgModule에서 사용할 수 있게 합니다.
+NgModule은 선언한 구성 요소, 지시자 및 파이프를 *내보낼* 수 있어 다른 구성 요소 및 NgModule에서 사용할 수 있게 합니다.
 
  ```typescript
 @NgModule({
@@ -110,8 +111,9 @@ export class CustomMenuModule { }
 팁: 종속성 주입 및 공급자에 대한 정보는 [종속성 주입 가이드](guide/di)를 참조하세요.
 
 `NgModule`은 주입된 종속성에 대한 `providers`를 지정할 수 있습니다. 이러한 공급자는 다음에 사용할 수 있습니다:
+
 * NgModule을 가져오는 모든 독립 구성 요소, 지시자 또는 파이프
-* NgModule을 가져오는 모든 _다른_ NgModule의 `declarations` 및 `providers`
+* NgModule을 가져오는 모든 *다른* NgModule의 `declarations` 및 `providers`
 
 ```typescript
 @NgModule({
@@ -133,6 +135,7 @@ export class UserProfileModule { }
 ```
 
 위의 예에서:
+
 * `CustomMenuModule`은 `OverlayManager`를 제공합니다.
 * `CustomMenu` 및 `CustomMenuItem` 구성 요소는 `CustomMenuModule`에 선언되었기 때문에 `OverlayManager`를 주입할 수 있습니다.
 * `UserProfile`은 자신의 NgModule이 `CustomMenuModule`을 가져오기 때문에 `OverlayManager`를 주입할 수 있습니다.
@@ -170,7 +173,7 @@ export class UserProfile { /* ... */ }
 
 `@NgModule` 데코레이터는 하나 이상의 구성 요소를 포함할 수 있는 선택적 `bootstrap` 배열을 수락합니다.
 
-Angular 애플리케이션을 시작하려면 [`platformBrowser`](api/platform-browser/platformBrowser) 또는 [`platformServer`](api/platform-server/platformServer)에서 [`bootstrapModule`](https://angular.dev/api/core/PlatformRef#bootstrapModule) 메서드를 사용할 수 있습니다. 이 함수가 실행되면 페이지에서 나열된 구성 요소의 CSS 선택자와 일치하는 요소를 찾고 해당 구성 요소를 페이지에 렌더링합니다.
+Angular 애플리케이션을 시작하려면 [`platformBrowser`](api/platform-browser/platformBrowser) 또는 [`platformServer`](api/platform-server/platformServer)에서 [`bootstrapModule`](https://angular-kr-docs.web.app/api/core/PlatformRef#bootstrapModule) 메서드를 사용할 수 있습니다. 이 함수가 실행되면 페이지에서 나열된 구성 요소의 CSS 선택자와 일치하는 요소를 찾고 해당 구성 요소를 페이지에 렌더링합니다.
 
 ```typescript
 import {platformBrowser} from '@angular/platform-browser';

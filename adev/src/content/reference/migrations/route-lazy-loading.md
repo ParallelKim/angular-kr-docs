@@ -72,4 +72,4 @@ export class AppModule {}
 export class AppModule {}
 </docs-code>
 
-이 마이그레이션은 또한 NgModules에서 선언된 모든 구성 요소에 대한 정보를 수집하고 이를 사용하는 경로의 목록을 출력합니다 (해당 파일의 위치 포함). 이러한 구성 요소를 독립적으로 만들고 이 마이그레이션을 다시 실행하는 것을 고려하세요. 기존의 마이그레이션을 사용하여 (https://angular.dev/reference/migrations/standalone 참조) 이러한 구성 요소를 독립적으로 변환할 수 있습니다.
+이 마이그레이션은 또한 NgModules에서 선언된 모든 구성 요소에 대한 정보를 수집하고 이를 사용하는 경로의 목록을 출력합니다 (해당 파일의 위치 포함). 이러한 구성 요소를 독립적으로 만들고 이 마이그레이션을 다시 실행하는 것을 고려하세요. 기존의 마이그레이션을 사용하여 (<https://angular-kr-docs.web.app/reference/migrations/standalone> 참조) 이러한 구성 요소를 독립적으로 변환할 수 있습니다.

@@ -211,7 +211,7 @@ export class PlaygroundComponent {
     return encodeURIComponent(
       `📐 ${emojiAccuracy} \n My angles are ${roundedAcc}% accurate on level ${
         this.gameStats().level
-      }. \n\nHow @Angular are you? \nhttps://angular.dev/playground`,
+      }. \n\nHow @Angular are you? \nhttps://angular-kr-docs.web.app/playground`,
     );
   }
 

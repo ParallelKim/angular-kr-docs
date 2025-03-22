@@ -1,6 +1,6 @@
 # npm에 게시된 Angular 라이브러리 사용법
 
-Angular 애플리케이션을 빌드할 때 정교한 첫 번째 라이브러리와 풍부한 생태계의 타사 라이브러리를 활용하세요. 
+Angular 애플리케이션을 빌드할 때 정교한 첫 번째 라이브러리와 풍부한 생태계의 타사 라이브러리를 활용하세요.
 [Angular Material][AngularMaterialMain]은 정교한 첫 번째 라이브러리의 예입니다.
 
 ## 라이브러리 설치
@@ -59,7 +59,7 @@ TypeScript는 기본적으로 `node_modules/@types` 디렉터리에서 타입을
     <docs-code language="typescript">
 
     import * as host from 'host';
-    const parsedUrl = host.parse('https://angular.io');
+    const parsedUrl = host.parse('<https://angular.io>');
     console.log(parsedUrl.hostname);
 
     </docs-code>
@@ -182,11 +182,10 @@ interface JQuery {
 
 [GuideWorkspaceConfig]: reference/configs/workspace-config "Angular workspace configuration | Angular"
 
-[Resources]: resources "Explore Angular Resources | Angular"
 
 [AngularMaterialMain]: https://material.angular.io "Angular Material | Angular"
 
-[AngularUpdateMain]: https://angular.dev/update-guide "Angular Update Guide | Angular"
+[AngularUpdateMain]: https://angular-kr-docs.web.app/update-guide "Angular Update Guide | Angular"
 
 [GetbootstrapDocs40GettingStartedIntroduction]: https://getbootstrap.com/docs/4.0/getting-started/introduction "Introduction | Bootstrap"
 

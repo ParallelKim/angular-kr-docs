@@ -8,21 +8,21 @@
   - [프로젝트 전환](#switching-a-project)
 - [구성 요소 및 서비스](#components-and-services)
 
-  - [EmbeddedEditor](#EmbeddedEditor)
-  - [CodeEditor](#CodeEditor)
-    - [CodeMirrorEditor](#CodeMirrorEditor)
+  - [EmbeddedEditor](#embeddededitor)
+  - [CodeEditor](#codeeditor)
+    - [CodeMirrorEditor](#codemirroreditor)
       - [TypeScript 웹 워커](#typescript-web-worker)
-  - [미리보기](#Preview)
-  - [터미널](#Terminal)
-    - [InteractiveTerminal](#InteractiveTerminal)
+  - [미리보기](#preview)
+  - [터미널](#terminal)
+    - [InteractiveTerminal](#interactiveterminal)
     - [콘솔](#Console)
-  - [NodeRuntimeSandbox](#NodeRuntimeSandbox)
-    - [NodeRuntimeState](#NodeRuntimeState)
-  - [EmbeddedTutorialManager](#EmbeddedTutorialManager)
-  - [EditorUiState](#EditorUiState)
-  - [DownloadManager](#DownloadManager)
-  - [AlertManager](#AlertManager)
-  - [TypingsLoader](#TypingsLoader)
+  - [NodeRuntimeSandbox](#noderuntimesandbox)
+    - [NodeRuntimeState](#noderuntimestate)
+  - [EmbeddedTutorialManager](#embeddedtutorialmanager)
+  - [EditorUiState](#editoruistate)
+  - [DownloadManager](#downloadmanager)
+  - [AlertManager](#alertmanager)
+  - [TypingsLoader](#typingsloader)
 
 ## 외부 라이브러리
 
@@ -44,9 +44,9 @@
 
 1. EmbeddedEditor를 위한 페이지는 [`EmbeddedEditor`](./embedded-editor.component.ts) 구성 요소와 [`NodeRuntimeSandbox`](./node-runtime-sandbox.service.ts)를 지연 로딩하고, 모든 구성 요소 및 서비스의 초기화를 트리거합니다. EmbeddedEditor는 다음 페이지에서 사용할 수 있습니다:
 
-   - 홈페이지: https://angular.dev
-   - 플레이그라운드: https://angular.dev/playground
-   - 튜토리얼 페이지: https://angular.dev/tutorials
+   - 홈페이지: <https:angular-kr-docs.web.appv>
+   - 플레이그라운드: https:/angular-kr-docs.web.app/playground
+   - 튜토리얼 페이지: <https:/angular-kr-docs.web.app/tutorials>
 
 2. 프로젝트 자산은 [`EmbeddedTutorialManager`](./embedded-tutorial-manager.service.ts)에 의해 가져옵니다. 이 동안:
 
