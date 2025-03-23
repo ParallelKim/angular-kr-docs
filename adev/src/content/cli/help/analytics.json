@@ -1,23 +1,23 @@
 {
   "name": "analytics",
   "command": "ng analytics",
-  "shortDescription": "Configures the gathering of Angular CLI usage metrics.",
+  "shortDescription": "Angular CLI 사용 메트릭 수집을 구성합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/analytics/long-description.md",
-  "longDescription": "You can help the Angular Team to prioritize features and improvements by permitting the Angular team to send command-line command usage statistics to Google.\nThe Angular Team does not collect usage statistics unless you explicitly opt in. When installing the Angular CLI you are prompted to allow global collection of usage statistics.\nIf you say no or skip the prompt, no data is collected.\n\n### What is collected?\n\nUsage analytics include the commands and selected flags for each execution.\nUsage analytics may include the following information:\n\n- Your operating system \\(macOS, Linux distribution, Windows\\) and its version.\n- Package manager name and version \\(local version only\\).\n- Node.js version \\(local version only\\).\n- Angular CLI version \\(local version only\\).\n- Command name that was run.\n- Workspace information, the number of application and library projects.\n- For schematics commands \\(add, generate and new\\), the schematic collection and name and a list of selected flags.\n- For build commands \\(build, serve\\), the builder name, the number and size of bundles \\(initial and lazy\\), compilation units, the time it took to build and rebuild, and basic Angular-specific API usage.\n\nOnly Angular owned and developed schematics and builders are reported.\nThird-party schematics and builders do not send data to the Angular Team.\n",
+  "longDescription": "Angular 팀이 Google에 명령줄 명령 사용 통계를 보내도록 허용하면 기능 및 개선 사항의 우선 순위를 정하는 데 도움을 줄 수 있습니다.\nAngular 팀은 귀하가 명시적으로 참여하지 않는 한 사용 통계를 수집하지 않습니다. Angular CLI를 설치할 때 사용 통계의 전역 수집을 허용하라는 메시지가 표시됩니다.\n'아니오'라고 말하거나 프롬프트를 건너뛰면 데이터가 수집되지 않습니다.\n\n### 수집되는 정보는 무엇인가요?\n\n사용 분석에는 각 실행에 대한 명령과 선택된 플래그가 포함됩니다.\n사용 분석에는 다음 정보가 포함될 수 있습니다:\n\n- 운영 체제 \\(macOS, Linux 배포판, Windows\\) 및 해당 버전.\n- 패키지 관리자 이름 및 버전 \\(로컬 버전만 해당\\).\n- Node.js 버전 \\(로컬 버전만 해당\\).\n- Angular CLI 버전 \\(로컬 버전만 해당\\).\n- 실행된 명령 이름.\n- 워크스페이스 정보, 애플리케이션 및 라이브러리 프로젝트 수.\n- 스키매틱 명령 \\(add, generate 및 new\\)의 경우, 스키매틱 컬렉션과 이름 및 선택된 플래그 목록.\n- 빌드 명령 \\(build, serve\\)의 경우, 빌더 이름, 번들 수 및 크기 \\(초기 및 지연\\), 컴파일 유닛, 빌드 및 재빌드에 걸린 시간, 기본 Angular 전용 API 사용.\n\nAngular 소속 및 개발된 스키매틱 및 빌더만 보고됩니다.\n서드파티 스키매틱 및 빌더는 Angular 팀에 데이터를 전송하지 않습니다.\n",
   "aliases": [],
   "deprecated": false,
   "options": [
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움 메시지를 표시합니다."
     }
   ],
   "subcommands": [
     {
       "name": "disable",
       "command": "disable",
-      "shortDescription": "Disables analytics gathering and reporting for the user.",
+      "shortDescription": "사용자의 분석 수집 및 보고를 비활성화합니다.",
       "options": [
         {
           "name": "global",
@@ -26,7 +26,7 @@
             "g"
           ],
           "default": false,
-          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+          "description": "호출자의 홈 디렉토리에서 전역적으로 분석 수집 및 보고를 구성합니다."
         }
       ],
       "aliases": [
@@ -37,7 +37,7 @@
     {
       "name": "enable",
       "command": "enable",
-      "shortDescription": "Enables analytics gathering and reporting for the user.",
+      "shortDescription": "사용자의 분석 수집 및 보고를 활성화합니다.",
       "options": [
         {
           "name": "global",
@@ -46,7 +46,7 @@
             "g"
           ],
           "default": false,
-          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+          "description": "호출자의 홈 디렉토리에서 전역적으로 분석 수집 및 보고를 구성합니다."
         }
       ],
       "aliases": [
@@ -57,7 +57,7 @@
     {
       "name": "info",
       "command": "info",
-      "shortDescription": "Prints analytics gathering and reporting configuration in the console.",
+      "shortDescription": "콘솔에서 분석 수집 및 보고 구성을 인쇄합니다.",
       "options": [],
       "aliases": [],
       "deprecated": false
@@ -65,7 +65,7 @@
     {
       "name": "prompt",
       "command": "prompt",
-      "shortDescription": "Prompts the user to set the analytics gathering status interactively.",
+      "shortDescription": "사용자에게 인터랙티브하게 분석 수집 상태를 설정하라는 메시지를 표시합니다.",
       "options": [
         {
           "name": "global",
@@ -74,7 +74,7 @@
             "g"
           ],
           "default": false,
-          "description": "Configure analytics gathering and reporting globally in the caller's home directory."
+          "description": "호출자의 홈 디렉토리에서 전역적으로 분석 수집 및 보고를 구성합니다."
         }
       ],
       "aliases": [],

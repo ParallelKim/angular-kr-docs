@@ -1,14 +1,14 @@
 {
   "name": "extract-i18n",
   "command": "ng extract-i18n [project]",
-  "shortDescription": "Extracts i18n messages from source code.",
+  "shortDescription": "소스 코드에서 i18n 메시지를 추출합니다.",
   "aliases": [],
   "deprecated": false,
   "options": [
     {
       "name": "build-target",
       "type": "string",
-      "description": "A builder target to extract i18n messages in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`."
+      "description": "`project:target[:configuration]` 형식의 i18n 메시지를 추출할 빌더 타겟입니다. 쉼표로 구분된 리스트로 여러 구성 이름을 전달할 수도 있습니다. 예: `project:target:production,staging`."
     },
     {
       "name": "configuration",
@@ -16,7 +16,7 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "angular.json의 \"configurations\" 섹션에 지정된 대로 쉼표로 구분된 리스트로 하나 이상의 명명된 빌더 구성입니다.\n빌더는 주어진 타겟을 실행하기 위해 명명된 구성을 사용합니다.\n자세한 정보는 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations를 참조하세요."
     },
     {
       "name": "format",
@@ -33,33 +33,33 @@
         "arb",
         "legacy-migrate"
       ],
-      "description": "Output format for the generated file."
+      "description": "생성된 파일의 출력 형식입니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에 대한 이 명령의 도움 메시지를 표시합니다."
     },
     {
       "name": "out-file",
       "type": "string",
-      "description": "Name of the file to output."
+      "description": "출력할 파일의 이름입니다."
     },
     {
       "name": "output-path",
       "type": "string",
-      "description": "Path where output will be placed."
+      "description": "출력이 배치될 경로입니다."
     },
     {
       "name": "progress",
       "type": "boolean",
       "default": true,
-      "description": "Log progress to the console."
+      "description": "콘솔에 진행 상황을 로그합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "빌드할 프로젝트의 이름입니다. 애플리케이션 또는 라이브러리가 될 수 있습니다.",
       "positional": 0
     }
   ]

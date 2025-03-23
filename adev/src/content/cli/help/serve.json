@@ -1,7 +1,7 @@
 {
   "name": "serve",
   "command": "ng serve [project]",
-  "shortDescription": "Builds and serves your application, rebuilding on file changes.",
+  "shortDescription": "애플리케이션을 빌드하고 제공하며, 파일 변경 시 다시 빌드합니다.",
   "aliases": [
     "dev",
     "s"
@@ -11,12 +11,12 @@
     {
       "name": "allowed-hosts",
       "type": "boolean",
-      "description": "The hosts that the development server will respond to. This option sets the Vite option of the same name. For further details: https://vite.dev/config/server-options.html#server-allowedhosts"
+      "description": "개발 서버가 응답할 호스트입니다. 이 옵션은 동일한 이름의 Vite 옵션을 설정합니다. 자세한 내용은: https://vite.dev/config/server-options.html#server-allowedhosts"
     },
     {
       "name": "build-target",
       "type": "string",
-      "description": "A build builder target to serve in the format of `project:target[:configuration]`. You can also pass in more than one configuration name as a comma-separated list. Example: `project:target:production,staging`."
+      "description": "`project:target[:configuration]` 형식으로 제공할 빌드 빌더 대상을 설정합니다. 쉼표로 구분된 목록으로 구성 이름을 여러 개 전달할 수도 있습니다. 예: `project:target:production,staging`."
     },
     {
       "name": "configuration",
@@ -24,44 +24,44 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "angular.json의 \"configurations\" 섹션에 지정된 대로 쉼표로 구분된 목록으로 하나 이상의 명명된 빌더 구성입니다.\n빌더는 주어진 대상을 실행하기 위해 명명된 구성을 사용합니다.\n자세한 내용은 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations을 참조하세요."
     },
     {
       "name": "headers",
       "type": "array",
-      "description": "Custom HTTP headers to be added to all responses."
+      "description": "모든 응답에 추가될 사용자 정의 HTTP 헤더입니다."
     },
     {
       "name": "headers",
       "type": "string",
-      "description": "Custom HTTP headers to be added to all responses."
+      "description": "모든 응답에 추가될 사용자 정의 HTTP 헤더입니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에 이 명령어에 대한 도움 메시지를 표시합니다."
     },
     {
       "name": "hmr",
       "type": "boolean",
-      "description": "Enable hot module replacement. Defaults to the value of 'liveReload'. Currently, only global and component stylesheets are supported."
+      "description": "핫 모듈 교체를 활성화합니다. 기본값은 'liveReload'의 값입니다. 현재는 전역 및 구성 요소 스타일시트만 지원됩니다."
     },
     {
       "name": "host",
       "type": "string",
       "default": "localhost",
-      "description": "Host to listen on."
+      "description": "수신할 호스트입니다."
     },
     {
       "name": "inspect",
       "type": "string",
-      "description": "Activate debugging inspector. This option only has an effect when 'SSR' or 'SSG' are enabled."
+      "description": "디버깅 검사기를 활성화합니다. 이 옵션은 'SSR' 또는 'SSG'가 활성화된 경우에만 효과가 있습니다."
     },
     {
       "name": "live-reload",
       "type": "boolean",
       "default": true,
-      "description": "Whether to reload the page on change, using live-reload."
+      "description": "변경 시 페이지를 다시 로드할지 여부를 결정합니다. 라이브 리로드 기능을 사용합니다."
     },
     {
       "name": "open",
@@ -70,67 +70,67 @@
         "o"
       ],
       "default": false,
-      "description": "Opens the url in default browser."
+      "description": "기본 브라우저에서 URL을 엽니다."
     },
     {
       "name": "poll",
       "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
+      "description": "파일 감시 폴 시간 간격을 밀리초로 활성화하고 정의합니다."
     },
     {
       "name": "port",
       "type": "number",
       "default": 4200,
-      "description": "Port to listen on."
+      "description": "수신할 포트입니다."
     },
     {
       "name": "prebundle",
       "type": "boolean",
       "default": true,
-      "description": "Enable and control the Vite-based development server's prebundling capabilities. To enable prebundling, the Angular CLI cache must also be enabled."
+      "description": "Vite 기반 개발 서버의 프리 번들링 기능을 활성화하고 제어합니다. 프리 번들링을 활성화하려면 Angular CLI 캐시도 활성화해야 합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "빌드할 프로젝트의 이름입니다. 애플리케이션 또는 라이브러리가 될 수 있습니다.",
       "positional": 0
     },
     {
       "name": "proxy-config",
       "type": "string",
-      "description": "Proxy configuration file. For more information, see https://angular.dev/tools/cli/serve#proxying-to-a-backend-server."
+      "description": "프록시 구성 파일입니다. 자세한 내용은 https://angular.dev/tools/cli/serve#proxying-to-a-backend-server을 참조하세요."
     },
     {
       "name": "serve-path",
       "type": "string",
-      "description": "The pathname where the application will be served."
+      "description": "애플리케이션이 제공될 경로입니다."
     },
     {
       "name": "ssl",
       "type": "boolean",
       "default": false,
-      "description": "Serve using HTTPS."
+      "description": "HTTPS를 사용하여 제공합니다."
     },
     {
       "name": "ssl-cert",
       "type": "string",
-      "description": "SSL certificate to use for serving HTTPS."
+      "description": "HTTPS 제공을 위한 SSL 인증서입니다."
     },
     {
       "name": "ssl-key",
       "type": "string",
-      "description": "SSL key to use for serving HTTPS."
+      "description": "HTTPS 제공을 위한 SSL 키입니다."
     },
     {
       "name": "verbose",
       "type": "boolean",
-      "description": "Adds more details to output logging."
+      "description": "출력 로그에 더 많은 세부정보를 추가합니다."
     },
     {
       "name": "watch",
       "type": "boolean",
       "default": true,
-      "description": "Rebuild on change."
+      "description": "변경 시 다시 빌드합니다."
     }
   ]
 }

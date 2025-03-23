@@ -1,7 +1,7 @@
 {
   "name": "generate",
   "command": "ng generate <schematic>",
-  "shortDescription": "Generates and/or modifies files based on a schematic.",
+  "shortDescription": "스키마를 기반으로 파일을 생성 및/또는 수정합니다.",
   "aliases": [
     "g"
   ],
@@ -11,7 +11,7 @@
       "name": "defaults",
       "type": "boolean",
       "default": false,
-      "description": "Disable interactive input prompts for options with a default."
+      "description": "기본값이 있는 옵션에 대한 대화형 입력 프롬프트를 비활성화합니다."
     },
     {
       "name": "dry-run",
@@ -20,29 +20,29 @@
         "d"
       ],
       "default": false,
-      "description": "Run through and reports activity without writing out results."
+      "description": "결과를 작성하지 않고 활동을 보고합니다."
     },
     {
       "name": "force",
       "type": "boolean",
       "default": false,
-      "description": "Force overwriting of existing files."
+      "description": "기존 파일의 덮어쓰기를 강제로 수행합니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움말 메시지를 표시합니다."
     },
     {
       "name": "interactive",
       "type": "boolean",
       "default": true,
-      "description": "Enable interactive input prompts."
+      "description": "대화형 입력 프롬프트를 활성화합니다."
     },
     {
       "name": "schematic",
       "type": "string",
-      "description": "The [collection:schematic] to run.",
+      "description": "실행할 [collection:schematic].",
       "positional": 0
     }
   ],
@@ -50,12 +50,12 @@
     {
       "name": "app-shell",
       "command": "app-shell",
-      "shortDescription": "Configures your project to generate an app-shell during build time.",
+      "shortDescription": "빌드 시간에 앱 셸을 생성하도록 프로젝트를 구성합니다.",
       "options": [
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the app-shell should be generated."
+          "description": "앱 셸이 생성되어야 하는 프로젝트의 이름."
         }
       ],
       "aliases": [],
@@ -64,13 +64,13 @@
     {
       "name": "application",
       "command": "application [name]",
-      "shortDescription": "Generates a new Angular application within your workspace. This schematic sets up the foundational structure of your project, including the root component, module, and configuration files. You can customize various aspects of the application, such as routing, styling, and testing.",
+      "shortDescription": "작업 공간 내에 새로운 Angular 애플리케이션을 생성합니다. 이 스키마는 루트 구성 요소, 모듈 및 구성 파일을 포함한 프로젝트의 기본 구조를 설정합니다. 라우팅, 스타일링 및 테스트와 같은 애플리케이션의 여러 측면을 사용자 정의할 수 있습니다.",
       "options": [
         {
           "name": "experimental-zoneless",
           "type": "boolean",
           "default": false,
-          "description": "Generate an application that does not use `zone.js`."
+          "description": "`zone.js`를 사용하지 않는 애플리케이션을 생성합니다."
         },
         {
           "name": "inline-style",
@@ -78,7 +78,7 @@
           "aliases": [
             "s"
           ],
-          "description": "Include the styles for the root component directly within the `app.component.ts` file. Only CSS styles can be included inline. By default, a separate stylesheet file (e.g., `app.component.css`) is created."
+          "description": "`app.component.ts` 파일에 루트 구성 요소 스타일을 직접 포함합니다. 인라인으로 포함될 수 있는 것은 CSS 스타일만입니다. 기본적으로 별도의 스타일 시트 파일(예: `app.component.css`)이 생성됩니다."
         },
         {
           "name": "inline-template",
@@ -86,18 +86,18 @@
           "aliases": [
             "t"
           ],
-          "description": "Include the HTML template for the root component directly within the `app.component.ts` file. By default, a separate template file (e.g., `app.component.html`) is created."
+          "description": "`app.component.ts` 파일에 루트 구성 요소의 HTML 템플릿을 직접 포함합니다. 기본적으로 별도의 템플릿 파일(예: `app.component.html`)이 생성됩니다."
         },
         {
           "name": "minimal",
           "type": "boolean",
           "default": false,
-          "description": "Generate a minimal project without any testing frameworks. This is intended for learning purposes and simple experimentation, not for production applications."
+          "description": "테스트 프레임워크 없이 최소 프로젝트를 생성합니다. 이는 학습 목적과 간단한 실험을 위한 것으로, 프로덕션 애플리케이션을 위한 것이 아닙니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new application. This name will be used for the project directory and various identifiers throughout the application's code.",
+          "description": "새로운 애플리케이션의 이름입니다. 이 이름은 프로젝트 디렉토리 및 애플리케이션 코드 전체에서 다양한 식별자에 사용됩니다.",
           "positional": 0
         },
         {
@@ -107,30 +107,30 @@
             "p"
           ],
           "default": "app",
-          "description": "A prefix to be added to the selectors of components generated within this application. For example, if the prefix is `my-app` and you generate a component named `my-component`, the selector will be `my-app-my-component`."
+          "description": "이 애플리케이션 내에서 생성된 구성 요소 선택자에 추가될 접두사입니다. 예를 들어 접두사가 `my-app`이고 `my-component`라는 이름의 구성 요소를 생성하는 경우 선택자는 `my-app-my-component`가 됩니다."
         },
         {
           "name": "project-root",
           "type": "string",
-          "description": "The directory where the new application's files will be created, relative to the workspace root. If not specified, the application will be created in a subfolder within the `projects` directory, using the application's name."
+          "description": "새로운 애플리케이션 파일이 생성될 디렉터리로, 작업 공간 루트를 기준으로 합니다. 지정되지 않으면 애플리케이션은 `projects` 디렉토리 내의 하위 폴더에 생성되며 애플리케이션의 이름을 사용합니다."
         },
         {
           "name": "routing",
           "type": "boolean",
           "default": true,
-          "description": "Generate an application with routing already configured. This sets up the necessary files and modules for managing navigation between different views in your application."
+          "description": "라우팅이 이미 구성된 애플리케이션을 생성합니다. 이는 애플리케이션 내에서 다양한 보기 간의 탐색을 관리하기 위한 필수 파일 및 모듈을 설정합니다."
         },
         {
           "name": "skip-install",
           "type": "boolean",
           "default": false,
-          "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later."
+          "description": "패키지의 자동 설치를 건너뜁니다. 이후에 종속성을 수동으로 설치해야 합니다."
         },
         {
           "name": "skip-package-json",
           "type": "boolean",
           "default": false,
-          "description": "Do not add dependencies to the `package.json` file."
+          "description": "`package.json` 파일에 종속성을 추가하지 않습니다."
         },
         {
           "name": "skip-tests",
@@ -139,25 +139,25 @@
             "S"
           ],
           "default": false,
-          "description": "Skip the generation of a unit test files `spec.ts`."
+          "description": "단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         },
         {
           "name": "ssr",
           "type": "boolean",
           "default": false,
-          "description": "Configure the application for Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)."
+          "description": "서버 측 렌더링(SSR) 및 정적 사이트 생성을 위한 애플리케이션을 구성합니다."
         },
         {
           "name": "standalone",
           "type": "boolean",
           "default": true,
-          "description": "Create an application that utilizes the standalone API, eliminating the need for NgModules. This can simplify the structure of your application."
+          "description": "NgModules가 필요하지 않은 독립형 API를 활용하는 애플리케이션을 생성합니다. 이는 애플리케이션 구조를 단순화할 수 있습니다."
         },
         {
           "name": "strict",
           "type": "boolean",
           "default": true,
-          "description": "Enable stricter bundle budget settings for the application. This helps to keep your application's bundle size small and improve performance. For more information, see https://angular.dev/tools/cli/template-typecheck#strict-mode"
+          "description": "애플리케이션에 대한 엄격한 번들 예산 설정을 활성화합니다. 이는 애플리케이션의 번들 크기를 작게 유지하고 성능을 개선하는 데 도움이 됩니다. 자세한 내용은 https://angular.dev/tools/cli/template-typecheck#strict-mode를 참조하십시오."
         },
         {
           "name": "style",
@@ -169,7 +169,7 @@
             "sass",
             "less"
           ],
-          "description": "The type of stylesheet files to be created for components in the application."
+          "description": "애플리케이션 내에서 구성 요소를 위한 스타일시트 파일의 유형입니다."
         },
         {
           "name": "view-encapsulation",
@@ -179,7 +179,7 @@
             "None",
             "ShadowDom"
           ],
-          "description": "Sets the view encapsulation mode for the application's components. This determines how component styles are scoped and applied."
+          "description": "애플리케이션의 구성 요소에 대한 보기 캡슐화 모드를 설정합니다. 이는 구성 요소 스타일의 범위와 적용 방법을 결정합니다."
         }
       ],
       "aliases": [
@@ -190,29 +190,29 @@
     {
       "name": "class",
       "command": "class [name]",
-      "shortDescription": "Creates a new class in your project. Classes are the fundamental building blocks for object-oriented programming in TypeScript. They provide a blueprint for creating objects with properties and methods. This schematic helps you generate a new class with the basic structure and optional test files.",
+      "shortDescription": "프로젝트에서 새로운 클래스를 생성합니다. 클래스는 TypeScript의 객체 지향 프로그래밍을 위한 기본 빌딩 블록입니다. 이들은 속성과 메서드를 가진 객체를 생성하기 위한 청사진을 제공합니다. 이 스키마를 사용하여 기본 구조와 선택적 테스트 파일로 새로운 클래스를 생성합니다.",
       "options": [
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new class. This will be used to create the class file (e.g., `my-class.ts`) and, if enabled, the corresponding test file `my-class.spec.ts`.",
+          "description": "새로운 클래스의 이름입니다. 이는 클래스 파일(예: `my-class.ts`)을 만들기 위해 사용되며, 활성화되면 해당 테스트 파일 `my-class.spec.ts`도 생성됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the class should be added. If not specified, the CLI will determine the project from the current directory."
+          "description": "클래스가 추가되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the new class."
+          "description": "새로운 클래스에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Adds a custom type to the filename, allowing you to create more descriptive class names. For example, if you set the type to `helper`, the filename will be `my-class.helper.ts`."
+          "description": "파일 이름에 사용자 정의 유형을 추가하여 보다 설명적인 클래스 이름을 만들 수 있습니다. 예를 들어, 유형을 `helper`로 설정하면 파일 이름은 `my-class.helper.ts`가 됩니다."
         }
       ],
       "aliases": [
@@ -223,7 +223,7 @@
     {
       "name": "component",
       "command": "component [name]",
-      "shortDescription": "Creates a new Angular component. Components are the basic building blocks of Angular applications. Each component consists of a TypeScript class, an HTML template, and an optional CSS stylesheet. Use this schematic to generate a new component in your project.",
+      "shortDescription": "새로운 Angular 구성 요소를 생성합니다. 구성 요소는 Angular 애플리케이션의 기본 빌딩 블록입니다. 각 구성 요소는 TypeScript 클래스, HTML 템플릿 및 선택적 CSS 스타일시트를 포함합니다. 이 스키마를 사용하여 프로젝트에 새로운 구성 요소를 생성합니다.",
       "options": [
         {
           "name": "change-detection",
@@ -236,7 +236,7 @@
             "Default",
             "OnPush"
           ],
-          "description": "Configures the change detection strategy for the component."
+          "description": "구성 요소에 대한 변경 감지 전략을 구성합니다."
         },
         {
           "name": "display-block",
@@ -245,25 +245,25 @@
             "b"
           ],
           "default": false,
-          "description": "Adds `:host { display: block; }` to the component's stylesheet, ensuring the component renders as a block-level element. This is useful for layout purposes."
+          "description": "`:host { display: block; }`를 구성 요소의 스타일시트에 추가하여 구성 요소가 블록 수준 요소로 렌더링되도록 합니다. 레이아웃 목적으로 유용합니다."
         },
         {
           "name": "export",
           "type": "boolean",
           "default": false,
-          "description": "Automatically export the component from the specified NgModule, making it accessible to other modules in the application."
+          "description": "지정된 NgModule에서 구성 요소를 자동으로 내보내어 애플리케이션의 다른 모듈에서 접근할 수 있도록 합니다."
         },
         {
           "name": "export-default",
           "type": "boolean",
           "default": false,
-          "description": "Use a default export for the component in its TypeScript file instead of a named export."
+          "description": "구성 요소의 TypeScript 파일에서 기본 내보내기를 사용합니다."
         },
         {
           "name": "flat",
           "type": "boolean",
           "default": false,
-          "description": "Create the component files directly in the project's `src/app` directory instead of creating a new folder for them."
+          "description": "새로운 구성 요소 파일을 프로젝트의 `src/app` 디렉터리에 직접 생성합니다. 이를 통해 해당 구성 요소들에 대한 새로운 폴더를 생성하지 않고 파일을 만들 수 있습니다."
         },
         {
           "name": "inline-style",
@@ -272,7 +272,7 @@
             "s"
           ],
           "default": false,
-          "description": "Include the component's styles directly in the `component.ts` file. By default, a separate stylesheet file (e.g., `my-component.component.css`) is created."
+          "description": "구성 요소의 스타일을 `component.ts` 파일에 직접 포함합니다. 기본적으로 별도의 스타일시트 파일(예: `my-component.component.css`)이 생성됩니다."
         },
         {
           "name": "inline-template",
@@ -281,7 +281,7 @@
             "t"
           ],
           "default": false,
-          "description": "Include the component's HTML template directly in the `component.ts` file. By default, a separate template file (e.g., `my-component.component.html`) is created."
+          "description": "구성 요소의 HTML 템플릿을 `component.ts` 파일에 직접 포함합니다. 기본적으로 별도의 템플릿 파일(예: `my-component.component.html`)이 생성됩니다."
         },
         {
           "name": "module",
@@ -289,19 +289,19 @@
           "aliases": [
             "m"
           ],
-          "description": "Specify the NgModule where the component should be declared. If not provided, the CLI will attempt to find the closest NgModule in the component's path."
+          "description": "구성 요소가 선언되어야 할 NgModule을 지정합니다. 제공되지 않으면, CLI는 구성 요소의 경로에서 가장 가까운 NgModule을 찾으려고 시도합니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new component. This will be used to create the component's class, template, and stylesheet files. For example, if you provide `my-component`, the files will be named `my-component.component.ts`, `my-component.component.html`, and `my-component.component.css`.",
+          "description": "새로운 구성 요소의 이름입니다. 이는 구성 요소의 클래스, 템플릿 및 스타일시트 파일을 만드는 데 사용됩니다. 예를 들어 `my-component`를 제공하면 파일 이름은 `my-component.component.ts`, `my-component.component.html`, 및 `my-component.component.css`가 됩니다.",
           "positional": 0
         },
         {
           "name": "ng-html",
           "type": "boolean",
           "default": true,
-          "description": "Generate component template files with an '.ng.html' file extension instead of '.html'. The '.ng.html' file extension is recommended by the Angular style guide."
+          "description": "구성 요소 템플릿 파일을 '.ng.html' 파일 확장자로 생성합니다. Angular 스타일 가이드에서 권장하는 방식입니다."
         },
         {
           "name": "prefix",
@@ -309,41 +309,41 @@
           "aliases": [
             "p"
           ],
-          "description": "A prefix to be added to the component's selector. For example, if the prefix is `app` and the component name is `my-component`, the selector will be `app-my-component`."
+          "description": "구성 요소의 선택자에 추가될 접두사입니다. 예를 들어 접두사가 `app`이고 구성 요소 이름이 `my-component`인 경우 선택자는 `app-my-component`가 됩니다."
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the component should be added. If not specified, the CLI will determine the project from the current directory."
+          "description": "구성 요소가 추가되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "selector",
           "type": "string",
-          "description": "The HTML selector to use for this component. If not provided, a selector will be generated based on the component name (e.g., `app-my-component`)."
+          "description": "이 구성 요소에 사용할 HTML 선택자입니다. 제공되지 않으면 구성 요소 이름을 기반으로 선택자가 생성됩니다(예: `app-my-component`)."
         },
         {
           "name": "skip-import",
           "type": "boolean",
           "default": false,
-          "description": "Do not automatically import the new component into its closest NgModule."
+          "description": "새로운 구성 요소를 가장 가까운 NgModule에 자동으로 가져오지 않습니다."
         },
         {
           "name": "skip-selector",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of an HTML selector for the component."
+          "description": "구성 요소에 대한 HTML 선택자 생성을 건너뜁니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of unit test files `spec.ts`."
+          "description": "단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         },
         {
           "name": "standalone",
           "type": "boolean",
           "default": true,
-          "description": "Generate a standalone component. Standalone components are self-contained and don't need to be declared in an NgModule. They can be used independently or imported directly into other standalone components."
+          "description": "독립형 구성 요소를 생성합니다. 독립형 구성 요소는 자체 포함되며 NgModule에서 선언할 필요가 없습니다. 이들은 독립적으로 사용하거나 다른 독립형 구성 요소에 직접 가져올 수 있습니다."
         },
         {
           "name": "style",
@@ -356,12 +356,12 @@
             "less",
             "none"
           ],
-          "description": "Specify the type of stylesheet to be created for the component, or `none` to skip creating a stylesheet."
+          "description": "구성 요소를 위한 스타일시트의 유형을 지정하거나 스타일시트를 생성하지 않으려면 `none`을 설정합니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Append a custom type to the component's filename. For example, if you set the type to `container`, the file will be named `my-component.container.ts`."
+          "description": "구성 요소의 파일 이름에 사용자 정의 유형을 추가합니다. 예를 들어, 유형을 `container`로 설정할 경우 파일 이름은 `my-component.container.ts`가 됩니다."
         },
         {
           "name": "view-encapsulation",
@@ -374,7 +374,7 @@
             "None",
             "ShadowDom"
           ],
-          "description": "Sets the view encapsulation mode for the component. This determines how the component's styles are scoped and applied."
+          "description": "구성 요소에 대한 보기 캡슐화 모드를 설정합니다. 이는 구성 요소의 스타일이 어떻게 범위화되고 적용되는지를 결정합니다."
         }
       ],
       "aliases": [
@@ -385,12 +385,12 @@
     {
       "name": "config",
       "command": "config [type]",
-      "shortDescription": "Generates configuration files for your project. These files control various aspects of your project's build process, testing, and browser compatibility. This schematic helps you create or update essential configuration files with ease.",
+      "shortDescription": "프로젝트를 위한 구성 파일을 생성합니다. 이 파일들은 프로젝트의 빌드 프로세스, 테스트 및 브라우저 호환성에 대한 다양한 측면을 제어합니다. 이 스키마는 필수 구성 파일을 쉽게 생성하거나 업데이트하는 데 도움을 줍니다.",
       "options": [
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the configuration file should be created or updated."
+          "description": "구성 파일이 생성되거나 업데이트되어야 하는 프로젝트의 이름입니다."
         },
         {
           "name": "type",
@@ -399,7 +399,7 @@
             "karma",
             "browserslist"
           ],
-          "description": "Specifies the type of configuration file to generate.",
+          "description": "생성할 구성 파일의 유형을 지정합니다.",
           "positional": 0
         }
       ],
@@ -409,19 +409,19 @@
     {
       "name": "directive",
       "command": "directive [name]",
-      "shortDescription": "Creates a new directive in your project. Directives are used to extend the behavior or appearance of HTML elements and components. They allow you to manipulate the DOM, add custom attributes, and respond to events. This schematic generates the necessary files and boilerplate code for a new directive.",
+      "shortDescription": "프로젝트에 새로운 지시자를 생성합니다. 지시자는 HTML 요소 및 구성 요소의 동작이나 외관을 확장하는 데 사용됩니다. 이를 통해 DOM을 조작하고, 사용자 지정 속성을 추가하며, 이벤트에 응답할 수 있습니다. 이 스키마는 새로운 지시자를 위한 필수 파일 및 보일러플레이트 코드를 생성합니다.",
       "options": [
         {
           "name": "export",
           "type": "boolean",
           "default": false,
-          "description": "Automatically export the directive from the specified NgModule, making it accessible to other modules in the application."
+          "description": "지정된 NgModule에서 지시자를 자동으로 내보내어 애플리케이션의 다른 모듈에서 접근할 수 있도록 합니다."
         },
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates the new directive files at the top level of the current project. If set to false, a new folder with the directive's name will be created to contain the files."
+          "description": "현재 프로젝트의 최상위에 새로운 지시자 파일을 생성합니다. false로 설정되면 지시자의 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "module",
@@ -429,12 +429,12 @@
           "aliases": [
             "m"
           ],
-          "description": "Specify the NgModule where the directive should be declared. If not provided, the CLI will attempt to find the closest NgModule in the directive's path."
+          "description": "지시자가 선언되어야 할 NgModule을 지정합니다. 제공되지 않으면 CLI는 지시자의 경로에서 가장 가까운 NgModule을 찾으려고 시도합니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new directive. This will be used to create the directive's class and spec files (e.g., `my-directive.directive.ts` and `my-directive.directive.spec.ts`).",
+          "description": "새로운 지시자의 이름입니다. 이는 지시자의 클래스 및 사양 파일(예: `my-directive.directive.ts` 및 `my-directive.directive.spec.ts`)을 생성하기 위해 사용됩니다.",
           "positional": 0
         },
         {
@@ -443,40 +443,40 @@
           "aliases": [
             "p"
           ],
-          "description": "A prefix to be added to the directive's selector. For example, if the prefix is `app` and the directive name is `highlight`, the selector will be `appHighlight`."
+          "description": "지시자의 선택자에 추가될 접두사입니다. 예를 들어 접두사가 `app`이고 지시자 이름이 `highlight`인 경우 선택자는 `appHighlight`가 됩니다."
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the directive should be added. If not specified, the CLI will determine the project from the current directory."
+          "description": "지시자가 추가되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "selector",
           "type": "string",
-          "description": "The HTML selector to use for this directive. If not provided, a selector will be generated based on the directive's name (e.g., `appHighlight`)."
+          "description": "이 지시자에 사용할 HTML 선택자입니다. 제공되지 않으면 지시자의 이름을 기반으로 선택자가 생성됩니다(예: `appHighlight`)."
         },
         {
           "name": "skip-import",
           "type": "boolean",
           "default": false,
-          "description": "Do not automatically import the new directive into its closest NgModule."
+          "description": "새로운 지시자를 가장 가까운 NgModule에 자동으로 가져오지 않습니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the new directive."
+          "description": "새로운 지시자에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         },
         {
           "name": "standalone",
           "type": "boolean",
           "default": true,
-          "description": "Generate a standalone directive. Standalone directives are self-contained and don't need to be declared in an NgModule. They can be used independently or imported directly into other standalone components or directives."
+          "description": "독립형 지시자를 생성합니다. 독립형 지시자는 자체 포함되며 NgModule에서 선언할 필요가 없습니다. 이들은 독립적으로 사용하거나 다른 독립형 구성 요소나 지시자에 직접 가져올 수 있습니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Append a custom type to the directive's filename. For example, if you set the type to `directive`, the file will be named `example.directive.ts`."
+          "description": "지시자의 파일 이름에 사용자 정의 유형을 추가합니다. 예를 들어, 유형을 `directive`로 설정하면 파일 이름은 `example.directive.ts`가 됩니다."
         }
       ],
       "aliases": [
@@ -487,23 +487,23 @@
     {
       "name": "enum",
       "command": "enum [name]",
-      "shortDescription": "Creates a new enum in your project. Enums (enumerations) are a way to define a set of named constants, making your code more readable and maintainable. This schematic generates a new enum with the specified name and type.",
+      "shortDescription": "프로젝트에 새로운 열거형을 생성합니다. 열거형(열거형)은 이름이 지정된 상수 집합을 정의하는 방법으로, 코드의 가독성과 유지 관리를 용이하게 합니다. 이 스키마는 지정된 이름과 유형으로 새로운 열거형을 생성합니다.",
       "options": [
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new enum. This will be used to create the enum file (e.g., `my-enum.enum.ts`).",
+          "description": "새로운 열거형의 이름입니다. 이는 열거형 파일(예: `my-enum.enum.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the enum should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "열거형이 생성될 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Adds a custom type to the filename, allowing you to create more descriptive enum names. For example, if you set the type to `status`, the filename will be `my-enum.status.ts`."
+          "description": "파일 이름에 사용자 정의 유형을 추가하여 보다 설명적인 열거형 이름을 생성합니다. 예를 들어, 유형을 `status`로 설정하면 파일 이름은 `my-enum.status.ts`가 됩니다."
         }
       ],
       "aliases": [
@@ -514,12 +514,12 @@
     {
       "name": "environments",
       "command": "environments",
-      "shortDescription": "Generates and configures environment files for your project. Environment files allow you to define different settings and configurations for various environments, such as development, testing, and production. This schematic helps you create and manage these files, making it easier to customize your application's behavior for each environment.",
+      "shortDescription": "프로젝트를 위한 환경 파일을 생성 및 구성합니다. 환경 파일을 통해 개발, 테스트 및 프로덕션과 같은 다양한 환경에 대한 설정 및 구성을 정의할 수 있습니다. 이 스키마는 이러한 파일을 생성하고 관리하는 데 도움을 주어 애플리케이션의 동작을 각 환경에 맞게 사용자 정의할 수 있습니다.",
       "options": [
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the environment files should be created or updated."
+          "description": "환경 파일이 생성되거나 업데이트되어야 할 프로젝트의 이름입니다."
         }
       ],
       "aliases": [],
@@ -528,19 +528,19 @@
     {
       "name": "guard",
       "command": "guard [name]",
-      "shortDescription": "Creates a new route guard in your project. Route guards are used to control access to parts of your application by checking certain conditions before a route is activated. This schematic generates a new guard with the specified name, type, and options.",
+      "shortDescription": "프로젝트에서 새로운 라우트 가드를 생성합니다. 라우트 가드는 라우트가 활성화되기 전에 특정 조건을 확인하여 애플리케이션의 일부에 대한 접근을 제어하는 데 사용됩니다. 이 스키마는 지정된 이름, 유형 및 옵션을 가진 새로운 가드를 생성합니다.",
       "options": [
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates the new guard files at the top level of the current project. If set to false, a new folder with the guard's name will be created to contain the files."
+          "description": "현재 프로젝트의 최상위에 새로운 가드 파일을 생성합니다. false로 설정되면 가드의 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "functional",
           "type": "boolean",
           "default": true,
-          "description": "Generate the guard as a function instead of a class. Functional guards can be simpler for basic scenarios."
+          "description": "클래스 대신 함수로 가드를 생성합니다. 기능적 가드는 기본 시나리오에 대해 간단할 수 있습니다."
         },
         {
           "name": "implements",
@@ -548,24 +548,24 @@
           "aliases": [
             "guardType"
           ],
-          "description": "Specifies the type(s) of guard to create. You can choose one or more of the following: `CanActivate` (controls access to a route), `CanActivateChild` (controls access to child routes), `CanDeactivate` (asks for confirmation before leaving a route), `CanMatch` (determines if a route can be matched)."
+          "description": "생성할 가드의 유형을 지정합니다. 다음 중 하나 이상을 선택할 수 있습니다: `CanActivate` (라우트 접근을 제어), `CanActivateChild` (자식 라우트 접근을 제어), `CanDeactivate` (라우트를 떠나기 전 확인을 요청), `CanMatch` (라우트를 매치할 수 있는지 확인)."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new route guard. This will be used to create the guard's class and spec files (e.g., `my-guard.guard.ts` and `my-guard.guard.spec.ts`).",
+          "description": "새로운 라우트 가드의 이름입니다. 이는 가드의 클래스 및 사양 파일(예: `my-guard.guard.ts` 및 `my-guard.guard.spec.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the guard should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "가드가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the new guard."
+          "description": "새로운 가드에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         }
       ],
       "aliases": [
@@ -576,36 +576,36 @@
     {
       "name": "interceptor",
       "command": "interceptor [name]",
-      "shortDescription": "Creates a new interceptor in your project. Interceptors are used to intercept and modify HTTP requests and responses before they reach their destination. This allows you to perform tasks like adding authentication headers, handling errors, or logging requests. This schematic generates the necessary files and boilerplate code for a new interceptor.",
+      "shortDescription": "프로젝트에 새로운 인터셉터를 생성합니다. 인터셉터는 HTTP 요청 및 응답을 가로채고 수정하여 배달지에 도달하기 전에 사용됩니다. 이를 통해 인증 헤더 추가, 오류 처리 또는 요청 로깅과 같은 작업을 수행할 수 있습니다. 이 스키마는 새로운 인터셉터에 필요한 파일과 보일러플레이트 코드를 생성합니다.",
       "options": [
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates the new interceptor files at the top level of the current project. If set to false, a new folder with the interceptor's name will be created to contain the files."
+          "description": "현재 프로젝트의 최상위에 새로운 인터셉터 파일을 생성합니다. false로 설정되면 인터셉터의 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "functional",
           "type": "boolean",
           "default": true,
-          "description": "Creates the interceptor as a function `HttpInterceptorFn` instead of a class. Functional interceptors can be simpler for basic scenarios."
+          "description": "클래스 대신 함수 `HttpInterceptorFn`으로 인터셉터를 생성합니다. 기능적 인터셉터는 기본 시나리오에 대해 간단할 수 있습니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new interceptor. This will be used to create the interceptor's class and spec files (e.g., `my-interceptor.interceptor.ts` and `my-interceptor.interceptor.spec.ts`).",
+          "description": "새로운 인터셉터의 이름입니다. 이는 인터셉터의 클래스 및 사양 파일(예: `my-interceptor.interceptor.ts` 및 `my-interceptor.interceptor.spec.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the interceptor should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "인터셉터가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the new interceptor."
+          "description": "새로운 인터셉터에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         }
       ],
       "aliases": [],
@@ -614,28 +614,28 @@
     {
       "name": "interface",
       "command": "interface [name] [type]",
-      "shortDescription": "Creates a new interface in your project. Interfaces define the structure of objects in TypeScript, ensuring type safety and code clarity. This schematic generates a new interface with the specified name and type.",
+      "shortDescription": "프로젝트에 새로운 인터페이스를 생성합니다. 인터페이스는 TypeScript에서 객체의 구조를 정의하여 타입 안전성과 코드 명확성을 보장합니다. 이 스키마는 지정된 이름과 유형의 새로운 인터페이스를 생성합니다.",
       "options": [
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new interface. This will be used to create the interface file (e.g., `my-interface.interface.ts`).",
+          "description": "새로운 인터페이스의 이름입니다. 이는 인터페이스 파일(예: `my-interface.interface.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "prefix",
           "type": "string",
-          "description": "A prefix to be added to the interface name. This is typically not used for interfaces, as they don't have selectors like components or directives."
+          "description": "인터페이스 이름에 추가될 접두사입니다. 일반적으로 인터페이스에 대해 사용되지는 않으며, 구성 요소나 지시자처럼 선택자가 없습니다."
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the interface should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "인터페이스가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Adds a custom type to the filename, allowing you to create more descriptive interface names. For example, if you set the type to `data`, the filename will be `my-interface.data.ts`.",
+          "description": "파일 이름에 사용자 정의 유형을 추가하여 보다 설명적인 인터페이스 이름을 생성합니다. 예를 들어, 유형을 `data`로 설정하면 파일 이름은 `my-interface.data.ts`가 됩니다.",
           "positional": 1
         }
       ],
@@ -647,18 +647,18 @@
     {
       "name": "library",
       "command": "library [name]",
-      "shortDescription": "Creates a new library project in your Angular workspace. Libraries are reusable collections of components, services, and other Angular artifacts that can be shared across multiple applications. This schematic simplifies the process of generating a new library with the necessary files and configurations.",
+      "shortDescription": "Angular 작업 공간에 새로운 라이브러리 프로젝트를 생성합니다. 라이브러리는 여러 애플리케이션에서 공유할 수 있는 구성 요소, 서비스 및 기타 Angular 아티팩트의 재사용 가능한 컬렉션입니다. 이 스키마는 필요한 파일과 구성을 갖춘 새로운 라이브러리를 생성하는 프로세스를 단순화합니다.",
       "options": [
         {
           "name": "entry-file",
           "type": "string",
           "default": "public-api",
-          "description": "The path to the library's public API file, relative to the workspace root. This file defines what parts of the library are accessible to applications that import it."
+          "description": "작업 공간 루트를 기준으로 하는 라이브러리의 공개 API 파일 경로입니다. 이 파일은 애플리케이션이 가져올 수 있는 라이브러리의 부분을 정의합니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new library. This name will be used for the project directory and various identifiers within the library's code.",
+          "description": "새로운 라이브러리의 이름입니다. 이 이름은 프로젝트 디렉토리 및 라이브러리 코드 내의 다양한 식별자에 사용됩니다.",
           "positional": 0
         },
         {
@@ -668,36 +668,36 @@
             "p"
           ],
           "default": "lib",
-          "description": "A prefix to be added to the selectors of components generated within this library. For example, if the prefix is `my-lib` and you generate a component named `my-component`, the selector will be `my-lib-my-component`."
+          "description": "이 라이브러리 내에서 생성된 구성 요소 선택자에 추가될 접두사입니다. 예를 들어 접두사가 `my-lib`이고 `my-component`라는 이름의 구성 요소를 생성하는 경우 선택자는 `my-lib-my-component`가 됩니다."
         },
         {
           "name": "project-root",
           "type": "string",
-          "description": "The root directory for the new library, relative to the workspace root. If not specified, the library will be created in a subfolder within the `projects` directory, using the library's name."
+          "description": "새로운 라이브러리의 루트 디렉터리로, 작업 공간 루트를 기준으로 합니다. 지정되지 않으면 라이브러리는 `projects` 디렉토리 내의 하위 폴더에 생성되며, 라이브러리의 이름을 사용합니다."
         },
         {
           "name": "skip-install",
           "type": "boolean",
           "default": false,
-          "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later."
+          "description": "패키지의 자동 설치를 건너뜁니다. 이후에 종속성을 수동으로 설치해야 합니다."
         },
         {
           "name": "skip-package-json",
           "type": "boolean",
           "default": false,
-          "description": "Do not automatically add dependencies to the `package.json` file."
+          "description": "`package.json` 파일에 종속성을 자동으로 추가하지 않습니다."
         },
         {
           "name": "skip-ts-config",
           "type": "boolean",
           "default": false,
-          "description": "Do not update the workspace `tsconfig.json` file to add a path mapping for the new library. The path mapping is needed to use the library in an application, but can be disabled here to simplify development."
+          "description": "새로운 라이브러리에 대한 경로 매핑을 추가하기 위해 작업 공간 `tsconfig.json` 파일을 업데이트하지 않습니다. 이 경로 매핑은 애플리케이션에서 라이브러리를 사용하는 데 필요하지만, 여기를 통해 개발을 단순화할 수 있습니다."
         },
         {
           "name": "standalone",
           "type": "boolean",
           "default": true,
-          "description": "Create a library that utilizes the standalone API, eliminating the need for NgModules. This can simplify the structure of your library and its usage in applications."
+          "description": "NgModules를 필요로 하지 않는 독립형 API를 활용하는 라이브러리를 생성합니다. 이는 라이브러리 구조와 애플리케이션 내에서의 사용을 단순화할 수 있습니다."
         }
       ],
       "aliases": [
@@ -708,13 +708,13 @@
     {
       "name": "module",
       "command": "module [name]",
-      "shortDescription": "Creates a new, generic NgModule definition in the given project.",
+      "shortDescription": "지정된 프로젝트에 새로운 일반 NgModule 정의를 생성합니다.",
       "options": [
         {
           "name": "flat",
           "type": "boolean",
           "default": false,
-          "description": "Create the new files at the top level of the current project root. "
+          "description": "현재 프로젝트 루트의 최상위에 새로운 파일을 생성합니다."
         },
         {
           "name": "module",
@@ -722,29 +722,29 @@
           "aliases": [
             "m"
           ],
-          "description": "The declaring NgModule."
+          "description": "선언하는 NgModule입니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name of the NgModule.",
+          "description": "NgModule의 이름입니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project."
+          "description": "프로젝트의 이름입니다."
         },
         {
           "name": "route",
           "type": "string",
-          "description": "The route path for a lazy-loaded module. When supplied, creates a component in the new module, and adds the route to that component in the `Routes` array declared in the module provided in the `--module` option."
+          "description": "지연 로드 모듈의 경로입니다. 제공할 경우 새로운 모듈에 컴포넌트를 생성하고, 제공된 `--module` 옵션의 모듈에 `Routes` 배열에 해당 컴포넌트를 추가합니다."
         },
         {
           "name": "routing",
           "type": "boolean",
           "default": false,
-          "description": "Create a routing module."
+          "description": "라우팅 모듈을 생성합니다."
         },
         {
           "name": "routing-scope",
@@ -754,7 +754,7 @@
             "Child",
             "Root"
           ],
-          "description": "The scope for the new routing module."
+          "description": "새로운 라우팅 모듈의 범위입니다."
         }
       ],
       "aliases": [
@@ -765,19 +765,19 @@
     {
       "name": "pipe",
       "command": "pipe [name]",
-      "shortDescription": "Creates a new pipe in your project. Pipes are used to transform data for display in templates. They take input values and apply a specific transformation, such as formatting dates, currency, or filtering arrays. This schematic generates the necessary files and boilerplate code for a new pipe.",
+      "shortDescription": "프로젝트에 새로운 파이프를 생성합니다. 파이프는 데이터를 템플릿에 표시하기 위해 변환하는 데 사용됩니다. 입력 값을 받아 특정 변환을 적용합니다. 이 스키마는 새로운 파이프에 필요한 파일과 보일러플레이트 코드를 생성합니다.",
       "options": [
         {
           "name": "export",
           "type": "boolean",
           "default": false,
-          "description": "Automatically export the pipe from the specified NgModule, making it accessible to other modules in the application."
+          "description": "지정된 NgModule에서 파이프를 자동으로 내보내어 애플리케이션의 다른 모듈에서 접근할 수 있도록 합니다."
         },
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates the new pipe files at the top level of the current project. If set to false, a new folder with the pipe's name will be created to contain the files."
+          "description": "현재 프로젝트의 최상위에 새로운 파이프 파일을 생성합니다. false로 설정되면 파이프의 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "module",
@@ -785,36 +785,36 @@
           "aliases": [
             "m"
           ],
-          "description": "Specify the NgModule where the pipe should be declared. If not provided, the CLI will attempt to find the closest NgModule in the pipe's path."
+          "description": "파이프가 선언되어야 할 NgModule을 지정합니다. 제공되지 않으면 CLI가 파이프의 경로에서 가장 가까운 NgModule을 찾으려고 시도합니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new pipe. This will be used to create the pipe's class and spec files (e.g., `my-pipe.pipe.ts` and `my-pipe.pipe.spec.ts`).",
+          "description": "새로운 파이프의 이름입니다. 이는 파이프의 클래스 및 사양 파일(예: `my-pipe.pipe.ts` 및 `my-pipe.pipe.spec.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the pipe should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "파이프가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-import",
           "type": "boolean",
           "default": false,
-          "description": "Do not automatically import the new pipe into its closest NgModule."
+          "description": "새로운 파이프를 가장 가까운 NgModule에 자동으로 가져오지 않습니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Prevent the generation of a unit test file `spec.ts` for the new pipe."
+          "description": "새로운 파이프에 대한 단위 테스트 파일 생성 `spec.ts`를 방지합니다."
         },
         {
           "name": "standalone",
           "type": "boolean",
           "default": true,
-          "description": "Generate a standalone pipe. Standalone pipes are self-contained and don't need to be declared in an NgModule. They can be used independently or imported directly into other standalone components, directives, or pipes."
+          "description": "독립형 파이프를 생성합니다. 독립형 파이프는 자체 포함되며 NgModule에서 선언할 필요가 없습니다. 이들은 독립적으로 사용하거나 다른 독립형 구성 요소, 지시자 또는 파이프에 직접 가져올 수 있습니다."
         }
       ],
       "aliases": [
@@ -825,36 +825,36 @@
     {
       "name": "resolver",
       "command": "resolver [name]",
-      "shortDescription": "Creates a new resolver in your project. Resolvers are used to pre-fetch data before a route is activated, ensuring that the necessary data is available before the component is displayed. This can improve the user experience by preventing delays and loading states. This schematic generates a new resolver with the specified name and options.",
+      "shortDescription": "프로젝트에 새로운 리졸버를 생성합니다. 리졸버는 라우트가 활성화되기 전에 데이터를 미리 가져오는 데 사용되며, 필요한 데이터가 컴포넌트가 표시되기 전에 사용 가능하도록 보장합니다. 이는 지연 및 로딩 상태를 방지하여 사용자 경험을 개선할 수 있습니다. 이 스키마는 지정된 이름과 옵션을 가진 새로운 리졸버를 생성합니다.",
       "options": [
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates the new resolver files at the top level of the current project. If set to false, a new folder with the resolver's name will be created to contain the files."
+          "description": "현재 프로젝트의 최상위에 새로운 리졸버 파일을 생성합니다. false로 설정되면 리졸버의 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "functional",
           "type": "boolean",
           "default": true,
-          "description": "Creates the resolver as a function `ResolveFn` instead of a class. Functional resolvers can be simpler for basic scenarios."
+          "description": "클래스 대신 함수 `ResolveFn`으로 리졸버를 생성합니다. 기능적 리졸버는 기본 시나리오에 대해 간단할 수 있습니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new resolver. This will be used to create the resolver's class and spec files (e.g., `my-resolver.resolver.ts` and `my-resolver.resolver.spec.ts`).",
+          "description": "새로운 리졸버의 이름입니다. 이 이름은 리졸버의 클래스 및 사양 파일(예: `my-resolver.resolver.ts` 및 `my-resolver.resolver.spec.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the resolver should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "리졸버가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the new resolver."
+          "description": "새로운 리졸버에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         }
       ],
       "aliases": [
@@ -865,35 +865,35 @@
     {
       "name": "service",
       "command": "service [name]",
-      "shortDescription": "Creates a new service in your project. Services are used to encapsulate reusable logic, such as data access, API calls, or utility functions. This schematic simplifies the process of generating a new service with the necessary files and boilerplate code.",
+      "shortDescription": "프로젝트에 새로운 서비스를 생성합니다. 서비스는 데이터 접근, API 호출 또는 유틸리티 기능과 같은 재사용 가능한 로직을 캡슐화하는 데 사용됩니다. 이 스키마는 필요한 파일 및 보일러플레이트 코드로 새로운 서비스를 생성하는 프로세스를 단순화합니다.",
       "options": [
         {
           "name": "flat",
           "type": "boolean",
           "default": true,
-          "description": "Creates files at the top level of the project or the given path. If set to false, a new folder with the service's name will be created to contain the files."
+          "description": "프로젝트 또는 지정된 경로의 최상위에 파일을 생성합니다. false로 설정되면 서비스 이름을 가진 새로운 폴더가 생성되어 파일이 포함됩니다."
         },
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new service. This will be used to create the service's class and spec files (e.g., `my-service.service.ts` and `my-service.service.spec.ts`).",
+          "description": "새로운 서비스의 이름입니다. 이는 서비스의 클래스 및 사양 파일(예: `my-service.service.ts` 및 `my-service.service.spec.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the service should be added. If not specified, the CLI will determine the project from the current directory."
+          "description": "서비스가 추가되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "skip-tests",
           "type": "boolean",
           "default": false,
-          "description": "Skip the generation of a unit test file `spec.ts` for the service."
+          "description": "서비스에 대한 단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
         },
         {
           "name": "type",
           "type": "string",
-          "description": "Append a custom type to the service's filename. For example, if you set the type to `service`, the file will be named `my-service.service.ts`."
+          "description": "서비스의 파일 이름에 사용자 정의 유형을 추가합니다. 예를 들어, 유형을 `service`로 설정하면 파일 이름은 `my-service.service.ts`가 됩니다."
         }
       ],
       "aliases": [
@@ -904,18 +904,18 @@
     {
       "name": "service-worker",
       "command": "service-worker",
-      "shortDescription": "Adds a service worker to your project. Service workers enable your application to work offline or on low-quality networks by caching assets and intercepting network requests. This schematic configures your project to use a service worker.",
+      "shortDescription": "프로젝트에 서비스 워커를 추가합니다. 서비스 워커는 애플리케이션이 오프라인에서 작동하도록 하거나 저품질 네트워크에서 작업할 수 있게 합니다. 이 스키마는 프로젝트에서 서비스 워커를 사용할 수 있도록 구성합니다.",
       "options": [
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project to add the service worker to. If not specified, the CLI will determine the project from the current directory."
+          "description": "서비스 워커가 추가될 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "target",
           "type": "string",
           "default": "build",
-          "description": "The build target to apply the service worker to. This is typically `build`, indicating that the service worker should be generated during the standard build process."
+          "description": "서비스 워커가 적용될 빌드 대상으로, 일반적으로 `build`로 설정되어 서비스 워커가 표준 빌드 프로세스 중에 생성되어야 함을 나타냅니다."
         }
       ],
       "aliases": [],
@@ -924,24 +924,24 @@
     {
       "name": "web-worker",
       "command": "web-worker [name]",
-      "shortDescription": "Creates a new web worker in your project. Web workers allow you to run JavaScript code in the background, improving the performance and responsiveness of your application by offloading computationally intensive tasks. This schematic generates the necessary files for a new web worker and provides an optional code snippet to demonstrate its usage.",
+      "shortDescription": "프로젝트에 새로운 웹 워커를 생성합니다. 웹 워커는 JavaScript 코드를 백그라운드에서 실행할 수 있게 하여 컴퓨팅 집약적인 작업을 오프로드하여 애플리케이션의 성능과 반응성을 향상시킵니다. 이 스키마는 새로운 웹 워커에 필요한 파일을 생성하며, 그 사용법을 보여주는 선택적 코드 조각을 제공합니다.",
       "options": [
         {
           "name": "name",
           "type": "string",
-          "description": "The name for the new web worker. This will be used to create the worker file (e.g., `my-worker.worker.ts`).",
+          "description": "새로운 웹 워커의 이름입니다. 이는 워커 파일(예: `my-worker.worker.ts`)을 생성하는 데 사용됩니다.",
           "positional": 0
         },
         {
           "name": "project",
           "type": "string",
-          "description": "The name of the project where the web worker should be created. If not specified, the CLI will determine the project from the current directory."
+          "description": "웹 워커가 생성되어야 할 프로젝트의 이름입니다. 지정되지 않으면 CLI가 현재 디렉토리에서 프로젝트를 결정합니다."
         },
         {
           "name": "snippet",
           "type": "boolean",
           "default": true,
-          "description": "Generate a code snippet that demonstrates how to create and use the new web worker."
+          "description": "새로운 웹 워커를 생성하고 사용하는 방법을 보여주는 코드 조각을 생성합니다."
         }
       ],
       "aliases": [],

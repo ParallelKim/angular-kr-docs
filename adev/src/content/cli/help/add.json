@@ -1,23 +1,23 @@
 {
   "name": "add",
   "command": "ng add <collection>",
-  "shortDescription": "Adds support for an external library to your project.",
+  "shortDescription": "프로젝트에 외부 라이브러리에 대한 지원을 추가합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/add/long-description.md",
-  "longDescription": "Adds the npm package for a published library to your workspace, and configures\nthe project in the current working directory to use that library, as specified by the library's schematic.\nFor example, adding `@angular/pwa` configures your project for PWA support:\n\n```bash\nng add @angular/pwa\n```\n",
+  "longDescription": "게시된 라이브러리에 대한 npm 패키지를 워크스페이스에 추가하고,\n현재 작업 디렉토리의 프로젝트를 해당 라이브러리를 사용하도록 구성합니다.\n예를 들어, `@angular/pwa`를 추가하면 프로젝트가 PWA 지원을 받도록 구성됩니다:\n\n```bash\nng add @angular/pwa\n```\n",
   "aliases": [],
   "deprecated": false,
   "options": [
     {
       "name": "collection",
       "type": "string",
-      "description": "The package to be added.",
+      "description": "추가할 패키지입니다.",
       "positional": 0
     },
     {
       "name": "defaults",
       "type": "boolean",
       "default": false,
-      "description": "Disable interactive input prompts for options with a default."
+      "description": "기본값이 있는 옵션에 대한 대화형 입력 프롬프트를 비활성화합니다."
     },
     {
       "name": "dry-run",
@@ -26,41 +26,41 @@
         "d"
       ],
       "default": false,
-      "description": "Run through and reports activity without writing out results."
+      "description": "결과를 작성하지 않고 활동을 보고하는 과정을 실행합니다."
     },
     {
       "name": "force",
       "type": "boolean",
       "default": false,
-      "description": "Force overwriting of existing files."
+      "description": "기존 파일을 강제로 덮어씁니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령의 도움말 메시지를 표시합니다."
     },
     {
       "name": "interactive",
       "type": "boolean",
       "default": true,
-      "description": "Enable interactive input prompts."
+      "description": "대화형 입력 프롬프트를 활성화합니다."
     },
     {
       "name": "registry",
       "type": "string",
-      "description": "The NPM registry to use."
+      "description": "사용할 NPM 레지스트리입니다."
     },
     {
       "name": "skip-confirmation",
       "type": "boolean",
       "default": false,
-      "description": "Skip asking a confirmation prompt before installing and executing the package. Ensure package name is correct prior to using this option."
+      "description": "패키지를 설치하고 실행하기 전에 확인 프롬프트를 건너뜁니다. 이 옵션을 사용하기 전에 패키지 이름이 올바른지 확인하십시오."
     },
     {
       "name": "verbose",
       "type": "boolean",
       "default": false,
-      "description": "Display additional details about internal operations during execution."
+      "description": "실행 중 내부 작업에 대한 추가 세부정보를 표시합니다."
     }
   ]
 }

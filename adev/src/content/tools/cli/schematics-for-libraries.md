@@ -1,15 +1,15 @@
 # 라이브러리 스키매틱
 
-Angular 라이브러리를 만들 때, Angular CLI와 통합되는 스키매틱을 제공하고 패키징할 수 있습니다. 
+Angular 라이브러리를 만들 때, Angular CLI와 통합되는 스키매틱을 제공하고 패키징할 수 있습니다.
 당신의 스키매틱을 사용하면 사용자가 `ng add`를 통해 라이브러리의 초기 버전을 설치하고,
-`ng generate`를 통해 라이브러리에 정의된 아티팩트를 생성하며, `ng update`를 사용하여 프로젝트를 새 버전의 라이브러리에 맞게 조정할 수 있습니다. 
+`ng generate`를 통해 라이브러리에 정의된 아티팩트를 생성하며, `ng update`를 사용하여 프로젝트를 새 버전의 라이브러리에 맞게 조정할 수 있습니다.
 이 과정에서 라이브러리가 파괴적인 변경사항을 도입합니다.
 
 세 가지 유형의 스키매틱은 모두 라이브러리와 함께 패키징되는 컬렉션의 일부가 될 수 있습니다.
 
 ## 스키매틱 컬렉션 만들기
 
-컬렉션을 시작하려면, 스키매틱 파일을 생성해야 합니다. 
+컬렉션을 시작하려면, 스키매틱 파일을 생성해야 합니다.
 다음 단계를 통해 프로젝트 파일을 수정하지 않고 초기 지원을 추가하는 방법을 보여줍니다.
 
 1. 라이브러리의 루트 폴더에서 `schematics` 폴더를 생성합니다.
@@ -21,7 +21,7 @@ Angular 라이브러리를 만들 때, Angular CLI와 통합되는 스키매틱�
 
     * `$schema` 경로는 Angular Devkit 컬렉션 스키마에 상대적입니다.
     * `schematics` 객체는 이 컬렉션의 일부인 명명된 스키매틱을 설명합니다.
-    * 첫 번째 항목은 `ng-add`라는 이름의 스키매틱에 대한 것입니다. 
+    * 첫 번째 항목은 `ng-add`라는 이름의 스키매틱에 대한 것입니다.
         이 스키매틱은 설명을 포함하고, 스키매틱이 실행될 때 호출되는 공장 함수에 대한 포인터를 포함합니다.
 
 1. 라이브러리 프로젝트의 `package.json` 파일에 스키마 파일의 경로를 가진 "schematics" 항목을 추가합니다.
@@ -122,7 +122,7 @@ ng generate my-lib:my-service
     * *type*: 속성으로 제공되는 유형을 설명하는 설명자.
     * *properties*: 스키매틱에 대한 사용 가능한 옵션을 정의하는 객체.
 
-    각 옵션은 키와 유형, 설명 및 선택적 별칭을 연결합니다. 
+    각 옵션은 키와 유형, 설명 및 선택적 별칭을 연결합니다.
     유형은 예상되는 값의 모양을 정의하고 설명은 사용자가 스키매틱의 사용 도움말을 요청할 때 표시됩니다.
 
     스키매틱 옵션에 대한 추가 사용자 정의는 작업 공간 스키마를 참조하십시오.
@@ -139,11 +139,11 @@ ng generate my-lib:my-service
 
 ### 템플릿 파일 추가
 
-아티팩트를 프로젝트에 추가하기 위해 스키매틱은 고유한 템플릿 파일이 필요합니다. 
+아티팩트를 프로젝트에 추가하기 위해 스키매틱은 고유한 템플릿 파일이 필요합니다.
 스키매틱 템플릿은 코드 실행 및 변수 치환을 위한 특별 문법을 지원합니다.
 
 1. `schematics/my-service/` 폴더 내에 `files/` 폴더를 생성합니다.
-1. 파일 생성 시 사용할 템플릿을 정의하는 `__name@dasherize__.service.ts.template`이라는 파일을 생성합니다. 
+1. 파일 생성 시 사용할 템플릿을 정의하는 `__name@dasherize__.service.ts.template`이라는 파일을 생성합니다.
     이 템플릿은 Angular의 `HttpClient`가 생성자의 주입되어 있는 서비스를 생성합니다.
 
     <docs-code lang="typescript" header="projects/my-lib/schematics/my-service/files/__name@dasherize__.service.ts.template (스키매틱 템플릿)">
@@ -167,13 +167,13 @@ ng generate my-lib:my-service
 
 이제 인프라가 마련되었으므로, 사용자의 프로젝트에서 필요한 수정을 수행하는 주요 함수를 정의할 수 있습니다.
 
-스키매틱 프레임워크는 파일 템플릿 시스템을 제공하며, 이는 경로 및 콘텐츠 템플릿 모두를 지원합니다. 
+스키매틱 프레임워크는 파일 템플릿 시스템을 제공하며, 이는 경로 및 콘텐츠 템플릿 모두를 지원합니다.
 이 시스템은 입력 `Tree`에 로드된 파일 또는 경로 내 정의된 자리 표시자에 대해 작동하며, `Rule`로 전달된 값을 사용하여 채웁니다.
 
 이러한 데이터 구조 및 문법에 대한 자세한 내용은 [스키매틱 README](https://github.com/angular/angular-cli/blob/main/packages/angular_devkit/schematics/README.md)를 참조하십시오.
 
 1. 주요 파일 `index.ts`를 생성하고 스키매틱 공장 함수의 소스 코드를 추가합니다.
-1. 먼저, 필요한 스키매틱 정의를 가져옵니다. 
+1. 먼저, 필요한 스키매틱 정의를 가져옵니다.
     스키매틱 프레임워크는 스키매틱을 실행할 때 규칙을 생성하고 사용하는 데 사용할 수 있는 많은 유틸리티 함수를 제공합니다.
 
     <docs-code header="projects/my-lib/schematics/my-service/index.ts (가져오기)" path="adev/src/content/examples/schematics-for-libraries/projects/my-lib/schematics/my-service/index.ts" visibleRegion="schematics-imports"/>
@@ -186,18 +186,18 @@ ng generate my-lib:my-service
 
     <docs-code header="projects/my-lib/schematics/my-service/index.ts (초기 규칙)" path="adev/src/content/examples/schematics-for-libraries/projects/my-lib/schematics/my-service/index.1.ts" visibleRegion="factory"/>
 
-이 규칙 공장은 수정 없이 나무를 반환합니다. 
+이 규칙 팩토리 수정 없이 트리를 반환합니다.
 옵션은 `ng generate` 명령으로 전달된 옵션 값입니다.
 
 ## 생성 규칙 정의
 
 이제 사용자의 애플리케이션을 수정하여 라이브러리에 정의된 서비스에 대한 설정을 준비하는 코드를 생성하는 기본 틀이 마련되었습니다.
 
-사용자가 라이브러리를 설치한 Angular 작업 공간에는 여러 프로젝트(애플리케이션과 라이브러리)가 포함되어 있습니다. 
-사용자는 커맨드 라인에서 프로젝트를 지정하거나 기본값으로 설정할 수 있습니다. 
+사용자가 라이브러리를 설치한 Angular 작업 공간에는 여러 프로젝트(애플리케이션과 라이브러리)가 포함되어 있습니다.
+사용자는 커맨드 라인에서 프로젝트를 지정하거나 기본값으로 설정할 수 있습니다.
 두 경우 모두, 당신의 코드는 이 스키매틱이 적용되는 특정 프로젝트를 식별해야 하므로, 프로젝트 구성에서 정보를 검색할 수 있습니다.
 
-이 작업은 공장 함수에 전달된 `Tree` 객체를 사용하여 수행됩니다. 
+이 작업은 공장 함수에 전달된 `Tree` 객체를 사용하여 수행됩니다.
 `Tree` 메소드는 작업 공간의 전체 파일 트리에 접근할 수 있도록 해주어 스키매틱이 실행되는 동안 파일을 읽고 쓸 수 있습니다.
 
 ### 프로젝트 구성 가져오기
@@ -218,17 +218,17 @@ ng generate my-lib:my-service
 
 1. `options.path`는 스키매틱이 적용된 후 스키매틱 템플릿 파일이 이동할 위치를 결정합니다.
 
-    스키매틱 스키마의 `path` 옵션은 기본적으로 현재 작업 디렉토리로 대체됩니다. 
+    스키매틱 스키마의 `path` 옵션은 기본적으로 현재 작업 디렉토리로 대체됩니다.
     `path`가 정의되지 않았으면 프로젝트 구성의 `sourceRoot`와 `projectType`을 사용하십시오.
 
     <docs-code header="projects/my-lib/schematics/my-service/index.ts (프로젝트 정보)" path="adev/src/content/examples/schematics-for-libraries/projects/my-lib/schematics/my-service/index.ts" visibleRegion="path"/>
 
 ### 규칙 정의
 
-`Rule`은 외부 템플릿 파일을 사용할 수 있으며, 이를 변환하고 변환된 템플릿으로 다른 `Rule` 객체를 반환할 수 있습니다. 
+`Rule`은 외부 템플릿 파일을 사용할 수 있으며, 이를 변환하고 변환된 템플릿으로 다른 `Rule` 객체를 반환할 수 있습니다.
 이제 템플릿을 사용하여 스키매틱에 필요한 사용자 정의 파일을 생성합니다.
 
-1. 공장 함수에 다음 코드를 추가합니다.
+1. 팩토리 함수에 다음 코드를 추가합니다.
 
     <docs-code header="projects/my-lib/schematics/my-service/index.ts (템플릿 변환)" path="adev/src/content/examples/schematics-for-libraries/projects/my-lib/schematics/my-service/index.ts" visibleRegion="template"/>
 
@@ -245,7 +245,7 @@ ng generate my-lib:my-service
 
     <docs-code header="projects/my-lib/schematics/my-service/index.ts (연결 규칙)" path="adev/src/content/examples/schematics-for-libraries/projects/my-lib/schematics/my-service/index.ts" visibleRegion="chain"/>
 
-    `chain()` 메소드는 여러 규칙을 단일 규칙으로 결합할 수 있도록 하여 단일 스키매틱에서 여러 작업을 수행할 수 있게 합니다. 
+    `chain()` 메소드는 여러 규칙을 단일 규칙으로 결합할 수 있도록 하여 단일 스키매틱에서 여러 작업을 수행할 수 있게 합니다.
     여기서는 템플릿 규칙과 스키매틱에 의해 실행되는 코드를 결합하고 있습니다.
 
 다음 스키매틱 규칙 함수의 완전한 예제를 참조하십시오.
@@ -256,7 +256,7 @@ ng generate my-lib:my-service
 
 ## 라이브러리 스키매틱 실행
 
-라이브러리와 스키매틱을 빌드한 후, 스키매틱 컬렉션을 설치하여 프로젝트에 적용할 수 있습니다. 
+라이브러리와 스키매틱을 빌드한 후, 스키매틱 컬렉션을 설치하여 프로젝트에 적용할 수 있습니다.
 다음 단계는 이전에 생성한 스키매틱을 사용하여 서비스를 생성하는 방법을 보여줍니다.
 
 ### 라이브러리와 스키매틱 빌드
@@ -280,8 +280,8 @@ npm run build
 
 ### 라이브러리 링크
 
-라이브러리와 스키매틱은 패키징되어 작업 공간의 루트에 있는 `dist/my-lib` 폴더에 배치됩니다. 
-스키매틱을 실행하기 위해 라이브러리를 `node_modules` 폴더에 링크해야 합니다. 
+라이브러리와 스키매틱은 패키징되어 작업 공간의 루트에 있는 `dist/my-lib` 폴더에 배치됩니다.
+스키매틱을 실행하기 위해 라이브러리를 `node_modules` 폴더에 링크해야 합니다.
 작업 공간의 루트에서 배포 가능한 라이브러리의 경로와 함께 `npm link` 명령을 실행합니다.
 
 <docs-code language="shell">

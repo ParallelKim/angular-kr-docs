@@ -1,21 +1,21 @@
 {
   "name": "run",
   "command": "ng run <target>",
-  "shortDescription": "Runs an Architect target with an optional custom builder configuration defined in your project.",
+  "shortDescription": "프로젝트에서 정의된 선택적 사용자 지정 빌더 구성으로 아키텍트 대상을 실행합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/run/long-description.md",
-  "longDescription": "Architect is the tool that the CLI uses to perform complex tasks such as compilation, according to provided configurations.\nThe CLI commands run Architect targets such as `build`, `serve`, `test`, and `lint`.\nEach named target has a default configuration, specified by an `options` object,\nand an optional set of named alternate configurations in the `configurations` object.\n\nFor example, the `serve` target for a newly generated app has a predefined\nalternate configuration named `production`.\n\nYou can define new targets and their configuration options in the `architect` section\nof the `angular.json` file which you can run them from the command line using the `ng run` command.\n",
+  "longDescription": "아키텍트는 CLI가 제공된 구성에 따라 컴파일과 같은 복잡한 작업을 수행하는 도구입니다.\nCLI 명령은 `build`, `serve`, `test`, `lint`와 같은 아키텍트 대상을 실행합니다.\n각 이름이 지정된 대상은 `options` 객체에 지정된 기본 구성과\n`configurations` 객체에 있는 선택적 이름이 지정된 대체 구성 세트를 가집니다.\n\n예를 들어, 새로 생성된 앱에 대한 `serve` 대상은 `production`이라는 미리 정의된\n대체 구성을 가집니다.\n\n새로운 대상을 정의하고 그 구성 옵션을 `angular.json` 파일의\n`architect` 섹션에 설정하고, `ng run` 명령을 사용하여 명령줄에서 실행할 수 있습니다.\n",
   "aliases": [],
   "deprecated": false,
   "options": [
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움 메시지를 표시합니다."
     },
     {
       "name": "target",
       "type": "string",
-      "description": "The Architect target to run provided in the following format `project:target[:configuration]`.",
+      "description": "다음 형식으로 제공된 실행할 아키텍트 대상 `project:target[:configuration]`입니다.",
       "positional": 0
     }
   ]

@@ -1,9 +1,9 @@
 {
   "name": "test",
   "command": "ng test [project]",
-  "shortDescription": "Runs unit tests in a project.",
+  "shortDescription": "프로젝트에서 단위 테스트를 실행합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/test/long-description.md",
-  "longDescription": "Takes the name of the project, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, it will execute for all projects.\n",
+  "longDescription": "`angular.json` 작업공간 구성 파일의 `projects` 섹션에 지정된 프로젝트의 이름을 사용합니다.\n프로젝트 이름이 제공되지 않으면 모든 프로젝트에 대해 실행됩니다.\n",
   "aliases": [
     "t"
   ],
@@ -13,23 +13,23 @@
       "name": "aot",
       "type": "boolean",
       "default": false,
-      "description": "Run tests using Ahead of Time compilation."
+      "description": "사전 컴파일을 사용하여 테스트를 실행합니다."
     },
     {
       "name": "browsers",
       "type": "string",
-      "description": "Override which browsers tests are run against. Set to `false` to not use any browser."
+      "description": "테스트가 실행되는 브라우저를 재정의합니다. 브라우저를 사용하지 않으려면 `false`로 설정하세요."
     },
     {
       "name": "code-coverage",
       "type": "boolean",
       "default": false,
-      "description": "Output a code coverage report."
+      "description": "코드 커버리지 보고서를 출력합니다."
     },
     {
       "name": "code-coverage-exclude",
       "type": "array",
-      "description": "Globs to exclude from code coverage."
+      "description": "코드 커버리지에서 제외할 glob입니다."
     },
     {
       "name": "configuration",
@@ -37,37 +37,37 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "angular.json의 \"configurations\" 섹션에서 지정된 쉼표로 구분된 목록으로 하나 이상의 이름이 지정된 빌더 구성입니다.\n빌더는 주어진 대상을 실행하기 위해 이름이 지정된 구성을 사용합니다.\n자세한 내용은 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations를 참조하세요."
     },
     {
       "name": "define",
       "type": "array",
-      "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced."
+      "description": "라이브러리를 포함한 모든 JavaScript 또는 TypeScript 코드에서 발견될 때 지정된 상수 값으로 바뀌는 전역 식별자를 정의합니다. 값은 직접 사용됩니다. 문자열 값은 따옴표로 묶어야 합니다. Component Decorators와 같은 Angular 메타데이터 내의 식별자는 대체되지 않습니다."
     },
     {
       "name": "define",
       "type": "string",
-      "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced."
+      "description": "라이브러리를 포함한 모든 JavaScript 또는 TypeScript 코드에서 발견될 때 지정된 상수 값으로 바뀌는 전역 식별자를 정의합니다. 값은 직접 사용됩니다. 문자열 값은 따옴표로 묶어야 합니다. Component Decorators와 같은 Angular 메타데이터 내의 식별자는 대체되지 않습니다."
     },
     {
       "name": "exclude",
       "type": "array",
-      "description": "Globs of files to exclude, relative to the project root."
+      "description": "프로젝트 루트를 기준으로 제외할 파일의 glob입니다."
     },
     {
       "name": "external-dependencies",
       "type": "array",
-      "description": "Exclude the listed external dependencies from being bundled into the bundle. Instead, the created bundle relies on these dependencies to be available during runtime."
+      "description": "나열된 외부 종속 항목이 번들에 묶이지 않도록 제외합니다. 대신, 생성된 번들은 실행 시간에 이러한 종속 항목이 사용 가능하도록 의존합니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움 메시지를 표시합니다."
     },
     {
       "name": "include",
       "type": "array",
-      "description": "Globs of files to include, relative to project root. \nThere are 2 special cases:\n - when a path to directory is provided, all spec files ending \".spec.@(ts|tsx)\" will be included\n - when a path to a file is provided, and a matching spec file exists it will be included instead."
+      "description": "프로젝트 루트를 기준으로 포함할 파일의 glob입니다. \n두 가지의 특별한 경우가 있습니다:\n - 디렉토리 경로가 제공되면, 모든 '.spec.@(ts|tsx)'로 끝나는 spec 파일이 포함됩니다.\n - 파일 경로가 제공되면, 일치하는 spec 파일이 존재하면 대신 포함됩니다."
     },
     {
       "name": "inline-style-language",
@@ -79,70 +79,70 @@
         "sass",
         "scss"
       ],
-      "description": "The stylesheet language to use for the application's inline component styles."
+      "description": "어플리케이션의 인라인 컴포넌트 스타일에 사용할 스타일 시트 언어입니다."
     },
     {
       "name": "karma-config",
       "type": "string",
-      "description": "The name of the Karma configuration file."
+      "description": "Karma 구성 파일의 이름입니다."
     },
     {
       "name": "main",
       "type": "string",
-      "description": "The name of the main entry-point file."
+      "description": "주 진입 파일의 이름입니다."
     },
     {
       "name": "poll",
       "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
+      "description": "밀리초 단위로 파일 감시 폴 시간 주기를 활성화하고 정의합니다."
     },
     {
       "name": "polyfills",
       "type": "array",
-      "description": "A list of polyfills to include in the build. Can be a full path for a file, relative to the current workspace or module specifier. Example: 'zone.js'."
+      "description": "빌드에 포함할 polyfill 목록입니다. 현재 작업공간이나 모듈 지정자에 대해 상대 경로를 사용할 수 있습니다. 예: 'zone.js'."
     },
     {
       "name": "preserve-symlinks",
       "type": "boolean",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
+      "description": "모듈을 해결할 때 실제 경로를 사용하지 않습니다. 설정되지 않은 경우, NodeJS 옵션 --preserve-symlinks가 설정된다면 기본값은 `true`로 설정됩니다."
     },
     {
       "name": "progress",
       "type": "boolean",
       "default": true,
-      "description": "Log progress to the console while building."
+      "description": "빌드하는 동안 콘솔에 진행 상황을 기록합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "빌드할 프로젝트의 이름입니다. 어플리케이션 또는 라이브러리가 될 수 있습니다.",
       "positional": 0
     },
     {
       "name": "reporters",
       "type": "array",
-      "description": "Karma reporters to use. Directly passed to the karma runner."
+      "description": "사용할 Karma 리포터입니다. karma 실행기에 직접 전달됩니다."
     },
     {
       "name": "source-map",
       "type": "boolean",
       "default": true,
-      "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration."
+      "description": "스크립트 및 스타일의 소스 맵을 출력합니다. 자세한 내용은 https://angular.dev/reference/configs/workspace-config#source-map-configuration을 참조하세요."
     },
     {
       "name": "ts-config",
       "type": "string",
-      "description": "The name of the TypeScript configuration file."
+      "description": "TypeScript 구성 파일의 이름입니다."
     },
     {
       "name": "watch",
       "type": "boolean",
-      "description": "Run build when files change."
+      "description": "파일이 변경될 경우 빌드를 실행합니다."
     },
     {
       "name": "web-worker-ts-config",
       "type": "string",
-      "description": "TypeScript configuration for Web Worker modules."
+      "description": "웹 워커 모듈에 대한 TypeScript 구성입니다."
     }
   ]
 }

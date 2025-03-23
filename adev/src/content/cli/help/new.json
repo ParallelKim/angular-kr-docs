@@ -1,9 +1,9 @@
 {
   "name": "new",
   "command": "ng new [name]",
-  "shortDescription": "Creates a new Angular workspace.",
+  "shortDescription": "새 Angular 작업 공간을 만듭니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/new/long-description.md",
-  "longDescription": "Creates and initializes a new Angular application that is the default project for a new workspace.\n\nProvides interactive prompts for optional configuration, such as adding routing support.\nAll prompts can safely be allowed to default.\n\n- The new workspace folder is given the specified project name, and contains configuration files at the top level.\n\n- By default, the files for a new initial application (with the same name as the workspace) are placed in the `src/` subfolder.\n- The new application's configuration appears in the `projects` section of the `angular.json` workspace configuration file, under its project name.\n\n- Subsequent applications that you generate in the workspace reside in the `projects/` subfolder.\n\nIf you plan to have multiple applications in the workspace, you can create an empty workspace by using the `--no-create-application` option.\nYou can then use `ng generate application` to create an initial application.\nThis allows a workspace name different from the initial app name, and ensures that all applications reside in the `/projects` subfolder, matching the structure of the configuration file.\n",
+  "longDescription": "새 Angular 애플리케이션을 만들고 초기화하며, 이는 새 작업 공간의 기본 프로젝트입니다.\n\n라우팅 지원 추가와 같은 선택적 구성에 대한 대화형 프롬프트를 제공합니다.\n모든 프롬프트는 기본값으로 안전하게 허용될 수 있습니다.\n\n- 새 작업 공간 폴더는 지정된 프로젝트 이름이 주어지며, 최상위에 구성 파일이 포함됩니다.\n\n- 기본적으로, 새 초기 애플리케이션(작업 공간과 동일한 이름을 가진)의 파일은 `src/` 하위 폴더에 배치됩니다.\n- 새 애플리케이션의 구성은 그 프로젝트 이름 아래 `angular.json` 작업 공간 구성 파일의 `projects` 섹션에 나타납니다.\n\n- 작업 공간에서 생성하는 후속 애플리케이션은 `projects/` 하위 폴더에 위치합니다.\n\n작업 공간에 여러 애플리케이션을 두려는 경우, `--no-create-application` 옵션을 사용하여 빈 작업 공간을 생성할 수 있습니다.\n그런 다음 `ng generate application`을 사용하여 초기 애플리케이션을 생성할 수 있습니다.\n이 방법은 초기 앱 이름과 다른 작업 공간 이름을 허용하며, 모든 애플리케이션이 구성 파일 구조와 일치하도록 `/projects` 하위 폴더에 위치하도록 보장합니다.\n",
   "aliases": [
     "n"
   ],
@@ -15,30 +15,30 @@
       "aliases": [
         "c"
       ],
-      "description": "A collection of schematics to use in generating the initial application."
+      "description": "초기 애플리케이션을 생성하는 데 사용할 스키마 모음입니다."
     },
     {
       "name": "commit",
       "type": "boolean",
       "default": true,
-      "description": "Configure the initial Git commit for the new repository."
+      "description": "새 리포지토리에 대한 초기 Git 커밋을 구성합니다."
     },
     {
       "name": "create-application",
       "type": "boolean",
       "default": true,
-      "description": "Create a new initial application project in the new workspace. When false, creates an empty workspace with no initial application. You can then use the `ng generate application` command to create applications in the `projects` directory."
+      "description": "새 작업 공간에 새로운 초기 애플리케이션 프로젝트를 생성합니다. false일 경우, 초기 애플리케이션이 없는 빈 작업 공간을 만듭니다. 그런 다음 `ng generate application` 명령을 사용하여 `projects` 디렉터리에 애플리케이션을 생성할 수 있습니다."
     },
     {
       "name": "defaults",
       "type": "boolean",
       "default": false,
-      "description": "Disable interactive input prompts for options with a default."
+      "description": "기본값이 있는 옵션에 대한 대화형 입력 프롬프트를 비활성화합니다."
     },
     {
       "name": "directory",
       "type": "string",
-      "description": "The directory where the new workspace and project should be created. If not specified, the workspace will be created in the current directory."
+      "description": "새 작업 공간과 프로젝트가 생성될 디렉터리입니다. 지정하지 않으면 작업 공간이 현재 디렉터리에 생성됩니다."
     },
     {
       "name": "dry-run",
@@ -47,24 +47,24 @@
         "d"
       ],
       "default": false,
-      "description": "Run through and reports activity without writing out results."
+      "description": "결과를 작성하지 않고 활동을 보고합니다."
     },
     {
       "name": "experimental-zoneless",
       "type": "boolean",
       "default": false,
-      "description": "Create an initial application that does not utilize `zone.js`."
+      "description": " `zone.js`를 사용하지 않는 초기 애플리케이션을 만듭니다."
     },
     {
       "name": "force",
       "type": "boolean",
       "default": false,
-      "description": "Force overwriting of existing files."
+      "description": "기존 파일을 강제로 덮어씁니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움말 메시지를 표시합니다."
     },
     {
       "name": "inline-style",
@@ -72,7 +72,7 @@
       "aliases": [
         "s"
       ],
-      "description": "Include the styles for the initial application's root component directly within the `app.component.ts` file. By default, a separate stylesheet file (e.g., `app.component.css`) is created."
+      "description": "초기 애플리케이션의 루트 컴포넌트에 대한 스타일을 `app.component.ts` 파일 내에 직접 포함합니다. 기본적으로 별도의 스타일시트 파일(e.g., `app.component.css`)이 생성됩니다."
     },
     {
       "name": "inline-template",
@@ -80,31 +80,31 @@
       "aliases": [
         "t"
       ],
-      "description": "Include the HTML template for the initial application's root component directly within the `app.component.ts` file. By default, a separate template file (e.g., `app.component.html`) is created."
+      "description": "초기 애플리케이션의 루트 컴포넌트에 대한 HTML 템플릿을 `app.component.ts` 파일 내에 직접 포함합니다. 기본적으로 별도의 템플릿 파일(e.g., `app.component.html`)이 생성됩니다."
     },
     {
       "name": "interactive",
       "type": "boolean",
       "default": true,
-      "description": "Enable interactive input prompts."
+      "description": "대화형 입력 프롬프트를 활성화합니다."
     },
     {
       "name": "minimal",
       "type": "boolean",
       "default": false,
-      "description": "Generate a minimal Angular workspace without any testing frameworks. This is intended for learning purposes and simple experimentation, not for production applications."
+      "description": "테스트 프레임워크가 없는 최소한의 Angular 작업 공간을 생성합니다. 이는 학습 목적과 간단한 실험에 사용되며, 프로덕션 애플리케이션에는 적합하지 않습니다."
     },
     {
       "name": "name",
       "type": "string",
-      "description": "The name for the new workspace and the initial project. This name will be used for the root directory and various identifiers throughout the project.",
+      "description": "새 작업 공간과 초기 프로젝트의 이름입니다. 이 이름은 루트 디렉터리와 프로젝트 전반에 걸쳐 다양한 식별자에 사용됩니다.",
       "positional": 0
     },
     {
       "name": "new-project-root",
       "type": "string",
       "default": "projects",
-      "description": "The path where new projects will be created within the workspace, relative to the workspace root. By default, new projects are created in the `projects` directory."
+      "description": "새 프로젝트가 작업 공간 내에 생성될 경로로, 작업 공간 루트에 상대적입니다. 기본적으로 새 프로젝트는 `projects` 디렉터리에 생성됩니다."
     },
     {
       "name": "package-manager",
@@ -116,7 +116,7 @@
         "cnpm",
         "bun"
       ],
-      "description": "The package manager used to install dependencies."
+      "description": "종속성을 설치하는 데 사용되는 패키지 관리자입니다."
     },
     {
       "name": "prefix",
@@ -125,12 +125,12 @@
         "p"
       ],
       "default": "app",
-      "description": "The prefix to apply to generated selectors for the initial project. For example, if the prefix is `my-app` and you generate a component named `my-component`, the selector will be `my-app-my-component`."
+      "description": "초기 프로젝트의 생성된 선택자에 적용할 접두사입니다. 예를 들어, 접두사가 `my-app`이고 `my-component`라는 컴포넌트를 생성하면, 선택자는 `my-app-my-component`가 됩니다."
     },
     {
       "name": "routing",
       "type": "boolean",
-      "description": "Enable routing in the initial application project. This sets up the necessary files and modules for managing navigation between different views in your application."
+      "description": "초기 애플리케이션 프로젝트에서 라우팅을 활성화합니다. 이는 애플리케이션 내에서 다양한 뷰 간에 내비게이션을 관리하기 위한 필요한 파일 및 모듈을 설정합니다."
     },
     {
       "name": "skip-git",
@@ -139,13 +139,13 @@
         "g"
       ],
       "default": false,
-      "description": "Do not initialize a Git repository in the new workspace. By default, a Git repository is initialized to help you track changes to your project."
+      "description": "새 작업 공간에서 Git 리포지토리를 초기화하지 않습니다. 기본적으로 Git 리포지토리가 초기화되어 프로젝트의 변경 사항을 추적하는 데 도움을 줍니다."
     },
     {
       "name": "skip-install",
       "type": "boolean",
       "default": false,
-      "description": "Skip the automatic installation of packages. You will need to manually install the dependencies later."
+      "description": "패키지의 자동 설치를 건너뜁니다. 나중에 수동으로 종속성을 설치해야 합니다."
     },
     {
       "name": "skip-tests",
@@ -154,24 +154,24 @@
         "S"
       ],
       "default": false,
-      "description": "Skip the generation of unit test files `spec.ts`."
+      "description": "단위 테스트 파일 `spec.ts`의 생성을 건너뜁니다."
     },
     {
       "name": "ssr",
       "type": "boolean",
-      "description": "Configure the initial application for Server-Side Rendering (SSR) and Static Site Generation (SSG/Prerendering)."
+      "description": "서버 측 렌더링(SSR) 및 정적 사이트 생성(SSG/프리렌더링)에 대한 초기 애플리케이션을 구성합니다."
     },
     {
       "name": "standalone",
       "type": "boolean",
       "default": true,
-      "description": "Creates an application based upon the standalone API, without NgModules."
+      "description": "NgModules 없이 독립형 API를 기반으로 한 애플리케이션을 만듭니다."
     },
     {
       "name": "strict",
       "type": "boolean",
       "default": true,
-      "description": "Enable stricter type checking and stricter bundle budgets settings. This setting helps improve maintainability and catch bugs ahead of time. For more information, see https://angular.dev/tools/cli/template-typecheck#strict-mode"
+      "description": "보다 엄격한 타입 검사 및 엄격한 번들 예산 설정을 활성화합니다. 이 설정은 유지 보수성을 향상하고 미리 버그를 잡는 데 도움을 줍니다. 자세한 내용은 https://angular.dev/tools/cli/template-typecheck#strict-mode를 참조하세요."
     },
     {
       "name": "style",
@@ -182,7 +182,7 @@
         "sass",
         "less"
       ],
-      "description": "The type of stylesheet files to be created for components in the initial project."
+      "description": "초기 프로젝트의 컴포넌트에 대해 생성될 스타일시트 파일의 유형입니다."
     },
     {
       "name": "view-encapsulation",
@@ -192,7 +192,7 @@
         "None",
         "ShadowDom"
       ],
-      "description": "Sets the view encapsulation mode for components in the initial project. This determines how component styles are scoped and applied. Options include: `Emulated` (default, styles are scoped to the component), `None` (styles are global), and `ShadowDom` (styles are encapsulated using Shadow DOM)."
+      "description": "초기 프로젝트의 컴포넌트에 대한 뷰 캡슐화 모드를 설정합니다. 이는 컴포넌트 스타일이 어떻게 범위 지정되고 적용되는지를 결정합니다. 옵션으로는: `Emulated`(기본값, 스타일이 컴포넌트에 범위 지정됨), `None`(스타일이 글로벌), `ShadowDom`(스타일이 Shadow DOM을 사용하여 캡슐화됨)이 있습니다."
     }
   ]
 }

@@ -1,7 +1,7 @@
 {
   "name": "version",
   "command": "ng version",
-  "shortDescription": "Outputs Angular CLI version.",
+  "shortDescription": "Angular CLI 버전을 출력합니다.",
   "aliases": [
     "v"
   ],
@@ -10,7 +10,7 @@
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움말 메시지를 보여줍니다."
     }
   ]
 }

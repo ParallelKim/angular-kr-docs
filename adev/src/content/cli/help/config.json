@@ -1,9 +1,9 @@
 {
   "name": "config",
   "command": "ng config [json-path] [value]",
-  "shortDescription": "Retrieves or sets Angular configuration values in the angular.json file for the workspace.",
+  "shortDescription": "작업 공간의 angular.json 파일에서 Angular 구성 값을 검색하거나 설정합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/config/long-description.md",
-  "longDescription": "A workspace has a single CLI configuration file, `angular.json`, at the top level.\nThe `projects` object contains a configuration object for each project in the workspace.\n\nYou can edit the configuration directly in a code editor,\nor indirectly on the command line using this command.\n\nThe configurable property names match command option names,\nexcept that in the configuration file, all names must use camelCase,\nwhile on the command line options can be given dash-case.\n\nFor further details, see [Workspace Configuration](reference/configs/workspace-config).\n\nFor configuration of CLI usage analytics, see [ng analytics](cli/analytics).\n",
+  "longDescription": "작업 공간에는 최상위에 하나의 CLI 구성 파일인 `angular.json`이 있습니다.\n`projects` 객체는 작업 공간의 각 프로젝트에 대한 구성 객체를 포함합니다.\n\n구성을 코드 편집기에서 직접 편집할 수 있습니다,\n또는 이 명령을 사용하여 명령 줄에서 간접적으로 편집할 수 있습니다.\n\n구성 가능한 속성 이름은 명령 옵션 이름과 일치하며,\n구성 파일에서는 모든 이름이 camelCase를 사용해야 하지만,\n명령 줄에서는 옵션에 dash-case를 사용할 수 있습니다.\n\n자세한 내용은 [작업 공간 구성](reference/configs/workspace-config)을 참조하십시오.\n\nCLI 사용 분석 구성에 대한 내용은 [ng analytics](cli/analytics)를 참조하십시오.\n",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -14,23 +14,23 @@
         "g"
       ],
       "default": false,
-      "description": "Access the global configuration in the caller's home directory."
+      "description": "호출자의 홈 디렉터리에서 전역 구성을 액세스합니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움말 메시지를 표시합니다."
     },
     {
       "name": "json-path",
       "type": "string",
-      "description": "The configuration key to set or query, in JSON path format. For example: \"a[3].foo.bar[2]\". If no new value is provided, returns the current value of this key.",
+      "description": "설정하거나 쿼리할 구성 키를 JSON 경로 형식으로 지정합니다. 예: \"a[3].foo.bar[2]\". 새 값이 제공되지 않으면 이 키의 현재 값을 반환합니다.",
       "positional": 0
     },
     {
       "name": "value",
       "type": "string",
-      "description": "If provided, a new value for the given configuration key.",
+      "description": "제공된 경우 주어진 구성 키에 대한 새 값입니다.",
       "positional": 1
     }
   ]

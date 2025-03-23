@@ -1,9 +1,9 @@
 {
   "name": "lint",
   "command": "ng lint [project]",
-  "shortDescription": "Runs linting tools on Angular application code in a given project folder.",
+  "shortDescription": "주어진 프로젝트 폴더의 Angular 애플리케이션 코드에서 린트 도구를 실행합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/lint/long-description.md",
-  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `lint` builder for all projects.\n\nTo use the `ng lint` command, use `ng add` to add a package that implements linting capabilities. Adding the package automatically updates your workspace configuration, adding a lint [CLI builder](tools/cli/cli-builder).\nFor example:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"lint\": {\n        \"builder\": \"@angular-eslint/builder:lint\",\n        \"options\": {}\n      }\n    }\n  }\n}\n```\n",
+  "longDescription": "이 명령은 `angular.json` 작업공간 구성 파일의 `projects` 섹션에 지정된 선택적 프로젝트 이름을 받습니다.\n프로젝트 이름이 제공되지 않으면 모든 프로젝트에 대해 `lint` 빌더를 실행합니다.\n\n`ng lint` 명령을 사용하려면 린팅 기능을 구현하는 패키지를 추가하기 위해 `ng add`를 사용하십시오. 패키지를 추가하면 작업공간 구성이 자동으로 업데이트되어 린트 [CLI 빌더](tools/cli/cli-builder)가 추가됩니다.\n예:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"lint\": {\n        \"builder\": \"@angular-eslint/builder:lint\",\n        \"options\": {}\n      }\n    }\n  }\n}\n```\n",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -13,17 +13,17 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "\"configurations\" 섹션에 지정된 대로 쉼표로 구분된 목록으로 하나 이상의 명명된 빌더 구성입니다.\n빌더는 명명된 구성을 사용하여 주어진 대상을 실행합니다.\n자세한 정보는 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations 를 참조하십시오."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에 이 명령에 대한 도움 메시지를 표시합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "생성할 프로젝트의 이름입니다. 애플리케이션 또는 라이브러리일 수 있습니다.",
       "positional": 0
     }
   ]

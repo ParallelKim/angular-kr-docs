@@ -1,23 +1,23 @@
 {
   "name": "cache",
   "command": "ng cache",
-  "shortDescription": "Configure persistent disk cache and retrieve cache statistics.",
+  "shortDescription": "지속적인 디스크 캐시를 구성하고 캐시 통계를 가져옵니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/cache/long-description.md",
-  "longDescription": "Angular CLI saves a number of cachable operations on disk by default.\n\nWhen you re-run the same build, the build system restores the state of the previous build and re-uses previously performed operations, which decreases the time taken to build and test your applications and libraries.\n\nTo amend the default cache settings, add the `cli.cache` object to your [Workspace Configuration](reference/configs/workspace-config).\nThe object goes under `cli.cache` at the top level of the file, outside the `projects` sections.\n\n```jsonc\n{\n  \"$schema\": \"./node_modules/@angular/cli/lib/config/schema.json\",\n  \"version\": 1,\n  \"cli\": {\n    \"cache\": {\n      // ...\n    },\n  },\n  \"projects\": {},\n}\n```\n\nFor more information, see [cache options](reference/configs/workspace-config#cache-options).\n\n### Cache environments\n\nBy default, disk cache is only enabled for local environments. The value of environment can be one of the following:\n\n- `all` - allows disk cache on all machines.\n- `local` - allows disk cache only on development machines.\n- `ci` - allows disk cache only on continuous integration (CI) systems.\n\nTo change the environment setting to `all`, run the following command:\n\n```bash\nng config cli.cache.environment all\n```\n\nFor more information, see `environment` in [cache options](reference/configs/workspace-config#cache-options).\n\n<div class=\"alert is-helpful\">\n\nThe Angular CLI checks for the presence and value of the `CI` environment variable to determine in which environment it is running.\n\n</div>\n\n### Cache path\n\nBy default, `.angular/cache` is used as a base directory to store cache results.\n\nTo change this path to `.cache/ng`, run the following command:\n\n```bash\nng config cli.cache.path \".cache/ng\"\n```\n",
+  "longDescription": "기본적으로 Angular CLI는 여러 캐시 작업을 디스크에 저장합니다.\n\n같은 빌드를 다시 실행하면 빌드 시스템은 이전 빌드의 상태를 복원하고 이전에 수행한 작업을 재사용하여 애플리케이션과 라이브러리의 빌드 및 테스트 시간을 단축합니다.\n\n기본 캐시 설정을 수정하려면 `cli.cache` 객체를 [작업 공간 구성](reference/configs/workspace-config)에 추가하십시오.\n이 객체는 파일의 최상위 수준에서 `cli.cache` 아래에 배치되어야 하며, `projects` 섹션 외부에 있어야 합니다.\n\n```jsonc\n{\n  \"$schema\": \"./node_modules/@angular/cli/lib/config/schema.json\",\n  \"version\": 1,\n  \"cli\": {\n    \"cache\": {\n      // ...\n    },\n  },\n  \"projects\": {},\n}\n```\n\n자세한 내용은 [캐시 옵션](reference/configs/workspace-config#cache-options)을 참조하십시오.\n\n### 캐시 환경\n\n기본적으로 디스크 캐시는 로컬 환경에 대해서만 활성화됩니다. 환경의 값은 다음 중 하나일 수 있습니다:\n\n- `all` - 모든 머신에서 디스크 캐시를 허용합니다.\n- `local` - 개발 머신에서만 디스크 캐시를 허용합니다.\n- `ci` - 지속적인 통합(CI) 시스템에서만 디스크 캐시를 허용합니다.\n\n환경 설정을 `all`로 변경하려면 다음 명령을 실행하십시오:\n\n```bash\nng config cli.cache.environment all\n```\n\n자세한 내용은 [캐시 옵션](reference/configs/workspace-config#cache-options)의 `environment`를 참조하십시오.\n\n<div class=\"alert is-helpful\">\n\nAngular CLI는 실행 중인 환경을 결정하기 위해 `CI` 환경 변수가 존재하고 값이 있는지 확인합니다.\n\n</div>\n\n### 캐시 경로\n\n기본적으로 `.angular/cache`가 캐시 결과를 저장하는 기본 디렉토리로 사용됩니다.\n\n이 경로를 `.cache/ng`로 변경하려면 다음 명령을 실행하십시오:\n\n```bash\nng config cli.cache.path \".cache/ng\"\n```\n",
   "aliases": [],
   "deprecated": false,
   "options": [
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움 메시지를 표시합니다."
     }
   ],
   "subcommands": [
     {
       "name": "clean",
       "command": "clean",
-      "shortDescription": "Deletes persistent disk cache from disk.",
+      "shortDescription": "지속적인 디스크 캐시를 디스크에서 삭제합니다.",
       "options": [],
       "aliases": [],
       "deprecated": false
@@ -25,7 +25,7 @@
     {
       "name": "disable",
       "command": "disable",
-      "shortDescription": "Disables persistent disk cache for all projects in the workspace.",
+      "shortDescription": "작업 공간의 모든 프로젝트에 대해 지속적인 디스크 캐시를 비활성화합니다.",
       "options": [],
       "aliases": [
         "off"
@@ -35,7 +35,7 @@
     {
       "name": "enable",
       "command": "enable",
-      "shortDescription": "Enables disk cache for all projects in the workspace.",
+      "shortDescription": "작업 공간의 모든 프로젝트에 대해 디스크 캐시를 활성화합니다.",
       "options": [],
       "aliases": [
         "on"
@@ -45,7 +45,7 @@
     {
       "name": "info",
       "command": "info",
-      "shortDescription": "Prints persistent disk cache configuration and statistics in the console.",
+      "shortDescription": "콘솔에 지속적인 디스크 캐시 구성 및 통계를 인쇄합니다.",
       "options": [],
       "aliases": [],
       "deprecated": false

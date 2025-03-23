@@ -1,9 +1,9 @@
 {
   "name": "build",
   "command": "ng build [project]",
-  "shortDescription": "Compiles an Angular application or library into an output directory named dist/ at the given output path.",
+  "shortDescription": "Angular 애플리케이션 또는 라이브러리를 주어진 출력 경로의 dist/라는 출력 디렉토리에 컴파일합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/build/long-description.md",
-  "longDescription": "The command can be used to build a project of type \"application\" or \"library\".\nWhen used to build a library, a different builder is invoked, and only the `ts-config`, `configuration`, `poll` and `watch` options are applied.\nAll other options apply only to building applications.\n\nThe application builder uses the [esbuild](https://esbuild.github.io/) build tool, with default configuration options specified in the workspace configuration file (`angular.json`) or with a named alternative configuration.\nA \"development\" configuration is created by default when you use the CLI to create the project, and you can use that configuration by specifying the `--configuration development`.\n\nThe configuration options generally correspond to the command options.\nYou can override individual configuration defaults by specifying the corresponding options on the command line.\nThe command can accept option names given in dash-case.\nNote that in the configuration file, you must specify names in camelCase.\n\nSome additional options can only be set through the configuration file,\neither by direct editing or with the `ng config` command.\nThese include `assets`, `styles`, and `scripts` objects that provide runtime-global resources to include in the project.\nResources in CSS, such as images and fonts, are automatically written and fingerprinted at the root of the output folder.\n\nFor further details, see [Workspace Configuration](reference/configs/workspace-config).\n",
+  "longDescription": "이 명령은 \"애플리케이션\" 또는 \"라이브러리\" 유형의 프로젝트를 빌드하는 데 사용될 수 있습니다.\n라이브러리를 빌드할 때는 다른 빌더가 호출되며, `ts-config`, `configuration`, `poll` 및 `watch` 옵션만 적용됩니다.\n다른 모든 옵션은 애플리케이션 빌드에만 적용됩니다.\n\n애플리케이션 빌더는 기본 구성 옵션이 작업공간 구성 파일(`angular.json`)에 지정되어 있거나 이름이 지정된 대체 구성으로 설정된 [esbuild](https://esbuild.github.io/) 빌드 도구를 사용합니다.\nCLI를 사용하여 프로젝트를 생성할 때 기본적으로 \"개발\" 구성이 생성되며, `--configuration development`를 지정하여 해당 구성을 사용할 수 있습니다.\n\n구성 옵션은 일반적으로 명령 옵션과 일치합니다.\n명령줄에서 해당 옵션을 지정하여 개별 구성 기본값을 재정의할 수 있습니다.\n명령은 대시 기법으로 주어진 옵션 이름을 허용합니다.\n구성 파일에서는 camelCase로 이름을 지정해야 합니다.\n\n일부 추가 옵션은 구성 파일을 통해서만 설정할 수 있으며,\n직접 편집하거나 `ng config` 명령으로 설정할 수 있습니다.\n여기에는 프로젝트에 포함할 런타임 전역 리소스를 제공하는 `assets`, `styles`, 및 `scripts` 객체가 포함됩니다.\nCSS의 리소스(이미지 및 글꼴 등)는 출력 폴더의 루트에 자동으로 작성되고 지문이 찍힙니다.\n\n자세한 내용은 [작업공간 구성](reference/configs/workspace-config)을 참조하십시오.\n",
   "aliases": [
     "b"
   ],
@@ -12,34 +12,34 @@
     {
       "name": "allowed-common-js-dependencies",
       "type": "array",
-      "description": "A list of CommonJS or AMD packages that are allowed to be used without a build time warning. Use `'*'` to allow all."
+      "description": "빌드 시간 경고 없이 사용할 수 있는 CommonJS 또는 AMD 패키지 목록입니다. 모든 것을 허용하려면 `'*'`를 사용하세요."
     },
     {
       "name": "aot",
       "type": "boolean",
       "default": true,
-      "description": "Build using Ahead of Time compilation."
+      "description": "사전 컴파일(Ahead of Time compilation) 사용하여 빌드합니다."
     },
     {
       "name": "app-shell",
       "type": "boolean",
-      "description": "Generates an application shell during build time."
+      "description": "빌드 시 애플리케이션 셸을 생성합니다."
     },
     {
       "name": "base-href",
       "type": "string",
-      "description": "Base url for the application being built."
+      "description": "빌드 중인 애플리케이션의 기본 URL입니다."
     },
     {
       "name": "browser",
       "type": "string",
-      "description": "The full path for the browser entry point to the application, relative to the current workspace."
+      "description": "현재 작업공간에 상대적인 애플리케이션의 브라우저 진입점에 대한 전체 경로입니다."
     },
     {
       "name": "clear-screen",
       "type": "boolean",
       "default": false,
-      "description": "Automatically clear the terminal screen during rebuilds."
+      "description": "재빌드하는 동안 터미널 화면을 자동으로 지웁니다."
     },
     {
       "name": "configuration",
@@ -47,7 +47,7 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "angular.json의 \"configurations\" 섹션에 지정된 대로 쉼표로 구분된 목록으로 하나 이상의 이름이 지정된 빌더 구성을 나열합니다.\n빌더는 주어진 대상을 실행하기 위해 지정된 이름의 구성을 사용합니다.\n자세한 내용은 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations을 참조하십시오."
     },
     {
       "name": "cross-origin",
@@ -58,44 +58,44 @@
         "anonymous",
         "use-credentials"
       ],
-      "description": "Define the crossorigin attribute setting of elements that provide CORS support."
+      "description": "CORS 지원을 제공하는 요소의 crossorigin 속성 설정을 정의합니다."
     },
     {
       "name": "define",
       "type": "array",
-      "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced."
+      "description": "라이브러리를 포함한 모든 JavaScript 또는 TypeScript 코드에서 발견될 때 지정된 상수 값으로 대체 될 전역 식별자를 정의합니다. 값은 직접 사용됩니다. 문자열 값은 따옴표로 묶어야 합니다. Component Decorators와 같은 Angular 메타데이터 내의 식별자는 대체되지 않습니다."
     },
     {
       "name": "define",
       "type": "string",
-      "description": "Defines global identifiers that will be replaced with a specified constant value when found in any JavaScript or TypeScript code including libraries. The value will be used directly. String values must be put in quotes. Identifiers within Angular metadata such as Component Decorators will not be replaced."
+      "description": "라이브러리를 포함한 모든 JavaScript 또는 TypeScript 코드에서 발견될 때 지정된 상수 값으로 대체 될 전역 식별자를 정의합니다. 값은 직접 사용됩니다. 문자열 값은 따옴표로 묶어야 합니다. Component Decorators와 같은 Angular 메타데이터 내의 식별자는 대체되지 않습니다."
     },
     {
       "name": "delete-output-path",
       "type": "boolean",
       "default": true,
-      "description": "Delete the output path before building."
+      "description": "빌드 전에 출력 경로를 삭제합니다."
     },
     {
       "name": "deploy-url",
       "type": "string",
-      "description": "Customize the base path for the URLs of resources in 'index.html' and component stylesheets. This option is only necessary for specific deployment scenarios, such as with Angular Elements or when utilizing different CDN locations."
+      "description": "'index.html' 및 구성 스타일시트의 리소스 URL에 대한 기본 경로를 사용자 정의합니다. 이 옵션은 Angular Elements와 같은 특정 배포 시나리오 또는 다른 CDN 위치를 사용할 때만 필요합니다."
     },
     {
       "name": "external-dependencies",
       "type": "array",
-      "description": "Exclude the listed external dependencies from being bundled into the bundle. Instead, the created bundle relies on these dependencies to be available during runtime. Note: `@foo/bar` marks all paths within the `@foo/bar` package as external, including sub-paths like `@foo/bar/baz`."
+      "description": "번들에 포함되지 않도록 나열된 외부 종속성을 제외합니다. 대신 생성된 번들은 런타임 동안 이러한 종속성이 사용 가능하도록 의존합니다. 참고: `@foo/bar`는 `@foo/bar` 패키지 내의 모든 경로(서브 경로 포함)를 외부로 표시합니다."
     },
     {
       "name": "extract-licenses",
       "type": "boolean",
       "default": true,
-      "description": "Extract all licenses in a separate file."
+      "description": "모든 라이센스를 별도의 파일로 추출합니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움 메시지를 표시합니다."
     },
     {
       "name": "i18n-duplicate-translation",
@@ -106,7 +106,7 @@
         "error",
         "ignore"
       ],
-      "description": "How to handle duplicate translations for i18n."
+      "description": "i18n의 중복 번역을 처리하는 방법입니다."
     },
     {
       "name": "i18n-missing-translation",
@@ -117,12 +117,12 @@
         "error",
         "ignore"
       ],
-      "description": "How to handle missing translations for i18n."
+      "description": "i18n의 누락된 번역을 처리하는 방법입니다."
     },
     {
       "name": "index",
       "type": "string",
-      "description": "Configures the generation of the application's HTML index."
+      "description": "애플리케이션의 HTML 인덱스 생성을 구성합니다."
     },
     {
       "name": "inline-style-language",
@@ -134,24 +134,24 @@
         "sass",
         "scss"
       ],
-      "description": "The stylesheet language to use for the application's inline component styles."
+      "description": "애플리케이션의 인라인 구성 요소 스타일에 사용할 스타일시트 언어입니다."
     },
     {
       "name": "localize",
       "type": "boolean",
-      "description": "Translate the bundles in one or more locales."
+      "description": "하나 이상의 로케일로 번들을 번역합니다."
     },
     {
       "name": "named-chunks",
       "type": "boolean",
       "default": false,
-      "description": "Use file name for lazy loaded chunks."
+      "description": "지연 로딩된 청크에 파일 이름을 사용합니다."
     },
     {
       "name": "optimization",
       "type": "boolean",
       "default": true,
-      "description": "Enables optimization of the build output. Including minification of scripts and styles, tree-shaking, dead-code elimination, inlining of critical CSS and fonts inlining. For more information, see https://angular.dev/reference/configs/workspace-config#optimization-configuration."
+      "description": "빌드 출력의 최적화를 활성화합니다. 스크립트 및 스타일의 축소, 트리 쉐이킹, 사용하지 않는 코드 제거, 중요한 CSS 및 글꼴 내장 등을 포함합니다. 자세한 내용은 https://angular.dev/reference/configs/workspace-config#optimization-configuration을 참조하십시오."
     },
     {
       "name": "output-hashing",
@@ -163,7 +163,7 @@
         "media",
         "bundles"
       ],
-      "description": "Define the output filename cache-busting hashing mode."
+      "description": "출력 파일 이름 캐시 무효화 해시 모드를 정의합니다."
     },
     {
       "name": "output-mode",
@@ -172,100 +172,100 @@
         "static",
         "server"
       ],
-      "description": "Defines the build output target. 'static': Generates a static site for deployment on any static hosting service. 'server': Produces an application designed for deployment on a server that supports server-side rendering (SSR)."
+      "description": "빌드 출력 대상을 정의합니다. 'static': 모든 정적 호스팅 서비스에 배포하기 위한 정적 사이트를 생성합니다. 'server': 서버측 렌더링(SSR)을 지원하는 서버에 배포하기 위해 설계된 애플리케이션을 생성합니다."
     },
     {
       "name": "output-path",
       "type": "string",
-      "description": "Specify the output path relative to workspace root."
+      "description": "작업공간 루트에 대한 상대적 출력 경로를 지정합니다."
     },
     {
       "name": "poll",
       "type": "number",
-      "description": "Enable and define the file watching poll time period in milliseconds."
+      "description": "파일 감시 폴링 시간 간격(밀리초)을 정의하고 활성화합니다."
     },
     {
       "name": "polyfills",
       "type": "array",
-      "description": "A list of polyfills to include in the build. Can be a full path for a file, relative to the current workspace or module specifier. Example: 'zone.js'."
+      "description": "빌드에 포함할 폴리필 목록입니다. 전체 파일 경로를 현재 작업공간 또는 모듈 지정자에 대해 상대적으로 지정할 수 있습니다. 예: 'zone.js'."
     },
     {
       "name": "prerender",
       "type": "boolean",
-      "description": "Prerender (SSG) pages of your application during build time."
+      "description": "빌드 중 애플리케이션의 페이지를 미리 렌더링(SSG)합니다."
     },
     {
       "name": "preserve-symlinks",
       "type": "boolean",
-      "description": "Do not use the real path when resolving modules. If unset then will default to `true` if NodeJS option --preserve-symlinks is set."
+      "description": "모듈을 해결할 때 실제 경로를 사용하지 않습니다. 설정되지 않은 경우 NodeJS 옵션 --preserve-symlinks가 설정되면 기본적으로 true로 설정됩니다."
     },
     {
       "name": "progress",
       "type": "boolean",
       "default": true,
-      "description": "Log progress to the console while building."
+      "description": "빌드하는 동안 콘솔에 진행 상황을 기록합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "빌드할 프로젝트의 이름입니다. 애플리케이션이나 라이브러리일 수 있습니다.",
       "positional": 0
     },
     {
       "name": "server",
       "type": "string",
-      "description": "The full path for the server entry point to the application, relative to the current workspace."
+      "description": "현재 작업공간에 상대적인 애플리케이션의 서버 진입점에 대한 전체 경로입니다."
     },
     {
       "name": "service-worker",
       "type": "string",
-      "description": "Generates a service worker configuration."
+      "description": "서비스 워커 구성을 생성합니다."
     },
     {
       "name": "source-map",
       "type": "boolean",
       "default": false,
-      "description": "Output source maps for scripts and styles. For more information, see https://angular.dev/reference/configs/workspace-config#source-map-configuration."
+      "description": "스크립트 및 스타일에 대한 소스 맵을 출력합니다. 자세한 내용은 https://angular.dev/reference/configs/workspace-config#source-map-configuration을 참조하십시오."
     },
     {
       "name": "ssr",
       "type": "boolean",
       "default": false,
-      "description": "Server side render (SSR) pages of your application during runtime."
+      "description": "런타임 중 애플리케이션의 서버 측 렌더링(SSR) 페이지를 생성합니다."
     },
     {
       "name": "stats-json",
       "type": "boolean",
       "default": false,
-      "description": "Generates a 'stats.json' file which can be analyzed with https://esbuild.github.io/analyze/."
+      "description": "분석할 수 있는 'stats.json' 파일을 생성합니다. https://esbuild.github.io/analyze/."
     },
     {
       "name": "subresource-integrity",
       "type": "boolean",
       "default": false,
-      "description": "Enables the use of subresource integrity validation."
+      "description": "서브 리소스 무결성 검증을 사용하도록 설정합니다."
     },
     {
       "name": "ts-config",
       "type": "string",
-      "description": "The full path for the TypeScript configuration file, relative to the current workspace."
+      "description": "현재 작업공간에 대한 TypeScript 구성 파일의 전체 경로입니다."
     },
     {
       "name": "verbose",
       "type": "boolean",
       "default": false,
-      "description": "Adds more details to output logging."
+      "description": "출력 로그에 더 많은 세부정보를 추가합니다."
     },
     {
       "name": "watch",
       "type": "boolean",
       "default": false,
-      "description": "Run build when files change."
+      "description": "파일이 변경될 때 빌드를 실행합니다."
     },
     {
       "name": "web-worker-ts-config",
       "type": "string",
-      "description": "TypeScript configuration for Web Worker modules."
+      "description": "웹 워커 모듈에 대한 TypeScript 구성입니다."
     }
   ]
 }

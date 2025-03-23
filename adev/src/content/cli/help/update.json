@@ -1,9 +1,9 @@
 {
   "name": "update",
   "command": "ng update [packages..]",
-  "shortDescription": "Updates your workspace and its dependencies. See https://update.angular.dev/.",
+  "shortDescription": "작업 공간 및 해당 종속성을 업데이트합니다. https://update.angular.dev/를 참조하세요.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/update/long-description.md",
-  "longDescription": "Perform a basic update to the current stable release of the core framework and CLI by running the following command.\n\n```\nng update @angular/cli @angular/core\n```\n\nTo update to the next beta or pre-release version, use the `--next` option.\n\nTo update from one major version to another, use the format\n\n```\nng update @angular/cli@^<major_version> @angular/core@^<major_version>\n```\n\nWe recommend that you always update to the latest patch version, as it contains fixes we released since the initial major release.\nFor example, use the following command to take the latest 10.x.x version and use that to update.\n\n```\nng update @angular/cli@^10 @angular/core@^10\n```\n\nFor detailed information and guidance on updating your application, see the interactive [Angular Update Guide](https://update.angular.dev/).\n",
+  "longDescription": "다음 명령을 실행하여 현재 안정적인 릴리즈의 핵심 프레임워크와 CLI를 기본 업데이트합니다.\n\n```\nng update @angular/cli @angular/core\n```\n\n다음 베타 또는 사전 릴리즈 버전으로 업데이트하려면 `--next` 옵션을 사용하세요.\n\n한 주요 버전에서 다른 주요 버전으로 업데이트하려면 형식을 사용하세요.\n\n```\nng update @angular/cli@^<major_version> @angular/core@^<major_version>\n```\n\n최신 패치 버전으로 항상 업데이트하는 것이 좋습니다. 이는 초기 주요 릴리즈 이후에 출시된 수정 사항을 포함합니다.\n예를 들어, 다음 명령을 사용하여 최신 10.x.x 버전을 취하고 이를 사용하여 업데이트하세요.\n\n```\nng update @angular/cli@^10 @angular/core@^10\n```\n\n애플리케이션 업데이트에 대한 자세한 정보와 지침은 대화형 [Angular 업데이트 가이드](https://update.angular.dev/)를 참조하세요.\n",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -11,7 +11,7 @@
       "name": "allow-dirty",
       "type": "boolean",
       "default": false,
-      "description": "Whether to allow updating when the repository contains modified or untracked files."
+      "description": "저장소에 수정되거나 추적되지 않은 파일이 있는 경우 업데이트를 허용할지 여부."
     },
     {
       "name": "create-commits",
@@ -20,64 +20,64 @@
         "C"
       ],
       "default": false,
-      "description": "Create source control commits for updates and migrations."
+      "description": "업데이트 및 마이그레이션을 위한 소스 제어 커밋을 생성합니다."
     },
     {
       "name": "force",
       "type": "boolean",
       "default": false,
-      "description": "Ignore peer dependency version mismatches."
+      "description": "동료 종속성 버전 불일치를 무시합니다."
     },
     {
       "name": "from",
       "type": "string",
-      "description": "Version from which to migrate from. Only available when a single package is updated, and only with 'migrate-only'."
+      "description": "마이그레이션할 버전입니다. 단일 패키지가 업데이트될 때만 사용 가능하며, 'migrate-only'와만 함께 사용할 수 있습니다."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에 이 명령어에 대한 도움말 메시지를 표시합니다."
     },
     {
       "name": "migrate-only",
       "type": "boolean",
-      "description": "Only perform a migration, do not update the installed version."
+      "description": "마이그레이션만 수행하고 설치된 버전을 업데이트하지 않습니다."
     },
     {
       "name": "name",
       "type": "string",
-      "description": "The name of the migration to run. Only available when a single package is updated."
+      "description": "실행할 마이그레이션의 이름입니다. 단일 패키지가 업데이트될 때만 사용 가능합니다."
     },
     {
       "name": "next",
       "type": "boolean",
       "default": false,
-      "description": "Use the prerelease version, including beta and RCs."
+      "description": "베타 및 RC를 포함한 사전 릴리즈 버전을 사용합니다."
     },
     {
       "name": "packages",
       "type": "array",
       "default": [],
-      "description": "The names of package(s) to update.",
+      "description": "업데이트할 패키지의 이름입니다.",
       "positional": 0
     },
     {
       "name": "packages",
       "type": "string",
       "default": [],
-      "description": "The names of package(s) to update.",
+      "description": "업데이트할 패키지의 이름입니다.",
       "positional": 0
     },
     {
       "name": "to",
       "type": "string",
-      "description": "Version up to which to apply migrations. Only available when a single package is updated, and only with 'migrate-only' option. Requires 'from' to be specified. Default to the installed version detected."
+      "description": "마이그레이션을 적용할 버전입니다. 단일 패키지가 업데이트될 때만 사용 가능하며, 'migrate-only' 옵션과만 함께 사용됩니다. 'from'이 지정되어야 합니다. 기본값은 감지된 설치 버전입니다."
     },
     {
       "name": "verbose",
       "type": "boolean",
       "default": false,
-      "description": "Display additional details about internal operations during execution."
+      "description": "실행 중 내부 작업에 대한 추가 세부 정보를 표시합니다."
     }
   ]
 }

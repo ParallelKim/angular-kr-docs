@@ -1,9 +1,9 @@
 {
   "name": "deploy",
   "command": "ng deploy [project]",
-  "shortDescription": "Invokes the deploy builder for a specified project or for the default project in the workspace.",
+  "shortDescription": "지정된 프로젝트 또는 작업 공간의 기본 프로젝트에 대한 배포 빌더를 호출합니다.",
   "longDescriptionRelativePath": "@angular/cli/src/commands/deploy/long-description.md",
-  "longDescription": "The command takes an optional project name, as specified in the `projects` section of the `angular.json` workspace configuration file.\nWhen a project name is not supplied, executes the `deploy` builder for the default project.\n\nTo use the `ng deploy` command, use `ng add` to add a package that implements deployment capabilities to your favorite platform.\nAdding the package automatically updates your workspace configuration, adding a deployment\n[CLI builder](tools/cli/cli-builder).\nFor example:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"deploy\": {\n        \"builder\": \"@angular/fire:deploy\",\n        \"options\": {}\n      }\n    }\n  }\n}\n```\n",
+  "longDescription": "`angular.json` 작업 공간 구성 파일의 `projects` 섹션에 지정된 선택적 프로젝트 이름을 사용하는 명령입니다.\n프로젝트 이름이 제공되지 않으면 기본 프로젝트에 대해 `deploy` 빌더를 실행합니다.\n\n`ng deploy` 명령을 사용하려면, `ng add`를 사용하여 배포 기능을 구현하는 패키지를 좋아하는 플랫폼에 추가하세요.\n패키지를 추가하면 자동으로 작업 공간 구성이 업데이트되어 배포\n[CLI 빌더](tools/cli/cli-builder)가 추가됩니다.\n예를 들어:\n\n```json\n\"projects\": {\n  \"my-project\": {\n    ...\n    \"architect\": {\n      ...\n      \"deploy\": {\n        \"builder\": \"@angular/fire:deploy\",\n        \"options\": {}\n      }\n    }\n  }\n}\n```\n",
   "aliases": [],
   "deprecated": false,
   "options": [
@@ -13,17 +13,17 @@
       "aliases": [
         "c"
       ],
-      "description": "One or more named builder configurations as a comma-separated list as specified in the \"configurations\" section in angular.json.\nThe builder uses the named configurations to run the given target.\nFor more information, see https://angular.dev/reference/configs/workspace-config#alternate-build-configurations."
+      "description": "angular.json의 \"configurations\" 섹션에 지정된 쉼표로 구분된 목록으로 하나 이상의 명명된 빌더 구성입니다.\n빌더는 명명된 구성을 사용하여 주어진 대상을 실행합니다.\n자세한 내용은 https://angular.dev/reference/configs/workspace-config#alternate-build-configurations를 참조하세요."
     },
     {
       "name": "help",
       "type": "boolean",
-      "description": "Shows a help message for this command in the console."
+      "description": "콘솔에서 이 명령에 대한 도움말 메시지를 표시합니다."
     },
     {
       "name": "project",
       "type": "string",
-      "description": "The name of the project to build. Can be an application or a library.",
+      "description": "빌드할 프로젝트의 이름입니다. 애플리케이션 또는 라이브러리가 될 수 있습니다.",
       "positional": 0
     }
   ]
