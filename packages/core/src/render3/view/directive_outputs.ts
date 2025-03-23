@@ -15,7 +15,7 @@ import {stringifyForError} from '../util/stringify_utils';
 import {getOrCreateLViewCleanup, getOrCreateTViewCleanup} from '../util/view_utils';
 import {wrapListener} from './listeners';
 
-/** Describes a subscribable output field value. */
+/** 구독 가능한 출력 필드 값을 설명합니다. */
 interface SubscribableOutput<T> {
   subscribe(listener: (v: T) => void): {unsubscribe: () => void};
 }
@@ -27,10 +27,10 @@ export function createOutputListener<T = unknown>(
   targetDef: DirectiveDef<unknown>,
   eventName: string,
 ) {
-  // TODO(pk): decouple checks from the actual binding
+  // TODO(pk): 실제 바인딩에서 검사를 분리합니다.
   const wrappedListener = wrapListener(tNode, lView, lView[CONTEXT], listenerFn);
 
-  // TODO(pk): simplify signature of listenToDirectiveOutput
+  // TODO(pk): listenToDirectiveOutput의 서명을 단순화합니다.
   const hasBound = listenToDirectiveOutput(
     tNode,
     lView[TVIEW],
@@ -43,12 +43,12 @@ export function createOutputListener<T = unknown>(
   if (!hasBound && ngDevMode) {
     throw new RuntimeError(
       RuntimeErrorCode.INVALID_BINDING_TARGET,
-      `${stringifyForError(targetDef.type)} does not have an output with a public name of "${eventName}".`,
+      `${stringifyForError(targetDef.type)} 에는 "${eventName}"의 공용 이름을 가진 출력이 없습니다.`,
     );
   }
 }
 
-/** Listens to an output on a specific directive. */
+/** 특정 지시문에서 출력을 듣습니다. */
 function listenToDirectiveOutput(
   tNode: TNode,
   tView: TView,
@@ -65,7 +65,7 @@ function listenToDirectiveOutput(
   let hasOutput = false;
 
   if (ngDevMode && !tNode.directiveToIndex?.has(target.type)) {
-    throw new Error(`Node does not have a directive with type ${target.type.name}`);
+    throw new Error(`노드에는 ${target.type.name} 유형의 지시문이 없습니다.`);
   }
 
   const data = tNode.directiveToIndex!.get(target.type)!;
@@ -143,7 +143,9 @@ export function listenToOutput(
   const output = instance[propertyName];
 
   if (ngDevMode && !isOutputSubscribable(output)) {
-    throw new Error(`@Output ${propertyName} not initialized in '${instance.constructor.name}'.`);
+    throw new Error(
+      `@Output ${propertyName}가 '${instance.constructor.name}'에서 초기화되지 않았습니다.`,
+    );
   }
 
   const subscription = (output as SubscribableOutput<unknown>).subscribe(listenerFn);
@@ -153,10 +155,10 @@ export function listenToOutput(
 }
 
 /**
- * Whether the given value represents a subscribable output.
+ * 주어진 값이 구독 가능한 출력을 나타내는지 여부입니다.
  *
- * For example, an `EventEmitter, a `Subject`, an `Observable` or an
- * `OutputEmitter`.
+ * 예를 들어, `EventEmitter`, `Subject`, `Observable` 또는
+ * `OutputEmitter`가 해당됩니다.
  */
 function isOutputSubscribable(value: unknown): value is SubscribableOutput<unknown> {
   return (

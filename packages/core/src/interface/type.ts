@@ -9,10 +9,10 @@
 /**
  * @description
  *
- * Represents a type that a Component or other object is instances of.
+ * 컴포넌트 또는 다른 객체가 인스턴스인 유형을 나타냅니다.
  *
- * An example of a `Type` is `MyCustomComponent` class, which in JavaScript is represented by
- * the `MyCustomComponent` constructor function.
+ * `Type`의 예는 `MyCustomComponent` 클래스이며, 이는 JavaScript에서
+ * `MyCustomComponent` 생성자 함수로 표현됩니다.
  *
  * @publicApi
  */
@@ -25,8 +25,7 @@ export function isType(v: any): v is Type<any> {
 /**
  * @description
  *
- * Represents an abstract class `T`, if applied to a concrete class it would stop being
- * instantiable.
+ * 구체적인 클래스에 적용되면 인스턴스화할 수 없는 추상 클래스 `T`를 나타냅니다.
  *
  * @publicApi
  */
@@ -39,27 +38,27 @@ export interface Type<T> extends Function {
 }
 
 /**
- * Returns a writable type version of type.
+ * 타입의 쓰기 가능한 유형 버전을 반환합니다.
  *
- * USAGE:
- * Given:
+ * 사용법:
+ * 주어진:
  * ```ts
  * interface Person {readonly name: string}
  * ```
  *
- * We would like to get a read/write version of `Person`.
+ * 우리는 `Person`의 읽기/쓰기 버전을 얻고 싶습니다.
  * ```ts
  * const WritablePerson = Writable<Person>;
  * ```
  *
- * The result is that you can do:
+ * 결과적으로 우리는 다음을 할 수 있습니다:
  *
  * ```ts
  * const readonlyPerson: Person = {name: 'Marry'};
  * readonlyPerson.name = 'John'; // TypeError
  * (readonlyPerson as WritablePerson).name = 'John'; // OK
  *
- * // Error: Correctly detects that `Person` did not have `age` property.
+ * // 오류: `Person`에 `age` 속성이 없음을 정확히 감지합니다.
  * (readonlyPerson as WritablePerson).age = 30;
  * ```
  */

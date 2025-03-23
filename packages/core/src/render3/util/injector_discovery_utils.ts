@@ -45,38 +45,37 @@ import {
 import {getNativeByTNode} from './view_utils';
 
 /**
- * Discovers the dependencies of an injectable instance. Provides DI information about each
- * dependency that the injectable was instantiated with, including where they were provided from.
+ * 주입 가능한 인스턴스의 의존성을 발견합니다. 주입 가능한 인스턴스가 생성된 각 의존성
+ * 에 대한 DI 정보를 제공합니다. 이 정보에는 제공된 출처가 포함됩니다.
  *
- * @param injector An injector instance
- * @param token a DI token that was constructed by the given injector instance
- * @returns an object that contains the created instance of token as well as all of the dependencies
- * that it was instantiated with OR undefined if the token was not created within the given
- * injector.
+ * @param injector 주입기 인스턴스
+ * @param token 주어진 주입기 인스턴스에 의해 생성된 DI 토큰
+ * @returns 생성된 인스턴스와 함께 인스턴스화된 모든 의존성을 포함하는 객체
+ *  또는 주어진 주입기 내에서 토큰이 생성되지 않은 경우 undefined.
  */
 export function getDependenciesFromInjectable<T>(
   injector: Injector,
   token: Type<T> | InjectionToken<T>,
 ): {instance: T; dependencies: Omit<InjectedService, 'injectedIn'>[]} | undefined {
-  // First we check to see if the token given maps to an actual instance in the injector given.
-  // We use `self: true` because we only want to look at the injector we were given.
-  // We use `optional: true` because it's possible that the token we were given was never
-  // constructed by the injector we were given.
+  // 먼저 주어진 토큰이 주어진 주입기에서 실제 인스턴스에 매핑되는지 확인합니다.
+  // `self: true`를 사용하여 주어진 주입기만 확인하고자 합니다.
+  // `optional: true`를 사용하여 주어진 토큰이 주어진 주입기에 의해 생성되지 않았을 가능성이
+  // 있기 때문입니다.
   const instance = injector.get(token, null, {self: true, optional: true});
   if (instance === null) {
-    throw new Error(`Unable to determine instance of ${token} in given injector`);
+    throw new Error(`주어진 주입기에서 ${token}의 인스턴스를 결정할 수 없습니다.`);
   }
 
   const unformattedDependencies = getDependenciesForTokenInInjector(token, injector);
   const resolutionPath = getInjectorResolutionPath(injector);
 
   const dependencies = unformattedDependencies.map((dep) => {
-    // injectedIn contains private fields, so we omit it from the response
+    // injectedIn은 비공식 필드를 포함하므로 응답에서 생략합니다.
     const formattedDependency: Omit<InjectedService, 'injectedIn'> = {
       value: dep.value,
     };
 
-    // convert injection flags to booleans
+    // 주입 플래그를 부울로 변환
     const flags = dep.flags as InternalInjectFlags;
     formattedDependency.flags = {
       optional: (InternalInjectFlags.Optional & flags) === InternalInjectFlags.Optional,
@@ -85,16 +84,16 @@ export function getDependenciesFromInjectable<T>(
       skipSelf: (InternalInjectFlags.SkipSelf & flags) === InternalInjectFlags.SkipSelf,
     };
 
-    // find the injector that provided the dependency
+    // 의존성을 제공한 주입기를 찾습니다.
     for (let i = 0; i < resolutionPath.length; i++) {
       const injectorToCheck = resolutionPath[i];
 
-      // if skipSelf is true we skip the first injector
+      // skipSelf가 true인 경우 첫 번째 주입기를 건너뜁니다.
       if (i === 0 && formattedDependency.flags.skipSelf) {
         continue;
       }
 
-      // host only applies to NodeInjectors
+      // host는 NodeInjectors에만 적용됩니다.
       if (formattedDependency.flags.host && injectorToCheck instanceof EnvironmentInjector) {
         break;
       }
@@ -105,10 +104,9 @@ export function getDependenciesFromInjectable<T>(
       });
 
       if (instance !== null) {
-        // if host flag is true we double check that we can get the service from the first element
-        // in the resolution path by using the host flag. This is done to make sure that we've found
-        // the correct providing injector, and not a node injector that is connected to our path via
-        // a router outlet.
+        // host 플래그가 true인 경우 첫 번째 요소에서 서비스를 가져올 수 있는지 두 번 확인합니다.
+        // 해결 경로의 첫 번째 요소를 사용하여. 이는 적절한 제공 주입기를 찾았는지 확인하기 위한 것입니다.
+        // 우리 경로와 연결된 노드 주입기가 아닙니다.
         if (formattedDependency.flags.host) {
           const firstInjector = resolutionPath[0];
           const lookupFromFirstInjector = firstInjector.get(dep.token as Type<unknown>, null, {
@@ -127,7 +125,7 @@ export function getDependenciesFromInjectable<T>(
         break;
       }
 
-      // if self is true we stop after the first injector
+      // self가 true인 경우 첫 번째 주입기 후에 중단합니다.
       if (i === 0 && formattedDependency.flags.self) {
         break;
       }
@@ -155,9 +153,9 @@ function getDependenciesForTokenInInjector<T>(
   const tokenDependencyMap = resolverToTokenToDependencies.get(lView);
   const dependencies = tokenDependencyMap?.get(token as Type<T>) ?? [];
 
-  // In the NodeInjector case, all injections for every node are stored in the same lView.
-  // We use the injectedIn field of the dependency to filter out the dependencies that
-  // do not come from the same node as the instance we're looking at.
+  // NodeInjector의 경우 모든 노드에 대한 모든 주입이 동일한 lView에 저장됩니다.
+  // 여기서 주입된 필드를 사용하여 현재 보고 있는 인스턴스와 동일한 노드에서
+  // 유래하지 않는 의존성을 필터링합니다.
   return dependencies.filter((dependency) => {
     const dependencyNode = dependency.injectedIn?.tNode;
     if (dependencyNode === undefined) {
@@ -173,39 +171,37 @@ function getDependenciesForTokenInInjector<T>(
 }
 
 /**
- * Gets the class associated with an injector that contains a provider `imports` array in it's
- * definition
+ * 공급자가 `imports` 배열을 포함하는 주입기와 연결된 클래스를 가져옵니다.
  *
- * For Module Injectors this returns the NgModule constructor.
+ * 모듈 주입기의 경우 NgModule 생성자를 반환합니다.
  *
- * For Standalone injectors this returns the standalone component constructor.
+ * 독립형 주입기의 경우 독립형 구성 요소 생성자를 반환합니다.
  *
- * @param injector Injector an injector instance
- * @returns the constructor where the `imports` array that configures this injector is located
+ * @param injector 주입기 인스턴스
+ * @returns 이 주입기를 구성하는 `imports` 배열이 위치한 생성자
  */
 function getProviderImportsContainer(injector: Injector): Type<unknown> | null {
   const {standaloneInjectorToComponent} = getFrameworkDIDebugData();
 
-  // standalone components configure providers through a component def, so we have to
-  // use the standalone component associated with this injector if Injector represents
-  // a standalone components EnvironmentInjector
+  // 독립형 구성 요소는 구성 요소 정의를 통해 공급자를 구성하므로,
+  // 이 주입기가 독립형 구성 요소의 EnvironmentInjector를 나타내는 경우
+  // 연결된 독립형 구성 요소를 사용해야 합니다.
   if (standaloneInjectorToComponent.has(injector)) {
     return standaloneInjectorToComponent.get(injector)!;
   }
 
-  // Module injectors configure providers through their NgModule def, so we use the
-  // injector to lookup its NgModuleRef and through that grab its instance
+  // 모듈 주입기는 NgModule 정의를 통해 공급자를 구성하므로,
+  // 주입기를 사용하여 NgModuleRef를 찾아 이를 통해 인스턴스를 가져옵니다.
   const defTypeRef = injector.get(viewEngine_NgModuleRef, null, {self: true, optional: true})!;
 
-  // If we can't find an associated imports container, return null.
-  // This could be the case if this function is called with an R3Injector that does not represent
-  // a standalone component or NgModule.
+  // 관련된 imports 컨테이너를 찾을 수 없는 경우 null을 반환합니다.
+  // 이는 이 함수가 독립형 구성 요소나 NgModule을 나타내지 않는 R3Injector로 호출될 경우 발생할 수 있습니다.
   if (defTypeRef === null) {
     return null;
   }
 
-  // In standalone applications, the root environment injector created by bootstrapApplication
-  // may have no associated "instance".
+  // 독립형 응용 프로그램에서 bootstrapApplication에 의해 생성된 루트 환경 주입기는
+  // 관련된 "인스턴스"가 없을 수 있습니다.
   if (defTypeRef.instance === null) {
     return null;
   }
@@ -214,11 +210,10 @@ function getProviderImportsContainer(injector: Injector): Type<unknown> | null {
 }
 
 /**
- * Gets the providers configured on a NodeInjector
+ * NodeInjector에서 구성된 공급자를 가져옵니다.
  *
- * @param injector A NodeInjector instance
- * @returns ProviderRecord[] an array of objects representing the providers configured on this
- *     injector
+ * @param injector NodeInjector 인스턴스
+ * @returns ProviderRecord[] 이 주입기에서 구성된 공급자를 나타내는 객체 배열
  */
 function getNodeInjectorProviders(injector: NodeInjector): ProviderRecord[] {
   const diResolver = getNodeInjectorTNode(injector);
@@ -227,7 +222,7 @@ function getNodeInjectorProviders(injector: NodeInjector): ProviderRecord[] {
 }
 
 /**
- * Gets a mapping of providers configured on an injector to their import paths
+ * 주입기에 구성된 공급자의 경로를 가져옵니다.
  *
  * ModuleA -> imports ModuleB
  * ModuleB -> imports ModuleC
@@ -238,13 +233,10 @@ function getNodeInjectorProviders(injector: NodeInjector): ProviderRecord[] {
  * > Map(2) {
  *   MyServiceA => [ModuleA, ModuleB]
  *   MyServiceB => [ModuleA, ModuleB, ModuleC]
- *  }
+ * }
  *
- * @param providerImportsContainer constructor of class that contains an `imports` array in it's
- *     definition
- * @returns A Map object that maps providers to an array of constructors representing it's import
- *     path
- *
+ * @param providerImportsContainer `imports` 배열을 포함하는 정의의 클래스 생성자
+ * @returns 공급자를 해당 수입 경로를 나타내는 생성자 배열에 매핑하는 Map 객체
  */
 function getProviderImportPaths(
   providerImportsContainer: Type<unknown>,
@@ -260,32 +252,27 @@ function getProviderImportPaths(
 
 /**
  *
- * Higher order function that returns a visitor for WalkProviderTree
+ * WalkProviderTree에 대한 방문자를 반환하는 고차 함수
  *
- * Takes in a Map and Set to keep track of the providers and containers
- * visited, so that we can discover the import paths of these providers
- * during the traversal.
+ * 방문한 공급자 및 컨테이너를 추적하는 맵과 세트를 받아서
+ * 이러한 공급자의 수입 경로를 발견합니다.
  *
- * This visitor takes advantage of the fact that walkProviderTree performs a
- * postorder traversal of the provider tree for the passed in container. Because postorder
- * traversal recursively processes subtrees from leaf nodes until the traversal reaches the root,
- * we write a visitor that constructs provider import paths in reverse.
+ * 이 방문자는 walkProviderTree가 제공한 컨테이너에 대한 공급자 트리를 후위 순회
+ * 수행한다는 사실을 활용합니다. 후위 순회는 리프 노드에서
+ * 서브트리를 재귀적으로 처리한 후 루트에 도달하는 방식입니다.
+ * 따라서 공급자 수입 경로를 역순으로 구성하는 방문자를 작성합니다.
  *
+ * 외부에서 정의된 visitedContainers 세트를 사용하여
+ * 각 트리에서 컨테이너에 대해 로직을 한 번만 실행하도록 합니다.
+ * 이 로직은 다음과 같이 설명할 수 있습니다:
  *
- * We use the visitedContainers set defined outside this visitor
- * because we want to run some logic only once for
- * each container in the tree. That logic can be described as:
+ * 1. 이미 발견된 공급자와 incompletely discovered_path를 위해
+ * 2. 발견된 경로에서 첫 번째 컨테이너를 얻습니다.
+ * 3. 해당 첫 번째 컨테이너가 현재 방문하는 컨테이너의 imports 배열에 있는 경우
+ *    현재 방문하는 컨테이너도 발견된 공급자의 수입 경로에 있으므로,
+ *    현재 방문하는 컨테이너를 discovered_path의 앞에 추가합니다.
  *
- *
- * 1. for each discovered_provider and discovered_path in the incomplete provider paths we've
- * already discovered
- * 2. get the first container in discovered_path
- * 3. if that first container is in the imports array of the container we're visiting
- *    Then the container we're visiting is also in the import path of discovered_provider, so we
- *    unshift discovered_path with the container we're currently visiting
- *
- *
- * Example Run:
+ * 예시 실행:
  * ```
  *                 ┌──────────┐
  *                 │containerA│
@@ -302,7 +289,7 @@ function getProviderImportPaths(
  *     └──────────┘             └──────────┘
  * ```
  *
- * Each step of the traversal,
+ * 트리 순회의 각 단계:
  *
  * ```
  * visitor(provD, containerB)
@@ -345,8 +332,8 @@ function getProviderImportPaths(
  * visitedContainers === Set { containerB, containerC, containerA }
  * ```
  *
- * @param providerToPath Map map of providers to paths that this function fills
- * @param visitedContainers Set a set to keep track of the containers we've already visited
+ * @param providerToPath Map 이 기능이 채우는 공급자에 대한 경로
+ * @param visitedContainers Set 방문할 컨테이너를 추적하는 세트
  * @return function(provider SingleProvider, container: Type<unknown> | InjectorType<unknown>) =>
  *     void
  */
@@ -355,19 +342,17 @@ function walkProviderTreeToDiscoverImportPaths(
   visitedContainers: Set<Type<unknown>>,
 ): (provider: SingleProvider, container: Type<unknown> | InjectorType<unknown>) => void {
   return (provider: SingleProvider, container: Type<unknown> | InjectorType<unknown>) => {
-    // If the provider is not already in the providerToPath map,
-    // add an entry with the provider as the key and an array containing the current container as
-    // the value
+    // providerToPath 맵에 공급자가 없다면,
+    // 공급자를 키로, 현재 컨테이너를 포함한 배열을 값으로 추가합니다.
     if (!providerToPath.has(provider)) {
       providerToPath.set(provider, [container]);
     }
 
-    // This block will run exactly once for each container in the import tree.
-    // This is where we run the logic to check the imports array of the current
-    // container to see if it's the next container in the path for our currently
-    // discovered providers.
+    // 이 블록은 import 트리의 각 컨테이너에 대해 한 번만 실행됩니다.
+    // 이는 현재 발견된 공급자의 경로에 대한 다음 컨테이너를
+    // 체크하기 위해 현재 컨테이너의 imports 배열을 확인하는 로직을 실행합니다.
     if (!visitedContainers.has(container)) {
-      // Iterate through the providers we've already seen
+      // 이미 확인한 공급자를 반복합니다.
       for (const prov of providerToPath.keys()) {
         const existingImportPath = providerToPath.get(prov)!;
 
@@ -407,31 +392,30 @@ function walkProviderTreeToDiscoverImportPaths(
 }
 
 /**
- * Gets the providers configured on an EnvironmentInjector
+ * EnvironmentInjector에서 구성된 공급자를 가져옵니다.
  *
  * @param injector EnvironmentInjector
- * @returns an array of objects representing the providers of the given injector
+ * @returns 주어진 주입기의 공급자를 나타내는 객체 배열
  */
 function getEnvironmentInjectorProviders(injector: EnvironmentInjector): ProviderRecord[] {
   const providerRecordsWithoutImportPaths =
     getFrameworkDIDebugData().resolverToProviders.get(injector) ?? [];
 
-  // platform injector has no provider imports container so can we skip trying to
-  // find import paths
+  // 플랫폼 주입기는 공급자 임포트 컨테이너가 없으므로
+  // 임포트 경로를 찾으려는 것을 건너뛸 수 있습니다.
   if (isPlatformInjector(injector)) {
     return providerRecordsWithoutImportPaths;
   }
 
   const providerImportsContainer = getProviderImportsContainer(injector);
   if (providerImportsContainer === null) {
-    // We assume that if an environment injector exists without an associated provider imports
-    // container, it was created without such a container. Some examples cases where this could
-    // happen:
-    // - The root injector of a standalone application
-    // - A router injector created by using the providers array in a lazy loaded route
-    // - A manually created injector that is attached to the injector tree
-    // Since each of these cases has no provider container, there is no concept of import paths,
-    // so we can simply return the provider records.
+    // 환경 주입기가 관련 공급자 임포트 컨테이너 없이 존재한다면
+    // 그러한 컨테이너 없이 생성되었다고 가정합니다. 몇 가지 예시:
+    // - 독립형 응용 프로그램의 루트 주입기
+    // - 지연 로딩 경로의 공급자 배열을 사용하여 생성된 라우터 주입기
+    // - 주입기 트리에 연결된 수동으로 생성된 주입기
+    // 이들 각 경우는 공급자 컨테이너가 없으므로
+    // 수입 경로의 개념도 존재하지 않으므로 공급자 기록을 반환할 수 있습니다.
     return providerRecordsWithoutImportPaths;
   }
 
@@ -440,8 +424,8 @@ function getEnvironmentInjectorProviders(injector: EnvironmentInjector): Provide
 
   for (const providerRecord of providerRecordsWithoutImportPaths) {
     const provider = providerRecord.provider;
-    // Ignore these special providers for now until we have a cleaner way of
-    // determing when they are provided by the framework vs provided by the user.
+    // 현재로서는 프레임워크에 의해 제공되는 것인지 사용자가 제공하는 것인지 결정하는
+    // 보다 깔끔한 방법이 생길 때까지 이러한 특별한 공급자는 무시합니다.
     const token = (provider as ValueProvider).provide;
     if (token === ENVIRONMENT_INITIALIZER || token === INJECTOR_DEF_TYPES) {
       continue;
@@ -451,8 +435,8 @@ function getEnvironmentInjectorProviders(injector: EnvironmentInjector): Provide
 
     const def = getComponentDef(providerImportsContainer);
     const isStandaloneComponent = !!def?.standalone;
-    // We prepend the component constructor in the standalone case
-    // because walkProviderTree does not visit this constructor during it's traversal
+    // 독립형 경우 구성 요소 생성자를 가장 앞에 추가합니다.
+    // walkProviderTree는 순회 도중 이 생성자를 방문하지 않기 때문입니다.
     if (isStandaloneComponent) {
       importPath = [providerImportsContainer, ...importPath];
     }
@@ -467,10 +451,10 @@ function isPlatformInjector(injector: Injector) {
 }
 
 /**
- * Gets the providers configured on an injector.
+ * 주입기에서 구성된 공급자를 가져옵니다.
  *
- * @param injector the injector to lookup the providers of
- * @returns ProviderRecord[] an array of objects representing the providers of the given injector
+ * @param injector 공급자의 주입기를 조회
+ * @returns ProviderRecord[] 주어진 주입기의 공급자를 나타내는 객체 배열
  */
 export function getInjectorProviders(injector: Injector): ProviderRecord[] {
   if (injector instanceof NodeInjector) {
@@ -479,13 +463,12 @@ export function getInjectorProviders(injector: Injector): ProviderRecord[] {
     return getEnvironmentInjectorProviders(injector as EnvironmentInjector);
   }
 
-  throwError('getInjectorProviders only supports NodeInjector and EnvironmentInjector');
+  throwError('getInjectorProviders는 NodeInjector 및 EnvironmentInjector만 지원합니다.');
 }
 
 /**
  *
- * Given an injector, this function will return
- * an object containing the type and source of the injector.
+ * 주입기를 주어지면, 이 함수는 주입기의 유형과 출처를 포함하는 객체를 반환합니다.
  *
  * |              | type        | source                                                      |
  * |--------------|-------------|-------------------------------------------------------------|
@@ -493,9 +476,8 @@ export function getInjectorProviders(injector: Injector): ProviderRecord[] {
  * | R3Injector   | environment | `injector.source`                                           |
  * | NullInjector | null        | null                                                        |
  *
- * @param injector the Injector to get metadata for
- * @returns an object containing the type and source of the given injector. If the injector metadata
- *     cannot be determined, returns null.
+ * @param injector 메타데이터를 가져올 주입기
+ * @returns 주어진 주입기의 유형과 출처를 포함하는 객체. 주입기 메타데이터를 결정할 수 없는 경우 null을 반환합니다.
  */
 export function getInjectorMetadata(
   injector: Injector,
@@ -535,16 +517,16 @@ function getInjectorResolutionPathHelper(
 ): Injector[] {
   const parent = getInjectorParent(injector);
 
-  // if getInjectorParent can't find a parent, then we've either reached the end
-  // of the path, or we need to move from the Element Injector tree to the
-  // module injector tree using the first injector in our path as the connection point.
+  // getInjectorParent가 부모를 찾지 못하면 경로의 끝에 도달했거나
+  // Element Injector 트리에서 모듈 주입기 트리로 이동해야 하며,
+  // 이동할 위치의 첫 번째 주입기를 연결 지점으로 사용합니다.
   if (parent === null) {
     if (injector instanceof NodeInjector) {
       const firstInjector = resolutionPath[0];
       if (firstInjector instanceof NodeInjector) {
         const moduleInjector = getModuleInjectorOfNodeInjector(firstInjector);
         if (moduleInjector === null) {
-          throwError('NodeInjector must have some connection to the module injector tree');
+          throwError('NodeInjector는 모듈 주입기 트리에 반드시 연결되어 있어야 합니다.');
         }
 
         resolutionPath.push(moduleInjector);
@@ -562,19 +544,19 @@ function getInjectorResolutionPathHelper(
 }
 
 /**
- * Gets the parent of an injector.
+ * 주입기의 부모를 가져옵니다.
  *
- * This function is not able to make the jump from the Element Injector Tree to the Module
- * injector tree. This is because the "parent" (the next step in the reoslution path)
- * of a root NodeInjector is dependent on which NodeInjector ancestor initiated
- * the DI lookup. See getInjectorResolutionPath for a function that can make this jump.
+ * 이 함수는 Element Injector 트리에서 모듈 주입기 트리로 점프할 수 없습니다.
+ * 이는 루트 NodeInjector의 "부모" (해결 경로의 다음 단계)는
+ * DI 조회를 시작한 NodeInjector 조상에 따라 달라지기 때문입니다.
+ * getInjectorResolutionPath를 참조하세요.
  *
- * In the below diagram:
+ * 아래 도표에서:
  * ```ts
  * getInjectorParent(NodeInjectorB)
  *  > NodeInjectorA
- * getInjectorParent(NodeInjectorA) // or getInjectorParent(getInjectorParent(NodeInjectorB))
- *  > null // cannot jump to ModuleInjector tree
+ * getInjectorParent(NodeInjectorA) // 또는 getInjectorParent(getInjectorParent(NodeInjectorB))
+ *  > null // ModuleInjector 트리로 점프할 수 없음
  * ```
  *
  * ```
@@ -594,20 +576,19 @@ function getInjectorResolutionPathHelper(
  *    │          ┌────▼─────┐                 ┌─────┴───────┐
  *    └─────────►│ComponentB├────Injector────►│NodeInjectorB│
  *               └──────────┘                 └─────────────┘
- *```
+ * ```
  *
- * @param injector an Injector to get the parent of
- * @returns Injector the parent of the given injector
+ * @param injector 부모를 가져올 주입기
+ * @returns Injector 주어진 주입기의 부모
  */
 function getInjectorParent(injector: Injector): Injector | null {
   if (injector instanceof R3Injector) {
     const parent = injector.parent;
     if (isRouterOutletInjector(parent)) {
-      // This is a special case for a `ChainedInjector` instance, which represents
-      // a combination of a Router's `OutletInjector` and an EnvironmentInjector,
-      // which represents a `@defer` block. Since the `OutletInjector` doesn't store
-      // any tokens itself, we point to the parent injector instead. See the
-      // `OutletInjector.__ngOutletInjector` field for additional information.
+      // 이는 Router의 OutletInjector와 EnvironmentInjector의 조합을 나타내는
+      // `ChainedInjector` 인스턴스의 특별한 경우입니다.
+      // OutletInjector는 토큰을 저장하지 않으므로 부모 주입기를 가리킵니다.
+      // 추가 정보는 `OutletInjector.__ngOutletInjector` 필드를 참조하세요.
       return (parent as ChainedInjector).parentInjector;
     }
     return parent;
@@ -624,7 +605,7 @@ function getInjectorParent(injector: Injector): Injector | null {
     return injector.parentInjector;
   } else {
     throwError(
-      'getInjectorParent only support injectors of type R3Injector, NodeInjector, NullInjector',
+      'getInjectorParent는 R3Injector, NodeInjector, NullInjector 타입의 주입기만 지원합니다.',
     );
   }
 
@@ -645,12 +626,11 @@ function getInjectorParent(injector: Injector): Injector | null {
   } else {
     const chainedInjector = lView[INJECTOR] as ChainedInjector;
 
-    // Case where chainedInjector.injector is an OutletInjector and chainedInjector.injector.parent
-    // is a NodeInjector.
-    // todo(aleksanderbodurri): ideally nothing in packages/core should deal
-    // directly with router concerns. Refactor this so that we can make the jump from
-    // NodeInjector -> OutletInjector -> NodeInjector
-    // without explicitly relying on types contracts from packages/router
+    // 경우 chainedInjector.injector가 OutletInjector이고 chainedInjector.injector.parent가
+    // NodeInjector인 경우입니다.
+    // todo(aleksanderbodurri): 이상적으로는 packages/core에서는 라우터 관련 사항을 직접 다루어서는 안 됩니다.
+    // NodeInjector -> OutletInjector -> NodeInjector로 점프할 수 있도록
+    // packages/router의 타입 계약을 명시적으로 의존하지 않도록 리팩토링합니다.
     const injectorParent = (chainedInjector.injector as any)?.parent as Injector;
 
     if (injectorParent instanceof NodeInjector) {
@@ -662,23 +642,23 @@ function getInjectorParent(injector: Injector): Injector | null {
 }
 
 /**
- * Gets the module injector of a NodeInjector.
+ * NodeInjector의 모듈 주입기를 가져옵니다.
  *
- * @param injector NodeInjector to get module injector of
- * @returns Injector representing module injector of the given NodeInjector
+ * @param injector NodeInjector의 모듈 주입기를 가져올 수 있습니다.
+ * @returns 주어진 NodeInjector의 모듈 주입기를 나타내는 Injector
  */
 function getModuleInjectorOfNodeInjector(injector: NodeInjector): Injector {
   let lView: LView<unknown>;
   if (injector instanceof NodeInjector) {
     lView = getNodeInjectorLView(injector);
   } else {
-    throwError('getModuleInjectorOfNodeInjector must be called with a NodeInjector');
+    throwError('getModuleInjectorOfNodeInjector는 NodeInjector로 호출되어야 합니다.');
   }
 
   const inj = lView[INJECTOR] as R3Injector | ChainedInjector;
   const moduleInjector = inj instanceof ChainedInjector ? inj.parentInjector : inj.parent;
   if (!moduleInjector) {
-    throwError('NodeInjector must have some connection to the module injector tree');
+    throwError('NodeInjector는 모듈 주입기 트리에 연결되어야 합니다.');
   }
 
   return moduleInjector;

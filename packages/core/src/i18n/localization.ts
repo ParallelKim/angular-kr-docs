@@ -11,7 +11,7 @@ import {getLocalePluralCase} from './locale_data_api';
 const pluralMapping = ['zero', 'one', 'two', 'few', 'many'];
 
 /**
- * Returns the plural case based on the locale
+ * 로케일에 따라 복수형 케이스를 반환합니다.
  */
 export function getPluralCase(value: string, locale: string): string {
   const plural = getLocalePluralCase(locale)(parseInt(value, 10));
@@ -20,12 +20,12 @@ export function getPluralCase(value: string, locale: string): string {
 }
 
 /**
- * The locale id that the application is using by default (for translations and ICU expressions).
+ * 애플리케이션이 기본적으로 사용하는 로케일 ID (번역 및 ICU 표현식용).
  */
 export const DEFAULT_LOCALE_ID = 'en-US';
 
 /**
- * USD currency code that the application uses by default for CurrencyPipe when no
- * DEFAULT_CURRENCY_CODE is provided.
+ * 애플리케이션이 기본적으로 CurrencyPipe에 사용하는 USD 통화 코드로,
+ * DEFAULT_CURRENCY_CODE가 제공되지 않을 때 사용됩니다.
  */
 export const USD_CURRENCY_CODE = 'USD';

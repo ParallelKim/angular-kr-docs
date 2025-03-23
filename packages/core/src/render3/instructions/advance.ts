@@ -18,10 +18,10 @@ import {
 } from '../state';
 
 /**
- * Advances to an element for later binding instructions.
+ * 나중에 바인딩 지시 사항을 위한 요소로 넘어감.
  *
- * Used in conjunction with instructions like {@link property} to act on elements with specified
- * indices, for example those created with {@link element} or {@link elementStart}.
+ * {@link property}와 같은 지시 사항과 함께 사용되어, {@link element} 또는 {@link elementStart}와 같이
+ * 지정된 인덱스를 가진 요소에 작용합니다.
  *
  * ```ts
  * (rf: RenderFlags, ctx: any) => {
@@ -31,17 +31,17 @@ import {
  *     element(2, 'div');
  *   }
  *   if (rf & 2) {
- *     advance(2); // Advance twice to the <div>.
+ *     advance(2); // <div>로 두 번 이동.
  *     property('title', 'test');
  *   }
- *  }
+ * }
  * ```
- * @param delta Number of elements to advance forwards by.
+ * @param delta 앞으로 이동할 요소의 수입니다.
  *
  * @codeGenApi
  */
 export function ɵɵadvance(delta: number = 1): void {
-  ngDevMode && assertGreaterThan(delta, 0, 'Can only advance forward');
+  ngDevMode && assertGreaterThan(delta, 0, '앞으로만 이동할 수 있습니다.');
   selectIndexInternal(
     getTView(),
     getLView(),
@@ -58,8 +58,8 @@ export function selectIndexInternal(
 ) {
   ngDevMode && assertIndexInDeclRange(lView[TVIEW], index);
 
-  // Flush the initial hooks for elements in the view that have been added up to this point.
-  // PERF WARNING: do NOT extract this to a separate function without running benchmarks
+  // 현재까지 뷰에 추가된 요소의 초기 후크를 플러시합니다.
+  // PERF WARNING: 이 코드를 별도의 함수로 추출하지 마세요, 벤치마크를 실행하지 않고
   if (!checkNoChangesMode) {
     const hooksInitPhaseCompleted =
       (lView[FLAGS] & LViewFlags.InitPhaseStateMask) === InitPhaseState.InitPhaseCompleted;
@@ -76,9 +76,10 @@ export function selectIndexInternal(
     }
   }
 
-  // We must set the selected index *after* running the hooks, because hooks may have side-effects
-  // that cause other template functions to run, thus updating the selected index, which is global
-  // state. If we run `setSelectedIndex` *before* we run the hooks, in some cases the selected index
-  // will be altered by the time we leave the `ɵɵadvance` instruction.
+  // 우리는 후크를 실행한 *후*에 선택된 인덱스를 설정해야 합니다,
+  // 왜냐하면 후크가 다른 템플릿 함수의 실행을 유발하여
+  // 선택된 인덱스를 업데이트할 수 있기 때문입니다. 선택된 인덱스는 전역 상태입니다.
+  // 후크를 실행하기 *전*에 `setSelectedIndex`를 실행하면,
+  // 어떤 경우에서 선택된 인덱스가 `ɵɵadvance` 지시를 떠날 때 변경될 수 있습니다.
   setSelectedIndex(index);
 }

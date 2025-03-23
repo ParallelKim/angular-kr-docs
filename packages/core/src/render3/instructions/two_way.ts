@@ -16,15 +16,15 @@ import {listenerInternal} from './listener';
 import {elementPropertyInternal, storePropertyBindingMetadata} from './shared';
 
 /**
- * Update a two-way bound property on a selected element.
+ * 선택된 요소의 양방향 바인딩된 속성을 업데이트합니다.
  *
- * Operates on the element selected by index via the {@link select} instruction.
+ * {@link select} 명령어를 통해 인덱스로 선택된 요소에서 작업합니다.
  *
- * @param propName Name of property.
- * @param value New value to write.
- * @param sanitizer An optional function used to sanitize the value.
- * @returns This function returns itself so that it may be chained
- * (e.g. `twoWayProperty('name', ctx.name)('title', ctx.title)`)
+ * @param propName 속성 이름.
+ * @param value 쓸 새로운 값.
+ * @param sanitizer 값을 세정하는 데 사용되는 선택적 함수.
+ * @returns 이 함수는 체이닝이 가능하도록 자신을 반환합니다
+ * (예: `twoWayProperty('name', ctx.name)('title', ctx.title)`)
  *
  * @codeGenApi
  */
@@ -33,7 +33,7 @@ export function ɵɵtwoWayProperty<T>(
   value: T | WritableSignal<T>,
   sanitizer?: SanitizerFn | null,
 ): typeof ɵɵtwoWayProperty {
-  // TODO(crisbeto): perf impact of re-evaluating this on each change detection?
+  // TODO(crisbeto): 각 변경 탐지 시 이걸 다시 평가하는 성능 영향?
   if (isWritableSignal(value)) {
     value = value();
   }
@@ -60,10 +60,10 @@ export function ɵɵtwoWayProperty<T>(
 }
 
 /**
- * Function used inside two-way listeners to conditionally set the value of the bound expression.
+ * 양방향 리스너 내부에서 바인딩된 표현식의 값을 조건부로 설정하는 데 사용되는 함수입니다.
  *
- * @param target Field on which to set the value.
- * @param value Value to be set to the field.
+ * @param target 값을 설정할 필드.
+ * @param value 필드에 설정할 값.
  *
  * @codeGenApi
  */
@@ -74,10 +74,10 @@ export function ɵɵtwoWayBindingSet<T>(target: unknown, value: T): boolean {
 }
 
 /**
- * Adds an event listener that updates a two-way binding to the current node.
+ * 현재 노드에 양방향 바인딩을 업데이트하는 이벤트 리스너를 추가합니다.
  *
- * @param eventName Name of the event.
- * @param listenerFn The function to be called when event emits.
+ * @param eventName 이벤트 이름.
+ * @param listenerFn 이벤트가 발생할 때 호출될 함수.
  *
  * @codeGenApi
  */

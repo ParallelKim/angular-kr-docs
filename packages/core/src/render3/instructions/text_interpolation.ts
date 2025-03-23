@@ -27,21 +27,21 @@ import {
 
 /**
  *
- * Update text content with a lone bound value
+ * 단일 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 1 interpolated value in it, an no additional text
- * surrounds that interpolated value:
+ * 텍스트 노드에 1개의 보간 값만 포함되어 있을 때 사용되며,
+ * 그 보간 값을 둘러싼 추가 텍스트가 없습니다:
  *
  * ```html
  * <div>{{v0}}</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate(v0);
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -52,20 +52,20 @@ export function ɵɵtextInterpolate(v0: any): typeof ɵɵtextInterpolate {
 
 /**
  *
- * Update text content with single bound value surrounded by other text.
+ * 다른 텍스트로 둘러싸인 단일 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 1 interpolated value in it:
+ * 텍스트 노드에 1개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate1('prefix', v0, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -84,20 +84,20 @@ export function ɵɵtextInterpolate1(
 
 /**
  *
- * Update text content with 2 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 2개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 2 interpolated values in it:
+ * 텍스트 노드에 2개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate2('prefix', v0, '-', v1, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -118,21 +118,21 @@ export function ɵɵtextInterpolate2(
 
 /**
  *
- * Update text content with 3 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 3개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 3 interpolated values in it:
+ * 텍스트 노드에 3개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate3(
  * 'prefix', v0, '-', v1, '-', v2, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -155,21 +155,21 @@ export function ɵɵtextInterpolate3(
 
 /**
  *
- * Update text content with 4 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 4개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 4 interpolated values in it:
+ * 텍스트 노드에 4개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate4(
  * 'prefix', v0, '-', v1, '-', v2, '-', v3, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see ɵɵtextInterpolateV
  * @codeGenApi
  */
@@ -194,21 +194,21 @@ export function ɵɵtextInterpolate4(
 
 /**
  *
- * Update text content with 5 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 5개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 5 interpolated values in it:
+ * 텍스트 노드에 5개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate5(
  * 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -235,23 +235,23 @@ export function ɵɵtextInterpolate5(
 
 /**
  *
- * Update text content with 6 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 6개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 6 interpolated values in it:
+ * 텍스트 노드에 6개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate6(
  *    'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, 'suffix');
  * ```
  *
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change. @returns itself, so that it may be chained.
+ * @param i4 연결에만 사용되는 정적 값입니다.
+ * @param v5 변경 사항을 확인하는 값입니다. @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -295,21 +295,21 @@ export function ɵɵtextInterpolate6(
 
 /**
  *
- * Update text content with 7 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 7개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 7 interpolated values in it:
+ * 텍스트 노드에 7개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate7(
  *    'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -357,21 +357,21 @@ export function ɵɵtextInterpolate7(
 
 /**
  *
- * Update text content with 8 bound values surrounded by other text.
+ * 다른 텍스트로 둘러싸인 8개의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when a text node has 8 interpolated values in it:
+ * 텍스트 노드에 8개의 보간 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolate8(
  *  'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, '-', v7, 'suffix');
  * ```
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @see textInterpolateV
  * @codeGenApi
  */
@@ -422,27 +422,25 @@ export function ɵɵtextInterpolate8(
 }
 
 /**
- * Update text content with 9 or more bound values other surrounded by text.
+ * 텍스트 주변에 9개 이상의 바인딩 값으로 텍스트 내용을 업데이트합니다.
  *
- * Used when the number of interpolated values exceeds 8.
+ * 보간 값의 수가 8을 초과할 때 사용됩니다.
  *
  * ```html
  * <div>prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}-{{v8}}-{{v9}}suffix</div>
  * ```
  *
- * Its compiled representation is:
+ * 해당 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵtextInterpolateV(
  *  ['prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, '-', v7, '-', v9,
  *  'suffix']);
  * ```
- *.
- * @param values The collection of values and the strings in between those values, beginning with
- * a string prefix and ending with a string suffix.
- * (e.g. `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
+ * @param values 값의 컬렉션과 그 값들 사이의 문자열로, 문자열 접두사로 시작하고 문자열 접미사로 끝납니다.
+ * (예: `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
  *
- * @returns itself, so that it may be chained.
+ * @returns 자신을 반환하여 체이닝이 가능하도록 합니다.
  * @codeGenApi
  */
 export function ɵɵtextInterpolateV(values: any[]): typeof ɵɵtextInterpolateV {
@@ -455,7 +453,7 @@ export function ɵɵtextInterpolateV(values: any[]): typeof ɵɵtextInterpolateV
 }
 
 /**
- * Updates a text binding at a given index in a given LView.
+ * 주어진 LView의 주어진 인덱스에서 텍스트 바인딩을 업데이트합니다.
  */
 function textBindingInternal(lView: LView, index: number, value: string): void {
   ngDevMode && assertString(value, 'Value should be a string');

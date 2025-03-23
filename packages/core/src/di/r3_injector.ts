@@ -83,21 +83,21 @@ import {
 } from '@angular/core/primitives/di';
 
 /**
- * Marker which indicates that a value has not yet been created from the factory function.
+ * 팩토리 함수에서 아직 값이 생성되지 않았음을 나타내는 마커.
  */
 const NOT_YET = {};
 
 /**
- * Marker which indicates that the factory function for a token is in the process of being called.
+ * 토큰에 대한 팩토리 함수가 호출 중임을 나타내는 마커.
  *
- * If the injector is asked to inject a token with its value set to CIRCULAR, that indicates
- * injection of a dependency has recursively attempted to inject the original token, and there is
- * a circular dependency among the providers.
+ * 주입기가 CIRCULAR로 설정된 토큰을 주입하도록 요청받으면, 이는
+ * 의존성 주입이 원래의 토큰을 재귀적으로 시도했음을 나타내며, 제공자 간의
+ * 순환 종속성이 있음을 의미합니다.
  */
 const CIRCULAR = {};
 
 /**
- * A lazily initialized NullInjector.
+ * 지연 초기화된 NullInjector.
  */
 let NULL_INJECTOR: Injector | undefined = undefined;
 
@@ -109,8 +109,7 @@ export function getNullInjector(): Injector {
 }
 
 /**
- * An entry in the injector which tracks information about the given token, including a possible
- * current value.
+ * 주어진 토큰에 대한 정보를 추적하는 주입기의 항목으로, 가능한 현재 값도 포함.
  */
 interface Record<T> {
   factory: (() => T) | undefined;
@@ -119,16 +118,15 @@ interface Record<T> {
 }
 
 /**
- * An `Injector` that's part of the environment injector hierarchy, which exists outside of the
- * component tree.
+ * 구성 요소 트리 외부에 존재하는 환경 주입기 계층의 일부인 `Injector`.
  *
  * @publicApi
  */
 export abstract class EnvironmentInjector implements Injector {
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기반으로 주입기에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 주입기에서 인스턴스를 반환하며, 그렇지 않으면 `notFoundValue`를 반환합니다.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(
     token: ProviderToken<T>,
@@ -138,9 +136,9 @@ export abstract class EnvironmentInjector implements Injector {
     },
   ): T;
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기반으로 주입기에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 주입기에서 인스턴스를 반환하며, 그렇지 않으면 `notFoundValue`를 반환합니다.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(
     token: ProviderToken<T>,
@@ -148,27 +146,27 @@ export abstract class EnvironmentInjector implements Injector {
     options: InjectOptions,
   ): T | null;
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기반으로 주입기에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 주입기에서 인스턴스를 반환하며, 그렇지 않으면 `notFoundValue`를 반환합니다.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(token: ProviderToken<T>, notFoundValue?: T, options?: InjectOptions): T;
   /**
-   * @deprecated from v4.0.0 use ProviderToken<T>
+   * @deprecated v4.0.0부터 ProviderToken<T> 사용
    * @suppress {duplicate}
    */
   abstract get<T>(token: string | ProviderToken<T>, notFoundValue?: any): any;
 
   /**
-   * Runs the given function in the context of this `EnvironmentInjector`.
+   * 주어진 함수를 이 `EnvironmentInjector`의 컨텍스트에서 실행합니다.
    *
-   * Within the function's stack frame, [`inject`](api/core/inject) can be used to inject
-   * dependencies from this injector. Note that `inject` is only usable synchronously, and cannot be
-   * used in any asynchronous callbacks or after any `await` points.
+   * 함수의 스택 프레임 내에서 [`inject`](api/core/inject) 를 사용하여
+   * 이 주입기에서 의존성을 주입할 수 있습니다. `inject`는 동기적으로만 사용할 수 있으며,
+   * 비동기 콜백이나 `await` 포인트 이후에는 사용할 수 없습니다.
    *
-   * @param fn the closure to be run in the context of this injector
-   * @returns the return value of the function, if any
-   * @deprecated use the standalone function `runInInjectionContext` instead
+   * @param fn 이 주입기의 컨텍스트에서 실행될 클로저
+   * @returns 함수의 반환 값이 있을 경우
+   * @deprecated 독립 함수 `runInInjectionContext`를 대신 사용
    */
   abstract runInContext<ReturnT>(fn: () => ReturnT): ReturnT;
 
@@ -182,21 +180,20 @@ export abstract class EnvironmentInjector implements Injector {
 
 export class R3Injector extends EnvironmentInjector implements PrimitivesInjector {
   /**
-   * Map of tokens to records which contain the instances of those tokens.
-   * - `null` value implies that we don't have the record. Used by tree-shakable injectors
-   * to prevent further searches.
+   * 토큰과 해당 토큰의 인스턴스를 포함하는 레코드의 맵.
+   * - `null` 값은 레코드가 없음을 의미합니다. 추가 검색을 방지하기 위해 트리-쉐이커블 주입기에서 사용됨.
    */
   private records = new Map<ProviderToken<any>, Record<any> | null>();
 
   /**
-   * Set of values instantiated by this injector which contain `ngOnDestroy` lifecycle hooks.
+   * 이 주입기에 의해 인스턴스화된 값의 집합으로, `ngOnDestroy` 생명주기 훅을 포함합니다.
    */
   private _ngOnDestroyHooks = new Set<OnDestroy>();
 
   private _onDestroyHooks: Array<() => void> = [];
 
   /**
-   * Flag indicating that this injector was previously destroyed.
+   * 이 주입기가 이전에 파괴되었음을 나타내는 플래그.
    */
   get destroyed(): boolean {
     return this._destroyed;
@@ -212,21 +209,21 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
     readonly scopes: Set<InjectorScope>,
   ) {
     super();
-    // Start off by creating Records for every provider.
+    // 모든 제공자에 대한 레코드를 생성하는 것으로 시작합니다.
     forEachSingleProvider(providers as Array<Provider | InternalEnvironmentProviders>, (provider) =>
       this.processProvider(provider),
     );
 
-    // Make sure the INJECTOR token provides this injector.
+    // 현재 주입기가 환경 범위여야 하는 경우
     this.records.set(INJECTOR, makeRecord(undefined, this));
 
-    // And `EnvironmentInjector` if the current injector is supposed to be env-scoped.
+    // 현재 주입기가 환경 범위여야 하는 경우 `EnvironmentInjector`도 설정합니다.
     if (scopes.has('environment')) {
       this.records.set(EnvironmentInjector, makeRecord(undefined, this));
     }
 
-    // Detect whether this injector has the APP_ROOT_SCOPE token and thus should provide
-    // any injectable scoped to APP_ROOT_SCOPE.
+    // 이 주입기에 APP_ROOT_SCOPE 토큰이 있는지 감지하고, 따라서
+    // APP_ROOT_SCOPE에 주입 가능한 항목을 제공해야 하는지를 확인합니다.
     const record = this.records.get(INJECTOR_SCOPE) as Record<InjectorScope | null>;
     if (record != null && typeof record.value === 'string') {
       this.scopes.add(record.value as InjectorScope);
@@ -240,38 +237,36 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
       convertToBitFlags(options as InjectOptions | undefined) || InternalInjectFlags.Default;
     return (this as BackwardsCompatibleInjector).get(
       token as unknown as InjectionToken<T>,
-      // When a dependency is requested with an optional flag, DI returns null as the default value.
+      // 의존성이 선택적 플래그로 요청될 때 DI는 NULL을 기본값으로 반환합니다.
       flags & InternalInjectFlags.Optional ? null : undefined,
       flags,
     )!;
   }
 
   /**
-   * Destroy the injector and release references to every instance or provider associated with it.
+   * 주입기를 파괴하고 그것과 연관된 모든 인스턴스 또는 제공자에 대한 참조를 해제합니다.
    *
-   * Also calls the `OnDestroy` lifecycle hooks of every instance that was created for which a
-   * hook was found.
+   * 또한 훅이 발견된 경우 생성된 모든 인스턴스의 `OnDestroy` 생명주기 훅을 호출합니다.
    */
   override destroy(): void {
     assertNotDestroyed(this);
 
-    // Set destroyed = true first, in case lifecycle hooks re-enter destroy().
+    // 라이프사이클 훅이 재진입하는 경우를 대비해 먼저 destroyed = true로 설정합니다.
     this._destroyed = true;
     const prevConsumer = setActiveConsumer(null);
     try {
-      // Call all the lifecycle hooks.
+      // 모든 생명 주기 훅을 호출합니다.
       for (const service of this._ngOnDestroyHooks) {
         service.ngOnDestroy();
       }
       const onDestroyHooks = this._onDestroyHooks;
-      // Reset the _onDestroyHooks array before iterating over it to prevent hooks that unregister
-      // themselves from mutating the array during iteration.
+      // 반복 중지된 훅이 배열을 변형하는 것을 방지하기 위해 _onDestroyHooks 배열을 재설정합니다.
       this._onDestroyHooks = [];
       for (const hook of onDestroyHooks) {
         hook();
       }
     } finally {
-      // Release all references.
+      // 모든 참조를 해제합니다.
       this.records.clear();
       this._ngOnDestroyHooks.clear();
       this.injectorDefTypes.clear();
@@ -318,7 +313,7 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
 
     const flags = convertToBitFlags(options) as InternalInjectFlags;
 
-    // Set the injection context.
+    // 주입 컨텍스트 설정
     let prevInjectContext: InjectorProfilerContext;
     if (ngDevMode) {
       prevInjectContext = setInjectorProfilerContext({injector: this, token: token as Type<T>});
@@ -326,17 +321,16 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
     const previousInjector = setCurrentInjector(this);
     const previousInjectImplementation = setInjectImplementation(undefined);
     try {
-      // Check for the SkipSelf flag.
+      // SkipSelf 플래그 확인
       if (!(flags & InternalInjectFlags.SkipSelf)) {
-        // SkipSelf isn't set, check if the record belongs to this injector.
+        // SkipSelf가 설정되지 않은 경우, 기록이 이 주입기에 속하는지 확인합니다.
         let record: Record<T> | undefined | null = this.records.get(token);
         if (record === undefined) {
-          // No record, but maybe the token is scoped to this injector. Look for an injectable
-          // def with a scope matching this injector.
+          // 기록이 없지만, 토큰이 이 주입기에 대해 범위가 설정되어 있을 수 있습니다.
           const def = couldBeInjectableType(token) && getInjectableDef(token);
           if (def && this.injectableDefInScope(def)) {
-            // Found an injectable def and it's scoped to this injector. Pretend as if it was here
-            // all along.
+            // 주입 가능한 정의를 찾았고, 이 주입기에 범위 설정됨.
+            // 여기가 처음부터 있었던 것처럼 가장합니다.
 
             if (ngDevMode) {
               runInInjectorProfilerContext(this, token as Type<T>, () => {
@@ -350,17 +344,16 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
           }
           this.records.set(token, record);
         }
-        // If a record was found, get the instance for it and return it.
+        // 기록이 발견되면, 해당 인스턴스를 가져와서 반환합니다.
         if (record != null /* NOT null || undefined */) {
           return this.hydrate(token, record);
         }
       }
 
-      // Select the next injector based on the Self flag - if self is set, the next injector is
-      // the NullInjector, otherwise it's the parent.
+      // Self 플래그에 따라 다음 주입기를 선택합니다 - Self가 설정되면 NullInjector, 그렇지 않으면 부모가 됩니다.
       const nextInjector = !(flags & InternalInjectFlags.Self) ? this.parent : getNullInjector();
-      // Set the notFoundValue based on the Optional flag - if optional is set and notFoundValue
-      // is undefined, the value is null, otherwise it's the notFoundValue.
+      // Optional 플래그에 따라 notFoundValue를 설정합니다 - optional이 설정되고 notFoundValue가 undefined인 경우
+      // 값은 null이며, 그렇지 않으면 notFoundValue입니다.
       notFoundValue =
         flags & InternalInjectFlags.Optional && notFoundValue === THROW_IF_NOT_FOUND
           ? null
@@ -371,17 +364,17 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
         const path: any[] = (e[NG_TEMP_TOKEN_PATH] = e[NG_TEMP_TOKEN_PATH] || []);
         path.unshift(stringify(token));
         if (previousInjector) {
-          // We still have a parent injector, keep throwing
+          // 여전히 부모 주입기가 있습니다. 계속해서 예외를 throw합니다.
           throw e;
         } else {
-          // Format & throw the final error message when we don't have any previous injector
+          // 이전 주입기가 없는 경우 마지막 오류 메시지를 형식화하고 throw합니다.
           return catchInjectorError(e, token, 'R3InjectorError', this.source);
         }
       } else {
         throw e;
       }
     } finally {
-      // Lastly, restore the previous injection context.
+      // 마지막으로 이전 주입 컨텍스트를 복원합니다.
       setInjectImplementation(previousInjectImplementation);
       setCurrentInjector(previousInjector);
       ngDevMode && setInjectorProfilerContext(prevInjectContext!);
@@ -403,10 +396,10 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
       if (ngDevMode && !Array.isArray(initializers)) {
         throw new RuntimeError(
           RuntimeErrorCode.INVALID_MULTI_PROVIDER,
-          'Unexpected type of the `ENVIRONMENT_INITIALIZER` token value ' +
-            `(expected an array, but got ${typeof initializers}). ` +
-            'Please check that the `ENVIRONMENT_INITIALIZER` token is configured as a ' +
-            '`multi: true` provider.',
+          '예상과 다른 `ENVIRONMENT_INITIALIZER` 토큰 값의 유형 ' +
+            `(배열이 예상되지만 ${typeof initializers}가 확인됨). ` +
+            '`ENVIRONMENT_INITIALIZER` 토큰이 ' +
+            '`multi: true` 제공자로 구성되어 있는지 확인하십시오.',
         );
       }
       for (const initializer of initializers) {
@@ -430,23 +423,21 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
   }
 
   /**
-   * Process a `SingleProvider` and add it.
+   * `SingleProvider`를 처리하고 추가합니다.
    */
   private processProvider(provider: SingleProvider): void {
-    // Determine the token from the provider. Either it's its own token, or has a {provide: ...}
-    // property.
+    // 공급자로부터 토큰을 결정합니다. 자기 자신의 토큰이거나 {provide: ...} 속성이 있습니다.
     provider = resolveForwardRef(provider);
     let token: any = isTypeProvider(provider)
       ? provider
       : resolveForwardRef(provider && provider.provide);
 
-    // Construct a `Record` for the provider.
+    // 공급자를 위한 `Record`를 생성합니다.
     const record = providerToRecord(provider);
     if (ngDevMode) {
       runInInjectorProfilerContext(this, token, () => {
-        // Emit InjectorProfilerEventType.Create if provider is a value provider because
-        // these are the only providers that do not go through the value hydration logic
-        // where this event would normally be emitted from.
+        // 공급자가 값 제공자일 경우 InjectorProfilerEventType.Create를 발생시킵니다.
+        // 그들만이 이 이벤트가 발생해야 하는 값 수화 로직을 통과하지 않기 때문입니다.
         if (isValueProvider(provider)) {
           emitInjectorToCreateInstanceEvent(token);
           emitInstanceCreatedByInjectorEvent(provider.useValue);
@@ -457,11 +448,11 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
     }
 
     if (!isTypeProvider(provider) && provider.multi === true) {
-      // If the provider indicates that it's a multi-provider, process it specially.
-      // First check whether it's been defined already.
+      // 공급자가 다중 공급자임을 나타내는 경우, 특별히 처리합니다.
+      // 먼저 이미 정의되었는지 확인합니다.
       let multiRecord = this.records.get(token);
       if (multiRecord) {
-        // It has. Throw a nice error if
+        // 이미 있습니다.
         if (ngDevMode && multiRecord.multi === undefined) {
           throwMixedMultiProviderError();
         }
@@ -531,7 +522,7 @@ export class R3Injector extends EnvironmentInjector implements PrimitivesInjecto
 }
 
 function injectableDefOrInjectorDefFactory(token: ProviderToken<any>): FactoryFn<any> {
-  // Most tokens will have an injectable def directly on them, which specifies a factory directly.
+  // 대부분의 토큰은 직접 팩토리를 지정하는 주입할 수 있는 정의를 가집니다.
   const injectableDef = getInjectableDef(token);
   const factory = injectableDef !== null ? injectableDef.factory : getFactoryDef(token);
 
@@ -539,42 +530,41 @@ function injectableDefOrInjectorDefFactory(token: ProviderToken<any>): FactoryFn
     return factory;
   }
 
-  // InjectionTokens should have an injectable def (ɵprov) and thus should be handled above.
-  // If it's missing that, it's an error.
+  // InjectionTokens는 주입할 수 있는 정의(ɵprov)를 가져야 하며, 따라서 위에서 처리되어야 합니다.
+  // 누락된 경우 오류입니다.
   if (token instanceof InjectionToken) {
     throw new RuntimeError(
       RuntimeErrorCode.INVALID_INJECTION_TOKEN,
-      ngDevMode && `Token ${stringify(token)} is missing a ɵprov definition.`,
+      ngDevMode && `토큰 ${stringify(token)}에 ɵprov 정의가 없습니다.`,
     );
   }
 
-  // Undecorated types can sometimes be created if they have no constructor arguments.
+  // 인수를 갖지 않는 경우 비장식된 타입이 생성될 수 있습니다.
   if (token instanceof Function) {
     return getUndecoratedInjectableFactory(token);
   }
 
-  // There was no way to resolve a factory for this token.
-  throw new RuntimeError(RuntimeErrorCode.INVALID_INJECTION_TOKEN, ngDevMode && 'unreachable');
+  // 이 토큰에 대해 팩토리를 해결할 방법이 없었습니다.
+  throw new RuntimeError(RuntimeErrorCode.INVALID_INJECTION_TOKEN, ngDevMode && '도달 불가능');
 }
 
 function getUndecoratedInjectableFactory(token: Function) {
-  // If the token has parameters then it has dependencies that we cannot resolve implicitly.
+  // 토큰이 인수를 가지면 해결할 수 없는 종속성이 있습니다.
   const paramLength = token.length;
   if (paramLength > 0) {
     throw new RuntimeError(
       RuntimeErrorCode.INVALID_INJECTION_TOKEN,
       ngDevMode &&
-        `Can't resolve all parameters for ${stringify(token)}: (${newArray(paramLength, '?').join(
-          ', ',
-        )}).`,
+        `${stringify(token)}의 모든 매개변수를 해결할 수 없습니다: (${newArray(
+          paramLength,
+          '?',
+        ).join(', ')}).`,
     );
   }
 
-  // The constructor function appears to have no parameters.
-  // This might be because it inherits from a super-class. In which case, use an injectable
-  // def from an ancestor if there is one.
-  // Otherwise this really is a simple class with no dependencies, so return a factory that
-  // just instantiates the zero-arg constructor.
+  // 생성자 함수는 인수가 없는 것으로 보입니다.
+  // 이것은 상위 클래스에서 상속되기 때문일 수 있습니다. 이 경우, 조상이 있는 경우 주입 가능한 정의를 사용합니다.
+  // 그렇지 않으면, 종속성이 없는 간단한 클래스이므로 인수가 없는 생성자를 단순히 인스턴스화하는 팩토리를 반환합니다.
   const inheritedInjectableDef = getInheritedInjectableDef(token);
   if (inheritedInjectableDef !== null) {
     return () => inheritedInjectableDef.factory(token as Type<any>);
@@ -593,9 +583,9 @@ function providerToRecord(provider: SingleProvider): Record<any> {
 }
 
 /**
- * Converts a `SingleProvider` into a factory function.
+ * `SingleProvider`를 팩토리 함수로 변환합니다.
  *
- * @param provider provider to convert to factory
+ * @param provider 팩토리로 변환할 제공자
  */
 export function providerToFactory(
   provider: SingleProvider,
@@ -639,7 +629,7 @@ export function assertNotDestroyed(injector: R3Injector): void {
   if (injector.destroyed) {
     throw new RuntimeError(
       RuntimeErrorCode.INJECTOR_ALREADY_DESTROYED,
-      ngDevMode && 'Injector has already been destroyed.',
+      ngDevMode && '주입기가 이미 파괴되었습니다.',
     );
   }
 }

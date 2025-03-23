@@ -8,13 +8,12 @@
 
 import {InputSignalWithTransform} from './input_signal';
 
-/** Retrieves the write type of an `InputSignal` and `InputSignalWithTransform`. */
+/** `InputSignal` 및 `InputSignalWithTransform`의 쓰기 유형을 검색합니다. */
 export type ɵUnwrapInputSignalWriteType<Field> =
   Field extends InputSignalWithTransform<any, infer WriteT> ? WriteT : never;
 
 /**
- * Unwraps all `InputSignal`/`InputSignalWithTransform` class fields of
- * the given directive.
+ * 주어진 지시문의 모든 `InputSignal`/`InputSignalWithTransform` 클래스 필드를 풀어냅니다.
  */
 export type ɵUnwrapDirectiveSignalInputs<Dir, Fields extends keyof Dir> = {
   [P in Fields]: ɵUnwrapInputSignalWriteType<Dir[P]>;

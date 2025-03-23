@@ -11,8 +11,8 @@ import {arrayInsert2, arraySplice} from '../util/array_utils';
 import {NgZone} from '../zone';
 
 /**
- * Returns a function that captures a provided delay.
- * Invoking the returned function schedules a trigger.
+ * 제공된 지연을 캡처하는 함수를 반환합니다.
+ * 반환된 함수를 호출하면 트리거가 예약됩니다.
  */
 export function onTimer(delay: number) {
   return (callback: VoidFunction, injector: Injector) =>
@@ -20,11 +20,11 @@ export function onTimer(delay: number) {
 }
 
 /**
- * Schedules a callback to be invoked after a given timeout.
+ * 주어진 타임아웃 후에 호출될 콜백을 예약합니다.
  *
- * @param delay A number of ms to wait until firing a callback.
- * @param callback A function to be invoked after a timeout.
- * @param injector injector for the app.
+ * @param delay 콜백이 실행되기까지 기다릴 ms의 수입니다.
+ * @param callback 타임아웃 후에 호출될 함수입니다.
+ * @param injector 앱의 injector입니다.
  */
 export function scheduleTimerTrigger(delay: number, callback: VoidFunction, injector: Injector) {
   const scheduler = injector.get(TimerScheduler);
@@ -35,31 +35,28 @@ export function scheduleTimerTrigger(delay: number, callback: VoidFunction, inje
 }
 
 /**
- * Helper service to schedule `setTimeout`s for batches of defer blocks,
- * to avoid calling `setTimeout` for each defer block (e.g. if defer blocks
- * are created inside a for loop).
+ * 배치된 지연 블록의 `setTimeout`을 예약하기 위한 도우미 서비스로,
+ * 각 지연 블록에 대해 `setTimeout`을 호출하지 않도록 합니다 (예: 지연 블록이 for 루프 내부에서 생성되는 경우).
  */
 export class TimerScheduler {
-  // Indicates whether current callbacks are being invoked.
+  // 현재 콜백이 실행 중인지 여부를 표시합니다.
   executingCallbacks = false;
 
-  // Currently scheduled `setTimeout` id.
+  // 현재 예약된 `setTimeout` ID입니다.
   timeoutId: number | null = null;
 
-  // When currently scheduled timer would fire.
+  // 현재 예약된 타이머가 실행될 예측 시간입니다.
   invokeTimerAt: number | null = null;
 
-  // List of callbacks to be invoked.
-  // For each callback we also store a timestamp on when the callback
-  // should be invoked. We store timestamps and callback functions
-  // in a flat array to avoid creating new objects for each entry.
+  // 호출될 콜백 목록입니다.
+  // 각 콜백에 대해서 콜백이 호출될 시각의 타임스탬프도 저장합니다.
+  // 타임스탬프와 콜백 함수를 평면 배열에 저장하여 각 항목에 대해 새로운 객체를 생성하지 않도록 합니다.
   // [timestamp1, callback1, timestamp2, callback2, ...]
   current: Array<number | VoidFunction> = [];
 
-  // List of callbacks collected while invoking current set of callbacks.
-  // Those callbacks are added to the "current" queue at the end of
-  // the current callback invocation. The shape of this list is the same
-  // as the shape of the `current` list.
+  // 현재 콜백 집합을 호출하는 동안 수집된 콜백 목록입니다.
+  // 이 콜백들은 현재 콜백 호출의 끝에서 "current" 큐에 추가됩니다.
+  // 이 목록의 형태는 `current` 목록의 형태와 동일합니다.
   deferred: Array<number | VoidFunction> = [];
 
   add(delay: number, callback: VoidFunction, ngZone: NgZone) {
@@ -72,11 +69,11 @@ export class TimerScheduler {
     const {current, deferred} = this;
     const callbackIndex = this.removeFromQueue(current, callback);
     if (callbackIndex === -1) {
-      // Try cleaning up deferred queue only in case
-      // we didn't find a callback in the "current" queue.
+      // 현재 큐에서 콜백을 찾지 못한 경우
+      // 지연 큐만 정리합니다.
       this.removeFromQueue(deferred, callback);
     }
-    // If the last callback was removed and there is a pending timeout - cancel it.
+    // 마지막 콜백이 제거되고 보류 중인 타임아웃이 있다면 - 취소합니다.
     if (current.length === 0 && deferred.length === 0) {
       this.clearTimeout();
     }
@@ -91,10 +88,9 @@ export class TimerScheduler {
     for (let i = 0; i < target.length; i += 2) {
       const invokeQueuedCallbackAt = target[i] as number;
       if (invokeQueuedCallbackAt > invokeAt) {
-        // We've reached a first timer that is scheduled
-        // for a later time than what we are trying to insert.
-        // This is the location at which we need to insert,
-        // no need to iterate further.
+        // 예약된 첫 번째 타이머가
+        // 삽입하려는 시간보다 늦습니다.
+        // 삽입해야 하는 위치입니다.
         insertAtIndex = i;
         break;
       }
@@ -112,8 +108,8 @@ export class TimerScheduler {
       }
     }
     if (index > -1) {
-      // Remove 2 elements: a timestamp slot and
-      // the following slot with a callback function.
+      // 2개의 요소를 제거합니다: 타임스탬프 슬롯과
+      // 콜백 함수가 있는 슬롯입니다.
       arraySplice(target, index, 2);
     }
     return index;
@@ -125,11 +121,11 @@ export class TimerScheduler {
 
       this.executingCallbacks = true;
 
-      // Clone the current state of the queue, since it might be altered
-      // as we invoke callbacks.
+      // 콜백을 호출하는 동안 변경될 수 있으므로
+      // 큐의 현재 상태를 복사합니다.
       const current = [...this.current];
 
-      // Invoke callbacks that were scheduled to run before the current time.
+      // 현재 시간 이전에 실행할 예정인 콜백을 호출합니다.
       const now = Date.now();
       for (let i = 0; i < current.length; i += 2) {
         const invokeAt = current[i] as number;
@@ -137,21 +133,21 @@ export class TimerScheduler {
         if (invokeAt <= now) {
           callback();
         } else {
-          // We've reached a timer that should not be invoked yet.
+          // 아직 호출되지 않아야 하는 타이머에 도달했습니다.
           break;
         }
       }
-      // The state of the queue might've changed after callbacks invocation,
-      // run the cleanup logic based on the *current* state of the queue.
+      // 콜백 호출 후 큐의 상태가 변경되었을 수 있으므로
+      // 큐의 *현재* 상태를 바탕으로 정리 로직을 실행합니다.
       let lastCallbackIndex = -1;
       for (let i = 0; i < this.current.length; i += 2) {
         const invokeAt = this.current[i] as number;
         if (invokeAt <= now) {
-          // Add +1 to account for a callback function that
-          // goes after the timestamp in events array.
+          // 이벤트 배열의 타임스탬프 뒤에 위치한
+          // 콜백 함수를 고려하여 +1을 추가합니다.
           lastCallbackIndex = i + 1;
         } else {
-          // We've reached a timer that should not be invoked yet.
+          // 아직 호출되지 않아야 하는 타이머에 도달했습니다.
           break;
         }
       }
@@ -161,9 +157,8 @@ export class TimerScheduler {
 
       this.executingCallbacks = false;
 
-      // If there are any callbacks added during an invocation
-      // of the current ones - move them over to the "current"
-      // queue.
+      // 현재 호출 중인 콜백에서 추가된 콜백이 있다면
+      // "current" 큐로 이동합니다.
       if (this.deferred.length > 0) {
         for (let i = 0; i < this.deferred.length; i += 2) {
           const invokeAt = this.deferred[i] as number;
@@ -175,27 +170,26 @@ export class TimerScheduler {
       this.scheduleTimer(ngZone);
     };
 
-    // Avoid running timer callbacks more than once per
-    // average frame duration. This is needed for better
-    // batching and to avoid kicking off excessive change
-    // detection cycles.
+    // 평균 프레임 지속 시간 당 타이머 콜백이 하나 이상 실행되지 않도록 합니다.
+    // 이것은 더 나은 배치 처리를 위해 필요하며
+    // 과도한 변경 감지 사이클을 방지합니다.
     const FRAME_DURATION_MS = 16; // 1000ms / 60fps
 
     if (this.current.length > 0) {
       const now = Date.now();
-      // First element in the queue points at the timestamp
-      // of the first (earliest) event.
+      // 큐의 첫 번째 요소는
+      // 첫 번째(가장 이른) 이벤트의 타임스탬프를 가리킵니다.
       const invokeAt = this.current[0] as number;
       if (
         this.timeoutId === null ||
-        // Reschedule a timer in case a queue contains an item with
-        // an earlier timestamp and the delta is more than an average
-        // frame duration.
+        // 큐에 더 이른 타임스탬프를 가진 항목이 있는 경우
+        // 시간 차이가 평균 프레임 지속 시간보다 큰지 확인하여
+        // 타이머를 재예약합니다.
         (this.invokeTimerAt && this.invokeTimerAt - invokeAt > FRAME_DURATION_MS)
       ) {
-        // There was a timeout already, but an earlier event was added
-        // into the queue. In this case we drop an old timer and setup
-        // a new one with an updated (smaller) timeout.
+        // 이전에 타임아웃이 있었지만 더 이른 이벤트가
+        // 큐에 추가되었습니다. 이런 경우 이전 타이머를 제거하고
+        // 업데이트된(더 짧은) 타임아웃으로 새로운 타이머를 설정합니다.
         this.clearTimeout();
 
         const timeout = Math.max(invokeAt - now, FRAME_DURATION_MS);

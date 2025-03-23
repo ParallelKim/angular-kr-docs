@@ -14,24 +14,24 @@ import {NO_CHANGE} from '../tokens';
 import {renderStringify} from '../util/stringify_utils';
 
 /**
- * Create interpolation bindings with a variable number of expressions.
+ * 변수 개수에 따라 보간바인딩을 생성합니다.
  *
- * If there are 1 to 8 expressions `interpolation1()` to `interpolation8()` should be used instead.
- * Those are faster because there is no need to create an array of expressions and iterate over it.
+ * 표현식이 1개에서 8개까지 'interpolation1()'에서 'interpolation8()'를 사용해야 합니다.
+ * 이는 표현식 배열을 생성하고 반복할 필요가 없기 때문에 더 빠릅니다.
  *
  * `values`:
- * - has static text at even indexes,
- * - has evaluated expressions at odd indexes.
+ * - 짝수 인덱스에 정적 텍스트가 있으며,
+ * - 홀수 인덱스에 평가된 표현식이 있습니다.
  *
- * Returns the concatenated string when any of the arguments changes, `NO_CHANGE` otherwise.
+ * 인자 중 하나라도 변경되면 연결된 문자열을 반환하고, 그렇지 않으면 `NO_CHANGE`를 반환합니다.
  */
 export function interpolationV(lView: LView, values: any[]): string | NO_CHANGE {
-  ngDevMode && assertLessThan(2, values.length, 'should have at least 3 values');
+  ngDevMode && assertLessThan(2, values.length, '최소 3개의 값을 가져야 합니다');
   let isBindingUpdated = false;
   let bindingIndex = getBindingIndex();
 
   for (let i = 1; i < values.length; i += 2) {
-    // Check if bindings (odd indexes) have changed
+    // 바인딩(홀수 인덱스)이 변경되었는지 확인
     isBindingUpdated = bindingUpdated(lView, bindingIndex++, values[i]) || isBindingUpdated;
   }
   setBindingIndex(bindingIndex);
@@ -40,10 +40,10 @@ export function interpolationV(lView: LView, values: any[]): string | NO_CHANGE 
     return NO_CHANGE;
   }
 
-  // Build the updated content
+  // 업데이트된 콘텐츠 빌드
   let content = values[0];
   for (let i = 1; i < values.length; i += 2) {
-    // The condition is to prevent an out-of-bound read
+    // 조건은 범위를 넘어가는 읽기를 방지합니다
     content += renderStringify(values[i]) + (i + 1 !== values.length ? values[i + 1] : '');
   }
 
@@ -51,11 +51,11 @@ export function interpolationV(lView: LView, values: any[]): string | NO_CHANGE 
 }
 
 /**
- * Creates an interpolation binding with 1 expression.
+ * 1개의 표현식으로 보간 바인딩을 생성합니다.
  *
- * @param prefix static value used for concatenation only.
- * @param v0 value checked for change.
- * @param suffix static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 사항을 확인할 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  */
 export function interpolation1(
   lView: LView,
@@ -68,7 +68,7 @@ export function interpolation1(
 }
 
 /**
- * Creates an interpolation binding with 2 expressions.
+ * 2개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation2(
   lView: LView,
@@ -86,7 +86,7 @@ export function interpolation2(
 }
 
 /**
- * Creates an interpolation binding with 3 expressions.
+ * 3개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation3(
   lView: LView,
@@ -108,7 +108,7 @@ export function interpolation3(
 }
 
 /**
- * Create an interpolation binding with 4 expressions.
+ * 4개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation4(
   lView: LView,
@@ -140,7 +140,7 @@ export function interpolation4(
 }
 
 /**
- * Creates an interpolation binding with 5 expressions.
+ * 5개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation5(
   lView: LView,
@@ -177,7 +177,7 @@ export function interpolation5(
 }
 
 /**
- * Creates an interpolation binding with 6 expressions.
+ * 6개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation6(
   lView: LView,
@@ -218,7 +218,7 @@ export function interpolation6(
 }
 
 /**
- * Creates an interpolation binding with 7 expressions.
+ * 7개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation7(
   lView: LView,
@@ -263,7 +263,7 @@ export function interpolation7(
 }
 
 /**
- * Creates an interpolation binding with 8 expressions.
+ * 8개의 표현식으로 보간 바인딩을 생성합니다.
  */
 export function interpolation8(
   lView: LView,

@@ -27,26 +27,25 @@ import {OutputRef} from '../output/output_ref';
 /**
  * @publicAPI
  *
- * Options for model signals.
+ * 모델 신호에 대한 옵션.
  */
 export interface ModelOptions {
   /**
-   * Optional public name of the input side of the model. The output side will have the same
-   * name as the input, but suffixed with `Change`. By default, the class field name is used.
+   * 모델의 입력 측에 대한 선택적 공용 이름입니다. 출력 측은 입력과 동일한 이름을 가지지만, `Change`로 접미사가 붙습니다. 기본적으로 클래스 필드 이름이 사용됩니다.
    */
   alias?: string;
 
   /**
-   * A debug name for the model signal. Used in Angular DevTools to identify the signal.
+   * 모델 신호에 대한 디버그 이름. Angular DevTools에서 신호를 식별하는 데 사용됩니다.
    */
   debugName?: string;
 }
 
 /**
- * `ModelSignal` represents a special `Signal` for a directive/component model field.
+ * `ModelSignal`은 지시자/컴포넌트 모델 필드에 대한 특별한 `Signal`을 나타냅니다.
  *
- * A model signal is a writeable signal that can be exposed as an output.
- * Whenever its value is updated, it emits to the output.
+ * 모델 신호는 출력으로 노출될 수 있는 쓰기 가능한 신호입니다.
+ * 값이 업데이트될 때마다 출력으로 방출됩니다.
  *
  * @publicAPI
  */
@@ -55,11 +54,11 @@ export interface ModelSignal<T> extends WritableSignal<T>, InputSignal<T>, Outpu
 }
 
 /**
- * Creates a model signal.
+ * 모델 신호를 생성합니다.
  *
- * @param initialValue The initial value.
- *   Can be set to {@link REQUIRED_UNSET_VALUE} for required model signals.
- * @param options Additional options for the model.
+ * @param initialValue 초기 값입니다.
+ *   필수 모델 신호의 경우 {@link REQUIRED_UNSET_VALUE}로 설정할 수 있습니다.
+ * @param options 모델에 대한 추가 옵션입니다.
  */
 export function createModelSignal<T>(initialValue: T, opts?: ModelOptions): ModelSignal<T> {
   const node: InputSignalNode<T, T> = Object.create(INPUT_SIGNAL_NODE);
@@ -76,7 +75,7 @@ export function createModelSignal<T>(initialValue: T, opts?: ModelOptions): Mode
   getter[SIGNAL] = node;
   getter.asReadonly = signalAsReadonlyFn.bind(getter as any) as () => Signal<T>;
 
-  // TODO: Should we throw an error when updating a destroyed model?
+  // TODO: 파괴된 모델을 업데이트할 때 오류를 던져야 할까요?
   getter.set = (newValue: T) => {
     if (!node.equal(node.value, newValue)) {
       signalSetFn(node, newValue);
@@ -106,12 +105,12 @@ export function createModelSignal<T>(initialValue: T, opts?: ModelOptions): Mode
     >;
 }
 
-/** Asserts that a model's value is set. */
+/** 모델의 값이 설정되었는지 확인합니다. */
 function assertModelSet(value: unknown): void {
   if (value === REQUIRED_UNSET_VALUE) {
     throw new RuntimeError(
       RuntimeErrorCode.REQUIRED_MODEL_NO_VALUE,
-      ngDevMode && 'Model is required but no value is available yet.',
+      ngDevMode && '모델이 필수이나 값이 아직 사용할 수 없습니다.',
     );
   }
 }

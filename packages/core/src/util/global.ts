@@ -9,8 +9,8 @@
 const _global: any = globalThis;
 
 /**
- * Attention: whenever providing a new value, be sure to add an
- * entry into the corresponding `....externs.js` file,
- * so that closure won't use that global for its purposes.
+ * 주의: 새로운 값을 제공할 때마다
+ * 해당하는 `....externs.js` 파일에 항목을 추가해야 합니다,
+ * 그래야 클로저가 그 글로벌을 자신의 목적에 사용하지 않을 것입니다.
  */
 export {_global as global};

@@ -23,26 +23,26 @@ import {elementAttributeInternal, storePropertyBindingMetadata} from './shared';
 
 /**
  *
- * Update an interpolated attribute on an element with single bound value surrounded by text.
+ * 텍스트로 둘러싸인 단일 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 1 interpolated value in it:
+ * 속성에 전달된 값이 1개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate1('title', 'prefix', v0, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate1(
@@ -73,28 +73,28 @@ export function ɵɵattributeInterpolate1(
 
 /**
  *
- * Update an interpolated attribute on an element with 2 bound values surrounded by text.
+ * 텍스트로 둘러싸인 2개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 2 interpolated values in it:
+ * 속성에 전달된 값이 2개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate2('title', 'prefix', v0, '-', v1, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate2(
@@ -128,31 +128,31 @@ export function ɵɵattributeInterpolate2(
 
 /**
  *
- * Update an interpolated attribute on an element with 3 bound values surrounded by text.
+ * 텍스트로 둘러싸인 3개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 3 interpolated values in it:
+ * 속성에 전달된 값이 3개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate3(
  * 'title', 'prefix', v0, '-', v1, '-', v2, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate3(
@@ -189,33 +189,33 @@ export function ɵɵattributeInterpolate3(
 
 /**
  *
- * Update an interpolated attribute on an element with 4 bound values surrounded by text.
+ * 텍스트로 둘러싸인 4개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 4 interpolated values in it:
+ * 속성에 전달된 값이 4개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate4(
  * 'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param i2 연결용으로만 사용되는 정적 값.
+ * @param v3 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate4(
@@ -255,35 +255,35 @@ export function ɵɵattributeInterpolate4(
 
 /**
  *
- * Update an interpolated attribute on an element with 5 bound values surrounded by text.
+ * 텍스트로 둘러싸인 5개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 5 interpolated values in it:
+ * 속성에 전달된 값이 5개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate5(
  * 'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param i2 연결용으로만 사용되는 정적 값.
+ * @param v3 변경 여부를 체크하는 값.
+ * @param i3 연결용으로만 사용되는 정적 값.
+ * @param v4 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate5(
@@ -339,37 +339,37 @@ export function ɵɵattributeInterpolate5(
 
 /**
  *
- * Update an interpolated attribute on an element with 6 bound values surrounded by text.
+ * 텍스트로 둘러싸인 6개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 6 interpolated values in it:
+ * 속성에 전달된 값이 6개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate6(
  *    'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param i2 연결용으로만 사용되는 정적 값.
+ * @param v3 변경 여부를 체크하는 값.
+ * @param i3 연결용으로만 사용되는 정적 값.
+ * @param v4 변경 여부를 체크하는 값.
+ * @param i4 연결용으로만 사용되는 정적 값.
+ * @param v5 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate6(
@@ -430,39 +430,39 @@ export function ɵɵattributeInterpolate6(
 
 /**
  *
- * Update an interpolated attribute on an element with 7 bound values surrounded by text.
+ * 텍스트로 둘러싸인 7개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 7 interpolated values in it:
+ * 속성에 전달된 값이 7개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate7(
  *    'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param i2 연결용으로만 사용되는 정적 값.
+ * @param v3 변경 여부를 체크하는 값.
+ * @param i3 연결용으로만 사용되는 정적 값.
+ * @param v4 변경 여부를 체크하는 값.
+ * @param i4 연결용으로만 사용되는 정적 값.
+ * @param v5 변경 여부를 체크하는 값.
+ * @param i5 연결용으로만 사용되는 정적 값.
+ * @param v6 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate7(
@@ -528,41 +528,41 @@ export function ɵɵattributeInterpolate7(
 
 /**
  *
- * Update an interpolated attribute on an element with 8 bound values surrounded by text.
+ * 텍스트로 둘러싸인 8개의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 8 interpolated values in it:
+ * 속성에 전달된 값이 8개의 보간 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div attr.title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolate8(
  *  'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, '-', v7, 'suffix');
  * ```
  *
- * @param attrName The name of the attribute to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param i6 Static value used for concatenation only.
- * @param v7 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름
+ * @param prefix 연결용으로만 사용되는 정적 값.
+ * @param v0 변경 여부를 체크하는 값.
+ * @param i0 연결용으로만 사용되는 정적 값.
+ * @param v1 변경 여부를 체크하는 값.
+ * @param i1 연결용으로만 사용되는 정적 값.
+ * @param v2 변경 여부를 체크하는 값.
+ * @param i2 연결용으로만 사용되는 정적 값.
+ * @param v3 변경 여부를 체크하는 값.
+ * @param i3 연결용으로만 사용되는 정적 값.
+ * @param v4 변경 여부를 체크하는 값.
+ * @param i4 연결용으로만 사용되는 정적 값.
+ * @param v5 변경 여부를 체크하는 값.
+ * @param i5 연결용으로만 사용되는 정적 값.
+ * @param v6 변경 여부를 체크하는 값.
+ * @param i6 연결용으로만 사용되는 정적 값.
+ * @param v7 변경 여부를 체크하는 값.
+ * @param suffix 연결용으로만 사용되는 정적 값.
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolate8(
@@ -632,16 +632,16 @@ export function ɵɵattributeInterpolate8(
 }
 
 /**
- * Update an interpolated attribute on an element with 9 or more bound values surrounded by text.
+ * 텍스트로 둘러싸인 9개 이상의 바인드 값을 가진 요소의 보간 속성을 업데이트합니다.
  *
- * Used when the number of interpolated values exceeds 8.
+ * 보간 값의 수가 8을 초과할 때 사용됩니다.
  *
  * ```html
  * <div
  *  title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}-{{v8}}-{{v9}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은 다음과 같습니다::
  *
  * ```ts
  * ɵɵattributeInterpolateV(
@@ -649,12 +649,11 @@ export function ɵɵattributeInterpolate8(
  *  'suffix']);
  * ```
  *
- * @param attrName The name of the attribute to update.
- * @param values The collection of values and the strings in-between those values, beginning with
- * a string prefix and ending with a string suffix.
- * (e.g. `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param attrName 업데이트할 속성 이름.
+ * @param values 값 컬렉션 및 해당 값들 사이의 문자열, 문자열 접두어로 시작하고 문자열 접미사로 끝납니다.
+ * (예: `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
+ * @param sanitizer 선택적인 샌itize 함수
+ * @returns 체이닝할 수 있도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵattributeInterpolateV(

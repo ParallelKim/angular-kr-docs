@@ -11,16 +11,15 @@ import {global} from '../util/global';
 import localeEn from './locale_en';
 
 /**
- * This const is used to store the locale data registered with `registerLocaleData`
+ * 이 const는 `registerLocaleData`와 함께 등록된 로케일 데이터를 저장하는 데 사용됩니다.
  */
 let LOCALE_DATA: {[localeId: string]: any} = {};
 
 /**
- * Register locale data to be used internally by Angular. See the
- * ["I18n guide"](guide/i18n/format-data-locale) to know how to import additional locale
- * data.
+ * Angular에서 내부적으로 사용될 로케일 데이터를 등록합니다. 추가 로케일
+ * 데이터를 가져오는 방법은 ["I18n guide"](guide/i18n/format-data-locale)를 참조하세요.
  *
- * The signature `registerLocaleData(data: any, extraData?: any)` is deprecated since v5.1
+ * `registerLocaleData(data: any, extraData?: any)`의 시그니처는 v5.1부터 사용 중단되었습니다.
  */
 export function registerLocaleData(data: any, localeId?: string | any, extraData?: any): void {
   if (typeof localeId !== 'string') {
@@ -38,10 +37,10 @@ export function registerLocaleData(data: any, localeId?: string | any, extraData
 }
 
 /**
- * Finds the locale data for a given locale.
+ * 주어진 로케일에 대한 로케일 데이터를 찾습니다.
  *
- * @param locale The locale code.
- * @returns The locale data.
+ * @param locale 로케일 코드입니다.
+ * @returns 로케일 데이터입니다.
  * @see [Internationalization (i18n) Guide](https://angular.io/guide/i18n)
  */
 export function findLocaleData(locale: string): any {
@@ -52,7 +51,7 @@ export function findLocaleData(locale: string): any {
     return match;
   }
 
-  // let's try to find a parent locale
+  // 부모 로케일을 찾아보겠습니다.
   const parentLocale = normalizedLocale.split('-')[0];
   match = getLocaleData(parentLocale);
   if (match) {
@@ -65,17 +64,17 @@ export function findLocaleData(locale: string): any {
 
   throw new RuntimeError(
     RuntimeErrorCode.MISSING_LOCALE_DATA,
-    ngDevMode && `Missing locale data for the locale "${locale}".`,
+    ngDevMode && `로케일 "${locale}"에 대한 로케일 데이터가 없습니다.`,
   );
 }
 
 /**
- * Retrieves the default currency code for the given locale.
+ * 주어진 로케일의 기본 통화 코드를 가져옵니다.
  *
- * The default is defined as the first currency which is still in use.
+ * 기본값은 여전히 사용되고 있는 첫 번째 통화로 정의됩니다.
  *
- * @param locale The code of the locale whose currency code we want.
- * @returns The code of the default currency for the given locale.
+ * @param locale 통화 코드를 원하는 로케일의 코드입니다.
+ * @returns 주어진 로케일의 기본 통화 코드입니다.
  *
  */
 export function getLocaleCurrencyCode(locale: string): string | null {
@@ -84,10 +83,9 @@ export function getLocaleCurrencyCode(locale: string): string | null {
 }
 
 /**
- * Retrieves the plural function used by ICU expressions to determine the plural case to use
- * for a given locale.
- * @param locale A locale code for the locale format rules to use.
- * @returns The plural function for the locale.
+ * 특정 로케일에 대해 사용할 복수형 기능을 가져옵니다.
+ * @param locale 사용할 로케일 형식 규칙의 로케일 코드입니다.
+ * @returns 로케일의 복수형 기능입니다.
  * @see {@link NgPlural}
  * @see [Internationalization (i18n) Guide](guide/i18n)
  */
@@ -97,8 +95,8 @@ export function getLocalePluralCase(locale: string): (value: number) => number {
 }
 
 /**
- * Helper function to get the given `normalizedLocale` from `LOCALE_DATA`
- * or from the global `ng.common.locale`.
+ * `LOCALE_DATA`에서 주어진 `normalizedLocale`을 가져오는 헬퍼 함수입니다.
+ * 또는 전역 `ng.common.locale`에서 가져옵니다.
  */
 export function getLocaleData(normalizedLocale: string): any {
   if (!(normalizedLocale in LOCALE_DATA)) {
@@ -112,14 +110,14 @@ export function getLocaleData(normalizedLocale: string): any {
 }
 
 /**
- * Helper function to remove all the locale data from `LOCALE_DATA`.
+ * `LOCALE_DATA`에서 모든 로케일 데이터를 제거하는 헬퍼 함수입니다.
  */
 export function unregisterAllLocaleData() {
   LOCALE_DATA = {};
 }
 
 /**
- * Index of each type of locale data from the locale data array
+ * 로케일 데이터 배열에서 각 유형의 로케일 데이터의 인덱스
  */
 export enum LocaleDataIndex {
   LocaleId = 0,
@@ -147,7 +145,7 @@ export enum LocaleDataIndex {
 }
 
 /**
- * Index of each type of locale data from the extra locale data array
+ * 추가 로케일 데이터 배열에서 각 유형의 로케일 데이터의 인덱스
  */
 export const enum ExtraLocaleDataIndex {
   ExtraDayPeriodFormats = 0,
@@ -156,7 +154,7 @@ export const enum ExtraLocaleDataIndex {
 }
 
 /**
- * Index of each value in currency data (used to describe CURRENCIES_EN in currencies.ts)
+ * 통화 데이터에서 각 값의 인덱스 (currencies.ts의 CURRENCIES_EN 설명에 사용됨)
  */
 export const enum CurrencyIndex {
   Symbol = 0,
@@ -165,7 +163,7 @@ export const enum CurrencyIndex {
 }
 
 /**
- * Returns the canonical form of a locale name - lowercase with `_` replaced with `-`.
+ * 로케일 이름의 정규형을 반환합니다. - 소문자로 `_`가 `-`로 대체됩니다.
  */
 function normalizeLocale(locale: string): string {
   return locale.toLowerCase().replace(/_/g, '-');

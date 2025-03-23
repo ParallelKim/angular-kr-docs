@@ -6,11 +6,11 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 
-// This default value is when checking the hierarchy for a token.
+// 이 기본 값은 토큰의 계층을 확인할 때 사용됩니다.
 //
-// It means both:
-// - the token is not provided by the current injector,
-// - only the element injectors should be checked (ie do not check module injectors
+// 이는 두 가지를 의미합니다:
+// - 현재 주입기가 토큰을 제공하지 않습니다,
+// - 엘리먼트 주입기만 확인해야 합니다 (즉, 모듈 주입기는 확인하지 마십시오).
 //
 //          mod1
 //         /
@@ -18,9 +18,9 @@
 //         \  /
 //         el2
 //
-// When requesting el2.injector.get(token), we should check in the following order and return the
-// first found value:
+// el2.injector.get(token)를 요청할 때, 다음 순서로 확인하고
+// 첫 번째로 찾은 값을 반환해야 합니다:
 // - el2.injector.get(token, default)
-// - el1.injector.get(token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR) -> do not check the module
+// - el1.injector.get(token, NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR) -> 모듈은 확인하지 마십시오.
 // - mod2.injector.get(token, default)
 export const NOT_FOUND_CHECK_ONLY_ELEMENT_INJECTOR = {};

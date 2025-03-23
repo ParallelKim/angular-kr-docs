@@ -17,42 +17,42 @@ export const enum BypassType {
 }
 
 /**
- * Marker interface for a value that's safe to use in a particular context.
+ * 특정 맥락에서 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
 export interface SafeValue {}
 
 /**
- * Marker interface for a value that's safe to use as HTML.
+ * HTML로 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
 export interface SafeHtml extends SafeValue {}
 
 /**
- * Marker interface for a value that's safe to use as style (CSS).
+ * 스타일(CSS)로 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
 export interface SafeStyle extends SafeValue {}
 
 /**
- * Marker interface for a value that's safe to use as JavaScript.
+ * JavaScript로 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
 export interface SafeScript extends SafeValue {}
 
 /**
- * Marker interface for a value that's safe to use as a URL linking to a document.
+ * 문서에 링크되는 URL로 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
 export interface SafeUrl extends SafeValue {}
 
 /**
- * Marker interface for a value that's safe to use as a URL to load executable code from.
+ * 실행 가능한 코드를 로드하기 위한 URL로 안전하게 사용할 수 있는 값에 대한 마커 인터페이스입니다.
  *
  * @publicApi
  */
@@ -65,8 +65,8 @@ abstract class SafeValueImpl implements SafeValue {
 
   toString() {
     return (
-      `SafeValue must use [property]=binding: ${this.changingThisBreaksApplicationSecurity}` +
-      ` (see ${XSS_SECURITY_URL})`
+      `SafeValue는 [property]=binding을 사용해야 합니다: ${this.changingThisBreaksApplicationSecurity}` +
+      ` (자세한 내용은 ${XSS_SECURITY_URL}을 참조하세요)`
     );
   }
 }
@@ -126,9 +126,11 @@ export function allowSanitizationBypassAndThrow(value: any, type: BypassType): b
 export function allowSanitizationBypassAndThrow(value: any, type: BypassType): boolean {
   const actualType = getSanitizationBypassType(value);
   if (actualType != null && actualType !== type) {
-    // Allow ResourceURLs in URL contexts, they are strictly more trusted.
+    // URL 컨텍스트에서 ResourceURLs를 허용합니다. 이는 더 신뢰할 수 있습니다.
     if (actualType === BypassType.ResourceUrl && type === BypassType.Url) return true;
-    throw new Error(`Required a safe ${type}, got a ${actualType} (see ${XSS_SECURITY_URL})`);
+    throw new Error(
+      `안전한 ${type}이 필요합니다. ${actualType}가 제공되었습니다 (자세한 내용은 ${XSS_SECURITY_URL}을 참조하세요)`,
+    );
   }
   return actualType === type;
 }
@@ -138,61 +140,61 @@ export function getSanitizationBypassType(value: any): BypassType | null {
 }
 
 /**
- * Mark `html` string as trusted.
+ * `html` 문자열을 신뢰하는 것으로 표시합니다.
  *
- * This function wraps the trusted string in `String` and brands it in a way which makes it
- * recognizable to {@link htmlSanitizer} to be trusted implicitly.
+ * 이 함수는 신뢰하는 문자열을 `String`으로 감싸고, 이것이
+ * {@link htmlSanitizer}에 의해 암묵적으로 신뢰되는 것을 인식할 수 있도록 브랜드합니다.
  *
- * @param trustedHtml `html` string which needs to be implicitly trusted.
- * @returns a `html` which has been branded to be implicitly trusted.
+ * @param trustedHtml 암묵적으로 신뢰해야 하는 `html` 문자열입니다.
+ * @returns 암묵적으로 신뢰하도록 브랜드된 `html`입니다.
  */
 export function bypassSanitizationTrustHtml(trustedHtml: string): SafeHtml {
   return new SafeHtmlImpl(trustedHtml);
 }
 /**
- * Mark `style` string as trusted.
+ * `style` 문자열을 신뢰하는 것으로 표시합니다.
  *
- * This function wraps the trusted string in `String` and brands it in a way which makes it
- * recognizable to {@link styleSanitizer} to be trusted implicitly.
+ * 이 함수는 신뢰하는 문자열을 `String`으로 감싸고, 이것이
+ * {@link styleSanitizer}에 의해 암묵적으로 신뢰되는 것을 인식할 수 있도록 브랜드합니다.
  *
- * @param trustedStyle `style` string which needs to be implicitly trusted.
- * @returns a `style` hich has been branded to be implicitly trusted.
+ * @param trustedStyle 암묵적으로 신뢰해야 하는 `style` 문자열입니다.
+ * @returns 암묵적으로 신뢰하도록 브랜드된 `style`입니다.
  */
 export function bypassSanitizationTrustStyle(trustedStyle: string): SafeStyle {
   return new SafeStyleImpl(trustedStyle);
 }
 /**
- * Mark `script` string as trusted.
+ * `script` 문자열을 신뢰하는 것으로 표시합니다.
  *
- * This function wraps the trusted string in `String` and brands it in a way which makes it
- * recognizable to {@link scriptSanitizer} to be trusted implicitly.
+ * 이 함수는 신뢰하는 문자열을 `String`으로 감싸고, 이것이
+ * {@link scriptSanitizer}에 의해 암묵적으로 신뢰되는 것을 인식할 수 있도록 브랜드합니다.
  *
- * @param trustedScript `script` string which needs to be implicitly trusted.
- * @returns a `script` which has been branded to be implicitly trusted.
+ * @param trustedScript 암묵적으로 신뢰해야 하는 `script` 문자열입니다.
+ * @returns 암묵적으로 신뢰하도록 브랜드된 `script`입니다.
  */
 export function bypassSanitizationTrustScript(trustedScript: string): SafeScript {
   return new SafeScriptImpl(trustedScript);
 }
 /**
- * Mark `url` string as trusted.
+ * `url` 문자열을 신뢰하는 것으로 표시합니다.
  *
- * This function wraps the trusted string in `String` and brands it in a way which makes it
- * recognizable to {@link urlSanitizer} to be trusted implicitly.
+ * 이 함수는 신뢰하는 문자열을 `String`으로 감싸고, 이것이
+ * {@link urlSanitizer}에 의해 암묵적으로 신뢰되는 것을 인식할 수 있도록 브랜드합니다.
  *
- * @param trustedUrl `url` string which needs to be implicitly trusted.
- * @returns a `url`  which has been branded to be implicitly trusted.
+ * @param trustedUrl 암묵적으로 신뢰해야 하는 `url` 문자열입니다.
+ * @returns 암묵적으로 신뢰하도록 브랜드된 `url`입니다.
  */
 export function bypassSanitizationTrustUrl(trustedUrl: string): SafeUrl {
   return new SafeUrlImpl(trustedUrl);
 }
 /**
- * Mark `url` string as trusted.
+ * `url` 문자열을 신뢰하는 것으로 표시합니다.
  *
- * This function wraps the trusted string in `String` and brands it in a way which makes it
- * recognizable to {@link resourceUrlSanitizer} to be trusted implicitly.
+ * 이 함수는 신뢰하는 문자열을 `String`으로 감싸고, 이것이
+ * {@link resourceUrlSanitizer}에 의해 암묵적으로 신뢰되는 것을 인식할 수 있도록 브랜드합니다.
  *
- * @param trustedResourceUrl `url` string which needs to be implicitly trusted.
- * @returns a `url` which has been branded to be implicitly trusted.
+ * @param trustedResourceUrl 암묵적으로 신뢰해야 하는 `url` 문자열입니다.
+ * @returns 암묵적으로 신뢰하도록 브랜드된 `url`입니다.
  */
 export function bypassSanitizationTrustResourceUrl(trustedResourceUrl: string): SafeResourceUrl {
   return new SafeResourceUrlImpl(trustedResourceUrl);

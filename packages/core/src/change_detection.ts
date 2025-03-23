@@ -9,7 +9,7 @@
 /**
  * @module
  * @description
- * Change detection enables data binding in Angular.
+ * 변경 감지는 Angular에서 데이터 바인딩을 가능하게 합니다.
  */
 
 export {

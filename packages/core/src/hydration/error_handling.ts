@@ -44,7 +44,7 @@ function getFriendlyStringFromTNodeType(tNodeType: TNodeType): string {
     case TNodeType.LetDeclaration:
       return '@let';
     default:
-      // This should not happen as we cover all possible TNode types above.
+      // 이 경우는 발생해서는 안 됩니다. 위에서 모든 가능한 TNode 유형을 다루었기 때문입니다.
       return '<unknown>';
   }
 }
@@ -67,21 +67,21 @@ export function validateMatchingNode(
       (node as HTMLElement).tagName.toLowerCase() !== tagName?.toLowerCase())
   ) {
     const expectedNode = shortRNodeDescription(nodeType, tagName, null);
-    let header = `During hydration Angular expected ${expectedNode} but `;
+    let header = `수분 과정 중 Angular는 ${expectedNode}를 기대했지만 `;
 
     const hostComponentDef = getDeclarationComponentDef(lView);
     const componentClassName = hostComponentDef?.type?.name;
 
     const expectedDom = describeExpectedDom(lView, tNode, isViewContainerAnchor);
-    const expected = `Angular expected this DOM:\n\n${expectedDom}\n\n`;
+    const expected = `Angular는 이 DOM을 기대했습니다:\n\n${expectedDom}\n\n`;
 
     let actual = '';
     const componentHostElement = unwrapRNode(lView[HOST]!);
     if (!node) {
-      // No node found during hydration.
-      header += `the node was not found.\n\n`;
+      // 수분 중 노드를 찾을 수 없습니다.
+      header += `노드를 찾을 수 없었습니다.\n\n`;
 
-      // Since the node is missing, we use the closest node to attach the error to
+      // 노드가 누락되어 있으므로 오류를 연결할 가장 가까운 노드를 사용합니다.
       markRNodeAsHavingHydrationMismatch(componentHostElement, expectedDom);
     } else {
       const actualNode = shortRNodeDescription(
@@ -90,12 +90,12 @@ export function validateMatchingNode(
         (node as HTMLElement).textContent ?? null,
       );
 
-      header += `found ${actualNode}.\n\n`;
+      header += `찾은 ${actualNode}입니다.\n\n`;
       const actualDom = describeDomFromNode(node);
-      actual = `Actual DOM is:\n\n${actualDom}\n\n`;
+      actual = `실제 DOM은:\n\n${actualDom}\n\n`;
 
-      // DevTools only report hydration issues on the component level, so we attach extra debug
-      // info to a component host element to make it available to DevTools.
+      // DevTools는 컴포넌트 수준에서만 수분 문제를 보고하므로,
+      // 추가 디버그 정보를 컴포넌트 호스트 요소에 연결하여 DevTools에서 사용할 수 있습니다.
       markRNodeAsHavingHydrationMismatch(componentHostElement, expectedDom, actualDom);
     }
 
@@ -111,8 +111,8 @@ export function validateMatchingNode(
 export function validateSiblingNodeExists(node: RNode | null): void {
   validateNodeExists(node);
   if (!node!.nextSibling) {
-    const header = 'During hydration Angular expected more sibling nodes to be present.\n\n';
-    const actual = `Actual DOM is:\n\n${describeDomFromNode(node!)}\n\n`;
+    const header = '수분 과정 중 Angular는 더 많은 형제 노드가 존재할 것으로 예상했습니다.\n\n';
+    const actual = `실제 DOM은:\n\n${describeDomFromNode(node!)}\n\n`;
     const footer = getHydrationErrorFooter();
 
     const message = header + actual + footer;
@@ -131,15 +131,14 @@ export function validateNodeExists(
   tNode: TNode | null = null,
 ): void {
   if (!node) {
-    const header =
-      'During hydration, Angular expected an element to be present at this location.\n\n';
+    const header = '수분 중 Angular는 이 위치에 요소가 존재할 것으로 예상했습니다.\n\n';
     let expected = '';
     let footer = '';
     if (lView !== null && tNode !== null) {
       expected = describeExpectedDom(lView, tNode, false);
       footer = getHydrationErrorFooter();
 
-      // Since the node is missing, we use the closest node to attach the error to
+      // 노드가 누락되어 있으므로 오류를 연결할 가장 가까운 노드를 사용합니다.
       markRNodeAsHavingHydrationMismatch(unwrapRNode(lView[HOST]!), expected, '');
     }
 
@@ -157,7 +156,7 @@ export function validateNodeExists(
  * @param tNode the TNode
  */
 export function nodeNotFoundError(lView: LView, tNode: TNode): Error {
-  const header = 'During serialization, Angular was unable to find an element in the DOM:\n\n';
+  const header = '직렬화 중 Angular는 DOM에서 요소를 찾을 수 없습니다:\n\n';
   const expected = `${describeExpectedDom(lView, tNode, false)}\n\n`;
   const footer = getHydrationErrorFooter();
 
@@ -172,8 +171,8 @@ export function nodeNotFoundError(lView: LView, tNode: TNode): Error {
  */
 export function nodeNotFoundAtPathError(host: Node, path: string): Error {
   const header =
-    `During hydration Angular was unable to locate a node ` +
-    `using the "${path}" path, starting from the ${describeRNode(host)} node.\n\n`;
+    `수분 중 Angular는 "${path}" 경로를 사용하여 노드를 찾을 수 없습니다. ` +
+    ` ${describeRNode(host)} 노드에서 시작합니다.\n\n`;
   const footer = getHydrationErrorFooter();
 
   markRNodeAsHavingHydrationMismatch(host);
@@ -190,11 +189,10 @@ export function nodeNotFoundAtPathError(host: Node, path: string): Error {
  */
 export function unsupportedProjectionOfDomNodes(rNode: RNode): Error {
   const header =
-    'During serialization, Angular detected DOM nodes ' +
-    'that were created outside of Angular context and provided as projectable nodes ' +
-    '(likely via `ViewContainerRef.createComponent` or `createComponent` APIs). ' +
-    'Hydration is not supported for such cases, consider refactoring the code to avoid ' +
-    'this pattern or using `ngSkipHydration` on the host element of the component.\n\n';
+    '직렬화 중 Angular는 Angular 컨텍스트 외부에서 생성되고 ' +
+    '프로젝션 가능한 노드로 제공된 DOM 노드를 감지했습니다. ' +
+    '이러한 경우에 대해서는 수분이 지원되지 않습니다. 이 패턴을 피하도록 코드를 리팩토링하거나 ' +
+    '`ngSkipHydration`을 컴포넌트의 호스트 요소에 사용해주세요.\n\n';
   const actual = `${describeDomFromNode(rNode)}\n\n`;
   const message = header + actual + getHydrationAttributeNote();
   return new RuntimeError(RuntimeErrorCode.UNSUPPORTED_PROJECTION_DOM_NODES, message);
@@ -209,11 +207,10 @@ export function unsupportedProjectionOfDomNodes(rNode: RNode): Error {
  */
 export function invalidSkipHydrationHost(rNode: RNode): Error {
   const header =
-    'The `ngSkipHydration` flag is applied on a node ' +
-    "that doesn't act as a component host. Hydration can be " +
-    'skipped only on per-component basis.\n\n';
+    '`ngSkipHydration` 플래그가 컴포넌트 호스트로 작용하지 않는 노드에 적용되었습니다. ' +
+    '수분은 컴포넌트별로만 건너뛸 수 있습니다.\n\n';
   const actual = `${describeDomFromNode(rNode)}\n\n`;
-  const footer = 'Please move the `ngSkipHydration` attribute to the component host element.\n\n';
+  const footer = '부디 `ngSkipHydration` 속성을 컴포넌트 호스트 요소로 이동해주세요.\n\n';
   const message = header + actual + footer;
   return new RuntimeError(RuntimeErrorCode.INVALID_SKIP_HYDRATION_HOST, message);
 }
@@ -231,8 +228,7 @@ function stringifyTNodeAttrs(tNode: TNode): string {
   if (tNode.attrs) {
     for (let i = 0; i < tNode.attrs.length; ) {
       const attrName = tNode.attrs[i++];
-      // Once we reach the first flag, we know that the list of
-      // attributes is over.
+      // 플래그에 도달하면 속성 목록이 끝났음을 알 수 있습니다.
       if (typeof attrName == 'number') {
         break;
       }
@@ -410,11 +406,10 @@ function shortRNodeDescription(
 function getHydrationErrorFooter(componentClassName?: string): string {
   const componentInfo = componentClassName ? `the "${componentClassName}"` : 'corresponding';
   return (
-    `To fix this problem:\n` +
-    `  * check ${componentInfo} component for hydration-related issues\n` +
-    `  * check to see if your template has valid HTML structure\n` +
-    `  * or skip hydration by adding the \`ngSkipHydration\` attribute ` +
-    `to its host node in a template\n\n`
+    `이 문제를 해결하려면:\n` +
+    `  * ${componentInfo} 컴포넌트에서 수분 관련 문제를 확인하세요\n` +
+    `  * 템플릿에 유효한 HTML 구조가 있는지 확인하세요\n` +
+    `  * 또는 템플릿의 호스트 노드에 \`ngSkipHydration\` 속성을 추가하여 수분을 건너뛸 수 있습니다\n\n`
   );
 }
 
@@ -423,8 +418,8 @@ function getHydrationErrorFooter(componentClassName?: string): string {
  */
 function getHydrationAttributeNote(): string {
   return (
-    'Note: attributes are only displayed to better represent the DOM' +
-    ' but have no effect on hydration mismatches.\n\n'
+    '참고: 속성은 DOM을 더 잘 표현하기 위해 표시되지만 ' +
+    '수분 불일치에는 영향을 미치지 않습니다.\n\n'
   );
 }
 

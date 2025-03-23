@@ -7,16 +7,16 @@
  */
 
 /**
- * Base URL for the error details page.
+ * 오류 세부정보 페이지의 기본 URL입니다.
  *
- * Keep this constant in sync across:
+ * 이 상수를 다음과 함께 동기화하십시오:
  *  - packages/compiler-cli/src/ngtsc/diagnostics/src/error_details_base_url.ts
  *  - packages/core/src/error_details_base_url.ts
  */
 export const ERROR_DETAILS_PAGE_BASE_URL = 'https://angular.dev/errors';
 
 /**
- * URL for the XSS security documentation.
+ * XSS 보안 문서의 URL입니다.
  */
 export const XSS_SECURITY_URL =
   'https://angular.dev/best-practices/security#preventing-cross-site-scripting-xss';

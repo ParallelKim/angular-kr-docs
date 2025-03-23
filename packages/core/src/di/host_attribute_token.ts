@@ -9,10 +9,10 @@
 import {ɵɵinjectAttribute} from '../render3/instructions/di_attr';
 
 /**
- * Creates a token that can be used to inject static attributes of the host node.
+ * 호스트 노드의 정적 속성을 주입하는 데 사용할 수 있는 토큰을 만듭니다.
  *
  * @usageNotes
- * ### Injecting an attribute that is known to exist
+ * ### 존재하는 것으로 알려진 속주입
  * ```ts
  * @Directive()
  * class MyDir {
@@ -20,7 +20,7 @@ import {ɵɵinjectAttribute} from '../render3/instructions/di_attr';
  * }
  * ```
  *
- * ### Optionally injecting an attribute
+ * ### 선택적으로 속주입
  * ```ts
  * @Directive()
  * class MyDir {

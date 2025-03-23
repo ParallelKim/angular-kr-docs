@@ -13,8 +13,7 @@ export function runEffectsInView(view: LView): void {
     return;
   }
 
-  // Since effects can make other effects dirty, we flush them in a loop until there are no more to
-  // flush.
+  // 효과가 다른 효과를 더럽힐 수 있기 때문에, 더 이상 플러시할 것이 없을 때까지 반복문에서 플러시합니다.
   let tryFlushEffects = true;
 
   while (tryFlushEffects) {
@@ -25,8 +24,7 @@ export function runEffectsInView(view: LView): void {
       }
       foundDirtyEffect = true;
 
-      // `runEffectsInView` is called during change detection, and therefore runs
-      // in the Angular zone if it's available.
+      // `runEffectsInView`는 변경 감지 중에 호출되며, 따라서 사용 가능할 경우 Angular 존에서 실행됩니다.
       if (effect.zone === null || Zone.current === effect.zone) {
         effect.run();
       } else {
@@ -34,10 +32,7 @@ export function runEffectsInView(view: LView): void {
       }
     }
 
-    // Check if we need to continue flushing. If we didn't find any dirty effects, then there's
-    // no need to loop back. Otherwise, check the view to see if it was marked for traversal
-    // again. If so, there's a chance that one of the effects we ran caused another effect to
-    // become dirty.
+    // 계속 플러시해야 하는지 확인합니다. 더러운 효과를 찾지 못했다면, 다시 반복할 필요가 없습니다. 그렇지 않으면, 뷰가 다시 순회하도록 표시되었는지 확인합니다. 그렇다면 실행한 효과 중 하나가 또 다른 효과를 더럽힐 수 있습니다.
     tryFlushEffects = foundDirtyEffect && !!(view[FLAGS] & LViewFlags.HasChildViewsToRefresh);
   }
 }

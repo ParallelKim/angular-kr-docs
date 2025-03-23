@@ -11,8 +11,7 @@ import {TNode} from './interfaces/node';
 import {LView} from './interfaces/view';
 
 /**
- * Retrieves `TemplateRef` instance from `Injector` when a local reference is placed on the
- * `<ng-template>` element.
+ * '<ng-template>' 요소에 로컬 참조가 설정될 때 `Injector`에서 `TemplateRef` 인스턴스를 가져옵니다.
  *
  * @codeGenApi
  */

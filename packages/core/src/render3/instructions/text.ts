@@ -27,10 +27,10 @@ import {
 import {getOrCreateTNode} from '../tnode_manipulation';
 
 /**
- * Create static text node
+ * 정적 텍스트 노드 생성
  *
- * @param index Index of the node in the data array
- * @param value Static string value to write.
+ * @param index 데이터 배열에서 노드의 인덱스
+ * @param value 작성할 정적 문자열 값.
  *
  * @codeGenApi
  */
@@ -43,7 +43,7 @@ export function ɵɵtext(index: number, value: string = ''): void {
     assertEqual(
       getBindingIndex(),
       tView.bindingStartIndex,
-      'text nodes should be created before any bindings',
+      '텍스트 노드는 바인딩 전에 생성되어야 합니다.',
     );
   ngDevMode && assertIndexInRange(lView, adjustedIndex);
 
@@ -58,7 +58,7 @@ export function ɵɵtext(index: number, value: string = ''): void {
     appendChild(tView, lView, textNative, tNode);
   }
 
-  // Text nodes are self closing.
+  // 텍스트 노드는 자기 닫기입니다.
   setCurrentTNode(tNode, false);
 }
 
@@ -74,8 +74,7 @@ let _locateOrCreateTextNode: typeof locateOrCreateTextNodeImpl = (
 };
 
 /**
- * Enables hydration code path (to lookup existing elements in DOM)
- * in addition to the regular creation mode of text nodes.
+ * 텍스트 노드의 일반 생성 모드에 추가하여 DOM에서 기존 요소를 조회하는 수분 코드 경로를 활성화합니다.
  */
 function locateOrCreateTextNodeImpl(
   tView: TView,
@@ -92,12 +91,12 @@ function locateOrCreateTextNodeImpl(
     isDisconnectedNode(hydrationInfo, index);
   lastNodeWasCreated(isNodeCreationMode);
 
-  // Regular creation mode.
+  // 일반 생성 모드.
   if (isNodeCreationMode) {
     return createTextNode(lView[RENDERER], value);
   }
 
-  // Hydration mode, looking up an existing element in DOM.
+  // 수분 모드, DOM에서 기존 요소를 조회합니다.
   const textNative = locateNextRNode(hydrationInfo, tView, lView, tNode) as RText;
 
   ngDevMode && validateMatchingNode(textNative, Node.TEXT_NODE, null, lView, tNode);

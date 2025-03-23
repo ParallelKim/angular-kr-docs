@@ -16,21 +16,21 @@ import {
 } from '../interfaces/injector';
 import {DECLARATION_VIEW, HEADER_OFFSET, LView} from '../interfaces/view';
 
-/// Parent Injector Utils ///////////////////////////////////////////////////////////////
+/// 부모 Injector 유틸리티 ///////////////////////////////////////////////////////////////
 export function hasParentInjector(parentLocation: RelativeInjectorLocation): boolean {
   return parentLocation !== NO_PARENT_INJECTOR;
 }
 
 export function getParentInjectorIndex(parentLocation: RelativeInjectorLocation): number {
   if (ngDevMode) {
-    assertNumber(parentLocation, 'Number expected');
-    assertNotEqual(parentLocation as any, -1, 'Not a valid state.');
+    assertNumber(parentLocation, '숫자가 예상됩니다.');
+    assertNotEqual(parentLocation as any, -1, '유효한 상태가 아닙니다.');
     const parentInjectorIndex = parentLocation & RelativeInjectorLocationFlags.InjectorIndexMask;
 
     assertGreaterThan(
       parentInjectorIndex,
       HEADER_OFFSET,
-      'Parent injector must be pointing past HEADER_OFFSET.',
+      '부모 injector는 HEADER_OFFSET을 초과해야 합니다.',
     );
   }
   return parentLocation & RelativeInjectorLocationFlags.InjectorIndexMask;
@@ -41,21 +41,18 @@ export function getParentInjectorViewOffset(parentLocation: RelativeInjectorLoca
 }
 
 /**
- * Unwraps a parent injector location number to find the view offset from the current injector,
- * then walks up the declaration view tree until the view is found that contains the parent
- * injector.
+ * 부모 injector 위치 번호의 래핑을 해제하여 현재 injector로부터 보기 오프셋을 찾고,
+ * 그런 다음 부모 injector를 포함하는 보기를 찾을 때까지 선언 보기 트리를 올라갑니다.
  *
- * @param location The location of the parent injector, which contains the view offset
- * @param startView The LView instance from which to start walking up the view tree
- * @returns The LView instance that contains the parent injector
+ * @param location 부모 injector의 위치, 뷰 오프셋이 포함되어 있습니다.
+ * @param startView 뷰 트리를 upward으로 탐색할 시작 LView 인스턴스
+ * @returns 부모 injector를 포함하는 LView 인스턴스
  */
 export function getParentInjectorView(location: RelativeInjectorLocation, startView: LView): LView {
   let viewOffset = getParentInjectorViewOffset(location);
   let parentView = startView;
-  // For most cases, the parent injector can be found on the host node (e.g. for component
-  // or container), but we must keep the loop here to support the rarer case of deeply nested
-  // <ng-template> tags or inline views, where the parent injector might live many views
-  // above the child injector.
+  // 대부분의 경우 부모 injector는 호스트 노드에 있을 수 있지만(예: 컴포넌트나 컨테이너의 경우),
+  // 부모 injector가 자식 injector 위에 여러 개의 뷰에 존재할 수 있는 희귀한 경우를 지원하기 위해 루프를 유지해야 합니다.
   while (viewOffset > 0) {
     parentView = parentView[DECLARATION_VIEW]!;
     viewOffset--;
@@ -64,8 +61,8 @@ export function getParentInjectorView(location: RelativeInjectorLocation, startV
 }
 
 /**
- * Detects whether an injector is an instance of a `ChainedInjector`,
- * created based on the `OutletInjector`.
+ * injector가 `ChainedInjector`의 인스턴스인지 감지합니다,
+ * `OutletInjector`를 기반으로 생성됩니다.
  */
 export function isRouterOutletInjector(currentInjector: Injector): boolean {
   return (

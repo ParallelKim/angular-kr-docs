@@ -21,16 +21,16 @@ export function getNgModuleDef<T>(type: any, throwIfNotFound?: boolean): NgModul
     throw new RuntimeError(
       RuntimeErrorCode.MISSING_NG_MODULE_DEFINITION,
       (typeof ngDevMode === 'undefined' || ngDevMode) &&
-        `Type ${stringify(type)} does not have 'ɵmod' property.`,
+        `타입 ${stringify(type)}에 'ɵmod' 속성이 없습니다.`,
     );
   }
   return ngModuleDef;
 }
 
 /**
- * The following getter methods retrieve the definition from the type. Currently the retrieval
- * honors inheritance, but in the future we may change the rule to require that definitions are
- * explicit. This would require some sort of migration strategy.
+ * 다음 getter 메소드는 타입에서 정의를 검색합니다. 현재 검색은
+ * 상속을 준수하지만, 앞으로 정의가 명시적이어야 한다는 규칙으로 변경될 수 있습니다.
+ * 이는 어떤 유형의 마이그레이션 전략이 필요할 것입니다.
  */
 
 export function getComponentDef<T>(type: any): ComponentDef<T> | null {
@@ -45,7 +45,7 @@ export function getDirectiveDef<T>(type: any, throwIfNotFound?: boolean): Direct
     throw new RuntimeError(
       RuntimeErrorCode.MISSING_DIRECTIVE_DEFINITION,
       (typeof ngDevMode === 'undefined' || ngDevMode) &&
-        `Type ${stringify(type)} does not have 'ɵdir' property.`,
+        `타입 ${stringify(type)}에 'ɵdir' 속성이 없습니다.`,
     );
   }
   return def;
@@ -56,11 +56,11 @@ export function getPipeDef<T>(type: any): PipeDef<T> | null {
 }
 
 /**
- * Checks whether a given Component, Directive or Pipe is marked as standalone.
- * This will return false if passed anything other than a Component, Directive, or Pipe class
- * See [this guide](guide/components/importing) for additional information:
+ * 주어진 컴포넌트, 디렉티브 또는 파이프가 독립형으로 마킹되어 있는지 확인합니다.
+ * 컴포넌트, 디렉티브 또는 파이프 클래스가 아닌 것을 전달 받은 경우 false를 반환합니다.
+ * 추가 정보는 [이 가이드](guide/components/importing)를 참조하세요:
  *
- * @param type A reference to a Component, Directive or Pipe.
+ * @param type 컴포넌트, 디렉티브 또는 파이프에 대한 참조입니다.
  * @publicApi
  */
 export function isStandalone(type: Type<unknown>): boolean {

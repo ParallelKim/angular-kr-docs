@@ -43,9 +43,9 @@ import {stringifyCSSSelectorList} from './node_selector_matcher';
 import {StandaloneService} from './standalone_service';
 
 /**
- * Map of inputs for a given directive/component.
+ * 주어진 지시자/컴포넌트에 대한 입력 맵입니다.
  *
- * Given:
+ * 주어진:
  * ```ts
  * class MyComponent {
  *   @Input()
@@ -61,7 +61,7 @@ import {StandaloneService} from './standalone_service';
  * }
  * ```
  *
- * is described as:
+ * 다음과 같이 설명됩니다:
  * ```ts
  * {
  *   publicInput1: 'publicInput1',
@@ -76,7 +76,7 @@ import {StandaloneService} from './standalone_service';
  * }
  * ```
  *
- * Which the minifier may translate to:
+ * 이는 압축 해제기가 다음과 같이 변환할 수 있습니다:
  * ```ts
  * {
  *   minifiedPublicInput1: 'publicInput1',
@@ -91,20 +91,16 @@ import {StandaloneService} from './standalone_service';
  * }
  * ```
  *
- * This allows the render to re-construct the minified, public, and declared names
- * of properties.
+ * 이렇게 하면 렌더링이 속성의 압축 해제된, 공개된 및 선언된 이름을 재구성할 수 있습니다.
  *
- * NOTE:
- *  - Because declared and public name are usually same we only generate the array
- *    `['declared', 'public']` format when they differ, or there is a transform.
- *  - The reason why this API and `outputs` API is not the same is that `NgOnChanges` has
- *    inconsistent behavior in that it uses declared names rather than minified or public.
+ * 참고:
+ *  - 선언된 이름과 공개된 이름이 일반적으로 동일하므로 둘이 다를 때만 구분하여 `['declared', 'public']` 형식의 배열을 생성합니다.
+ *  - 이 API와 `outputs` API가 동일하지 않은 이유는 `NgOnChanges`가 압축된 이름이 아닌 선언된 이름을 사용하는 불일치 behavior 때문입니다.
  */
 type DirectiveInputs<T> = {
-  [P in keyof T]?:  // Basic case. Mapping minified name to public name.
+  [P in keyof T]?:  // 기본 경우. 압축된 이름을 공개된 이름에 매핑.
     | string
-    // Complex input when there are flags, or differing public name and declared name, or there
-    // is a transform. Such inputs are not as common, so the array form is only generated then.
+    // 플래그가 있거나 공개된 이름과 선언된 이름이 다른 경우 또는 변환이 있는 경우 복잡한 입력입니다. 이러한 입력은 일반적이지 않으므로 배열 형식은 그때만 생성됩니다.
     | [
         flags: InputFlags,
         publicName: string,
@@ -115,150 +111,139 @@ type DirectiveInputs<T> = {
 
 interface DirectiveDefinition<T> {
   /**
-   * Directive type, needed to configure the injector.
+   * 주입기를 구성하는 데 필요한 지시자 유형.
    */
   type: Type<T>;
 
-  /** The selectors that will be used to match nodes to this directive. */
+  /** 이 지시자에 노드를 매칭하기 위해 사용되는 선택자들. */
   selectors?: CssSelectorList;
 
   /**
-   * A map of input names.
+   * 입력 이름의 맵입니다.
    */
   inputs?: DirectiveInputs<T>;
 
   /**
-   * A map of output names.
+   * 출력 이름의 맵입니다.
    *
-   * The format is in: `{[actualPropertyName: string]:string}`.
+   * 형식은: `{[actualPropertyName: string]:string}`입니다.
    *
-   * Which the minifier may translate to: `{[minifiedPropertyName: string]:string}`.
+   * 이는 압축 해제기가 변환할 수 있습니다: `{[minifiedPropertyName: string]:string}`.
    *
-   * This allows the render to re-construct the minified and non-minified names
-   * of properties.
+   * 이를 통해 렌더링이 속성의 압축 해제 및 비압축 해제된 이름을 재구성할 수 있습니다.
    */
   outputs?: {[P in keyof T]?: string};
 
   /**
-   * A list of optional features to apply.
+   * 적용할 선택적 기능 목록입니다.
    *
-   * See: {@link NgOnChangesFeature}, {@link ProvidersFeature}, {@link InheritDefinitionFeature}
+   * 참조: {@link NgOnChangesFeature}, {@link ProvidersFeature}, {@link InheritDefinitionFeature}
    */
   features?: DirectiveDefFeature[];
 
   /**
-   * Function executed by the parent template to allow child directive to apply host bindings.
+   * 자식 지시자가 호스트 바인딩을 적용할 수 있도록 부모 템플릿에 의해 실행되는 함수.
    */
   hostBindings?: HostBindingsFunction<T>;
 
   /**
-   * The number of bindings in this directive `hostBindings` (including pure fn bindings).
+   * 이 지시자의 `hostBindings`에서의 바인딩 수(순수 함수 바인딩 포함).
    *
-   * Used to calculate the length of the component's LView array, so we
-   * can pre-fill the array and set the host binding start index.
+   * 이는 구성 요소의 LView 배열의 길이를 계산하는 데 사용됩니다. 따라서 배열을 미리 채우고 호스트 바인딩 시작 인덱스를 설정할 수 있습니다.
    */
   hostVars?: number;
 
   /**
-   * Assign static attribute values to a host element.
+   * 호스트 요소에 정적 속성 값을 할당합니다.
    *
-   * This property will assign static attribute values as well as class and style
-   * values to a host element. Since attribute values can consist of different types of values,
-   * the `hostAttrs` array must include the values in the following format:
+   * 이 속성은 호스트 요소에 정적 속성 값과 클래스 및 스타일 값을 할당합니다. 속성 값은 다양한 유형의 값을 포함할 수 있으므로 `hostAttrs` 배열에는 다음 형식으로 값을 포함해야 합니다:
    *
    * attrs = [
-   *   // static attributes (like `title`, `name`, `id`...)
+   *   // 정적 속성 (예: `title`, `name`, `id`...)
    *   attr1, value1, attr2, value,
    *
-   *   // a single namespace value (like `x:id`)
+   *   // 단일 네임스페이스 값 (예: `x:id`)
    *   NAMESPACE_MARKER, namespaceUri1, name1, value1,
    *
-   *   // another single namespace value (like `x:name`)
+   *   // 또 다른 단일 네임스페이스 값 (예: `x:name`)
    *   NAMESPACE_MARKER, namespaceUri2, name2, value2,
    *
-   *   // a series of CSS classes that will be applied to the element (no spaces)
+   *   // 요소에 적용될 일련의 CSS 클래스 (공백 없음)
    *   CLASSES_MARKER, class1, class2, class3,
    *
-   *   // a series of CSS styles (property + value) that will be applied to the element
+   *   // 요소에 적용될 일련의 CSS 스타일 (속성 + 값)
    *   STYLES_MARKER, prop1, value1, prop2, value2
    * ]
    *
-   * All non-class and non-style attributes must be defined at the start of the list
-   * first before all class and style values are set. When there is a change in value
-   * type (like when classes and styles are introduced) a marker must be used to separate
-   * the entries. The marker values themselves are set via entries found in the
-   * [AttributeMarker] enum.
+   * 모든 비클래스 및 비스타일 속성은 클래스 및 스타일 값이 설정되기 전에 목록의 시작 부분에 먼저 정의되어야 합니다. 값 유형이 변경될 때(예: 클래스 및 스타일이 도입될 때) 항목을 구분하기 위해 마커를 사용해야 합니다. 마커 값 자체는 [AttributeMarker] 열거형에 있는 항목을 통해 설정됩니다.
    */
   hostAttrs?: TAttributes;
 
   /**
-   * Function to create instances of content queries associated with a given directive.
+   * 주어진 지시자와 관련된 콘텐츠 쿼리 인스턴스를 생성하는 함수입니다.
    */
   contentQueries?: ContentQueriesFunction<T>;
 
   /**
-   * Additional set of instructions specific to view query processing. This could be seen as a
-   * set of instructions to be inserted into the template function.
+   * 보기 쿼리 처리에 특별한 추가 지침 세트입니다. 이는 템플릿 함수에 삽입될 지침 세트로 간주될 수 있습니다.
    */
   viewQuery?: ViewQueriesFunction<T> | null;
 
   /**
-   * Defines the name that can be used in the template to assign this directive to a variable.
+   * 이 지시자를 변수에 할당하는 데 템플릿에서 사용할 수 있는 이름을 정의합니다.
    *
-   * See: {@link Directive.exportAs}
+   * 참조: {@link Directive.exportAs}
    */
   exportAs?: string[];
 
   /**
-   * Whether this directive/component is standalone.
+   * 이 지시자/컴포넌트가 독립적인지 여부.
    */
   standalone?: boolean;
 
   /**
-   * Whether this directive/component is signal-based.
+   * 이 지시자/컴포넌트가 신호 기반인지 여부.
    */
   signals?: boolean;
 }
 
 interface ComponentDefinition<T> extends Omit<DirectiveDefinition<T>, 'features'> {
   /**
-   * The number of nodes, local refs, and pipes in this component template.
+   * 이 컴포넌트 템플릿의 노드, 로컬 참조 및 파이프 수.
    *
-   * Used to calculate the length of this component's LView array, so we
-   * can pre-fill the array and set the binding start index.
+   * 이는 이 컴포넌트의 LView 배열의 길이를 계산하는 데 사용됩니다. 따라서 배열을 미리 채우고 바인딩 시작 인덱스를 설정할 수 있습니다.
    */
   decls: number;
 
   /**
-   * The number of bindings in this component template (including pure fn bindings).
+   * 이 컴포넌트 템플릿의 바인딩 수(순수 함수 바인딩 포함).
    *
-   * Used to calculate the length of this component's LView array, so we
-   * can pre-fill the array and set the host binding start index.
+   * 이는 이 컴포넌트의 LView 배열의 길이를 계산하는 데 사용됩니다. 따라서 배열을 미리 채우고 호스트 바인딩 시작 인덱스를 설정할 수 있습니다.
    */
   vars: number;
 
   /**
-   * Template function use for rendering DOM.
+   * DOM 렌더링에 사용되는 템플릿 함수입니다.
    *
-   * This function has following structure.
+   * 이 함수는 다음 구조를 가집니다.
    *
    * ```ts
    * function Template<T>(ctx:T, creationMode: boolean) {
    *   if (creationMode) {
-   *     // Contains creation mode instructions.
+   *     // 생성 모드 지침이 포함됩니다.
    *   }
-   *   // Contains binding update instructions
+   *   // 바인딩 업데이트 지침이 포함됩니다.
    * }
    * ```
    *
-   * Common instructions are:
-   * Creation mode instructions:
+   * 일반적인 지침은 다음과 같습니다:
+   * 생성 모드 지침:
    *  - `elementStart`, `elementEnd`
    *  - `text`
    *  - `container`
    *  - `listener`
    *
-   * Binding update instructions:
+   * 바인딩 업데이트 지침:
    * - `bind`
    * - `elementAttribute`
    * - `elementProperty`
@@ -269,69 +254,69 @@ interface ComponentDefinition<T> extends Omit<DirectiveDefinition<T>, 'features'
   template: ComponentTemplate<T>;
 
   /**
-   * Constants for the nodes in the component's view.
-   * Includes attribute arrays, local definition arrays etc.
+   * 구성 요소의 뷰에 있는 노드에 대한 상수입니다.
+   * 속성 배열, 로컬 정의 배열 등이 포함됩니다.
    */
   consts?: TConstantsOrFactory;
 
   /**
-   * An array of `ngContent[selector]` values that were found in the template.
+   * 템플릿에서 발견된 `ngContent[selector]` 값의 배열입니다.
    */
   ngContentSelectors?: string[];
+
   /**
-   * A list of optional features to apply.
+   * 적용할 선택적 기능 목록입니다.
    *
-   * See: {@link NgOnChangesFeature}, {@link ProvidersFeature}
+   * 참조: {@link NgOnChangesFeature}, {@link ProvidersFeature}
    */
   features?: ComponentDefFeature[];
 
   /**
-   * Defines template and style encapsulation options available for Component's {@link /api/core/Component Component}.
+   * 구성 요소의 {@link /api/core/Component Component}에 대해 사용할 수 있는 템플릿 및 스타일 캡슐화 옵션을 정의합니다.
    */
   encapsulation?: ViewEncapsulation;
 
   /**
-   * Defines arbitrary developer-defined data to be stored on a renderer instance.
-   * This is useful for renderers that delegate to other renderers.
+   * 렌더러 인스턴스에 저장될 개발자 정의 임의 데이터입니다.
+   * 이는 다른 렌더러로 위임하는 렌더러에 유용합니다.
    *
-   * see: animation
+   * 참조: 애니메이션
    */
   data?: {[kind: string]: any};
 
   /**
-   * A set of styles that the component needs to be present for component to render correctly.
+   * 구성 요소가 렌더링이 올바르게 이루어지기 위해 필요한 스타일 세트입니다.
    */
   styles?: string[];
 
   /**
-   * The strategy that the default change detector uses to detect changes.
-   * When set, takes effect the next time change detection is triggered.
+   * 기본 변경 감지기가 변경을 감지하는 데 사용하는 전략입니다.
+   * 설정 시, 다음 번 변경 감지가 트리거 될 때 적용됩니다.
    */
   changeDetection?: ChangeDetectionStrategy;
 
   /**
-   * Registry of directives, components, and pipes that may be found in this component's view.
+   * 이 구성 요소의 뷰에서 발견될 수 있는 지시자, 구성 요소 및 파이프의 등록부입니다.
    *
-   * This property is either an array of types or a function that returns the array of types. This
-   * function may be necessary to support forward declarations.
+   * 이 속성은 유형 배열이거나 배열 유형이 반환되는 함수입니다. 이 함수는 전달 선언을 지원하기 위해 필요할 수 있습니다.
    */
   dependencies?: TypeOrFactory<DependencyTypeList>;
 
   /**
-   * The set of schemas that declare elements to be allowed in the component's template.
+   * 구성 요소 템플릿에 허용될 요소를 선언하는 스키마 세트입니다.
    */
   schemas?: SchemaMetadata[] | null;
 }
 
 /**
- * Create a component definition object.
+ * 구성 요소 정의 객체를 생성합니다.
  *
  *
- * # Example
+ * # 예시
  * ```ts
  * class MyComponent {
- *   // Generated by Angular Template Compiler
- *   // [Symbol] syntax will not be supported by TypeScript until v2.7
+ *   // Angular 컴포넌트 컴파일러에 의해 생성됨
+ *   // [Symbol] 구문은 v2.7까지 TypeScript에서 지원되지 않습니다.
  *   static ɵcmp = defineComponent({
  *     ...
  *   });
@@ -343,8 +328,8 @@ export function ɵɵdefineComponent<T>(
   componentDefinition: ComponentDefinition<T>,
 ): ComponentDef<any> {
   return noSideEffects(() => {
-    // Initialize ngDevMode. This must be the first statement in ɵɵdefineComponent.
-    // See the `initNgDevMode` docstring for more information.
+    // ngDevMode 초기화. 이것은 ɵɵdefineComponent의 첫 번째 문의어야 합니다.
+    // 더 많은 정보를 보려면 `initNgDevMode` 문서 문자열을 참조하십시오.
     (typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode();
 
     const baseDef = getNgDirectiveDef(componentDefinition as DirectiveDefinition<T>);
@@ -356,8 +341,8 @@ export function ɵɵdefineComponent<T>(
       consts: componentDefinition.consts || null,
       ngContentSelectors: componentDefinition.ngContentSelectors,
       onPush: componentDefinition.changeDetection === ChangeDetectionStrategy.OnPush,
-      directiveDefs: null!, // assigned in noSideEffects
-      pipeDefs: null!, // assigned in noSideEffects
+      directiveDefs: null!, // noSideEffects에서 할당됨
+      pipeDefs: null!, // noSideEffects에서 할당됨
       dependencies: (baseDef.standalone && componentDefinition.dependencies) || null,
       getStandaloneInjector: baseDef.standalone
         ? (parentInjector: EnvironmentInjector) => {
@@ -375,7 +360,7 @@ export function ɵɵdefineComponent<T>(
       id: '',
     };
 
-    // TODO: Do we still need/want this ?
+    // TODO: 이게 아직 필요한가요/원하는가요?
     if (baseDef.standalone) {
       performanceMarkFeature('NgStandalone');
     }
@@ -402,28 +387,27 @@ function nonNull<T>(value: T | null): value is T {
  * @codeGenApi
  */
 export function ɵɵdefineNgModule<T>(def: {
-  /** Token representing the module. Used by DI. */
+  /** 모듈을 나타내는 토큰. DI에서 사용됩니다. */
   type: T;
 
-  /** List of components to bootstrap. */
+  /** 부트스트랩할 구성 요소 목록입니다. */
   bootstrap?: Type<any>[] | (() => Type<any>[]);
 
-  /** List of components, directives, and pipes declared by this module. */
+  /** 이 모듈에 의해 선언된 구성 요소, 지시자 및 파이프 목록입니다. */
   declarations?: Type<any>[] | (() => Type<any>[]);
 
-  /** List of modules or `ModuleWithProviders` imported by this module. */
+  /** 이 모듈에서 가져온 모듈 또는 `ModuleWithProviders` 목록입니다. */
   imports?: Type<any>[] | (() => Type<any>[]);
 
   /**
-   * List of modules, `ModuleWithProviders`, components, directives, or pipes exported by this
-   * module.
+   * 이 모듈에서 내보낸 모듈, `ModuleWithProviders`, 구성 요소, 지시자 또는 파이프 목록입니다.
    */
   exports?: Type<any>[] | (() => Type<any>[]);
 
-  /** The set of schemas that declare elements to be allowed in the NgModule. */
+  /** NgModule에 허용될 요소를 선언하는 스키마 세트입니다. */
   schemas?: SchemaMetadata[] | null;
 
-  /** Unique ID for the module that is used with `getModuleFactory`. */
+  /** `getModuleFactory`와 함께 사용되는 모듈의 고유 ID입니다. */
   id?: string | null;
 }): unknown {
   return noSideEffects(() => {
@@ -442,16 +426,13 @@ export function ɵɵdefineNgModule<T>(def: {
 }
 
 /**
- * Converts binding objects from the `DirectiveDefinition` into more efficient
- * lookup dictionaries that are optimized for the framework runtime.
+ * `DirectiveDefinition`에서 바인딩 객체를 변환하여 프레임워크 런타임에 최적화된 더 효율적인 조회 사전으로 변환합니다.
  *
- * This function converts inputs or output directive information into new objects
- * where the public name conveniently maps to the minified internal field name.
+ * 이 함수는 입력 또는 출력 지시자 정보를 새로운 객체로 변환하여 공개 이름이 압축된 내부 필드 이름에 적절히 매핑됩니다.
  *
- * For inputs, the input flags are additionally persisted into the new data structure,
- * so that those can be quickly retrieved when needed.
+ * 입력의 경우 입력 플래그도 새로운 데이터 구조에 유지되어 필요할 때 신속하게 검색할 수 있습니다.
  *
- * e.g. for
+ * 예를 들어
  *
  * ```ts
  * class Comp {
@@ -465,7 +446,7 @@ export function ɵɵdefineNgModule<T>(def: {
  * }
  * ```
  *
- * will be serialized as
+ * 다음과 같이 직렬화됩니다:
  *
  * ```ts
  * {
@@ -475,7 +456,7 @@ export function ɵɵdefineNgModule<T>(def: {
  * }
  * ```
  *
- * which is than translated by the minifier as:
+ * 이는 다음과 같이 변환됩니다:
  *
  * ```ts
  * {
@@ -485,7 +466,7 @@ export function ɵɵdefineNgModule<T>(def: {
  * }
  * ```
  *
- * becomes: (public name => minifiedName + isSignal if needed)
+ * 이는 다음과 같이 됩니다: (공식 이름 => 압축된 이름 + 필요 시 신호)
  *
  * ```ts
  * {
@@ -495,8 +476,7 @@ export function ɵɵdefineNgModule<T>(def: {
  * }
  * ```
  *
- * Optionally the function can take `declaredInputs` which will result
- * in: (public name => declared name)
+ * 선택적으로 이 함수는 `declaredInputs`를 받아 결과적으로: (공식 이름 => 선언된 이름)
  *
  * ```ts
  * {
@@ -506,7 +486,6 @@ export function ɵɵdefineNgModule<T>(def: {
  * }
  * ```
  *
-
  */
 function parseAndConvertInputsForDefinition<T>(
   obj: DirectiveDefinition<T>['inputs'],
@@ -528,7 +507,7 @@ function parseAndConvertInputsForDefinition<T>(
       if (Array.isArray(value)) {
         inputFlags = value[0];
         publicName = value[1];
-        declaredName = value[2] ?? publicName; // declared name might not be set to save bytes.
+        declaredName = value[2] ?? publicName; // 선언된 이름은 바이트를 절약하기 위해 설정되지 않을 수 있습니다.
         transform = value[3] || null;
       } else {
         publicName = value;
@@ -558,13 +537,13 @@ function parseAndConvertOutputsForDefinition<T>(
 }
 
 /**
- * Create a directive definition object.
+ * 지시자 정의 객체를 생성합니다.
  *
- * # Example
+ * # 예시
  * ```ts
  * class MyDirective {
- *   // Generated by Angular Template Compiler
- *   // [Symbol] syntax will not be supported by TypeScript until v2.7
+ *   // 각무 템플릿 컴파일러에 의해 생성됨
+ *   // [Symbol] 구문은 v2.7까지 TypeScript에서 지원되지 않습니다.
  *   static ɵdir = ɵɵdefineDirective({
  *     ...
  *   });
@@ -585,33 +564,33 @@ export function ɵɵdefineDirective<T>(
 }
 
 /**
- * Create a pipe definition object.
+ * 파이프 정의 객체를 생성합니다.
  *
- * # Example
+ * # 예시
  * ```ts
  * class MyPipe implements PipeTransform {
- *   // Generated by Angular Template Compiler
+ *   // 각무 템플릿 컴파일러에 의해 생성됨
  *   static ɵpipe = definePipe({
  *     ...
  *   });
  * }
  * ```
- * @param pipeDef Pipe definition generated by the compiler
+ * @param pipeDef 컴파일러에 의해 생성된 파이프 정의
  *
  * @codeGenApi
  */
 export function ɵɵdefinePipe<T>(pipeDef: {
-  /** Name of the pipe. Used for matching pipes in template to pipe defs. */
+  /** 파이프의 이름. 템플릿에서 파이프 정의와 일치시키는 데 사용됩니다. */
   name: string;
 
-  /** Pipe class reference. Needed to extract pipe lifecycle hooks. */
+  /** 파이프 클래스 참조. 파이프 생명 주기 훅을 추출하는 데 필요합니다. */
   type: Type<T>;
 
-  /** Whether the pipe is pure. */
+  /** 파이프가 순수한지 여부. */
   pure?: boolean;
 
   /**
-   * Whether the pipe is standalone.
+   * 파이프가 독립적인지 여부.
    */
   standalone?: boolean;
 }): unknown {
@@ -682,32 +661,28 @@ export function extractDefListOrFactory(
 }
 
 /**
- * A map that contains the generated component IDs and type.
+ * 생성된 컴포넌트 ID와 유형을 포함하는 맵입니다.
  */
 export const GENERATED_COMP_IDS = new Map<string, Type<unknown>>();
 
 /**
- * A method can returns a component ID from the component definition using a variant of DJB2 hash
- * algorithm.
+ * 해당 구성 요소 정의에서 구성 요소 ID를 반환할 수 있는 메서드로, DJB2 해시의 변형을 사용합니다.
  */
 function getComponentId<T>(componentDef: ComponentDef<T>): string {
   let hash = 0;
 
-  // For components with i18n in templates, the `consts` array is generated by the compiler
-  // as a function. If client and server bundles were produced with different minification
-  // configurations, the serializable contents of the function body would be different on
-  // the client and on the server. This might result in different ids generated. To avoid this
-  // issue, we do not take the `consts` contents into account if it's a function.
-  // See https://github.com/angular/angular/issues/58713.
+  // i18n이 있는 템플릿의 경우 `consts` 배열은 컴파일러에 의해 함수로 생성됩니다.
+  // 클라이언트 및 서버 번들이 서로 다른 압축 구성을 사용하여 생성된 경우,
+  // 함수 본문의 직렬화 가능한 내용은 클라이언트와 서버에서 다를 수 있습니다. 이로 인해
+  // 다른 ID가 생성될 수 있습니다. 이 문제를 피하기 위해 `consts` 내용은 참조하지 않습니다.
+  // 참조: https://github.com/angular/angular/issues/58713.
   const componentDefConsts = typeof componentDef.consts === 'function' ? '' : componentDef.consts;
 
-  // We cannot rely solely on the component selector as the same selector can be used in different
-  // modules.
+  // 모듈마다 같은 선택자가 사용할 수 있으므로 구성 요소 선택자에만 의존할 수 없습니다.
   //
-  // `componentDef.style` is not used, due to it causing inconsistencies. Ex: when server
-  // component styles has no sourcemaps and browsers do.
+  // `componentDef.style`는 일관성 문제를 발생시키므로 사용되지 않습니다.
   //
-  // Example:
+  // 예시:
   // https://github.com/angular/components/blob/d9f82c8f95309e77a6d82fd574c65871e91354c2/src/material/core/option/option.ts#L248
   // https://github.com/angular/components/blob/285f46dc2b4c5b127d356cb7c4714b221f03ce50/src/material/legacy-core/option/option.ts#L32
   const hashSelectors = [
@@ -724,17 +699,16 @@ function getComponentId<T>(componentDef: ComponentDef<T>): string {
     componentDef.exportAs,
     JSON.stringify(componentDef.inputs),
     JSON.stringify(componentDef.outputs),
-    // We cannot use 'componentDef.type.name' as the name of the symbol will change and will not
-    // match in the server and browser bundles.
+    // 'componentDef.type.name'를 사용할 수 없습니다. 기호 이름이 변경되고 서버와 브라우저 번들에서 일치하지 않기 때문입니다.
     Object.getOwnPropertyNames(componentDef.type.prototype),
     !!componentDef.contentQueries,
     !!componentDef.viewQuery,
   ];
 
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
-    // If client and server bundles were produced with different minification configurations,
-    // the serializable contents of the function body would be different on the client and on
-    // the server. Ensure that we do not accidentally use functions in component id computation.
+    // 클라이언트 및 서버 번들이 서로 다른 압축 구성을 사용하여 생성된 경우,
+    // 함수 본문의 직렬화 가능한 내용이 클라이언트와 서버에서 다를 수 있습니다.
+    // 컴포넌트 ID 계산에 함수가 우연히 사용되지 않도록 해야 합니다.
     for (const item of hashSelectors) {
       assertNotEqual(
         typeof item,
@@ -748,17 +722,16 @@ function getComponentId<T>(componentDef: ComponentDef<T>): string {
     hash = (Math.imul(31, hash) + char.charCodeAt(0)) << 0;
   }
 
-  // Force positive number hash.
-  // 2147483647 = equivalent of Integer.MAX_VALUE.
+  // 양수 해시 강제화.
+  // 2147483647 = Integer.MAX_VALUE의 동등값.
   hash += 2147483647 + 1;
 
   const compId = 'c' + hash;
 
   if (
     (typeof ngDevMode === 'undefined' || ngDevMode) &&
-    // Skip the check on the server since we can't guarantee the same component instance between
-    // requests. Note that we can't use DI to check if we're on the server, because the component
-    // hasn't been instantiated yet.
+    // 요청 간에 동일한 컴포넌트 인스턴스의 보장을 할 수 없기 때문에 서버에서 검사를 건너뜁니다.
+    // 구성 요소가 아직 초기화되지 않았으므로 DI를 사용하여 서버에서 있는지 확인할 수 없습니다.
     (typeof ngServerMode === 'undefined' || !ngServerMode)
   ) {
     if (GENERATED_COMP_IDS.has(compId)) {
@@ -767,11 +740,9 @@ function getComponentId<T>(componentDef: ComponentDef<T>): string {
         console.warn(
           formatRuntimeError(
             RuntimeErrorCode.COMPONENT_ID_COLLISION,
-            `Component ID generation collision detected. Components '${
-              previousCompDefType.name
-            }' and '${componentDef.type.name}' with selector '${stringifyCSSSelectorList(
+            `구성 요소 ID 생성 충돌이 감지되었습니다. '${previousCompDefType.name}' 및 '${componentDef.type.name}'이 '${stringifyCSSSelectorList(
               componentDef.selectors,
-            )}' generated the same component ID. To fix this, you can change the selector of one of those components or add an extra host attribute to force a different ID.`,
+            )}' 선택자로 동일한 구성 요소 ID를 생성했습니다. 이를 수정하려면 이들 구성 요소 중 하나의 선택자를 변경하거나 별도의 호스트 속성을 추가하여 다른 ID를 강제화할 수 있습니다.`,
           ),
         );
       }

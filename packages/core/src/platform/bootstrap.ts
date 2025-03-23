@@ -28,24 +28,22 @@ import {stringify} from '../util/stringify';
 import {isPromise} from '../util/lang';
 
 /**
- * InjectionToken to control root component bootstrap behavior.
+ * 루트 컴포넌트 부트스트랩 동작을 제어하는 InjectionToken입니다.
  *
- * This token is primarily used in Angular's server-side rendering (SSR) scenarios,
- * particularly by the `@angular/ssr` package, to manage whether the root component
- * should be bootstrapped during the application initialization process.
+ * 이 토큰은 주로 Angular의 서버 측 렌더링(SSR) 시나리오에서 사용되며,
+ * 특히 `@angular/ssr` 패키지에서 애플리케이션 초기화 과정 중에
+ * 루트 컴포넌트를 부트스트랩해야 하는지를 관리합니다.
  *
- * ## Purpose:
- * During SSR route extraction, setting this token to `false` prevents Angular from
- * bootstrapping the root component. This avoids unnecessary component rendering,
- * enabling route extraction without requiring additional APIs or triggering
- * component logic.
+ * ## 목적:
+ * SSR 경로 추출 중 이 토큰을 `false`로 설정하면 Angular가 루트 컴포넌트를
+ * 부트스트랩하는 것을 방지합니다. 이는 불필요한 컴포넌트 렌더링을 피하고
+ * 추가 API를 요구하거나 컴포넌트 논리를 트리거하지 않고도 경로 추출을 가능하게 합니다.
  *
- * ## Behavior:
- * - **`false`**: Prevents the root component from being bootstrapped.
- * - **`true`** (default): Proceeds with the normal root component bootstrap process.
+ * ## 동작:
+ * - **`false`**: 루트 컴포넌트의 부트스트랩을 방지합니다.
+ * - **`true`** (기본값): 정상적인 루트 컴포넌트 부트스트랩 프로세스를 진행합니다.
  *
- * This mechanism ensures SSR can efficiently separate route extraction logic
- * from component rendering.
+ * 이 메커니즘은 SSR이 컴포넌트 렌더링과 경로 추출 로직을 효율적으로 분리할 수 있게 합니다.
  */
 export const ENABLE_ROOT_COMPONENT_BOOTSTRAP = new InjectionToken<boolean>(
   ngDevMode ? 'ENABLE_ROOT_COMPONENT_BOOTSTRAP' : '',
@@ -94,8 +92,8 @@ export function bootstrap<M>(
     if (typeof ngDevMode === 'undefined' || ngDevMode) {
       if (exceptionHandler === null) {
         const errorMessage = isApplicationBootstrapConfig(config)
-          ? 'No `ErrorHandler` found in the Dependency Injection tree.'
-          : 'No ErrorHandler. Is platform module (BrowserModule) included';
+          ? 'Dependency Injection 트리에서 `ErrorHandler`를 찾을 수 없습니다.'
+          : 'ErrorHandler가 없습니다. 플랫폼 모듈(BrowserModule)이 포함되어 있습니까?';
         throw new RuntimeError(
           RuntimeErrorCode.MISSING_REQUIRED_INJECTABLE_IN_BOOTSTRAP,
           errorMessage,
@@ -104,8 +102,8 @@ export function bootstrap<M>(
       if (envInjector.get(PROVIDED_ZONELESS) && envInjector.get(PROVIDED_NG_ZONE)) {
         throw new RuntimeError(
           RuntimeErrorCode.PROVIDED_BOTH_ZONE_AND_ZONELESS,
-          'Invalid change detection configuration: ' +
-            'provideZoneChangeDetection and provideExperimentalZonelessChangeDetection cannot be used together.',
+          '잘못된 변경 감지 구성: ' +
+            'provideZoneChangeDetection과 provideExperimentalZonelessChangeDetection을 함께 사용할 수 없습니다.',
         );
       }
     }
@@ -119,8 +117,7 @@ export function bootstrap<M>(
       });
     });
 
-    // If the whole platform is destroyed, invoke the `destroy` method
-    // for all bootstrapped applications as well.
+    // 플랫폼이 완전히 파괴되면 부트스트랩된 모든 애플리케이션에 대해 `destroy` 메서드를 호출합니다.
     if (isApplicationBootstrapConfig(config)) {
       const destroyListener = () => envInjector.destroy();
       const onPlatformDestroyListeners = config.platformInjector.get(PLATFORM_DESTROY_LISTENERS);
@@ -147,7 +144,7 @@ export function bootstrap<M>(
       initStatus.runInitializers();
 
       return initStatus.donePromise.then(() => {
-        // If the `LOCALE_ID` provider is defined at bootstrap then we set the value for ivy
+        // 부트스트랩 시 `LOCALE_ID` 제공자가 정의되어 있다면 ivy의 값을 설정합니다.
         const localeId = envInjector.get(LOCALE_ID, DEFAULT_LOCALE_ID);
         setLocaleId(localeId || DEFAULT_LOCALE_ID);
 
@@ -194,9 +191,9 @@ function moduleDoBootstrap(
     throw new RuntimeError(
       RuntimeErrorCode.BOOTSTRAP_COMPONENTS_NOT_FOUND,
       ngDevMode &&
-        `The module ${stringify(moduleRef.instance.constructor)} was bootstrapped, ` +
-          `but it does not declare "@NgModule.bootstrap" components nor a "ngDoBootstrap" method. ` +
-          `Please define one of these.`,
+        `모듈 ${stringify(moduleRef.instance.constructor)}이(가) 부트스트랩되었지만, ` +
+          `“@NgModule.bootstrap” 컴포넌트 또는 “ngDoBootstrap” 메서드를 선언하지 않았습니다. ` +
+          `이 중 하나를 정의하십시오.`,
     );
   }
   allPlatformModules.push(moduleRef);
@@ -212,7 +209,7 @@ function _callAndReportToErrorHandler(
     if (isPromise(result)) {
       return result.catch((e: any) => {
         ngZone.runOutsideAngular(() => errorHandler.handleError(e));
-        // rethrow as the exception handler might not do it
+        // 예외 처리기가 이를 하지 않을 수 있으므로 다시 던집니다.
         throw e;
       });
     }
@@ -220,7 +217,7 @@ function _callAndReportToErrorHandler(
     return result;
   } catch (e) {
     ngZone.runOutsideAngular(() => errorHandler.handleError(e));
-    // rethrow as the exception handler might not do it
+    // 예외 처리기가 이를 하지 않을 수 있으므로 다시 던집니다.
     throw e;
   }
 }

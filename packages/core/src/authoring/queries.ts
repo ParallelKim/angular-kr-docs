@@ -32,18 +32,16 @@ function viewChildRequiredFn<LocatorT, ReadT>(
 }
 
 /**
- * Type of the `viewChild` function. The viewChild function creates a singular view query.
+ * `viewChild` 함수의 유형. viewChild 함수는 단일 뷰 쿼리를 생성합니다.
  *
- * It is a special function that also provides access to required query results via the `.required`
- * property.
+ * 이 함수는 `viewChild.required` 속성을 통해 필수 쿼리 결과에 접근할 수 있는 특별한 기능을 제공합니다.
  *
  * @publicAPI
- * @docsPrivate Ignored because `viewChild` is the canonical API entry.
+ * @docsPrivate `viewChild`가 표준 API 엔트리이므로 무시됩니다.
  */
 export interface ViewChildFunction {
   /**
-   * Initializes a view child query. Consider using `viewChild.required` for queries that should
-   * always match.
+   * 뷰 자식 쿼리를 초기화합니다. 항상 일치해야 하는 쿼리에는 `viewChild.required`를 사용하는 것을 고려하십시오.
    *
    * @publicAPI
    */
@@ -64,7 +62,7 @@ export interface ViewChildFunction {
   ): Signal<LocatorT | undefined>;
 
   /**
-   * Initializes a view child query that is expected to always match an element.
+   * 항상 요소와 일치할 것으로 예상되는 뷰 자식 쿼리를 초기화합니다.
    *
    * @publicAPI
    */
@@ -87,13 +85,12 @@ export interface ViewChildFunction {
 }
 
 /**
- * Initializes a view child query.
+ * 뷰 자식 쿼리를 초기화합니다.
  *
- * Consider using `viewChild.required` for queries that should always match.
+ * 항상 일치해야 하는 쿼리에는 `viewChild.required`를 사용하는 것을 고려하십시오.
  *
  * @usageNotes
- * Create a child query in your component by declaring a
- * class field and initializing it with the `viewChild()` function.
+ * 컴포넌트에서 class 필드를 선언하고 `viewChild()` 함수로 초기화하여 자식 쿼리를 생성하십시오.
  *
  * ```angular-ts
  * @Component({template: '<div #el></div><my-component #cmp />'})
@@ -109,9 +106,9 @@ export interface ViewChildFunction {
  * @initializerApiFunction
  */
 export const viewChild: ViewChildFunction = (() => {
-  // Note: This may be considered a side-effect, but nothing will depend on
-  // this assignment, unless this `viewChild` constant export is accessed. It's a
-  // self-contained side effect that is local to the user facing `viewChild` export.
+  // 참고: 이것은 부작용으로 간주될 수 있지만, 사용자가 보는 `viewChild` 내보내기를
+  // 접근하지 않는 한 이 할당에 의존하는 것은 없습니다. 사용자가
+  // 보는 `viewChild` 내보내기에 국한된 자급자족 부작용입니다.
   (viewChildFn as any).required = viewChildRequiredFn;
   return viewChildFn as typeof viewChildFn & {required: typeof viewChildRequiredFn};
 })();
@@ -129,14 +126,12 @@ export function viewChildren<LocatorT, ReadT>(
 ): Signal<ReadonlyArray<ReadT>>;
 
 /**
- * Initializes a view children query.
+ * 뷰 자식 쿼리를 초기화합니다.
  *
- * Query results are represented as a signal of a read-only collection containing all matched
- * elements.
+ * 쿼리 결과는 일치하는 모든 요소를 포함하는 읽기 전용 컬렉션의 신호로 표현됩니다.
  *
  * @usageNotes
- * Create a children query in your component by declaring a
- * class field and initializing it with the `viewChildren()` function.
+ * 컴포넌트에서 class 필드를 선언하고 `viewChildren()` 함수로 초기화하여 자식 쿼리를 생성하십시오.
  *
  * ```ts
  * @Component({...})
@@ -184,19 +179,19 @@ function contentChildRequiredFn<LocatorT, ReadT>(
 }
 
 /**
- * Type of the `contentChild` function.
+ * `contentChild` 함수의 유형.
  *
- * The contentChild function creates a singular content query. It is a special function that also
- * provides access to required query results via the `.required` property.
+ * contentChild 함수는 단일 콘텐츠 쿼리를 생성합니다. 이 함수는
+ * `.required` 속성을 통해 필수 쿼리 결과에 접근할 수 있는 특별한 기능을 제공합니다.
  *
  * @publicAPI
- * @docsPrivate Ignored because `contentChild` is the canonical API entry.
+ * @docsPrivate `contentChild`가 표준 API 엔트리이므로 무시됩니다.
  */
 export interface ContentChildFunction {
   /**
-   * Initializes a content child query.
+   * 콘텐츠 자식 쿼리를 초기화합니다.
    *
-   * Consider using `contentChild.required` for queries that should always match.
+   * 항상 일치해야 하는 쿼리에는 `contentChild.required`를 사용하는 것을 고려하십시오.
    * @publicAPI
    */
   <LocatorT>(
@@ -218,7 +213,7 @@ export interface ContentChildFunction {
   ): Signal<ReadT | undefined>;
 
   /**
-   * Initializes a content child query that is always expected to match.
+   * 항상 일치할 것으로 예상되는 콘텐츠 자식 쿼리를 초기화합니다.
    */
   required: {
     <LocatorT>(
@@ -242,18 +237,16 @@ export interface ContentChildFunction {
 }
 
 /**
- * Initializes a content child query. Consider using `contentChild.required` for queries that should
- * always match.
+ * 콘텐츠 자식 쿼리를 초기화합니다. 항상 일치해야 하는 쿼리에는 `contentChild.required`를 사용하는 것을 고려하십시오.
  *
  * @usageNotes
- * Create a child query in your component by declaring a
- * class field and initializing it with the `contentChild()` function.
+ * 컴포넌트에서 클래스 필드를 선언하고 `contentChild()` 함수로 초기화하여 자식 쿼리를 생성하십시오.
  *
  * ```ts
  * @Component({...})
  * export class TestComponent {
  *   headerEl = contentChild<ElementRef>('h');                    // Signal<ElementRef|undefined>
- *   headerElElRequired = contentChild.required<ElementRef>('h'); // Signal<ElementRef>
+ *   headerElRequired = contentChild.required<ElementRef>('h'); // Signal<ElementRef>
  *   header = contentChild(MyHeader);                             // Signal<MyHeader|undefined>
  *   headerRequired = contentChild.required(MyHeader);            // Signal<MyHeader>
  * }
@@ -263,9 +256,9 @@ export interface ContentChildFunction {
  * @publicAPI
  */
 export const contentChild: ContentChildFunction = (() => {
-  // Note: This may be considered a side-effect, but nothing will depend on
-  // this assignment, unless this `viewChild` constant export is accessed. It's a
-  // self-contained side effect that is local to the user facing `viewChild` export.
+  // 참고: 이것은 부작용으로 간주될 수 있지만, 사용자가 보는 `viewChild` 내보내기를
+  // 접근하지 않는 한 이 할당에 의존하는 것은 없습니다. 사용자가
+  // 보는 `viewChild` 내보내기에 국한된 자급자족 부작용입니다.
   (contentChildFn as any).required = contentChildRequiredFn;
   return contentChildFn as typeof contentChildFn & {required: typeof contentChildRequiredFn};
 })();
@@ -288,14 +281,12 @@ export function contentChildren<LocatorT, ReadT>(
 ): Signal<ReadonlyArray<ReadT>>;
 
 /**
- * Initializes a content children query.
+ * 콘텐츠 자식 쿼리를 초기화합니다.
  *
- * Query results are represented as a signal of a read-only collection containing all matched
- * elements.
+ * 쿼리 결과는 일치하는 모든 요소를 포함하는 읽기 전용 컬렉션의 신호로 표현됩니다.
  *
  * @usageNotes
- * Create a children query in your component by declaring a
- * class field and initializing it with the `contentChildren()` function.
+ * 컴포넌트에서 클래스 필드를 선언하고 `contentChildren()` 함수로 초기화하여 자식 쿼리를 생성하십시오.
  *
  * ```ts
  * @Component({...})

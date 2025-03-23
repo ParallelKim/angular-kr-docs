@@ -25,12 +25,11 @@ import {getNgModuleDef} from './def_getters';
 import {maybeUnwrapFn} from './util/misc_utils';
 
 /**
- * Returns a new NgModuleRef instance based on the NgModule class and parent injector provided.
+ * 제공된 NgModule 클래스와 부모 인젝터를 기반으로 새로운 NgModuleRef 인스턴스를 반환합니다.
  *
- * @param ngModule NgModule class.
- * @param parentInjector Optional injector instance to use as a parent for the module injector. If
- *     not provided, `NullInjector` will be used instead.
- * @returns NgModuleRef that represents an NgModule instance.
+ * @param ngModule NgModule 클래스.
+ * @param parentInjector 모듈 인젝터의 부모로 사용할 선택적 인젝터 인스턴스. 제공되지 않으면 `NullInjector`가 대신 사용됩니다.
+ * @returns NgModule 인스턴스를 나타내는 NgModuleRef.
  *
  * @publicApi
  */
@@ -42,10 +41,10 @@ export function createNgModule<T>(
 }
 
 /**
- * The `createNgModule` function alias for backwards-compatibility.
- * Please avoid using it directly and use `createNgModule` instead.
+ * 호환성을 위해 `createNgModule`의 함수 별칭.
+ * 직접 사용하지 마시고 대신 `createNgModule`를 사용해 주십시오.
  *
- * @deprecated Use `createNgModule` instead.
+ * @deprecated 대신 `createNgModule`를 사용하십시오.
  */
 export const createNgModuleRef = createNgModule;
 export class NgModuleRef<T> extends viewEngine_NgModuleRef<T> implements InternalNgModuleRef<T> {
@@ -55,12 +54,10 @@ export class NgModuleRef<T> extends viewEngine_NgModuleRef<T> implements Interna
   override instance!: T;
   destroyCbs: (() => void)[] | null = [];
 
-  // When bootstrapping a module we have a dependency graph that looks like this:
-  // ApplicationRef -> ComponentFactoryResolver -> NgModuleRef. The problem is that if the
-  // module being resolved tries to inject the ComponentFactoryResolver, it'll create a
-  // circular dependency which will result in a runtime error, because the injector doesn't
-  // exist yet. We work around the issue by creating the ComponentFactoryResolver ourselves
-  // and providing it, rather than letting the injector resolve it.
+  // 모듈을 부트스트랩 할 때 우리는 다음과 같은 의존성 그래프를 가집니다:
+  // ApplicationRef -> ComponentFactoryResolver -> NgModuleRef. 문제는 해결하고 있는 모듈이 ComponentFactoryResolver를 주입하려고 하면
+  // 순환 의존성이 발생하여 런타임 오류가 발생합니다. 왜냐하면 인젝터가 아직 존재하지 않기 때문입니다. 우리는 인젝터가 해결하도록 두지 않고
+  // 우리가 직접 ComponentFactoryResolver를 생성하고 제공함으로써 문제를 해결합니다.
   override readonly componentFactoryResolver: ComponentFactoryResolver =
     new ComponentFactoryResolver(this);
 
@@ -75,7 +72,7 @@ export class NgModuleRef<T> extends viewEngine_NgModuleRef<T> implements Interna
     ngDevMode &&
       assertDefined(
         ngModuleDef,
-        `NgModule '${stringify(ngModuleType)}' is not a subtype of 'NgModuleType'.`,
+        `NgModule '${stringify(ngModuleType)}'는 'NgModuleType'의 하위 유형이 아닙니다.`,
       );
 
     this._bootstrapComponents = maybeUnwrapFn(ngModuleDef!.bootstrap);
@@ -94,9 +91,9 @@ export class NgModuleRef<T> extends viewEngine_NgModuleRef<T> implements Interna
       new Set(['environment']),
     ) as R3Injector;
 
-    // We need to resolve the injector types separately from the injector creation, because
-    // the module might be trying to use this ref in its constructor for DI which will cause a
-    // circular error that will eventually error out, because the injector isn't created yet.
+    // 인젝터 생성과는 별도로 인젝터 유형을 해결해야 합니다. 왜냐하면
+    // 모듈이 DI를 위해 생성자에서 이 참조를 사용하려고 할 수 있기 때문에,
+    // 이는 순환 오류를 초래하여 결국 오류가 발생할 것입니다. 왜냐하면 인젝터가 아직 생성되지 않았기 때문입니다.
     if (runInjectorInitializers) {
       this.resolveInjectorInitializers();
     }
@@ -112,14 +109,14 @@ export class NgModuleRef<T> extends viewEngine_NgModuleRef<T> implements Interna
   }
 
   override destroy(): void {
-    ngDevMode && assertDefined(this.destroyCbs, 'NgModule already destroyed');
+    ngDevMode && assertDefined(this.destroyCbs, 'NgModule가 이미 파괴되었습니다');
     const injector = this._r3Injector;
     !injector.destroyed && injector.destroy();
     this.destroyCbs!.forEach((fn) => fn());
     this.destroyCbs = null;
   }
   override onDestroy(callback: () => void): void {
-    ngDevMode && assertDefined(this.destroyCbs, 'NgModule already destroyed');
+    ngDevMode && assertDefined(this.destroyCbs, 'NgModule가 이미 파괴되었습니다');
     this.destroyCbs!.push(callback);
   }
 }
@@ -181,12 +178,11 @@ export class EnvironmentNgModuleRefAdapter extends viewEngine_NgModuleRef<null> 
 }
 
 /**
- * Create a new environment injector.
+ * 새로운 환경 인젝터를 생성합니다.
  *
- * @param providers An array of providers.
- * @param parent A parent environment injector.
- * @param debugName An optional name for this injector instance, which will be used in error
- *     messages.
+ * @param providers 제공자 배열.
+ * @param parent 부모 환경 인젝터.
+ * @param debugName 이 인젝터 인스턴스에 대한 선택적 이름, 오류 메시지에 사용됩니다.
  *
  * @publicApi
  */

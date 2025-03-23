@@ -17,18 +17,15 @@ import {JSACTION_BLOCK_ELEMENT_MAP} from '../hydration/tokens';
 import {DehydratedDeferBlock} from './interfaces';
 
 /**
- * An internal injection token to reference `DehydratedBlockRegistry` implementation
- * in a tree-shakable way.
+ * 트리 섀킥 가능한 방식으로 `DehydratedBlockRegistry` 구현을 참조하기 위한 내부 주입 토큰입니다.
  */
 export const DEHYDRATED_BLOCK_REGISTRY = new InjectionToken<DehydratedBlockRegistry>(
   ngDevMode ? 'DEHYDRATED_BLOCK_REGISTRY' : '',
 );
 
 /**
- * The DehydratedBlockRegistry is used for incremental hydration purposes. It keeps
- * track of the Defer Blocks that need hydration so we can effectively
- * navigate up to the top dehydrated defer block and fire appropriate cleanup
- * functions post hydration.
+ * DehydratedBlockRegistry는 점진적인 수분화 목적에 사용됩니다. 수분화가 필요한 Defer Block을 추적하여
+ * 최상위 탈수된 Defer Block으로 효과적으로 탐색하고 수분화 후 적절한 정리 함수가 호출되도록 합니다.
  */
 export class DehydratedBlockRegistry {
   private registry = new Map<string, DehydratedDeferBlock>();
@@ -38,10 +35,8 @@ export class DehydratedBlockRegistry {
 
   add(blockId: string, info: DehydratedDeferBlock) {
     this.registry.set(blockId, info);
-    // It's possible that hydration is queued that's waiting for the
-    // resolution of a lazy loaded route. In this case, we ensure
-    // the callback function is called to continue the hydration process
-    // for the queued block set.
+    // 수분화가 지연 로드된 경로의 해결을 기다리고 있는 경우,
+    // 이 경우 콜백 함수를 호출하여 큐에 있는 블록 집합에 대한 수분화 프로세스를 계속 진행합니다.
     if (this.awaitingCallbacks.has(blockId)) {
       const awaitingCallbacks = this.awaitingCallbacks.get(blockId)!;
       for (const cb of awaitingCallbacks) {
@@ -76,8 +71,8 @@ export class DehydratedBlockRegistry {
     return this.registry.size;
   }
 
-  // we have to leave the lowest block Id in the registry
-  // unless that block has no children
+  // 가장 낮은 블록 ID를 레지스트리에 남겨야 하며
+  // 해당 블록에 자식이 없는 경우를 제외합니다.
   addCleanupFn(blockId: string, fn: Function) {
     let cleanupFunctions: Function[] = [];
     if (this.cleanupFns.has(blockId)) {
@@ -95,10 +90,10 @@ export class DehydratedBlockRegistry {
     this.cleanupFns.delete(blockId);
   }
 
-  // Blocks that are being hydrated.
+  // 수분화 중인 블록.
   hydrating = new Map<string, PromiseWithResolvers<void>>();
 
-  // Blocks that are awaiting a defer instruction finish.
+  // 지연 지시 완료를 기다리는 블록.
   private awaitingCallbacks = new Map<string, Function[]>();
 
   awaitParentBlock(topmostParentBlock: string, callback: Function) {

@@ -24,16 +24,15 @@ import {
 } from './shared';
 
 /**
- * Update a property on a host element. Only applies to native node properties, not inputs.
+ * 호스트 요소의 속성을 업데이트합니다. 입력 필드가 아닌 기본 노드 속성에만 적용됩니다.
  *
- * Operates on the element selected by index via the {@link select} instruction.
+ * {@link select} 명령을 통해 인덱스로 선택된 요소에서 작동합니다.
  *
- * @param propName Name of property. Because it is going to DOM, this is not subject to
- *        renaming as part of minification.
- * @param value New value to write.
- * @param sanitizer An optional function used to sanitize the value.
- * @returns This function returns itself so that it may be chained
- * (e.g. `property('name', ctx.name)('title', ctx.title)`)
+ * @param propName 속성 이름. DOM으로 전달되므로 축소의 일환으로 이름이 변경되지 않습니다.
+ * @param value 쓸 새 값.
+ * @param sanitizer 값을 정리하는 데 사용되는 선택적 함수.
+ * @returns 이 함수는 체이닝할 수 있도록 자체를 반환합니다.
+ * (예: `property('name', ctx.name)('title', ctx.title)`)
  *
  * @codeGenApi
  */
@@ -54,23 +53,20 @@ export function ɵɵhostProperty<T>(
 }
 
 /**
- * Updates a synthetic host binding (e.g. `[@foo]`) on a component or directive.
+ * 컴포넌트나 지시어에서 합성 호스트 바인딩(e.g. `[@foo]`)을 업데이트합니다.
  *
- * This instruction is for compatibility purposes and is designed to ensure that a
- * synthetic host binding (e.g. `@HostBinding('@foo')`) properly gets rendered in
- * the component's renderer. Normally all host bindings are evaluated with the parent
- * component's renderer, but, in the case of animation @triggers, they need to be
- * evaluated with the sub component's renderer (because that's where the animation
- * triggers are defined).
+ * 이 명령은 호환성을 위해 존재하며 합성 호스트 바인딩(e.g. `@HostBinding('@foo')`)이
+ * 컴포넌트의 렌더러에서 적절하게 렌더링되도록 설계되었습니다. 일반적으로 모든 호스트 바인딩은 부모
+ * 컴포넌트의 렌더러로 평가되지만, 애니메이션 @triggers 의 경우, 서브 컴포넌트의 렌더러에서 평가되어야
+ * 합니다(애니메이션 트리거가 정의되는 곳이기 때문입니다).
  *
- * Do not use this instruction as a replacement for `elementProperty`. This instruction
- * only exists to ensure compatibility with the ViewEngine's host binding behavior.
+ * 이 명령을 `elementProperty`의 대체물로 사용하지 마십시오. 이 명령은 ViewEngine의 호스트 바인딩
+ * 동작과의 호환성을 보장하기 위해 존재합니다.
  *
- * @param index The index of the element to update in the data array
- * @param propName Name of property. Because it is going to DOM, this is not subject to
- *        renaming as part of minification.
- * @param value New value to write.
- * @param sanitizer An optional function used to sanitize the value.
+ * @param index 데이터 배열에서 업데이트할 요소의 인덱스
+ * @param propName 속성 이름. DOM으로 전달되므로 축소의 일환으로 이름이 변경되지 않습니다.
+ * @param value 쓸 새 값.
+ * @param sanitizer 값을 정리하는 데 사용되는 선택적 함수.
  *
  * @codeGenApi
  */

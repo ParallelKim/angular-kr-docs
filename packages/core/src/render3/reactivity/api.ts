@@ -9,25 +9,25 @@
 import {SIGNAL} from '@angular/core/primitives/signals';
 
 /**
- * A reactive value which notifies consumers of any changes.
+ * 변경 사항을 소비자에게 알리는 반응형 값입니다.
  *
- * Signals are functions which returns their current value. To access the current value of a signal,
- * call it.
+ * 신호(Signal)는 현재 값을 반환하는 함수입니다. 신호의 현재 값에 접근하려면,
+ * 호출하십시오.
  *
- * Ordinary values can be turned into `Signal`s with the `signal` function.
+ * 일반 값은 `signal` 함수를 사용하여 `Signal`로 변환할 수 있습니다.
  */
 export type Signal<T> = (() => T) & {
   [SIGNAL]: unknown;
 };
 
 /**
- * Checks if the given `value` is a reactive `Signal`.
+ * 주어진 `value`가 반응형 `Signal`인지 확인합니다.
  */
 export function isSignal(value: unknown): value is Signal<unknown> {
   return typeof value === 'function' && (value as Signal<unknown>)[SIGNAL] !== undefined;
 }
 
 /**
- * A comparison function which can determine if two values are equal.
+ * 두 값이 같은지 비교할 수 있는 함수입니다.
  */
 export type ValueEqualityFn<T> = (a: T, b: T) => boolean;

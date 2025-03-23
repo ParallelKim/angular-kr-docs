@@ -11,7 +11,7 @@ import {PendingTasksInternal} from '../../pending_tasks';
 import {inject} from '../../di/injector_compatibility';
 
 /**
- * Abstraction that encompasses any kind of effect that can be scheduled.
+ * 예약할 수 있는 모든 종류의 효과를 포함하는 추상화입니다.
  */
 export interface SchedulableEffect {
   run(): void;
@@ -21,22 +21,22 @@ export interface SchedulableEffect {
 }
 
 /**
- * A scheduler which manages the execution of effects.
+ * 효과의 실행을 관리하는 스케줄러입니다.
  */
 export abstract class EffectScheduler {
   /**
-   * Schedule the given effect to be executed at a later time.
+   * 주어진 효과를 나중에 실행되도록 예약합니다.
    *
-   * It is an error to attempt to execute any effects synchronously during a scheduling operation.
+   * 스케줄링 작업 중에 효과를 동기적으로 실행하려고 시도하는 것은 오류입니다.
    */
   abstract schedule(e: SchedulableEffect): void;
 
   /**
-   * Run any scheduled effects.
+   * 예약된 모든 효과를 실행합니다.
    */
   abstract flush(): void;
 
-  /** Remove a scheduled effect */
+  /** 예약된 효과를 제거합니다 */
   abstract remove(e: SchedulableEffect): void;
 
   /** @nocollapse */
@@ -48,8 +48,7 @@ export abstract class EffectScheduler {
 }
 
 /**
- * A wrapper around `ZoneAwareQueueingScheduler` that schedules flushing via the microtask queue
- * when.
+ * 마이크로 태스크 큐를 통해 플러시를 예약하는 `ZoneAwareQueueingScheduler`의 래퍼입니다.
  */
 export class ZoneAwareEffectScheduler implements EffectScheduler {
   private queuedEffectCount = 0;
@@ -85,15 +84,14 @@ export class ZoneAwareEffectScheduler implements EffectScheduler {
   }
 
   /**
-   * Run all scheduled effects.
+   * 예약된 모든 효과를 실행합니다.
    *
-   * Execution order of effects within the same zone is guaranteed to be FIFO, but there is no
-   * ordering guarantee between effects scheduled in different zones.
+   * 동일한 영역 내에서 효과의 실행 순서는 FIFO로 보장되지만, 서로 다른 영역에서 예약된 효과 간의 순서 보장은 없습니다.
    */
   flush(): void {
     while (this.queuedEffectCount > 0) {
       for (const [zone, queue] of this.queues) {
-        // `zone` here must be defined.
+        // 여기서 `zone`은 정의되어 있어야 합니다.
         if (zone === null) {
           this.flushQueue(queue);
         } else {
@@ -108,7 +106,7 @@ export class ZoneAwareEffectScheduler implements EffectScheduler {
       queue.delete(handle);
       this.queuedEffectCount--;
 
-      // TODO: what happens if this throws an error?
+      // TODO: 만약 이 실행 중 오류가 발생하면 어떻게 될까요?
       handle.run();
     }
   }

@@ -7,8 +7,8 @@
  */
 
 /**
- * This indirection is needed to free up Component, etc symbols in the public API
- * to be used by the decorator versions of these annotations.
+ * 이 간접 참조는 이러한 주석의 데코레이터 버전이 사용할 수 있도록
+ * 공개 API에서 Component 등의 기호를 해제하는 데 필요합니다.
  */
 
 export {Attribute, AttributeDecorator} from './di/metadata_attr';

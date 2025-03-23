@@ -28,10 +28,10 @@ import {getRootContext} from './view_traversal_utils';
 import {getLViewParent, unwrapRNode} from './view_utils';
 
 /**
- * Retrieves the component instance associated with a given DOM element.
+ * 주어진 DOM 요소와 관련된 컴포넌트 인스턴스를 검색합니다.
  *
  * @usageNotes
- * Given the following DOM structure:
+ * 다음 DOM 구조를 고려하십시오:
  *
  * ```html
  * <app-root>
@@ -41,15 +41,13 @@ import {getLViewParent, unwrapRNode} from './view_utils';
  * </app-root>
  * ```
  *
- * Calling `getComponent` on `<child-comp>` will return the instance of `ChildComponent`
- * associated with this DOM element.
+ * `<child-comp>`에 대한 `getComponent`를 호출하면 이 DOM 요소와 관련된 `ChildComponent`의 인스턴스를 반환합니다.
  *
- * Calling the function on `<app-root>` will return the `MyApp` instance.
+ * `<app-root>`에 대한 함수를 호출하면 `MyApp` 인스턴스를 반환합니다.
  *
  *
- * @param element DOM element from which the component should be retrieved.
- * @returns Component instance associated with the element or `null` if there
- *    is no component associated with it.
+ * @param element 컴포넌트를 검색할 DOM 요소입니다.
+ * @returns 요소와 연결된 컴포넌트 인스턴스 또는 연결된 컴포넌트가 없는 경우 `null`을 반환합니다.
  *
  * @publicApi
  */
@@ -70,13 +68,12 @@ export function getComponent<T>(element: Element): T | null {
 }
 
 /**
- * If inside an embedded view (e.g. `*ngIf` or `*ngFor`), retrieves the context of the embedded
- * view that the element is part of. Otherwise retrieves the instance of the component whose view
- * owns the element (in this case, the result is the same as calling `getOwningComponent`).
+ * 임베디드 뷰(예: `*ngIf` 또는 `*ngFor`) 내에 있는 경우 요소가 포함된 임베디드
+ * 뷰의 컨텍스트를 검색합니다. 그렇지 않으면 요소를 소유한 컴포넌트의 인스턴스를 검색합니다.
+ * (이 경우 결과는 `getOwningComponent`를 호출하는 것과 동일합니다.)
  *
- * @param element Element for which to get the surrounding component instance.
- * @returns Instance of the component that is around the element or null if the element isn't
- *    inside any component.
+ * @param element 주위의 컴포넌트 인스턴스를 가져오기 위한 요소입니다.
+ * @returns 요소 주위에 있는 컴포넌트의 인스턴스 또는 요소가 어떤 컴포넌트에도 속하지 않은 경우 null을 반환합니다.
  *
  * @publicApi
  */
@@ -88,16 +85,14 @@ export function getContext<T extends {}>(element: Element): T | null {
 }
 
 /**
- * Retrieves the component instance whose view contains the DOM element.
+ * DOM 요소를 포함하는 뷰의 컴포넌트 인스턴스를 검색합니다.
  *
- * For example, if `<child-comp>` is used in the template of `<app-comp>`
- * (i.e. a `ViewChild` of `<app-comp>`), calling `getOwningComponent` on `<child-comp>`
- * would return `<app-comp>`.
+ * 예를 들어, `<child-comp>`가 `<app-comp>`의 템플릿에서 사용되는 경우
+ * (즉, `<app-comp>`의 `ViewChild`와 같이), `<child-comp>`에 대한 `getOwningComponent`를 호출하면
+ * `<app-comp>`를 반환합니다.
  *
- * @param elementOrDir DOM element, component or directive instance
- *    for which to retrieve the root components.
- * @returns Component instance whose view owns the DOM element or null if the element is not
- *    part of a component view.
+ * @param elementOrDir 루트 컴포넌트를 검색할 DOM 요소, 컴포넌트 또는 지시어 인스턴스입니다.
+ * @returns DOM 요소의 뷰를 소유하는 컴포넌트 인스턴스 또는 요소가 컴포넌트 뷰의 일부가 아닌 경우 null을 반환합니다.
  *
  * @publicApi
  */
@@ -114,12 +109,11 @@ export function getOwningComponent<T>(elementOrDir: Element | {}): T | null {
 }
 
 /**
- * Retrieves all root components associated with a DOM element, directive or component instance.
- * Root components are those which have been bootstrapped by Angular.
+ * DOM 요소, 지시어 또는 컴포넌트 인스턴스와 관련된 모든 루트 컴포넌트를 검색합니다.
+ * 루트 컴포넌트는 Angular에서 부트스트랩된 컴포넌트입니다.
  *
- * @param elementOrDir DOM element, component or directive instance
- *    for which to retrieve the root components.
- * @returns Root components associated with the target object.
+ * @param elementOrDir 루트 컴포넌트를 검색할 DOM 요소, 컴포넌트 또는 지시어 인스턴스입니다.
+ * @returns 대상 객체와 관련된 루트 컴포넌트입니다.
  *
  * @publicApi
  */
@@ -129,11 +123,10 @@ export function getRootComponents(elementOrDir: Element | {}): {}[] {
 }
 
 /**
- * Retrieves an `Injector` associated with an element, component or directive instance.
+ * 요소, 컴포넌트 또는 지시어 인스턴스와 관련된 `Injector`를 검색합니다.
  *
- * @param elementOrDir DOM element, component or directive instance for which to
- *    retrieve the injector.
- * @returns Injector associated with the element, component or directive instance.
+ * @param elementOrDir 검색할 injector를 위한 DOM 요소, 컴포넌트 또는 지시어 인스턴스입니다.
+ * @returns 요소, 컴포넌트 또는 지시어 인스턴스와 관련된 Injector입니다.
  *
  * @publicApi
  */
@@ -147,9 +140,9 @@ export function getInjector(elementOrDir: Element | {}): Injector {
 }
 
 /**
- * Retrieve a set of injection tokens at a given DOM node.
+ * 주어진 DOM 노드에서 주입 토큰 집합을 검색합니다.
  *
- * @param element Element for which the injection tokens should be retrieved.
+ * @param element 주입 토큰을 검색할 요소입니다.
  */
 export function getInjectionTokens(element: Element): any[] {
   const context = getLContext(element)!;
@@ -163,10 +156,10 @@ export function getInjectionTokens(element: Element): any[] {
   for (let i = startIndex; i < endIndex; i++) {
     let value = tView.data[i];
     if (isDirectiveDefHack(value)) {
-      // The fact that we sometimes store Type and sometimes DirectiveDef in this location is a
-      // design flaw.  We should always store same type so that we can be monomorphic. The issue
-      // is that for Components/Directives we store the def instead the type. The correct behavior
-      // is that we should always be storing injectable type in this location.
+      // 우리가 때때로 Type와 DirectiveDef를 이 위치에 저장하는 것은
+      // 설계 결함입니다. 우리는 항상 동일한 유형을 저장해야 모노모픽할 수 있습니다.
+      // 문제는 컴포넌트/지시어의 경우 정의를 저장하지 않고 유형을 저장하기 때문입니다.
+      // 올바른 동작은 항상 주입 가능한 유형을 이 위치에 저장해야 한다는 것입니다.
       value = value.type;
     }
     providerTokens.push(value);
@@ -175,11 +168,10 @@ export function getInjectionTokens(element: Element): any[] {
 }
 
 /**
- * Retrieves directive instances associated with a given DOM node. Does not include
- * component instances.
+ * 주어진 DOM 노드와 관련된 지시어 인스턴스를 검색합니다. 컴포넌트 인스턴스는 포함되지 않습니다.
  *
  * @usageNotes
- * Given the following DOM structure:
+ * 다음 DOM 구조를 고려하십시오:
  *
  * ```html
  * <app-root>
@@ -188,18 +180,18 @@ export function getInjectionTokens(element: Element): any[] {
  * </app-root>
  * ```
  *
- * Calling `getDirectives` on `<button>` will return an array with an instance of the `MyButton`
- * directive that is associated with the DOM node.
+ * `<button>`에서 `getDirectives`를 호출하면 이 DOM 노드와 관련된 `MyButton`
+ * 지시어의 인스턴스를 포함하는 배열을 반환합니다.
  *
- * Calling `getDirectives` on `<my-comp>` will return an empty array.
+ * `<my-comp>`에서 `getDirectives`를 호출하면 빈 배열을 반환합니다.
  *
- * @param node DOM node for which to get the directives.
- * @returns Array of directives associated with the node.
+ * @param node 지시어를 가져올 DOM 노드입니다.
+ * @returns 노드와 관련된 지시어의 배열입니다.
  *
  * @publicApi
  */
 export function getDirectives(node: Node): {}[] {
-  // Skip text nodes because we can't have directives associated with them.
+  // 텍스트 노드는 지시어와 연결될 수 없으므로 건너뜁니다.
   if (node instanceof Text) {
     return [];
   }
@@ -219,15 +211,15 @@ export function getDirectives(node: Node): {}[] {
     context.directives = getDirectivesAtNodeIndex(nodeIndex, lView);
   }
 
-  // The `directives` in this case are a named array called `LComponentView`. Clone the
-  // result so we don't expose an internal data structure in the user's console.
+  // 이 경우 `directives`는 `LComponentView`라는 이름이 붙은 배열입니다.
+  // 결과를 복제하여 사용자 콘솔에 내부 데이터 구조를 노출하지 않도록 합니다.
   return context.directives === null ? [] : [...context.directives];
 }
 
 /**
- * Partial metadata for a given directive instance.
- * This information might be useful for debugging purposes or tooling.
- * Currently only `inputs` and `outputs` metadata is available.
+ * 주어진 지시어 인스턴스를 위한 부분 메타데이터입니다.
+ * 이 정보는 디버깅 목적이나 도구에 유용할 수 있습니다.
+ * 현재는 `inputs`와 `outputs` 메타데이터만 사용할 수 있습니다.
  *
  * @publicApi
  */
@@ -237,9 +229,9 @@ export interface DirectiveDebugMetadata {
 }
 
 /**
- * Partial metadata for a given component instance.
- * This information might be useful for debugging purposes or tooling.
- * Currently the following fields are available:
+ * 주어진 컴포넌트 인스턴스를 위한 부분 메타데이터입니다.
+ * 이 정보는 디버깅 목적이나 도구에 유용할 수 있습니다.
+ * 현재 다음 필드가 제공됩니다:
  *  - inputs
  *  - outputs
  *  - encapsulation
@@ -253,12 +245,11 @@ export interface ComponentDebugMetadata extends DirectiveDebugMetadata {
 }
 
 /**
- * Returns the debug (partial) metadata for a particular directive or component instance.
- * The function accepts an instance of a directive or component and returns the corresponding
- * metadata.
+ * 특정 지시어 또는 컴포넌트 인스턴스에 대한 디버그(부분) 메타데이터를 반환합니다.
+ * 이 함수는 지시어 또는 컴포넌트의 인스턴스를 수용하고 해당 메타데이터를 반환합니다.
  *
- * @param directiveOrComponentInstance Instance of a directive or component
- * @returns metadata of the passed directive or component
+ * @param directiveOrComponentInstance 지시어 또는 컴포넌트 인스턴스입니다.
+ * @returns 전달된 지시어 또는 컴포넌트의 메타데이터입니다.
  *
  * @publicApi
  */
@@ -267,10 +258,10 @@ export function getDirectiveMetadata(
 ): ComponentDebugMetadata | DirectiveDebugMetadata | null {
   const {constructor} = directiveOrComponentInstance;
   if (!constructor) {
-    throw new Error('Unable to find the instance constructor');
+    throw new Error('인스턴스 생성자를 찾을 수 없습니다.');
   }
-  // In case a component inherits from a directive, we may have component and directive metadata
-  // To ensure we don't get the metadata of the directive, we want to call `getComponentDef` first.
+  // 컴포넌트가 지시어로부터 상속되는 경우 지시어와 컴포넌트 메타데이터를 모두 가질 수 있습니다.
+  // 지시어의 메타데이터를 받지 않도록 하기 위해 먼저 `getComponentDef`를 호출하고 싶습니다.
   const componentDef = getComponentDef(constructor);
   if (componentDef) {
     const inputs = extractInputDebugMetadata(componentDef.inputs);
@@ -292,12 +283,11 @@ export function getDirectiveMetadata(
 }
 
 /**
- * Retrieve map of local references.
+ * 로컬 참조의 맵을 검색합니다.
  *
- * The references are retrieved as a map of local reference name to element or directive instance.
+ * 참조는 로컬 참조 이름을 요소 또는 지시어 인스턴스로 매핑한 맵으로 검색됩니다.
  *
- * @param target DOM element, component or directive instance for which to retrieve
- *    the local references.
+ * @param target 로컬 참조를 검색할 DOM 요소, 컴포넌트 또는 지시어 인스턴스입니다.
  */
 export function getLocalRefs(target: {}): {[key: string]: any} {
   const context = getLContext(target);
@@ -315,12 +305,11 @@ export function getLocalRefs(target: {}): {[key: string]: any} {
 }
 
 /**
- * Retrieves the host element of a component or directive instance.
- * The host element is the DOM element that matched the selector of the directive.
+ * 컴포넌트 또는 지시어 인스턴스의 호스트 요소를 검색합니다.
+ * 호스트 요소는 지시어의 선택자와 일치하는 DOM 요소입니다.
  *
- * @param componentOrDirective Component or directive instance for which the host
- *     element should be retrieved.
- * @returns Host element of the target.
+ * @param componentOrDirective 호스트 요소를 검색할 컴포넌트 또는 지시어 인스턴스입니다.
+ * @returns 대상의 호스트 요소입니다.
  *
  * @publicApi
  */
@@ -329,14 +318,13 @@ export function getHostElement(componentOrDirective: {}): Element {
 }
 
 /**
- * Retrieves the rendered text for a given component.
+ * 주어진 컴포넌트에 대한 렌더링된 텍스트를 검색합니다.
  *
- * This function retrieves the host element of a component and
- * and then returns the `textContent` for that element. This implies
- * that the text returned will include re-projected content of
- * the component as well.
+ * 이 함수는 컴포넌트의 호스트 요소를 검색한 다음
+ * 해당 요소의 `textContent`를 반환합니다. 이는 반환된 텍스트에
+ * 컴포넌트의 재투영된 콘텐츠가 포함됨을 의미합니다.
  *
- * @param component The component to return the content text for.
+ * @param component 콘텐츠 텍스트를 반환할 컴포넌트입니다.
  */
 export function getRenderedText(component: any): string {
   const hostElement = getHostElement(component);
@@ -344,31 +332,31 @@ export function getRenderedText(component: any): string {
 }
 
 /**
- * Event listener configuration returned from `getListeners`.
+ * `getListeners`에서 반환된 이벤트 리스너 구성입니다.
  * @publicApi
  */
 export interface Listener {
-  /** Name of the event listener. */
+  /** 이벤트 리스너의 이름. */
   name: string;
-  /** Element that the listener is bound to. */
+  /** 리스너가 바인딩된 요소. */
   element: Element;
-  /** Callback that is invoked when the event is triggered. */
+  /** 이벤트가 발생할 때 호출되는 콜백. */
   callback: (value: any) => any;
-  /** Whether the listener is using event capturing. */
+  /** 리스너가 이벤트 캡처링을 사용하는지 여부. */
   useCapture: boolean;
   /**
-   * Type of the listener (e.g. a native DOM event or a custom @Output).
+   * 리스너 유형(예: 네이티브 DOM 이벤트 또는 사용자 정의 @Output).
    */
   type: 'dom' | 'output';
 }
 
 /**
- * Retrieves a list of event listeners associated with a DOM element. The list does include host
- * listeners, but it does not include event listeners defined outside of the Angular context
- * (e.g. through `addEventListener`).
+ * DOM 요소와 관련된 이벤트 리스너 목록을 검색합니다. 이 목록에는 호스트 리스너가 포함되지만,
+ * Angular 컨텍스트 외부에서 정의된 이벤트 리스너는 포함되지 않습니다
+ * (예: `addEventListener`를 통해).
  *
  * @usageNotes
- * Given the following DOM structure:
+ * 다음 DOM 구조를 고려하십시오:
  *
  * ```html
  * <app-root>
@@ -376,7 +364,7 @@ export interface Listener {
  * </app-root>
  * ```
  *
- * Calling `getListeners` on `<div>` will return an object that looks as follows:
+ * `<div>`에서 `getListeners`를 호출하면 다음과 같은 객체가 반환됩니다:
  *
  * ```ts
  * {
@@ -387,8 +375,8 @@ export interface Listener {
  * }
  * ```
  *
- * @param element Element for which the DOM listeners should be retrieved.
- * @returns Array of event listeners on the DOM element.
+ * @param element DOM 리스너를 검색할 요소입니다.
+ * @returns DOM 요소의 이벤트 리스너 배열입니다.
  *
  * @publicApi
  */
@@ -411,9 +399,9 @@ export function getListeners(element: Element): Listener[] {
         const listenerElement = unwrapRNode(lView[secondParam]) as any as Element;
         const callback: (value: any) => any = lCleanup[tCleanup[i++]];
         const useCaptureOrIndx = tCleanup[i++];
-        // if useCaptureOrIndx is boolean then report it as is.
-        // if useCaptureOrIndx is positive number then it in unsubscribe method
-        // if useCaptureOrIndx is negative number then it is a Subscription
+        // if useCaptureOrIndx가 boolean이면 그대로 리포트합니다.
+        // useCaptureOrIndx가 양수이면 구독 해제 메서드에 있습니다.
+        // useCaptureOrIndx가 음수이면 Subscription입니다.
         const type =
           typeof useCaptureOrIndx === 'boolean' || useCaptureOrIndx >= 0 ? 'dom' : 'output';
         const useCapture = typeof useCaptureOrIndx === 'boolean' ? useCaptureOrIndx : false;
@@ -433,9 +421,10 @@ function sortListeners(a: Listener, b: Listener) {
 }
 
 /**
- * This function should not exist because it is megamorphic and only mostly correct.
+ * 이 함수는 존재해서는 안 됩니다. 왜냐하면 그것은 메가형이며,
+ * 대체로만 정확하기 때문입니다.
  *
- * See call site for more info.
+ * 더 많은 정보를 원하시면 호출 위치를 참고하십시오.
  */
 function isDirectiveDefHack(obj: any): obj is DirectiveDef<any> {
   return (
@@ -446,12 +435,12 @@ function isDirectiveDefHack(obj: any): obj is DirectiveDef<any> {
 }
 
 /**
- * Retrieve the component `LView` from component/element.
+ * 컴포넌트/요소에서 컴포넌트 `LView`를 검색합니다.
  *
- * NOTE: `LView` is a private and should not be leaked outside.
- *       Don't export this method to `ng.*` on window.
+ * NOTE: `LView`는 비공식적인 것이며 외부에 노출되지 않아야 합니다.
+ *       이 메서드를 `ng.*`에 내보내지 마십시오.
  *
- * @param target DOM element or component instance for which to retrieve the LView.
+ * @param target LView를 반환할 DOM 요소 또는 컴포넌트 인스턴스입니다.
  */
 export function getComponentLView(target: any): LView {
   const lContext = getLContext(target)!;
@@ -463,19 +452,19 @@ export function getComponentLView(target: any): LView {
   return componentLView;
 }
 
-/** Asserts that a value is a DOM Element. */
+/** 값이 DOM 요소인지 확인합니다. */
 function assertDomElement(value: any) {
   if (typeof Element !== 'undefined' && !(value instanceof Element)) {
-    throw new Error('Expecting instance of DOM Element');
+    throw new Error('DOM Element의 인스턴스를 기대합니다.');
   }
 }
 
 /**
- * A directive definition holds additional metadata using bitwise flags to indicate
- * for example whether it is signal based.
+ * 지시어 정의는 비트 플래그를 사용하여 추가 메타데이터를 보유하고 있습니다.
+ * 예를 들어 신호 기반인지를 나타냅니다.
  *
- * This information needs to be separate from the `publicName -> minifiedName`
- * mappings for backwards compatibility.
+ * 이 정보는 이전 버전의 호환성을 위해
+ * `publicName -> minifiedName` 매핑과 분리되어야 합니다.
  */
 function extractInputDebugMetadata<T>(inputs: DirectiveDef<T>['inputs']) {
   const res: DirectiveDebugMetadata['inputs'] = {};

@@ -9,11 +9,10 @@
 import {trustedHTMLFromString} from '../util/security/trusted_types';
 
 /**
- * This helper is used to get hold of an inert tree of DOM elements containing dirty HTML
- * that needs sanitizing.
- * Depending upon browser support we use one of two strategies for doing this.
- * Default: DOMParser strategy
- * Fallback: InertDocument strategy
+ * 이 헬퍼는 위생 처리(sanitizing)가 필요한 더러운(dirty) HTML을 포함하는 비활성 DOM 요소 트리를 얻기 위해 사용됩니다.
+ * 브라우저 지원에 따라 두 가지 전략 중 하나를 사용합니다.
+ * 기본: DOMParser 전략
+ * 대체: InertDocument 전략
  */
 export function getInertBodyHelper(defaultDoc: Document): InertBodyHelper {
   const inertDocumentHelper = new InertDocumentHelper(defaultDoc);
@@ -22,23 +21,22 @@ export function getInertBodyHelper(defaultDoc: Document): InertBodyHelper {
 
 export interface InertBodyHelper {
   /**
-   * Get an inert DOM element containing DOM created from the dirty HTML string provided.
+   * 제공된 더러운 HTML 문자열로 생성된 DOM을 포함하는 비활성 DOM 요소를 가져옵니다.
    */
   getInertBodyElement: (html: string) => HTMLElement | null;
 }
 
 /**
- * Uses DOMParser to create and fill an inert body element.
- * This is the default strategy used in browsers that support it.
+ * DOMParser를 사용하여 비활성 본문 요소를 생성하고 채웁니다.
+ * 이는 이를 지원하는 브라우저에서 사용되는 기본 전략입니다.
  */
 class DOMParserHelper implements InertBodyHelper {
   constructor(private inertDocumentHelper: InertBodyHelper) {}
 
   getInertBodyElement(html: string): HTMLElement | null {
-    // We add these extra elements to ensure that the rest of the content is parsed as expected
-    // e.g. leading whitespace is maintained and tags like `<meta>` do not get hoisted to the
-    // `<head>` tag. Note that the `<body>` tag is closed implicitly to prevent unclosed tags
-    // in `html` from consuming the otherwise explicit `</body>` tag.
+    // 나머지 콘텐츠가 예상대로 파싱되도록 추가 요소를 추가합니다.
+    // 예: 선행 공백이 유지되고 `<meta>`와 같은 태그가 `<head>` 태그로 승격되지 않도록 합니다.
+    // `html`에서 닫히지 않은 태그가 명시적 `</body>` 태그를 소비하지 않도록 `<body>` 태그가 암시적으로 닫힙니다.
     html = '<body><remove></remove>' + html;
     try {
       const body = new window.DOMParser().parseFromString(
@@ -46,9 +44,8 @@ class DOMParserHelper implements InertBodyHelper {
         'text/html',
       ).body as HTMLBodyElement;
       if (body === null) {
-        // In some browsers (e.g. Mozilla/5.0 iPad AppleWebKit Mobile) the `body` property only
-        // becomes available in the following tick of the JS engine. In that case we fall back to
-        // the `inertDocumentHelper` instead.
+        // 일부 브라우저에서는 (예: Mozilla/5.0 iPad AppleWebKit Mobile) `body` 속성이 JS 엔진의 다음 틱에서만 사용 가능해집니다.
+        // 그 경우, 대신 `inertDocumentHelper`로 대체합니다.
         return this.inertDocumentHelper.getInertBodyElement(html);
       }
       body.firstChild?.remove();
@@ -60,8 +57,8 @@ class DOMParserHelper implements InertBodyHelper {
 }
 
 /**
- * Use an HTML5 `template` element to create and fill an inert DOM element.
- * This is the fallback strategy if the browser does not support DOMParser.
+ * HTML5 `template` 요소를 사용하여 비활성 DOM 요소를 생성하고 채웁니다.
+ * 이는 브라우저가 DOMParser를 지원하지 않을 경우의 대체 전략입니다.
  */
 class InertDocumentHelper implements InertBodyHelper {
   private inertDocument: Document;
@@ -78,9 +75,9 @@ class InertDocumentHelper implements InertBodyHelper {
 }
 
 /**
- * We need to determine whether the DOMParser exists in the global context and
- * supports parsing HTML; HTML parsing support is not as wide as other formats, see
- * https://developer.mozilla.org/en-US/docs/Web/API/DOMParser#Browser_compatibility.
+ * 글로벌 컨텍스트에 DOMParser가 존재하는지 여부와
+ * HTML 파싱을 지원하는지를 확인해야 합니다; HTML 파싱 지원은 다른 형식만큼 넓지 않습니다.
+ * https://developer.mozilla.org/en-US/docs/Web/API/DOMParser#Browser_compatibility를 참조하십시오.
  *
  * @suppress {uselessCode}
  */

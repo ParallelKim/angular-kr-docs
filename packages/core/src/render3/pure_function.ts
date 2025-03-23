@@ -20,7 +20,7 @@ import {getBindingRoot, getLView} from './state';
 import {NO_CHANGE} from './tokens';
 
 /**
- * Bindings for pure functions are stored after regular bindings.
+ * 순수 함수에 대한 바인딩은 일반 바인딩 이후에 저장됩니다.
  *
  * |-------decls------|---------vars---------|                 |----- hostVars (dir1) ------|
  * ------------------------------------------------------------------------------------------
@@ -29,22 +29,18 @@ import {NO_CHANGE} from './tokens';
  *                    ^                      ^
  *      TView.bindingStartIndex      TView.expandoStartIndex
  *
- * Pure function instructions are given an offset from the binding root. Adding the offset to the
- * binding root gives the first index where the bindings are stored. In component views, the binding
- * root is the bindingStartIndex. In host bindings, the binding root is the expandoStartIndex +
- * any directive instances + any hostVars in directives evaluated before it.
+ * 순수 함수 지침은 바인딩 루트에서 오프셋을 부여받습니다. 오프셋을 바인딩 루트에 추가하면 바인딩이 저장되는 첫 번째 인덱스가 얻어집니다. 컴포넌트 뷰에서는 바인딩 루트가 bindingStartIndex입니다. 호스트 바인딩에서는 바인딩 루트가 expandoStartIndex + 평가된 어떤 지시기 인스턴스 + 지시기 내의 어떤 hostVars입니다.
  *
- * See VIEW_DATA.md for more information about host binding resolution.
+ * 호스트 바인딩 해석에 대한 자세한 내용은 VIEW_DATA.md를 참조하십시오.
  */
 
 /**
- * If the value hasn't been saved, calls the pure function to store and return the
- * value. If it has been saved, returns the saved value.
+ * 값이 저장되지 않았다면, 순수 함수를 호출하여 값을 저장하고 반환합니다. 값이 저장되어 있다면 저장된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
- * @param pureFn Function that returns a value
- * @param thisArg Optional calling context of pureFn
- * @returns value
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
+ * @param pureFn 값을 반환하는 함수
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 값
  *
  * @codeGenApi
  */
@@ -57,14 +53,13 @@ export function ɵɵpureFunction0<T>(slotOffset: number, pureFn: () => T, thisAr
 }
 
 /**
- * If the value of the provided exp has changed, calls the pure function to return
- * an updated value. Or if the value has not changed, returns cached value.
+ * 제공된 exp의 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
- * @param pureFn Function that returns an updated value
- * @param exp Updated expression value
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
+ * @param pureFn 업데이트된 값을 반환하는 함수
+ * @param exp 업데이트된 표현식 값
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -78,15 +73,14 @@ export function ɵɵpureFunction1(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -109,16 +103,15 @@ export function ɵɵpureFunction2(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
  * @param exp3
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -143,17 +136,16 @@ export function ɵɵpureFunction3(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
  * @param exp3
  * @param exp4
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -180,18 +172,17 @@ export function ɵɵpureFunction4(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
  * @param exp3
  * @param exp4
  * @param exp5
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -220,10 +211,9 @@ export function ɵɵpureFunction5(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
@@ -231,8 +221,8 @@ export function ɵɵpureFunction5(
  * @param exp4
  * @param exp5
  * @param exp6
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -262,10 +252,9 @@ export function ɵɵpureFunction6(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
@@ -274,8 +263,8 @@ export function ɵɵpureFunction6(
  * @param exp5
  * @param exp6
  * @param exp7
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -306,10 +295,9 @@ export function ɵɵpureFunction7(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
@@ -319,8 +307,8 @@ export function ɵɵpureFunction7(
  * @param exp6
  * @param exp7
  * @param exp8
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -352,17 +340,15 @@ export function ɵɵpureFunction8(
 }
 
 /**
- * pureFunction instruction that can support any number of bindings.
+ * 순수 함수 지침은 임의의 수의 바인딩을 지원할 수 있습니다.
  *
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param slotOffset the offset from binding root to the reserved slot
- * @param pureFn A pure function that takes binding values and builds an object or array
- * containing those values.
- * @param exps An array of binding values
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
+ * @param pureFn 바인딩 값을 가져와 객체나 배열을 생성하는 순수 함수
+ * @param exps 바인딩 값의 배열
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  * @codeGenApi
  */
@@ -376,11 +362,7 @@ export function ɵɵpureFunctionV(
 }
 
 /**
- * Results of a pure function invocation are stored in LView in a dedicated slot that is initialized
- * to NO_CHANGE. In rare situations a pure pipe might throw an exception on the very first
- * invocation and not produce any valid results. In this case LView would keep holding the NO_CHANGE
- * value. The NO_CHANGE is not something that we can use in expressions / bindings thus we convert
- * it to `undefined`.
+ * 순수 함수 호출의 결과는 NO_CHANGE로 초기화된 전용 슬롯에서 LView에 저장됩니다. 드물게 순수 파이프가 첫 번째 호출 시 예외를 발생시키고 유효한 결과를 생성하지 않을 수 있습니다. 이 경우 LView는 NO_CHANGE 값을 계속 가지고 있게 됩니다. NO_CHANGE는 표현식 / 바인딩에서 사용할 수 있는 것이 아니므로 `undefined`로 변환합니다.
  */
 function getPureFunctionReturnValue(lView: LView, returnValueIndex: number) {
   ngDevMode && assertIndexInRange(lView, returnValueIndex);
@@ -389,16 +371,15 @@ function getPureFunctionReturnValue(lView: LView, returnValueIndex: number) {
 }
 
 /**
- * If the value of the provided exp has changed, calls the pure function to return
- * an updated value. Or if the value has not changed, returns cached value.
+ * 제공된 exp의 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param lView LView in which the function is being executed.
- * @param bindingRoot Binding root index.
- * @param slotOffset the offset from binding root to the reserved slot
- * @param pureFn Function that returns an updated value
- * @param exp Updated expression value
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param lView 함수가 실행되는 LView.
+ * @param bindingRoot 바인딩 루트 인덱스.
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
+ * @param pureFn 업데이트된 값을 반환하는 함수
+ * @param exp 업데이트된 표현식 값
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  */
 export function pureFunction1Internal(
   lView: LView,
@@ -415,17 +396,16 @@ export function pureFunction1Internal(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param lView LView in which the function is being executed.
- * @param bindingRoot Binding root index.
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param lView 함수가 실행되는 LView.
+ * @param bindingRoot 바인딩 루트 인덱스.
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  */
 export function pureFunction2Internal(
   lView: LView,
@@ -447,18 +427,17 @@ export function pureFunction2Internal(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param lView LView in which the function is being executed.
- * @param bindingRoot Binding root index.
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param lView 함수가 실행되는 LView.
+ * @param bindingRoot 바인딩 루트 인덱스.
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
  * @param exp3
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  */
 export function pureFunction3Internal(
   lView: LView,
@@ -481,19 +460,18 @@ export function pureFunction3Internal(
 }
 
 /**
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param lView LView in which the function is being executed.
- * @param bindingRoot Binding root index.
- * @param slotOffset the offset from binding root to the reserved slot
+ * @param lView 함수가 실행되는 LView.
+ * @param bindingRoot 바인딩 루트 인덱스.
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
  * @param pureFn
  * @param exp1
  * @param exp2
  * @param exp3
  * @param exp4
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  *
  */
 export function pureFunction4Internal(
@@ -518,19 +496,17 @@ export function pureFunction4Internal(
 }
 
 /**
- * pureFunction instruction that can support any number of bindings.
+ * 순수 함수 지침은 임의의 수의 바인딩을 지원할 수 있습니다.
  *
- * If the value of any provided exp has changed, calls the pure function to return
- * an updated value. Or if no values have changed, returns cached value.
+ * 제공된 exp 중 어떤 것이든 값이 변경되었다면, 순수 함수를 호출하여 업데이트된 값을 반환합니다. 값이 변경되지 않았다면, 캐시된 값을 반환합니다.
  *
- * @param lView LView in which the function is being executed.
- * @param bindingRoot Binding root index.
- * @param slotOffset the offset from binding root to the reserved slot
- * @param pureFn A pure function that takes binding values and builds an object or array
- * containing those values.
- * @param exps An array of binding values
- * @param thisArg Optional calling context of pureFn
- * @returns Updated or cached value
+ * @param lView 함수가 실행되는 LView.
+ * @param bindingRoot 바인딩 루트 인덱스.
+ * @param slotOffset 바인딩 루트에서 예약된 슬롯까지의 오프셋
+ * @param pureFn 바인딩 값을 가져와 객체나 배열을 생성하는 순수 함수
+ * @param exps 바인딩 값의 배열
+ * @param thisArg 순수 함수의 선택적 호출 컨텍스트
+ * @returns 업데이트된 값 또는 캐시된 값
  */
 export function pureFunctionVInternal(
   lView: LView,

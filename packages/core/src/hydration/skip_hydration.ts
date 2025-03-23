@@ -10,25 +10,24 @@ import {TNode, TNodeFlags} from '../render3/interfaces/node';
 import {RElement} from '../render3/interfaces/renderer_dom';
 
 /**
- * The name of an attribute that can be added to the hydration boundary node
- * (component host node) to disable hydration for the content within that boundary.
+ * 수조 경계 노드(컴포넌트 호스트 노드)에 추가할 수 있는 속성 이름으로,
+ * 해당 경계 내의 콘텐츠에 대한 수조를 비활성화합니다.
  */
 export const SKIP_HYDRATION_ATTR_NAME = 'ngSkipHydration';
 
-/** Lowercase name of the `ngSkipHydration` attribute used for case-insensitive comparisons. */
+/** 대소문자를 구분하지 않는 비교에 사용되는 `ngSkipHydration` 속성의 소문자 이름. */
 const SKIP_HYDRATION_ATTR_NAME_LOWER_CASE = 'ngskiphydration';
 
 /**
- * Helper function to check if a given TNode has the 'ngSkipHydration' attribute.
+ * 주어진 TNode가 'ngSkipHydration' 속성을 가지고 있는지 확인하는 헬퍼 함수.
  */
 export function hasSkipHydrationAttrOnTNode(tNode: TNode): boolean {
   const attrs = tNode.mergedAttrs;
   if (attrs === null) return false;
-  // only ever look at the attribute name and skip the values
+  // 항상 속성 이름만 보고 값을 건너뜁니다.
   for (let i = 0; i < attrs.length; i += 2) {
     const value = attrs[i];
-    // This is a marker, which means that the static attributes section is over,
-    // so we can exit early.
+    // 이것은 마커로, 정적 속성 섹션이 끝났음을 의미하므로 조기에 종료할 수 있습니다.
     if (typeof value === 'number') return false;
     if (typeof value === 'string' && value.toLowerCase() === SKIP_HYDRATION_ATTR_NAME_LOWER_CASE) {
       return true;
@@ -38,24 +37,22 @@ export function hasSkipHydrationAttrOnTNode(tNode: TNode): boolean {
 }
 
 /**
- * Helper function to check if a given RElement has the 'ngSkipHydration' attribute.
+ * 주어진 RElement가 'ngSkipHydration' 속성을 가지고 있는지 확인하는 헬퍼 함수.
  */
 export function hasSkipHydrationAttrOnRElement(rNode: RElement): boolean {
   return rNode.hasAttribute(SKIP_HYDRATION_ATTR_NAME);
 }
 
 /**
- * Checks whether a TNode has a flag to indicate that it's a part of
- * a skip hydration block.
+ * TNode가 건너뛰기 수조 블록의 일부임을 나타내는 플래그가 있는지 확인합니다.
  */
 export function hasInSkipHydrationBlockFlag(tNode: TNode): boolean {
   return (tNode.flags & TNodeFlags.inSkipHydrationBlock) === TNodeFlags.inSkipHydrationBlock;
 }
 
 /**
- * Helper function that determines if a given node is within a skip hydration block
- * by navigating up the TNode tree to see if any parent nodes have skip hydration
- * attribute.
+ * 주어진 노드가 수조 건너뛰기 블록 안에 있는지를 확인하는 헬퍼 함수로,
+ * TNode 트리를 올라가면서 부모 노드 중에 수조 건너뛰기 속성을 가진 노드가 있는지 확인합니다.
  */
 export function isInSkipHydrationBlock(tNode: TNode): boolean {
   if (hasInSkipHydrationBlockFlag(tNode)) {
@@ -72,9 +69,8 @@ export function isInSkipHydrationBlock(tNode: TNode): boolean {
 }
 
 /**
- * Check if an i18n block is in a skip hydration section by looking at a parent TNode
- * to determine if this TNode is in a skip hydration section or the TNode has
- * the `ngSkipHydration` attribute.
+ * i18n 블록이 수조 건너뛰기 섹션에 있는지를 확인하기 위해 부모 TNode를 살펴보아
+ * 이 TNode가 수조 건너뛰기 섹션에 있는지 또는 TNode가 `ngSkipHydration` 속성을 가지고 있는지를 확인합니다.
  */
 export function isI18nInSkipHydrationBlock(parentTNode: TNode): boolean {
   return (

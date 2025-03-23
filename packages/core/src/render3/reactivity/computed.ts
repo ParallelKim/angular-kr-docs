@@ -11,22 +11,22 @@ import {createComputed, SIGNAL} from '@angular/core/primitives/signals';
 import {Signal, ValueEqualityFn} from './api';
 
 /**
- * Options passed to the `computed` creation function.
+ * `computed` 생성 함수에 전달된 옵션.
  */
 export interface CreateComputedOptions<T> {
   /**
-   * A comparison function which defines equality for computed values.
+   * 계산된 값의 동등성을 정의하는 비교 함수.
    */
   equal?: ValueEqualityFn<T>;
 
   /**
-   * A debug name for the computed signal. Used in Angular DevTools to identify the signal.
+   * 계산된 신호의 디버그 이름. Angular DevTools에서 신호를 식별하는 데 사용됩니다.
    */
   debugName?: string;
 }
 
 /**
- * Create a computed `Signal` which derives a reactive value from an expression.
+ * 표현식에서 반응형 값을 파생하는 계산된 `Signal`을 생성합니다.
  */
 export function computed<T>(computation: () => T, options?: CreateComputedOptions<T>): Signal<T> {
   const getter = createComputed(computation, options?.equal);

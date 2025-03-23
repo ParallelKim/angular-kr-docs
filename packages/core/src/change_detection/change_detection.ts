@@ -39,12 +39,12 @@ export {
 export {PipeTransform} from './pipe_transform';
 
 /**
- * Structural diffing for `Object`s and `Map`s.
+ * `Object`와 `Map`에 대한 구조적 차이.
  */
 const keyValDiff: KeyValueDifferFactory[] = [new DefaultKeyValueDifferFactory()];
 
 /**
- * Structural diffing for `Iterable` types such as `Array`s.
+ * `Array`와 같은 `Iterable` 타입에 대한 구조적 차이.
  */
 const iterableDiff: IterableDifferFactory[] = [new DefaultIterableDifferFactory()];
 

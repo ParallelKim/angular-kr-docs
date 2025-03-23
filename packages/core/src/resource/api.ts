@@ -11,103 +11,102 @@ import {Signal, ValueEqualityFn} from '../render3/reactivity/api';
 import {WritableSignal} from '../render3/reactivity/signal';
 
 /**
- * Status of a `Resource`.
+ * `Resource`의 상태입니다.
  *
  * @experimental
  */
 export enum ResourceStatus {
   /**
-   * The resource has no valid request and will not perform any loading.
+   * 리소스에 유효한 요청이 없으며 로드를 수행하지 않습니다.
    *
-   * `value()` will be `undefined`.
+   * `value()`는 `undefined`가 됩니다.
    */
   Idle,
 
   /**
-   * Loading failed with an error.
+   * 오류로 인해 로딩이 실패했습니다.
    *
-   * `value()` will be `undefined`.
+   * `value()`는 `undefined`가 됩니다.
    */
   Error,
 
   /**
-   * The resource is currently loading a new value as a result of a change in its `request`.
+   * 리소스가 `request`의 변경으로 인해 새 값을 로딩 중입니다.
    *
-   * `value()` will be `undefined`.
+   * `value()`는 `undefined`가 됩니다.
    */
   Loading,
 
   /**
-   * The resource is currently reloading a fresh value for the same request.
+   * 리소스가 동일한 요청을 위한 새 값을 다시 로딩 중입니다.
    *
-   * `value()` will continue to return the previously fetched value during the reloading operation.
+   * `value()`는 다시 로딩 작업 중에 이전에 가져온 값을 계속 반환합니다.
    */
   Reloading,
 
   /**
-   * Loading has completed and the resource has the value returned from the loader.
+   * 로딩이 완료되었고 리소스가 로더에서 반환된 값을 가지고 있습니다.
    */
   Resolved,
 
   /**
-   * The resource's value was set locally via `.set()` or `.update()`.
+   * 리소스의 값이 `.set()` 또는 `.update()`를 통해 로컬로 설정되었습니다.
    */
   Local,
 }
 
 /**
- * A Resource is an asynchronous dependency (for example, the results of an API call) that is
- * managed and delivered through signals.
+ * 리소스는 비동기 종속성(예: API 호출의 결과)으로,
+ * 신호를 통해 관리되고 전달됩니다.
  *
- * The usual way of creating a `Resource` is through the `resource` function, but various other APIs
- * may present `Resource` instances to describe their own concepts.
+ * `Resource`를 생성하는 일반적인 방법은 `resource` 함수를 사용하는 것이지만,
+ * 다양한 다른 API가 자체 개념을 설명하기 위해 `Resource` 인스턴스를 제공할 수 있습니다.
  *
  * @experimental
  */
 export interface Resource<T> {
   /**
-   * The current value of the `Resource`, or `undefined` if there is no current value.
+   * `Resource`의 현재 값이나 현재 값이 없으면 `undefined`.
    */
   readonly value: Signal<T>;
 
   /**
-   * The current status of the `Resource`, which describes what the resource is currently doing and
-   * what can be expected of its `value`.
+   * 리소스의 현재 상태로, 리소스가 현재 수행하는 작업과
+   * `value`에서 예상할 수 있는 내용을 설명합니다.
    */
   readonly status: Signal<ResourceStatus>;
 
   /**
-   * When in the `error` state, this returns the last known error from the `Resource`.
+   * `error` 상태에 있을 때, 이 속성은 리소스의 마지막 알려진 오류를 반환합니다.
    */
   readonly error: Signal<unknown>;
 
   /**
-   * Whether this resource is loading a new value (or reloading the existing one).
+   * 이 리소스가 새 값을 로딩 중인지(또는 기존 값을 다시 로딩 중인지) 여부입니다.
    */
   readonly isLoading: Signal<boolean>;
 
   /**
-   * Whether this resource has a valid current value.
+   * 이 리소스가 유효한 현재 값을 가지고 있는지 여부입니다.
    *
-   * This function is reactive.
+   * 이 함수는 반응형입니다.
    */
   hasValue(): this is Resource<Exclude<T, undefined>>;
 
   /**
-   * Instructs the resource to re-load any asynchronous dependency it may have.
+   * 리소스에 비동기 종속성을 다시 로드하라는 지시입니다.
    *
-   * Note that the resource will not enter its reloading state until the actual backend request is
-   * made.
+   * 실제 백엔드 요청이 이루어질 때까지 리소스는 다시 로딩 상태로 들어가지 않습니다.
    *
-   * @returns true if a reload was initiated, false if a reload was unnecessary or unsupported
+   * @returns 재로드가 시작되었으면 true, 재로드가 불필요하거나 지원되지 않으면 false
    */
   reload(): boolean;
 }
 
 /**
- * A `Resource` with a mutable value.
+ * 변경 가능한 값을 가진 `Resource`입니다.
  *
- * Overwriting the value of a resource sets it to the 'local' state.
+ * 리소스의 값을 덮어쓰면 '로컬' 상태로 설정됩니다.
  *
  * @experimental
  */
@@ -116,19 +115,19 @@ export interface WritableResource<T> extends Resource<T> {
   hasValue(): this is WritableResource<Exclude<T, undefined>>;
 
   /**
-   * Convenience wrapper for `value.set`.
+   * `value.set`에 대한 편리한 래퍼입니다.
    */
   set(value: T): void;
 
   /**
-   * Convenience wrapper for `value.update`.
+   * `value.update`에 대한 편리한 래퍼입니다.
    */
   update(updater: (value: T) => T): void;
   asReadonly(): Resource<T>;
 }
 
 /**
- * A `WritableResource` created through the `resource` function.
+ * `resource` 함수를 통해 생성된 `WritableResource`입니다.
  *
  * @experimental
  */
@@ -136,14 +135,13 @@ export interface ResourceRef<T> extends WritableResource<T> {
   hasValue(): this is ResourceRef<Exclude<T, undefined>>;
 
   /**
-   * Manually destroy the resource, which cancels pending requests and returns it to `idle` state.
+   * 리소스를 수동으로 삭제하여 보류 중인 요청을 취소하고 `idle` 상태로 돌아갑니다.
    */
   destroy(): void;
 }
 
 /**
- * Parameter to a `ResourceLoader` which gives the request and other options for the current loading
- * operation.
+ * 현재 로딩 작업에 대한 요청 및 기타 옵션을 제공하는 `ResourceLoader`의 매개변수입니다.
  *
  * @experimental
  */
@@ -156,14 +154,14 @@ export interface ResourceLoaderParams<R> {
 }
 
 /**
- * Loading function for a `Resource`.
+ * `Resource`의 로딩 함수입니다.
  *
  * @experimental
  */
 export type ResourceLoader<T, R> = (param: ResourceLoaderParams<R>) => PromiseLike<T>;
 
 /**
- * Streaming loader for a `Resource`.
+ * `Resource`에 대한 스트리밍 로더입니다.
  *
  * @experimental
  */
@@ -172,67 +170,66 @@ export type ResourceStreamingLoader<T, R> = (
 ) => PromiseLike<Signal<ResourceStreamItem<T>>>;
 
 /**
- * Options to the `resource` function, for creating a resource.
+ * 리소스를 생성하기 위한 `resource` 함수의 옵션입니다.
  *
  * @experimental
  */
 export interface BaseResourceOptions<T, R> {
   /**
-   * A reactive function which determines the request to be made. Whenever the request changes, the
-   * loader will be triggered to fetch a new value for the resource.
+   * 수행될 요청을 결정하는 반응형 함수입니다. 요청이 변경되면
+   * 로더가 리소스의 새 값을 가져오도록 트리거됩니다.
    *
-   * If a request function isn't provided, the loader won't rerun unless the resource is reloaded.
+   * 요청 함수가 제공되지 않으면 리소스가 다시 로드되지 않는 한 로더는 다시 실행되지 않습니다.
    */
   request?: () => R;
 
   /**
-   * The value which will be returned from the resource when a server value is unavailable, such as
-   * when the resource is still loading, or in an error state.
+   * 서버 값이 사용할 수 없을 때 리소스에서 반환될 값으로,
+   * 예를 들어 리소스가 여전히 로딩 중이거나 오류 상태에 있을 때 사용됩니다.
    */
   defaultValue?: NoInfer<T>;
 
   /**
-   * Equality function used to compare the return value of the loader.
+   * 로더의 반환 값을 비교하는 데 사용되는 동등성 함수입니다.
    */
   equal?: ValueEqualityFn<T>;
 
   /**
-   * Overrides the `Injector` used by `resource`.
+   * `resource`에서 사용하는 `Injector`를 재정의합니다.
    */
   injector?: Injector;
 }
 
 /**
- * Options to the `resource` function, for creating a resource.
+ * 리소스를 생성하기 위한 `resource` 함수의 옵션입니다.
  *
  * @experimental
  */
 export interface PromiseResourceOptions<T, R> extends BaseResourceOptions<T, R> {
   /**
-   * Loading function which returns a `Promise` of the resource's value for a given request.
+   * 주어진 요청에 대한 리소스 값을 `Promise`로 반환하는 로딩 함수입니다.
    */
   loader: ResourceLoader<T, R>;
 
   /**
-   * Cannot specify `stream` and `loader` at the same time.
+   * `stream`과 `loader`를 동시에 지정할 수 없습니다.
    */
   stream?: never;
 }
 
 /**
- * Options to the `resource` function, for creating a resource.
+ * 리소스를 생성하기 위한 `resource` 함수의 옵션입니다.
  *
  * @experimental
  */
 export interface StreamingResourceOptions<T, R> extends BaseResourceOptions<T, R> {
   /**
-   * Loading function which returns a `Promise` of a signal of the resource's value for a given
-   * request, which can change over time as new values are received from a stream.
+   * 주어진 요청에 대한 리소스의 값을 포함하는 신호의 `Promise`를 반환하는 로딩 함수로, 새 값이 스트림에서 수신되면 시간이 지남에 따라 변경될 수 있습니다.
    */
   stream: ResourceStreamingLoader<T, R>;
 
   /**
-   * Cannot specify `stream` and `loader` at the same time.
+   * `stream`과 `loader`를 동시에 지정할 수 없습니다.
    */
   loader?: never;
 }

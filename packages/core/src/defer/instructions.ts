@@ -67,23 +67,19 @@ import {
 } from './triggering';
 
 /**
- * Creates runtime data structures for defer blocks.
+ * 지연 블록에 대한 런타임 데이터 구조를 생성합니다.
  *
- * @param index Index of the `defer` instruction.
- * @param primaryTmplIndex Index of the template with the primary block content.
- * @param dependencyResolverFn Function that contains dependencies for this defer block.
- * @param loadingTmplIndex Index of the template with the loading block content.
- * @param placeholderTmplIndex Index of the template with the placeholder block content.
- * @param errorTmplIndex Index of the template with the error block content.
- * @param loadingConfigIndex Index in the constants array of the configuration of the loading.
- *     block.
- * @param placeholderConfigIndex Index in the constants array of the configuration of the
- *     placeholder block.
- * @param enableTimerScheduling Function that enables timer-related scheduling if `after`
- *     or `minimum` parameters are setup on the `@loading` or `@placeholder` blocks.
- * @param flags A set of flags to define a particular behavior (e.g. to indicate that
- *              hydrate triggers are present and regular triggers should be deactivated
- *              in certain scenarios).
+ * @param index `defer` 명령의 인덱스입니다.
+ * @param primaryTmplIndex 기본 블록 콘텐츠가 있는 템플릿의 인덱스입니다.
+ * @param dependencyResolverFn 이 지연 블록에 대한 종속성을 포함하는 함수입니다.
+ * @param loadingTmplIndex 로딩 블록 콘텐츠가 있는 템플릿의 인덱스입니다.
+ * @param placeholderTmplIndex 플레이스 홀더 블록 콘텐츠가 있는 템플릿의 인덱스입니다.
+ * @param errorTmplIndex 오류 블록 콘텐츠가 있는 템플릿의 인덱스입니다.
+ * @param loadingConfigIndex 로딩 블록의 구성이 포함된 상수 배열의 인덱스입니다.
+ * @param placeholderConfigIndex 플레이스 홀더 블록의 구성이 포함된 상수 배열의 인덱스입니다.
+ * @param enableTimerScheduling `@loading` 또는 `@placeholder` 블록이 설정된 경우
+ *     타이머 관련 일정을 활성화하는 함수입니다.
+ * @param flags 특정 동작을 정의하는 플래그 집합입니다 (예: 수분 트리거가 존재한다는 것을 나타내고 특정 시나리오에서 일반 트리거를 비활성화해야 함).
  *
  * @codeGenApi
  */
@@ -129,9 +125,9 @@ export function ɵɵdefer(
 
   const lContainer = lView[adjustedIndex];
 
-  // If hydration is enabled, looks up dehydrated views in the DOM
-  // using hydration annotation info and stores those views on LContainer.
-  // In client-only mode, this function is a noop.
+  // 수분이 활성화된 경우, DOM에서 탈수된 뷰를 찾아서
+  // 이를 LContainer에 저장합니다. 클라이언트 전용 모드에서는
+  // 이 함수는 noop입니다.
   populateDehydratedViewsInLContainer(lContainer, tNode, lView);
 
   let ssrBlockState = null;
@@ -142,7 +138,7 @@ export function ɵɵdefer(
     ssrBlockState = info[SERIALIZED_DEFER_BLOCK_STATE];
   }
 
-  // Init instance-specific defer details and store it.
+  // 인스턴스별 지연 세부정보를 초기화하고 저장합니다.
   const lDetails: LDeferBlockDetails = [
     null, // NEXT_DEFER_BLOCK_STATE
     DeferBlockInternalState.Initial, // DEFER_BLOCK_STATE
@@ -161,8 +157,8 @@ export function ɵɵdefer(
   if (ssrUniqueId !== null) {
     ngDevMode && assertIncrementalHydrationIsConfigured(injector);
 
-    // Store this defer block in the registry, to have an access to
-    // internal data structures from hydration runtime code.
+    // 이 지연 블록을 레지스트리에 저장하여
+    // 수분 런타임 코드에서 내부 데이터 구조에 액세스 할 수 있도록 합니다.
     registry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
     registry.add(ssrUniqueId, {lView, tNode, lContainer});
   }
@@ -174,7 +170,7 @@ export function ɵɵdefer(
     }
   };
 
-  // When defer block is triggered - unsubscribe from LView destroy cleanup.
+  // 지연 블록이 트리거 될 때 - LView 파괴 정리에서 구독 취소합니다.
   storeTriggerCleanupFn(TriggerType.Regular, lDetails, () =>
     removeLViewOnDestroy(lView, onLViewDestroy),
   );
@@ -182,7 +178,7 @@ export function ɵɵdefer(
 }
 
 /**
- * Loads defer block dependencies when a trigger value becomes truthy.
+ * 트리거 값이 true가 될 때 지연 블록 종속성을 로드합니다.
  * @codeGenApi
  */
 export function ɵɵdeferWhen(rawValue: unknown) {
@@ -199,11 +195,11 @@ export function ɵɵdeferWhen(rawValue: unknown) {
   if (bindingUpdated(lView, bindingIndex, rawValue)) {
     const prevConsumer = setActiveConsumer(null);
     try {
-      const value = Boolean(rawValue); // handle truthy or falsy values
+      const value = Boolean(rawValue); // true or false 값을 처리
       const lDetails = getLDeferBlockDetails(lView, tNode);
       const renderedState = lDetails[DEFER_BLOCK_STATE];
       if (value === false && renderedState === DeferBlockInternalState.Initial) {
-        // If nothing is rendered yet, render a placeholder (if defined).
+        // 아무것도 렌더링되지 않은 경우, 플레이스 홀더를 렌더링합니다 (정의된 경우).
         renderPlaceholder(lView, tNode);
       } else if (
         value === true &&
@@ -219,7 +215,7 @@ export function ɵɵdeferWhen(rawValue: unknown) {
 }
 
 /**
- * Prefetches the deferred content when a value becomes truthy.
+ * 값이 true가 될 때 지연 콘텐츠를 미리 가져옵니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchWhen(rawValue: unknown) {
@@ -237,12 +233,12 @@ export function ɵɵdeferPrefetchWhen(rawValue: unknown) {
   if (bindingUpdated(lView, bindingIndex, rawValue)) {
     const prevConsumer = setActiveConsumer(null);
     try {
-      const value = Boolean(rawValue); // handle truthy or falsy values
+      const value = Boolean(rawValue); // true or false 값을 처리
       const tView = lView[TVIEW];
       const tNode = getSelectedTNode();
       const tDetails = getTDeferBlockDetails(tView, tNode);
       if (value === true && tDetails.loadingState === DeferDependenciesLoadingState.NOT_STARTED) {
-        // If loading has not been started yet, trigger it now.
+        // 로딩이 시작되지 않은 경우, 지금 트리거합니다.
         triggerPrefetching(tDetails, lView, tNode);
       }
     } finally {
@@ -252,7 +248,7 @@ export function ɵɵdeferPrefetchWhen(rawValue: unknown) {
 }
 
 /**
- * Hydrates the deferred content when a value becomes truthy.
+ * 값이 true가 될 때 지연 콘텐츠를 수분합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateWhen(rawValue: unknown) {
@@ -265,8 +261,8 @@ export function ɵɵdeferHydrateWhen(rawValue: unknown) {
 
   if (!shouldAttachTrigger(TriggerType.Hydrate, lView, tNode)) return;
 
-  // TODO(incremental-hydration): audit all defer instructions to reduce unnecessary work by
-  // moving function calls inside their relevant control flow blocks
+  // TODO(incremental-hydration): 모든 지연 명령을 감사하여
+  // 관련 제어 플로우 블록 내로 함수 호출을 이동하여 불필요한 작업을 줄입니다.
   const bindingIndex = nextBindingIndex();
   const tView = getTView();
   const hydrateTriggers = getHydrateTriggers(tView, tNode);
@@ -274,17 +270,15 @@ export function ɵɵdeferHydrateWhen(rawValue: unknown) {
 
   if (bindingUpdated(lView, bindingIndex, rawValue)) {
     if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-      // We are on the server and SSR for defer blocks is enabled.
+      // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
       triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
     } else {
       const injector = lView[INJECTOR];
       const prevConsumer = setActiveConsumer(null);
       try {
-        const value = Boolean(rawValue); // handle truthy or falsy values
+        const value = Boolean(rawValue); // true or false 값을 처리
         if (value === true) {
-          // The `when` condition has changed to `true`, trigger defer block loading
-          // if the block is either in initial (nothing is rendered) or a placeholder
-          // state.
+          // `when` 조건이 `true`로 변경되었으며, 블록이 초기 상태(렌더링된 것이 없음) 또는 플레이스 홀더 상태일 경우, 지연 블록 로딩을 트리거합니다.
           const lDetails = getLDeferBlockDetails(lView, tNode);
           const ssrUniqueId = lDetails[SSR_UNIQUE_ID]!;
           ngDevMode && assertSsrIdDefined(ssrUniqueId);
@@ -298,7 +292,7 @@ export function ɵɵdeferHydrateWhen(rawValue: unknown) {
 }
 
 /**
- * Specifies that hydration never occurs.
+ * 수분이 절대로 발생하지 않음을 명시합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateNever() {
@@ -315,13 +309,13 @@ export function ɵɵdeferHydrateNever() {
   hydrateTriggers.set(DeferBlockTrigger.Never, null);
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   }
 }
 
 /**
- * Sets up logic to handle the `on idle` deferred trigger.
+ * `on idle` 지연 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnIdle() {
@@ -338,7 +332,7 @@ export function ɵɵdeferOnIdle() {
 }
 
 /**
- * Sets up logic to handle the `prefetch on idle` deferred trigger.
+ * `prefetch on idle` 지연 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnIdle() {
@@ -355,7 +349,7 @@ export function ɵɵdeferPrefetchOnIdle() {
 }
 
 /**
- * Sets up logic to handle the `on idle` deferred trigger.
+ * `on idle` 지연 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnIdle() {
@@ -372,7 +366,7 @@ export function ɵɵdeferHydrateOnIdle() {
   hydrateTriggers.set(DeferBlockTrigger.Idle, null);
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   } else {
     scheduleDelayedHydrating(onIdle, lView, tNode);
@@ -380,7 +374,7 @@ export function ɵɵdeferHydrateOnIdle() {
 }
 
 /**
- * Sets up logic to handle the `on immediate` deferred trigger.
+ * `on immediate` 지연 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnImmediate() {
@@ -393,9 +387,7 @@ export function ɵɵdeferOnImmediate() {
 
   if (!shouldAttachTrigger(TriggerType.Regular, lView, tNode)) return;
 
-  // Render placeholder block only if loading template is not present and we're on
-  // the client to avoid content flickering, since it would be immediately replaced
-  // by the loading block.
+  // 로딩 템플릿이 존재하지 않고 클라이언트에 있는 경우에만 플레이스 홀더 블록을 렌더링하여 깜박임을 피합니다.
   const tDetails = getTDeferBlockDetails(lView[TVIEW], tNode);
   if (tDetails.loadingTmplIndex === null) {
     renderPlaceholder(lView, tNode);
@@ -404,7 +396,7 @@ export function ɵɵdeferOnImmediate() {
 }
 
 /**
- * Sets up logic to handle the `prefetch on immediate` deferred trigger.
+ * `prefetch on immediate` 지연 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnImmediate() {
@@ -426,7 +418,7 @@ export function ɵɵdeferPrefetchOnImmediate() {
 }
 
 /**
- * Sets up logic to handle the `on immediate` hydrate trigger.
+ * `on immediate` hydrate 트리거를 처리하기 위한 로직을 설정합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnImmediate() {
@@ -453,8 +445,8 @@ export function ɵɵdeferHydrateOnImmediate() {
   }
 }
 /**
- * Creates runtime data structures for the `on timer` deferred trigger.
- * @param delay Amount of time to wait before loading the content.
+ * `on timer` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param delay 콘텐츠를 로딩하기 전에 기다려야 하는 시간입니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnTimer(delay: number) {
@@ -471,8 +463,8 @@ export function ɵɵdeferOnTimer(delay: number) {
 }
 
 /**
- * Creates runtime data structures for the `prefetch on timer` deferred trigger.
- * @param delay Amount of time to wait before prefetching the content.
+ * `prefetch on timer` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param delay 콘텐츠를 미리 가져오기 전에 기다려야 하는 시간입니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnTimer(delay: number) {
@@ -489,8 +481,8 @@ export function ɵɵdeferPrefetchOnTimer(delay: number) {
 }
 
 /**
- * Creates runtime data structures for the `on timer` hydrate trigger.
- * @param delay Amount of time to wait before loading the content.
+ * `on timer` hydrate 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param delay 콘텐츠를 로딩하기 전에 기다려야 하는 시간입니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnTimer(delay: number) {
@@ -507,7 +499,7 @@ export function ɵɵdeferHydrateOnTimer(delay: number) {
   hydrateTriggers.set(DeferBlockTrigger.Timer, {delay});
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   } else {
     scheduleDelayedHydrating(onTimer(delay), lView, tNode);
@@ -515,9 +507,9 @@ export function ɵɵdeferHydrateOnTimer(delay: number) {
 }
 
 /**
- * Creates runtime data structures for the `on hover` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `on hover` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnHover(triggerIndex: number, walkUpTimes?: number) {
@@ -536,7 +528,7 @@ export function ɵɵdeferOnHover(triggerIndex: number, walkUpTimes?: number) {
 
   renderPlaceholder(lView, tNode);
 
-  // Avoid adding event listeners when this instruction is invoked on the server.
+  // 이 명령이 서버에서 호출될 때 이벤트 리스너를 추가하지 않도록 합니다.
   if (!(typeof ngServerMode !== 'undefined' && ngServerMode)) {
     registerDomTrigger(
       lView,
@@ -551,9 +543,9 @@ export function ɵɵdeferOnHover(triggerIndex: number, walkUpTimes?: number) {
 }
 
 /**
- * Creates runtime data structures for the `prefetch on hover` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `prefetch on hover` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnHover(triggerIndex: number, walkUpTimes?: number) {
@@ -587,7 +579,7 @@ export function ɵɵdeferPrefetchOnHover(triggerIndex: number, walkUpTimes?: num
 }
 
 /**
- * Creates runtime data structures for the `on hover` hydrate trigger.
+ * `on hover` hydrate 트리거를 위한 런타임 데이터 구조를 생성합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnHover() {
@@ -604,17 +596,16 @@ export function ɵɵdeferHydrateOnHover() {
   hydrateTriggers.set(DeferBlockTrigger.Hover, null);
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   }
-  // The actual triggering of hydration on hover is handled by JSAction in
-  // event_replay.ts.
+  // hover 시 hydration의 실제 트리거는 event_replay.ts의 JSAction에 의해 처리됩니다.
 }
 
 /**
- * Creates runtime data structures for the `on interaction` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `on interaction` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnInteraction(triggerIndex: number, walkUpTimes?: number) {
@@ -633,7 +624,7 @@ export function ɵɵdeferOnInteraction(triggerIndex: number, walkUpTimes?: numbe
 
   renderPlaceholder(lView, tNode);
 
-  // Avoid adding event listeners when this instruction is invoked on the server.
+  // 이 명령이 서버에서 호출될 때 이벤트 리스너를 추가하지 않도록 합니다.
   if (!(typeof ngServerMode !== 'undefined' && ngServerMode)) {
     registerDomTrigger(
       lView,
@@ -648,9 +639,9 @@ export function ɵɵdeferOnInteraction(triggerIndex: number, walkUpTimes?: numbe
 }
 
 /**
- * Creates runtime data structures for the `prefetch on interaction` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `prefetch on interaction` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnInteraction(triggerIndex: number, walkUpTimes?: number) {
@@ -684,7 +675,7 @@ export function ɵɵdeferPrefetchOnInteraction(triggerIndex: number, walkUpTimes
 }
 
 /**
- * Creates runtime data structures for the `on interaction` hydrate trigger.
+ * `on interaction` hydrate 트리거를 위한 런타임 데이터 구조를 생성합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnInteraction() {
@@ -701,17 +692,16 @@ export function ɵɵdeferHydrateOnInteraction() {
   hydrateTriggers.set(DeferBlockTrigger.Interaction, null);
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   }
-  // The actual triggering of hydration on interaction is handled by JSAction in
-  // event_replay.ts.
+  // interaction 시 hydration의 실제 트리거는 event_replay.ts의 JSAction에 의해 처리됩니다.
 }
 
 /**
- * Creates runtime data structures for the `on viewport` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `on viewport` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferOnViewport(triggerIndex: number, walkUpTimes?: number) {
@@ -730,7 +720,7 @@ export function ɵɵdeferOnViewport(triggerIndex: number, walkUpTimes?: number) 
 
   renderPlaceholder(lView, tNode);
 
-  // Avoid adding event listeners when this instruction is invoked on the server.
+  // 이 명령이 서버에서 호출될 때 이벤트 리스너를 추가하지 않도록 합니다.
   if (!(typeof ngServerMode !== 'undefined' && ngServerMode)) {
     registerDomTrigger(
       lView,
@@ -745,9 +735,9 @@ export function ɵɵdeferOnViewport(triggerIndex: number, walkUpTimes?: number) 
 }
 
 /**
- * Creates runtime data structures for the `prefetch on viewport` deferred trigger.
- * @param triggerIndex Index at which to find the trigger element.
- * @param walkUpTimes Number of times to walk up/down the tree hierarchy to find the trigger.
+ * `prefetch on viewport` 지연 트리거를 위한 런타임 데이터 구조를 생성합니다.
+ * @param triggerIndex 트리거 요소를 찾기 위한 인덱스입니다.
+ * @param walkUpTimes 트리거를 찾기 위해 트리 구조를 얼마나 많이 올라갈지를 나타냅니다.
  * @codeGenApi
  */
 export function ɵɵdeferPrefetchOnViewport(triggerIndex: number, walkUpTimes?: number) {
@@ -781,7 +771,7 @@ export function ɵɵdeferPrefetchOnViewport(triggerIndex: number, walkUpTimes?: 
 }
 
 /**
- * Creates runtime data structures for the `on viewport` hydrate trigger.
+ * `on viewport` hydrate 트리거를 위한 런타임 데이터 구조를 생성합니다.
  * @codeGenApi
  */
 export function ɵɵdeferHydrateOnViewport() {
@@ -798,9 +788,9 @@ export function ɵɵdeferHydrateOnViewport() {
   hydrateTriggers.set(DeferBlockTrigger.Viewport, null);
 
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // We are on the server and SSR for defer blocks is enabled.
+    // 우리는 서버에 있으며, 지연 블록에 대해 SSR이 활성화되어 있습니다.
     triggerDeferBlock(TriggerType.Hydrate, lView, tNode);
   }
-  // The actual triggering of hydration on viewport happens in triggering.ts,
-  // since these instructions won't exist for dehydrated content.
+  // viewport에서의 hydration의 실제 트리거는 triggering.ts에서 발생합니다.
+  // 탈수된 콘텐츠에 대해 이러한 명령은 존재하지 않습니다.
 }

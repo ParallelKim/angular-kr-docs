@@ -20,30 +20,29 @@ import {CONTEXT, HEADER_OFFSET, HOST, ID, LView, TVIEW} from './interfaces/view'
 import {getComponentLViewByIndex, unwrapRNode} from './util/view_utils';
 
 /**
- * Returns the matching `LContext` data for a given DOM node, directive or component instance.
+ * 주어진 DOM 노드, 지시어 또는 컴포넌트 인스턴스에 대한 일치하는 `LContext` 데이터를 반환합니다.
  *
- * This function will examine the provided DOM element, component, or directive instance\'s
- * monkey-patched property to derive the `LContext` data. Once called then the monkey-patched
- * value will be that of the newly created `LContext`.
+ * 이 함수는 제공된 DOM 요소, 컴포넌트 또는 지시어 인스턴스의
+ * 몽키 패치된 속성을 검사하여 `LContext` 데이터를 유도합니다. 한번 호출되면 몽키 패치된
+ * 값은 새로 생성된 `LContext`의 값이 됩니다.
  *
- * If the monkey-patched value is the `LView` instance then the context value for that
- * target will be created and the monkey-patch reference will be updated. Therefore when this
- * function is called it may mutate the provided element\'s, component\'s or any of the associated
- * directive\'s monkey-patch values.
+ * 몽키 패치된 값이 `LView` 인스턴스인 경우 해당
+ * 대상에 대한 컨텍스트 값이 생성되며 몽키 패치 참조가 업데이트됩니다. 따라서 이
+ * 함수가 호출되면 제공된 요소, 컴포넌트 또는 관련된
+ * 지시어의 몽키 패치 값을 변경할 수 있습니다.
  *
- * If the monkey-patch value is not detected then the code will walk up the DOM until an element
- * is found which contains a monkey-patch reference. When that occurs then the provided element
- * will be updated with a new context (which is then returned). If the monkey-patch value is not
- * detected for a component/directive instance then it will throw an error (all components and
- * directives should be automatically monkey-patched by ivy).
+ * 몽키 패치된 값이 감지되지 않으면 코드는 DOM을 위로 올라가며 몽키 패치 참조를 포함하는 요소를 찾습니다.
+ * 그런 일이 발생하면 제공된 요소가 새 컨텍스트로 업데이트됩니다(그 후 반환됨). 컴포넌트/지시어 인스턴스의
+ * 몽키 패치 값이 감지되지 않으면 오류가 발생합니다(모든 컴포넌트와
+ * 지시어는 ivy에 의해 자동으로 몽키 패치되어야 함).
  *
- * @param target Component, Directive or DOM Node.
+ * @param target 컴포넌트, 지시어 또는 DOM 노드.
  */
 export function getLContext(target: any): LContext | null {
   let mpValue = readPatchedData(target);
   if (mpValue) {
-    // only when it's an array is it considered an LView instance
-    // ... otherwise it's an already constructed LContext instance
+    // 배열일 경우에만 LView 인스턴스로 간주됨
+    // ... 그렇지 않으면 이미 구성된 LContext 인스턴스
     if (isLView(mpValue)) {
       const lView: LView = mpValue!;
       let nodeIndex: number;
@@ -53,13 +52,13 @@ export function getLContext(target: any): LContext | null {
       if (isComponentInstance(target)) {
         nodeIndex = findViaComponent(lView, target);
         if (nodeIndex == -1) {
-          throw new Error('The provided component was not found in the application');
+          throw new Error('제공된 컴포넌트를 애플리케이션에서 찾을 수 없습니다.');
         }
         component = target;
       } else if (isDirectiveInstance(target)) {
         nodeIndex = findViaDirective(lView, target);
         if (nodeIndex == -1) {
-          throw new Error('The provided directive was not found in the application');
+          throw new Error('제공된 지시어를 애플리케이션에서 찾을 수 없습니다.');
         }
         directives = getDirectivesAtNodeIndex(nodeIndex, lView);
       } else {
@@ -69,10 +68,10 @@ export function getLContext(target: any): LContext | null {
         }
       }
 
-      // the goal is not to fill the entire context full of data because the lookups
-      // are expensive. Instead, only the target data (the element, component, container, ICU
-      // expression or directive details) are filled into the context. If called multiple times
-      // with different target values then the missing target data will be filled in.
+      // 목표는 데이터로 가득 찬 전체 컨텍스트를 채우지 않는 것입니다. 검색이
+      // 비용이 많이 들기 때문입니다. 대신, 목표 데이터(요소, 컴포넌트, 컨테이너, ICU
+      // 표현 또는 지시어 세부정보)만 컨텍스트에 채워집니다. 서로 다른 목표 값으로
+      // 여러 번 호출되면 누락된 목표 데이터가 채워집니다.
       const native = unwrapRNode(lView[nodeIndex]);
       const existingCtx = readPatchedData(native);
       const context: LContext =
@@ -80,13 +79,13 @@ export function getLContext(target: any): LContext | null {
           ? existingCtx
           : createLContext(lView, nodeIndex, native);
 
-      // only when the component has been discovered then update the monkey-patch
+      // 컴포넌트가 발견되면 몽키 패치를 업데이트합니다.
       if (component && context.component === undefined) {
         context.component = component;
         attachPatchData(context.component, context);
       }
 
-      // only when the directives have been discovered then update the monkey-patch
+      // 지시어가 발견되면 몽키 패치를 업데이트합니다.
       if (directives && context.directives === undefined) {
         context.directives = directives;
         for (let i = 0; i < directives.length; i++) {
@@ -101,16 +100,16 @@ export function getLContext(target: any): LContext | null {
     const rElement = target as RElement;
     ngDevMode && assertDomNode(rElement);
 
-    // if the context is not found then we need to traverse upwards up the DOM
-    // to find the nearest element that has already been monkey patched with data
+    // 컨텍스트를 찾을 수 없으면 DOM을 위로 이동해야 합니다.
+    // 데이터로 이미 몽키 패치된 가장 가까운 요소를 찾기 위해
     let parent = rElement as any;
     while ((parent = parent.parentNode)) {
       const parentContext = readPatchedData(parent);
       if (parentContext) {
         const lView = Array.isArray(parentContext) ? (parentContext as LView) : parentContext.lView;
 
-        // the edge of the app was also reached here through another means
-        // (maybe because the DOM was changed manually).
+        // 다른 방법으로 애플리케이션의 끝에도 도달했습니다
+        // (DOM이 수동으로 변경되었기 때문일 수 있음).
         if (!lView) {
           return null;
         }
@@ -130,17 +129,17 @@ export function getLContext(target: any): LContext | null {
 }
 
 /**
- * Creates an empty instance of a `LContext` context
+ * `LContext`의 빈 인스턴스를 생성합니다.
  */
 function createLContext(lView: LView, nodeIndex: number, native: RNode): LContext {
   return new LContext(lView[ID], nodeIndex, native);
 }
 
 /**
- * Takes a component instance and returns the view for that component.
+ * 컴포넌트 인스턴스를 가져와 해당 컴포넌트의 뷰를 반환합니다.
  *
  * @param componentInstance
- * @returns The component's view
+ * @returns 컴포넌트의 뷰
  */
 export function getComponentViewByInstance(componentInstance: {}): LView {
   let patchedData = readPatchedData(componentInstance);
@@ -164,7 +163,7 @@ export function getComponentViewByInstance(componentInstance: {}): LView {
 }
 
 /**
- * This property will be monkey-patched on elements, components and directives.
+ * 이 속성은 요소, 컴포넌트 및 지시어에 몽키 패치됩니다.
  */
 const MONKEY_PATCH_KEY_NAME = '__ngContext__';
 
@@ -173,8 +172,8 @@ export function attachLViewId(target: any, data: LView) {
 }
 
 /**
- * Returns the monkey-patch value data present on the target (which could be
- * a component, directive or a DOM node).
+ * 대상(컴포넌트, 지시어 또는 DOM 노드일 수 있음)에서
+ * 현재 존재하는 몽키 패치 값 데이터를 반환합니다.
  */
 export function readLView(target: any): LView | null {
   const data = readPatchedData(target);
@@ -185,14 +184,14 @@ export function readLView(target: any): LView | null {
 }
 
 /**
- * Assigns the given data to the given target (which could be a component,
- * directive or DOM node instance) using monkey-patching.
+ * 주어진 데이터(컴포넌트, 지시어 또는 DOM 노드 인스턴스일 수 있음)를
+ * 몽키 패치를 사용하여 주어진 대상에 할당합니다.
  */
 export function attachPatchData(target: any, data: LView | LContext) {
-  ngDevMode && assertDefined(target, 'Target expected');
-  // Only attach the ID of the view in order to avoid memory leaks (see #41047). We only do this
-  // for `LView`, because we have control over when an `LView` is created and destroyed, whereas
-  // we can't know when to remove an `LContext`.
+  ngDevMode && assertDefined(target, '대상이 예상됩니다.');
+  // 메모리 누수를 방지하기 위해 보기의 ID만 연결합니다(참조 #41047). 우리는 이것만 수행합니다.
+  // `LView`의 경우, 우리는 `LView`가 생성되고 파괴될 때를 제어할 수 있지만,
+  // `LContext`를 언제 제거할지 알 수 없습니다.
   if (isLView(data)) {
     target[MONKEY_PATCH_KEY_NAME] = data[ID];
     registerLView(data);
@@ -202,11 +201,11 @@ export function attachPatchData(target: any, data: LView | LContext) {
 }
 
 /**
- * Returns the monkey-patch value data present on the target (which could be
- * a component, directive or a DOM node).
+ * 주어진 대상(컴포넌트, 지시어 또는 DOM 노드일 수 있음)에서
+ * 현재 존재하는 몽키 패치 값 데이터를 반환합니다.
  */
 export function readPatchedData(target: any): LView | LContext | null {
-  ngDevMode && assertDefined(target, 'Target expected');
+  ngDevMode && assertDefined(target, '대상이 예상됩니다.');
   const data = target[MONKEY_PATCH_KEY_NAME];
   return typeof data === 'number' ? getLViewById(data) : data || null;
 }
@@ -228,7 +227,7 @@ export function isDirectiveInstance(instance: any): boolean {
 }
 
 /**
- * Locates the element within the given LView and returns the matching index
+ * 주어진 LView 내에서 요소를 찾아 일치하는 인덱스를 반환합니다.
  */
 function findViaNativeElement(lView: LView, target: RElement): number {
   const tView = lView[TVIEW];
@@ -242,7 +241,7 @@ function findViaNativeElement(lView: LView, target: RElement): number {
 }
 
 /**
- * Locates the next tNode (child, sibling or parent).
+ * 다음 tNode(자식, 형제 또는 부모)를 찾습니다.
  */
 function traverseNextElement(tNode: TNode): TNode | null {
   if (tNode.child) {
@@ -250,9 +249,9 @@ function traverseNextElement(tNode: TNode): TNode | null {
   } else if (tNode.next) {
     return tNode.next;
   } else {
-    // Let's take the following template: <div><span>text</span></div><component/>
-    // After checking the text node, we need to find the next parent that has a "next" TNode,
-    // in this case the parent `div`, so that we can find the component.
+    // 다음 템플릿을 가져가 보겠습니다: <div><span>text</span></div><component/>
+    // 텍스트 노드를 확인한 후 "다음" TNode가 있는 다음 상위를 찾아야 합니다.
+    // 이 경우는 부모 `div`로, 그래서 컴포넌트를 찾을 수 있습니다.
     while (tNode.parent && !tNode.parent.next) {
       tNode = tNode.parent;
     }
@@ -261,7 +260,7 @@ function traverseNextElement(tNode: TNode): TNode | null {
 }
 
 /**
- * Locates the component within the given LView and returns the matching index
+ * 주어진 LView 내에서 컴포넌트를 찾아 일치하는 인덱스를 반환합니다.
  */
 function findViaComponent(lView: LView, componentInstance: {}): number {
   const componentIndices = lView[TVIEW].components;
@@ -277,8 +276,8 @@ function findViaComponent(lView: LView, componentInstance: {}): number {
     const rootComponentView = getComponentLViewByIndex(HEADER_OFFSET, lView);
     const rootComponent = rootComponentView[CONTEXT];
     if (rootComponent === componentInstance) {
-      // we are dealing with the root element here therefore we know that the
-      // element is the very first element after the HEADER data in the lView
+      // 우리는 여기에서 루트 요소를 다루고 있으므로
+      // 요소가 lView의 HEADER 데이터 이후의 첫 번째 요소임을 알고 있습니다.
       return HEADER_OFFSET;
     }
   }
@@ -286,14 +285,13 @@ function findViaComponent(lView: LView, componentInstance: {}): number {
 }
 
 /**
- * Locates the directive within the given LView and returns the matching index
+ * 주어진 LView 내에서 지시어를 찾아 일치하는 인덱스를 반환합니다.
  */
 function findViaDirective(lView: LView, directiveInstance: {}): number {
-  // if a directive is monkey patched then it will (by default)
-  // have a reference to the LView of the current view. The
-  // element bound to the directive being search lives somewhere
-  // in the view data. We loop through the nodes and check their
-  // list of directives for the instance.
+  // 지시어가 몽키 패치되면 기본적으로
+  // 현재 뷰의 LView에 대한 참조를 갖습니다.
+  // 검색할 지시어가 바인딩된 요소는 뷰 데이터 어딘가에 위치하고 있습니다.
+  // 우리는 노드를 반복하여 인스턴스를 위한 지시어 목록을 확인합니다.
   let tNode = lView[TVIEW].firstChild;
   while (tNode) {
     const directiveIndexStart = tNode.directiveStart;
@@ -309,12 +307,12 @@ function findViaDirective(lView: LView, directiveInstance: {}): number {
 }
 
 /**
- * Returns a list of directives applied to a node at a specific index. The list includes
- * directives matched by selector and any host directives, but it excludes components.
- * Use `getComponentAtNodeIndex` to find the component applied to a node.
+ * 특정 인덱스의 노드에 적용된 지시어 목록을 반환합니다. 목록에는
+ * 선택자와 일치하는 지시어 및 모든 호스트 지시어가 포함되지만, 컴포넌트는 제외됩니다.
+ * 노드에 적용된 컴포넌트를 찾으려면 `getComponentAtNodeIndex`를 사용하십시오.
  *
- * @param nodeIndex The node index
- * @param lView The target view data
+ * @param nodeIndex 노드 인덱스
+ * @param lView 목표 뷰 데이터
  */
 export function getDirectivesAtNodeIndex(nodeIndex: number, lView: LView): any[] | null {
   const tNode = lView[TVIEW].data[nodeIndex] as TNode;
@@ -335,8 +333,7 @@ export function getComponentAtNodeIndex(nodeIndex: number, lView: LView): {} | n
 }
 
 /**
- * Returns a map of local references (local reference name => element or directive instance) that
- * exist on a given element.
+ * 주어진 요소에 존재하는 로컬 참조(로컬 참조 이름 => 요소 또는 지시어 인스턴스)의 맵을 반환합니다.
  */
 export function discoverLocalRefs(lView: LView, nodeIndex: number): {[key: string]: any} | null {
   const tNode = lView[TVIEW].data[nodeIndex] as TNode;

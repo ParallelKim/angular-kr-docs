@@ -80,23 +80,20 @@ import {addToEndOfViewTree} from '../render3/view/construction';
 import {Binding, DirectiveWithBindings} from '../render3/dynamic_bindings';
 
 /**
- * Represents a container where one or more views can be attached to a component.
+ * 컴포넌트에 하나 이상의 뷰를 연결할 수 있는 컨테이너를 나타냅니다.
  *
- * Can contain *host views* (created by instantiating a
- * component with the `createComponent()` method), and *embedded views*
- * (created by instantiating a `TemplateRef` with the `createEmbeddedView()` method).
+ * *호스트 뷰* (*createComponent()* 메소드를 사용하여 생성된 컴포넌트)와
+ * *임베디드 뷰* (*createEmbeddedView()* 메소드를 사용하여 `TemplateRef`를 인스턴스화하여 생성됨)을 포함할 수 있습니다.
  *
- * A view container instance can contain other view containers,
- * creating a view hierarchy.
+ * 뷰 컨테이너 인스턴스는 다른 뷰 컨테이너를 포함할 수 있어,
+ * 뷰 계층 구조를 생성합니다.
  *
  * @usageNotes
  *
- * The example below demonstrates how the `createComponent` function can be used
- * to create an instance of a ComponentRef dynamically and attach it to an ApplicationRef,
- * so that it gets included into change detection cycles.
+ * 아래 예제에서는 `createComponent` 함수가 어떻게 동적으로 `ComponentRef` 인스턴스를 생성하고
+ * `ApplicationRef`에 연결할 수 있는지를 보여줍니다. 이를 통해 변경 탐지 주기에 포함됩니다.
  *
- * Note: the example uses standalone components, but the function can also be used for
- * non-standalone components (declared in an NgModule) as well.
+ * 참고: 예제는 독립 실행형 컴포넌트를 사용하지만, 이 함수는 비독립 실행형 컴포넌트(모듈에서 선언)에도 사용할 수 있습니다.
  *
  * ```angular-ts
  * @Component({
@@ -130,58 +127,57 @@ import {Binding, DirectiveWithBindings} from '../render3/dynamic_bindings';
  */
 export abstract class ViewContainerRef {
   /**
-   * Anchor element that specifies the location of this container in the containing view.
-   * Each view container can have only one anchor element, and each anchor element
-   * can have only a single view container.
+   * 이 컨테이너의 위치를 나타내는 앵커 요소.
+   * 각 뷰 컨테이너는 하나의 앵커 요소만 가질 수 있으며,
+   * 각 앵커 요소는 단일 뷰 컨테이너만 가질 수 있습니다.
    *
-   * Root elements of views attached to this container become siblings of the anchor element in
-   * the rendered view.
+   * 이 컨테이너에 연결된 뷰의 루트 요소는
+   * 렌더링된 뷰에서 앵커 요소의 형제가 됩니다.
    *
-   * Access the `ViewContainerRef` of an element by placing a `Directive` injected
-   * with `ViewContainerRef` on the element, or use a `ViewChild` query.
+   * 앵커 요소에 `ViewContainerRef`가 주입된 `Directive`를 배치하거나 `ViewChild` 쿼리를 사용하여
+   * 엑세스합니다.
    *
    * <!-- TODO: rename to anchorElement -->
    */
   abstract get element(): ElementRef;
 
   /**
-   * The dependency injector for this view container.
+   * 이 뷰 컨테이너에 대한 의존성 주입기.
    */
   abstract get injector(): Injector;
 
-  /** @deprecated No replacement */
+  /** @deprecated 대체 항목 없음 */
   abstract get parentInjector(): Injector;
 
   /**
-   * Destroys all views in this container.
+   * 이 컨테이너의 모든 뷰를 파괴합니다.
    */
   abstract clear(): void;
 
   /**
-   * Retrieves a view from this container.
-   * @param index The 0-based index of the view to retrieve.
-   * @returns The `ViewRef` instance, or null if the index is out of range.
+   * 이 컨테이너에서 뷰를 검색합니다.
+   * @param index 검색할 뷰의 0 기반 인덱스.
+   * @returns 인스턴스 `ViewRef` 또는 인덱스가 범위를 벗어났다면 null.
    */
   abstract get(index: number): ViewRef | null;
 
   /**
-   * Reports how many views are currently attached to this container.
-   * @returns The number of views.
+   * 현재 이 컨테이너에 연결된 뷰의 수를 보고합니다.
+   * @returns 뷰의 수.
    */
   abstract get length(): number;
 
   /**
-   * Instantiates an embedded view and inserts it
-   * into this container.
-   * @param templateRef The HTML template that defines the view.
-   * @param context The data-binding context of the embedded view, as declared
-   * in the `<ng-template>` usage.
-   * @param options Extra configuration for the created view. Includes:
-   *  * index: The 0-based index at which to insert the new view into this container.
-   *           If not specified, appends the new view as the last entry.
-   *  * injector: Injector to be used within the embedded view.
+   * 임베디드 뷰를 인스턴스화하고
+   * 이 컨테이너에 삽입합니다.
+   * @param templateRef 뷰를 정의하는 HTML 템플릿입니다.
+   * @param context <ng-template> 안에서 정의된 임베디드 뷰의 데이터 바인딩 컨텍스트입니다.
+   * @param options 생성된 뷰에 대한 추가 구성을 포함합니다:
+   *  * index: 새로운 뷰를 이 컨테이너에 삽입할 0 기반 인덱스.
+   *           지정하지 않으면 새로운 뷰가 마지막 항목으로 추가됩니다.
+   *  * injector: 임베디드 뷰 내에서 사용할 주입기입니다.
    *
-   * @returns The `ViewRef` instance for the newly created view.
+   * @returns 새로 생성된 뷰의 `ViewRef` 인스턴스입니다.
    */
   abstract createEmbeddedView<C>(
     templateRef: TemplateRef<C>,
@@ -193,15 +189,14 @@ export abstract class ViewContainerRef {
   ): EmbeddedViewRef<C>;
 
   /**
-   * Instantiates an embedded view and inserts it
-   * into this container.
-   * @param templateRef The HTML template that defines the view.
-   * @param context The data-binding context of the embedded view, as declared
-   * in the `<ng-template>` usage.
-   * @param index The 0-based index at which to insert the new view into this container.
-   * If not specified, appends the new view as the last entry.
+   * 임베디드 뷰를 인스턴스화하고
+   * 이 컨테이너에 삽입합니다.
+   * @param templateRef 뷰를 정의하는 HTML 템플릿입니다.
+   * @param context <ng-template> 안에서 정의된 임베디드 뷰의 데이터 바인딩 컨텍스트입니다.
+   * @param index 새로운 뷰를 이 컨테이너에 삽입할 0 기반 인덱스.
+   * 지정하지 않으면 새로운 뷰가 마지막 항목으로 추가됩니다.
    *
-   * @returns The `ViewRef` instance for the newly created view.
+   * @returns 새로 생성된 뷰의 `ViewRef` 인스턴스입니다.
    */
   abstract createEmbeddedView<C>(
     templateRef: TemplateRef<C>,
@@ -210,26 +205,24 @@ export abstract class ViewContainerRef {
   ): EmbeddedViewRef<C>;
 
   /**
-   * Instantiates a single component and inserts its host view into this container.
+   * 단일 컴포넌트를 인스턴스화하고
+   * 그 호스트 뷰를 이 컨테이너에 삽입합니다.
    *
-   * @param componentType Component Type to use.
-   * @param options An object that contains extra parameters:
-   *  * index: the index at which to insert the new component's host view into this container.
-   *           If not specified, appends the new view as the last entry.
-   *  * injector: the injector to use as the parent for the new component.
-   *  * ngModuleRef: an NgModuleRef of the component's NgModule, you should almost always provide
-   *                 this to ensure that all expected providers are available for the component
-   *                 instantiation.
-   *  * environmentInjector: an EnvironmentInjector which will provide the component's environment.
-   *                 you should almost always provide this to ensure that all expected providers
-   *                 are available for the component instantiation. This option is intended to
-   *                 replace the `ngModuleRef` parameter.
-   *  * projectableNodes: list of DOM nodes that should be projected through
-   *                      [`<ng-content>`](api/core/ng-content) of the new component instance.
-   *  * directives: Directives that should be applied to the component.
-   *  * bindings: Bindings that should be applied to the component.
+   * @param componentType 사용할 컴포넌트 유형입니다.
+   * @param options 추가 매개변수를 포함하는 객체:
+   *  * index: 새로운 컴포넌트의 호스트 뷰를 이 컨테이너에 삽입할 인덱스.
+   *           지정하지 않으면 새로운 뷰가 마지막 항목으로 추가됩니다.
+   *  * injector: 새 컴포넌트의 부모로 사용할 주입기입니다.
+   *  * ngModuleRef: 컴포넌트의 NgModule의 NgModuleRef, 일반적으로 제공해야 합니다.
+   *                 이렇게 하면 컴포넌트 인스턴스화에 필요한 모든 제공자를 보장할 수 있습니다.
+   *  * environmentInjector: 컴포넌트의 환경을 제공할 EnvironmentInjector입니다.
+   *                 일반적으로 제공해야 합니다. 이렇게 하면 컴포넌트 인스턴스화에 필요한 모든 제공자를 보장할 수 있습니다.
+   *                 이 옵션은 `ngModuleRef` 매개변수를 대체하려고 합니다.
+   *  * projectableNodes: 새 컴포넌트 인스턴스를 통해 투영되어야 하는 DOM 노드 목록입니다.
+   *  * directives: 컴포넌트에 적용해야 하는 지시어입니다.
+   *  * bindings: 컴포넌트에 적용해야 하는 바인딩입니다.
    *
-   * @returns The new `ComponentRef` which contains the component instance and the host view.
+   * @returns 컴포넌트 인스턴스와 호스트 뷰를 포함하는 새로운 `ComponentRef`입니다.
    */
   abstract createComponent<C>(
     componentType: Type<C>,
@@ -245,24 +238,23 @@ export abstract class ViewContainerRef {
   ): ComponentRef<C>;
 
   /**
-   * Instantiates a single component and inserts its host view into this container.
+   * 단일 컴포넌트를 인스턴스화하고
+   * 그 호스트 뷰를 이 컨테이너에 삽입합니다.
    *
-   * @param componentFactory Component factory to use.
-   * @param index The index at which to insert the new component's host view into this container.
-   * If not specified, appends the new view as the last entry.
-   * @param injector The injector to use as the parent for the new component.
-   * @param projectableNodes List of DOM nodes that should be projected through
-   *     [`<ng-content>`](api/core/ng-content) of the new component instance.
-   * @param ngModuleRef An instance of the NgModuleRef that represent an NgModule.
-   * This information is used to retrieve corresponding NgModule injector.
-   * @param directives Directives that should be applied to the component.
-   * @param bindings Bindings that should be applied to the component.
+   * @param componentFactory 사용할 컴포넌트 팩토리입니다.
+   * @param index 새로운 컴포넌트의 호스트 뷰를 이 컨테이너에 삽입할 인덱스.
+   * 지정하지 않으면 새로운 뷰가 마지막 항목으로 추가됩니다.
+   * @param injector 새로운 컴포넌트의 부모로 사용할 주입기입니다.
+   * @param projectableNodes 새 컴포넌트 인스턴스의 [`<ng-content>`](api/core/ng-content)를 통해 투영되어야 하는 DOM 노드 목록입니다.
+   * @param ngModuleRef NgModule를 나타내는 NgModuleRef의 인스턴스입니다.
+   * 이 정보는 해당 NgModule 주입기를 검색하는 데 사용됩니다.
+   * @param directives 컴포넌트에 적용해야 하는 지시어입니다.
+   * @param bindings 컴포넌트에 적용해야 하는 바인딩입니다.
    *
-   * @returns The new `ComponentRef` which contains the component instance and the host view.
+   * @returns 컴포넌트 인스턴스와 호스트 뷰를 포함하는 새로운 `ComponentRef`입니다.
    *
-   * @deprecated Angular no longer requires component factories to dynamically create components.
-   *     Use different signature of the `createComponent` method, which allows passing
-   *     Component class directly.
+   * @deprecated Angular는 더 이상 컴포넌트 팩토리를 사용하여 동적으로 컴포넌트를 생성할 필요가 없습니다.
+   *     컴포넌트 클래스를 직접 전달할 수 있는 `createComponent` 메소드의 다른 시그니처를 사용하십시오.
    */
   abstract createComponent<C>(
     componentFactory: ComponentFactory<C>,
@@ -275,43 +267,43 @@ export abstract class ViewContainerRef {
   ): ComponentRef<C>;
 
   /**
-   * Inserts a view into this container.
-   * @param viewRef The view to insert.
-   * @param index The 0-based index at which to insert the view.
-   * If not specified, appends the new view as the last entry.
-   * @returns The inserted `ViewRef` instance.
+   * 뷰를 이 컨테이너에 삽입합니다.
+   * @param viewRef 삽입할 뷰입니다.
+   * @param index 삽입할 뷰의 0 기반 인덱스.
+   * 지정하지 않으면 새로운 뷰가 마지막 항목으로 추가됩니다.
+   * @returns 삽입된 `ViewRef` 인스턴스입니다.
    *
    */
   abstract insert(viewRef: ViewRef, index?: number): ViewRef;
 
   /**
-   * Moves a view to a new location in this container.
-   * @param viewRef The view to move.
-   * @param index The 0-based index of the new location.
-   * @returns The moved `ViewRef` instance.
+   * 뷰를 이 컨테이너의 새로운 위치로 이동합니다.
+   * @param viewRef 이동할 뷰입니다.
+   * @param index 새 위치의 0 기반 인덱스입니다.
+   * @returns 이동된 `ViewRef` 인스턴스입니다.
    */
   abstract move(viewRef: ViewRef, currentIndex: number): ViewRef;
 
   /**
-   * Returns the index of a view within the current container.
-   * @param viewRef The view to query.
-   * @returns The 0-based index of the view's position in this container,
-   * or `-1` if this container doesn't contain the view.
+   * 현재 컨테이너 내에서 뷰의 인덱스를 반환합니다.
+   * @param viewRef 쿼리할 뷰입니다.
+   * @returns 이 컨테이너 내에서 뷰의 위치의 0 기반 인덱스입니다.
+   * 또는 이 컨테이너가 뷰를 포함하지 않는 경우 `-1`입니다.
    */
   abstract indexOf(viewRef: ViewRef): number;
 
   /**
-   * Destroys a view attached to this container
-   * @param index The 0-based index of the view to destroy.
-   * If not specified, the last view in the container is removed.
+   * 이 컨테이너에 연결된 뷰를 파괴합니다.
+   * @param index 파괴할 뷰의 0 기반 인덱스입니다.
+   * 지정하지 않으면 컨테이너에서 마지막 뷰가 제거됩니다.
    */
   abstract remove(index?: number): void;
 
   /**
-   * Detaches a view from this container without destroying it.
-   * Use along with `insert()` to move a view within the current container.
-   * @param index The 0-based index of the view to detach.
-   * If not specified, the last view in the container is detached.
+   * 이 컨테이너에서 뷰를 분리하지만 파괴하지는 않습니다.
+   * 현재 컨테이너 내에서 뷰를 이동하기 위해 `insert()`와 함께 사용합니다.
+   * @param index 분리할 뷰의 0 기반 인덱스입니다.
+   * 지정하지 않으면 컨테이너에서 마지막 뷰가 분리됩니다.
    */
   abstract detach(index?: number): ViewRef | null;
 
@@ -323,10 +315,10 @@ export abstract class ViewContainerRef {
 }
 
 /**
- * Creates a ViewContainerRef and stores it on the injector. Or, if the ViewContainerRef
- * already exists, retrieves the existing ViewContainerRef.
+ * ViewContainerRef를 생성하고 주입기에 저장합니다.
+ * 또는, ViewContainerRef가 이미 존재하는 경우, 기존 ViewContainerRef를 검색합니다.
  *
- * @returns The ViewContainerRef instance to use
+ * @returns 사용할 ViewContainerRef 인스턴스입니다.
  */
 export function injectViewContainerRef(): ViewContainerRef {
   const previousTNode = getCurrentTNode() as TElementNode | TElementContainerNode | TContainerNode;
@@ -335,8 +327,8 @@ export function injectViewContainerRef(): ViewContainerRef {
 
 const VE_ViewContainerRef = ViewContainerRef;
 
-// TODO(alxhub): cleaning up this indirection triggers a subtle bug in Closure in g3. Once the fix
-// for that lands, this can be cleaned up.
+// TODO(alxhub): 이 사이드 키워드를 정리하면 g3의 Closure에서 미세한 버그를 유발합니다. 수리되고 나면,
+// 이 부분을 정리할 수 있습니다.
 const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
   constructor(
     private _lContainer: LContainer,
@@ -354,7 +346,7 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
     return new NodeInjector(this._hostTNode, this._hostLView);
   }
 
-  /** @deprecated No replacement */
+  /** @deprecated 대체 항목 없음 */
   override get parentInjector(): Injector {
     const parentLocation = getParentInjectorLocation(this._hostTNode, this._hostLView);
     if (hasParentInjector(parentLocation)) {
@@ -440,9 +432,8 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
     },
   ): ComponentRef<C>;
   /**
-   * @deprecated Angular no longer requires component factories to dynamically create components.
-   *     Use different signature of the `createComponent` method, which allows passing
-   *     Component class directly.
+   * @deprecated Angular는 더 이상 컴포넌트 팩토리를 사용하여 동적으로 컴포넌트를 생성할 필요가 없습니다.
+   *     컴포넌트 클래스를 직접 전달할 수 있는 `createComponent` 메소드의 다른 시그니처를 사용하십시오.
    */
   override createComponent<C>(
     componentFactory: ComponentFactory<C>,
@@ -476,21 +467,17 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
     const isComponentFactory = componentFactoryOrType && !isType(componentFactoryOrType);
     let index: number | undefined;
 
-    // This function supports 2 signatures and we need to handle options correctly for both:
-    //   1. When first argument is a Component type. This signature also requires extra
-    //      options to be provided as object (more ergonomic option).
-    //   2. First argument is a Component factory. In this case extra options are represented as
-    //      positional arguments. This signature is less ergonomic and will be deprecated.
+    // 이 함수는 2개의 시그니처를 지원하며, 두 가지 옵션을 모두 처리해야 합니다:
+    //   1. 첫 번째 인자가 컴포넌트 유형입니다. 이 시그니처는 추가
+    //      옵션이 객체 형식으로 제공되어야 합니다(더 인체공학적인 옵션).
+    //   2. 첫 번째 인자가 컴포넌트 팩토리입니다. 이 경우 추가 옵션은
+    //      위치 인수로 나타납니다. 이 시그니처는 덜 인체공학적이며 곧 사용 중단됩니다.
     if (isComponentFactory) {
       if (ngDevMode) {
         assertEqual(
           typeof indexOrOptions !== 'object',
           true,
-          'It looks like Component factory was provided as the first argument ' +
-            'and an options object as the second argument. This combination of arguments ' +
-            'is incompatible. You can either change the first argument to provide Component ' +
-            'type or change the second argument to be a number (representing an index at ' +
-            "which to insert the new component's host view into this container)",
+          '첫 번째 인자로 컴포넌트 팩토리가 제공되고 두 번째 인자로 옵션 객체가 제공된 것 같습니다. 이 인수 조합은 호환되지 않습니다. 첫 번째 인수를 컴포넌트 유형으로 변경하거나 두 번째 인수를 새 컴포넌트의 호스트 뷰를 삽입할 인덱스를 나타내는 숫자로 변경할 수 있습니다.',
         );
       }
       index = indexOrOptions as number | undefined;
@@ -498,16 +485,12 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
       if (ngDevMode) {
         assertDefined(
           getComponentDef(componentFactoryOrType),
-          `Provided Component class doesn't contain Component definition. ` +
-            `Please check whether provided class has @Component decorator.`,
+          '제공된 컴포넌트 클래스에는 컴포넌트 정의가 포함되어 있지 않습니다. 제공된 클래스에 @Component 장식자가 있는지 확인하십시오.',
         );
         assertEqual(
           typeof indexOrOptions !== 'number',
           true,
-          'It looks like Component type was provided as the first argument ' +
-            "and a number (representing an index at which to insert the new component's " +
-            'host view into this container as the second argument. This combination of arguments ' +
-            'is incompatible. Please use an object as the second argument instead.',
+          '첫 번째 인자로 컴포넌트 유형이 제공되고 두 번째 인자로 새 컴포넌트의 호스트 뷰를 삽입할 인덱스를 나타내는 숫자가 제공된 것 같습니다. 이 인수 조합은 호환되지 않습니다. 두 번째 인수로 대신 객체를 사용하십시오.',
         );
       }
       const options = (indexOrOptions || {}) as {
@@ -521,7 +504,7 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
       };
       if (ngDevMode && options.environmentInjector && options.ngModuleRef) {
         throwError(
-          `Cannot pass both environmentInjector and ngModuleRef options to createComponent().`,
+          'createComponent()에 environmentInjector와 ngModuleRef 옵션을 모두 전달할 수 없습니다.',
         );
       }
       index = options.index;
@@ -537,29 +520,27 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
       : new R3ComponentFactory(getComponentDef(componentFactoryOrType)!);
     const contextInjector = injector || this.parentInjector;
 
-    // If an `NgModuleRef` is not provided explicitly, try retrieving it from the DI tree.
+    // `NgModuleRef`가 명시적으로 제공되지 않은 경우, DI 트리에서 검색합니다.
     if (!environmentInjector && (componentFactory as any).ngModule == null) {
-      // For the `ComponentFactory` case, entering this logic is very unlikely, since we expect that
-      // an instance of a `ComponentFactory`, resolved via `ComponentFactoryResolver` would have an
-      // `ngModule` field. This is possible in some test scenarios and potentially in some JIT-based
-      // use-cases. For the `ComponentFactory` case we preserve backwards-compatibility and try
-      // using a provided injector first, then fall back to the parent injector of this
-      // `ViewContainerRef` instance.
+      // `ComponentFactory` 경우에는 이 논리를 진입하기가 매우 드물며,
+      // `ComponentFactory`의 인스턴스가 `ComponentFactoryResolver`를 통해 해결되면
+      // `ngModule` 필드를 갖게 된다고 기대합니다.
+      // 일부 테스트 시나리오 및 일부 JIT 기반 사용 사례에서 가능할 수 있습니다.
+      // 컴포넌트 팩토리의 경우, 이전 호환성을 유지하고 제공된 주입기를 먼저 사용한 다음,
+      // 이 `ViewContainerRef` 인스턴스의 부모 주입기로 되돌립니다.
       //
-      // For the factory-less case, it's critical to establish a connection with the module
-      // injector tree (by retrieving an instance of an `NgModuleRef` and accessing its injector),
-      // so that a component can use DI tokens provided in MgModules. For this reason, we can not
-      // rely on the provided injector, since it might be detached from the DI tree (for example, if
-      // it was created via `Injector.create` without specifying a parent injector, or if an
-      // injector is retrieved from an `NgModuleRef` created via `createNgModule` using an
-      // NgModule outside of a module tree). Instead, we always use `ViewContainerRef`'s parent
-      // injector, which is normally connected to the DI tree, which includes module injector
-      // subtree.
+      // 팩토리 없는 경우에는 모듈 주입기 트리와 연결을 설정하는 것이 중요합니다.
+      // (NgModuleRef의 인스턴스를 검색하고 해당 주입기를 액세스하여),
+      // 컴포넌트가 MgModules에서 제공하는 DI 토큰을 사용할 수 있도록 합니다.
+      // 따라서 제공된 주입기에 의존할 수 없으며, DI 트리에서 분리될 수 있습니다.
+      // (예: 부모 주입기를 지정하지 않고 `Injector.create`를 통해 생성되거나,
+      // NgModule 외부 모듈 트리에 사용되는 NgModuleRef에서 주입기를 검색한 경우).
+      // 대신, 우리는 항상 `ViewContainerRef`의 부모 주입기를 사용합니다.
+      // 이는 일반적으로 DI 트리와 연결되어 있습니다.
       const _injector = isComponentFactory ? contextInjector : this.parentInjector;
 
-      // DO NOT REFACTOR. The code here used to have a `injector.get(NgModuleRef, null) ||
-      // undefined` expression which seems to cause internal google apps to fail. This is documented
-      // in the following internal bug issue: go/b/142967802
+      // 리팩터링하지 마십시오. 여기의 코드는 `injector.get(NgModuleRef, null) || undefined` 표현식을 가지고 있어
+      // 내부 구글 앱에서 실패하게 보입니다. 이는 다음 내부 버그 문제에서 문서화되었습니다: go/b/142967802
       const result = _injector.get(EnvironmentInjector, null);
       if (result) {
         environmentInjector = result;
@@ -593,18 +574,18 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
     const lView = (viewRef as R3ViewRef<any>)._lView!;
 
     if (ngDevMode && viewRef.destroyed) {
-      throw new Error('Cannot insert a destroyed View in a ViewContainer!');
+      throw new Error('파괴된 뷰를 ViewContainer에 삽입할 수 없습니다!');
     }
 
     if (viewAttachedToContainer(lView)) {
-      // If view is already attached, detach it first so we clean up references appropriately.
+      // 뷰가 이미 첨부된 경우, 먼저 분리하여 참조를 적절히 정리합니다.
 
       const prevIdx = this.indexOf(viewRef);
 
-      // A view might be attached either to this or a different container. The `prevIdx` for
-      // those cases will be:
-      // equal to -1 for views attached to this ViewContainerRef
-      // >= 0 for views attached to a different ViewContainerRef
+      // 뷰가 이 컨테이너나 다른 컨테이너에 첨부되어 있을 수 있습니다.
+      // 이러한 경우의 `prevIdx`는 다음과 같습니다:
+      // 이 ViewContainerRef에 첨부된 뷰는 -1과 같음
+      // 다른 ViewContainerRef에 첨부된 뷰는 >= 0
       if (prevIdx !== -1) {
         this.detach(prevIdx);
       } else {
@@ -613,11 +594,10 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
           assertEqual(
             isLContainer(prevLContainer),
             true,
-            'An attached view should have its PARENT point to a container.',
+            '첨부된 뷰는 PARENT가 컨테이너를 가리켜야 합니다.',
           );
 
-        // We need to re-create a R3ViewContainerRef instance since those are not stored on
-        // LView (nor anywhere else).
+        // R3ViewContainerRef 인스턴스를 다시 생성해야 합니다.
         const prevVCRef = new R3ViewContainerRef(
           prevLContainer,
           prevLContainer[T_HOST] as TDirectiveHostNode,
@@ -628,7 +608,7 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
       }
     }
 
-    // Logical operation of adding `LView` to `LContainer`
+    // LView를 LContainer에 추가하는 논리 작업
     const adjustedIdx = this._adjustIndex(index);
     const lContainer = this._lContainer;
 
@@ -642,7 +622,7 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
 
   override move(viewRef: ViewRef, newIndex: number): ViewRef {
     if (ngDevMode && viewRef.destroyed) {
-      throw new Error('Cannot move a destroyed View in a ViewContainer!');
+      throw new Error('파괴된 뷰를 ViewContainer에서 이동할 수 없습니다!');
     }
     return this.insert(viewRef, newIndex);
   }
@@ -657,12 +637,9 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
     const detachedView = detachView(this._lContainer, adjustedIdx);
 
     if (detachedView) {
-      // Before destroying the view, remove it from the container's array of `ViewRef`s.
-      // This ensures the view container length is updated before calling
-      // `destroyLView`, which could recursively call view container methods that
-      // rely on an accurate container length.
-      // (e.g. a method on this view container being called by a child directive's OnDestroy
-      // lifecycle hook)
+      // 뷰를 파괴하기 전에, 컨테이너의 `ViewRef` 목록에서 제거합니다.
+      // 이렇게 하면 `destroyLView`를 호출하기 전에 뷰 컨테이너 길이가 업데이트됩니다.
+      // (예: 호출된 메소드에서 자식 지시어의 OnDestroy 생명주기 후크가 호출될 수 있습니다.)
       removeFromArray(getOrCreateViewRefs(this._lContainer), adjustedIdx);
       destroyLView(detachedView[TVIEW], detachedView);
     }
@@ -682,9 +659,9 @@ const R3ViewContainerRef = class ViewContainerRef extends VE_ViewContainerRef {
       return this.length + shift;
     }
     if (ngDevMode) {
-      assertGreaterThan(index, -1, `ViewRef index must be positive, got ${index}`);
-      // +1 because it's legal to insert at the end.
-      assertLessThan(index, this.length + 1 + shift, 'index');
+      assertGreaterThan(index, -1, `ViewRef 인덱스는 양수여야 하며, ${index}를 얻었습니다.`);
+      // +1은 끝에 삽입할 수 있도록 합법적입니다.
+      assertLessThan(index, this.length + 1 + shift, '인덱스');
     }
     return index;
   }
@@ -699,11 +676,11 @@ function getOrCreateViewRefs(lContainer: LContainer): ViewRef[] {
 }
 
 /**
- * Creates a ViewContainerRef and stores it on the injector.
+ * ViewContainerRef를 생성하고 주입기에 저장합니다.
  *
- * @param hostTNode The node that is requesting a ViewContainerRef
- * @param hostLView The view to which the node belongs
- * @returns The ViewContainerRef instance to use
+ * @param hostTNode ViewContainerRef를 요청하는 노드입니다.
+ * @param hostLView 노드가 속한 뷰입니다.
+ * @returns 사용할 ViewContainerRef 인스턴스입니다.
  */
 export function createContainerRef(
   hostTNode: TElementNode | TContainerNode | TElementContainerNode,
@@ -714,11 +691,11 @@ export function createContainerRef(
   let lContainer: LContainer;
   const slotValue = hostLView[hostTNode.index];
   if (isLContainer(slotValue)) {
-    // If the host is a container, we don't need to create a new LContainer
+    // 호스트가 컨테이너인 경우, 새로운 LContainer를 생성할 필요가 없습니다.
     lContainer = slotValue;
   } else {
-    // An LContainer anchor can not be `null`, but we set it here temporarily
-    // and update to the actual value later in this function (see
+    // LContainer 앵커는 null이 될 수 없지만, 여기서는 임시로 설정하고
+    // 이 함수의 나중에 실제 값을 업데이트합니다 (see
     // `_locateOrCreateAnchorNode`).
     lContainer = createLContainer(slotValue, hostLView, null!, hostTNode);
     hostLView[hostTNode.index] = lContainer;
@@ -730,11 +707,10 @@ export function createContainerRef(
 }
 
 /**
- * Creates and inserts a comment node that acts as an anchor for a view container.
+ * 뷰 컨테이너의 앵커 역할을 하는 주석 노드를 생성하고 삽입합니다.
  *
- * If the host is a regular element, we have to insert a comment node manually which will
- * be used as an anchor when inserting elements. In this specific case we use low-level DOM
- * manipulation to insert it.
+ * 호스트가 일반 요소인 경우, 요소를 삽입할 때 사용되는 주석 노드를 수동으로 삽입해야 합니다.
+ * 이 특정 경우에는 저수준 DOM 조작을 사용하여 삽입합니다.
  */
 function insertAnchorNode(hostLView: LView, hostTNode: TNode): RComment {
   const renderer = hostLView[RENDERER];
@@ -754,20 +730,20 @@ function insertAnchorNode(hostLView: LView, hostTNode: TNode): RComment {
 
 let _locateOrCreateAnchorNode = createAnchorNode;
 let _populateDehydratedViewsInLContainer: typeof populateDehydratedViewsInLContainerImpl = () =>
-  false; // noop by default
+  false; // 기본적으로 noop
 
 /**
- * Looks up dehydrated views that belong to a given LContainer and populates
- * this information into the `LContainer[DEHYDRATED_VIEWS]` slot. When running
- * in client-only mode, this function is a noop.
+ * 주어진 LContainer에 속한 탈수된 뷰를 검색하고
+ * 이 정보를 `LContainer[DEHYDRATED_VIEWS]` 슬롯에 채웁니다.
+ * 클라이언트 전용 모드로 실행될 때,
+ * 이 함수는 noop입니다.
  *
- * @param lContainer LContainer that should be populated.
- * @param tNode Corresponding TNode.
- * @param hostLView LView that hosts LContainer.
- * @returns a boolean flag that indicates whether a populating operation
- *   was successful. The operation might be unsuccessful in case is has completed
- *   previously, we are rendering in client-only mode or this content is located
- *   in a skip hydration section.
+ * @param lContainer 채워야 할 LContainer입니다.
+ * @param tNode 해당 TNode입니다.
+ * @param hostLView LContainer를 포함하는 LView입니다.
+ * @returns 채우기 작업이 성공적으로 수행되었는지의 여부를 나타내는 부울 플래그입니다.
+ * 채우기 작업은 이전에 완료되었거나, 클라이언트 전용 모드에서 렌더링되거나,
+ * 이 콘텐츠가 스킵 수화 섹션에 위치한 경우에 실패할 수 있습니다.
  */
 export function populateDehydratedViewsInLContainer(
   lContainer: LContainer,
@@ -778,8 +754,8 @@ export function populateDehydratedViewsInLContainer(
 }
 
 /**
- * Regular creation mode: an anchor is created and
- * assigned to the `lContainer[NATIVE]` slot.
+ * 일반 생성 모드: 앵커가 생성되고
+ * `lContainer[NATIVE]` 슬롯에 할당됩니다.
  */
 function createAnchorNode(
   lContainer: LContainer,
@@ -787,14 +763,13 @@ function createAnchorNode(
   hostTNode: TNode,
   slotValue: any,
 ) {
-  // We already have a native element (anchor) set, return.
+  // 이미 네이티브 요소(앵커)가 설정되어 있으면 반환합니다.
   if (lContainer[NATIVE]) return;
 
   let commentNode: RComment;
-  // If the host is an element container, the native host element is guaranteed to be a
-  // comment and we can reuse that comment as anchor element for the new LContainer.
-  // The comment node in question is already part of the DOM structure so we don't need to append
-  // it again.
+  // 호스트가 요소 컨테이너인 경우, 네이티브 호스트 요소는 댓글을 할당되어 있으며,
+  // 그 댓글을 새 LContainer의 앵커 요소로 재사용할 수 있습니다.
+  // 해당 주석 노드는 이미 DOM 구조의 일부이므로 다시 추가할 필요가 없습니다.
   if (hostTNode.type & TNodeType.ElementContainer) {
     commentNode = unwrapRNode(slotValue) as RComment;
   } else {
@@ -804,22 +779,20 @@ function createAnchorNode(
 }
 
 /**
- * Hydration logic that looks up all dehydrated views in this container
- * and puts them into `lContainer[DEHYDRATED_VIEWS]` slot.
+ * 이 컨테이너의 모든 탈수된 뷰를 검색하고
+ * `lContainer[DEHYDRATED_VIEWS]` 슬롯에 저장합니다.
  *
- * @returns a boolean flag that indicates whether a populating operation
- *   was successful. The operation might be unsuccessful in case is has completed
- *   previously, we are rendering in client-only mode or this content is located
- *   in a skip hydration section.
+ * @returns 폴링 작업이 성공적으로 수행되었는지의 여부를 나타내는 부울 플래그입니다.
+ * 작업이 완료된 경우, 클라이언트 전용 모드에서 렌더링되고 있거나,
+ * 이 콘텐츠가 스킵 수화 섹션에 위치한 경우에 실패할 수 있습니다.
  */
 function populateDehydratedViewsInLContainerImpl(
   lContainer: LContainer,
   tNode: TNode,
   hostLView: LView,
 ): boolean {
-  // We already have a native element (anchor) set and the process
-  // of finding dehydrated views happened (so the `lContainer[DEHYDRATED_VIEWS]`
-  // is not null), exit early.
+  // 이미 네이티브 요소(앵커)가 설정되어 있고 탈수된 뷰 검색이 이루어졌습니다
+  // (그래서 `lContainer[DEHYDRATED_VIEWS]`가 null이 아닙니다), 일찍 종료됩니다.
   if (lContainer[NATIVE] && lContainer[DEHYDRATED_VIEWS]) {
     return true;
   }
@@ -831,20 +804,20 @@ function populateDehydratedViewsInLContainerImpl(
     isInSkipHydrationBlock(tNode) ||
     isDisconnectedNode(hydrationInfo, noOffsetIndex);
 
-  // Regular creation mode.
+  // 일반 생성 모드.
   if (isNodeCreationMode) {
     return false;
   }
 
-  // Hydration mode, looking up an anchor node and dehydrated views in DOM.
+  // 수화 모드, DOM에서 앵커 노드 및 탈수된 뷰를 검색합니다.
   const currentRNode: RNode | null = getSegmentHead(hydrationInfo, noOffsetIndex);
 
   const serializedViews = hydrationInfo.data[CONTAINERS]?.[noOffsetIndex];
   ngDevMode &&
     assertDefined(
       serializedViews,
-      'Unexpected state: no hydration info available for a given TNode, ' +
-        'which represents a view container.',
+      '예상치 못한 상태: 주어진 TNode에 대한 수화 정보가 없습니다. ' +
+        'view 컨테이너를 나타내고 있습니다.',
     );
 
   const [commentNode, dehydratedViews] = locateDehydratedViewsInContainer(
@@ -854,11 +827,11 @@ function populateDehydratedViewsInLContainerImpl(
 
   if (ngDevMode) {
     validateMatchingNode(commentNode, Node.COMMENT_NODE, null, hostLView, tNode, true);
-    // Do not throw in case this node is already claimed (thus `false` as a second
-    // argument). If this container is created based on an `<ng-template>`, the comment
-    // node would be already claimed from the `template` instruction. If an element acts
-    // as an anchor (e.g. <div #vcRef>), a separate comment node would be created/located,
-    // so we need to claim it here.
+    // 이 노드가 이미 클레임된 경우 예외를 발생시키지 않습니다(따라서 두 번째
+    // 인수로 `false`를 전달합니다). 이 컨테이너가 `<ng-template>`을 기반으로 생성된 경우,
+    // 주석 노드는 `template` 지시문으로부터 이미 클레임된 상태일 수 있습니다. 요소가
+    // 앵커 역할을 하는 경우 (예: <div #vcRef>), 별도의 주석 노드가 생성/위치할 수 있으므로
+    // 이를 여기서 클레임할 필요가 있습니다.
     markRNodeAsClaimedByHydration(commentNode, false);
   }
 
@@ -875,9 +848,9 @@ function locateOrCreateAnchorNode(
   slotValue: any,
 ): void {
   if (!_populateDehydratedViewsInLContainer(lContainer, hostTNode, hostLView)) {
-    // Populating dehydrated views operation returned `false`, which indicates
-    // that the logic was running in client-only mode, this an anchor comment
-    // node should be created for this container.
+    // 탈수된 뷰 채우기 작업이 `false`를 반환했으며, 이는
+    // 클라이언트 전용 모드에서 실행 중임을 나타냅니다. 이 컨테이너를 위한
+    // 주석 요소가 생성되어야 합니다.
     createAnchorNode(lContainer, hostLView, hostTNode, slotValue);
   }
 }

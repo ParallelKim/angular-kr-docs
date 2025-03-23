@@ -23,23 +23,23 @@ import {checkStylingMap, classStringParser} from './styling';
 
 /**
  *
- * Update an interpolated class on an element with single bound value surrounded by text.
+ * 단일 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 1 interpolated value in it:
+ * 속성에 전달된 값에 1개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate1('prefix', v0, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate1(prefix: string, v0: any, suffix?: string): void {
@@ -50,25 +50,25 @@ export function ɵɵclassMapInterpolate1(prefix: string, v0: any, suffix?: strin
 
 /**
  *
- * Update an interpolated class on an element with 2 bound values surrounded by text.
+ * 2개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 2 interpolated values in it:
+ * 속성에 전달된 값에 2개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate2('prefix', v0, '-', v1, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate2(
@@ -85,28 +85,28 @@ export function ɵɵclassMapInterpolate2(
 
 /**
  *
- * Update an interpolated class on an element with 3 bound values surrounded by text.
+ * 3개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 3 interpolated values in it:
+ * 속성에 전달된 값에 3개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate3(
  * 'prefix', v0, '-', v1, '-', v2, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate3(
@@ -125,30 +125,30 @@ export function ɵɵclassMapInterpolate3(
 
 /**
  *
- * Update an interpolated class on an element with 4 bound values surrounded by text.
+ * 4개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 4 interpolated values in it:
+ * 속성에 전달된 값에 4개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate4(
  * 'prefix', v0, '-', v1, '-', v2, '-', v3, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate4(
@@ -169,32 +169,32 @@ export function ɵɵclassMapInterpolate4(
 
 /**
  *
- * Update an interpolated class on an element with 5 bound values surrounded by text.
+ * 5개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 5 interpolated values in it:
+ * 속성에 전달된 값에 5개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate5(
  * 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경을 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate5(
@@ -230,34 +230,34 @@ export function ɵɵclassMapInterpolate5(
 
 /**
  *
- * Update an interpolated class on an element with 6 bound values surrounded by text.
+ * 6개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 6 interpolated values in it:
+ * 속성에 전달된 값에 6개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate6(
  *    'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경을 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경을 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate6(
@@ -297,36 +297,36 @@ export function ɵɵclassMapInterpolate6(
 
 /**
  *
- * Update an interpolated class on an element with 7 bound values surrounded by text.
+ * 7개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 7 interpolated values in it:
+ * 속성에 전달된 값에 7개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate7(
  *    'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경을 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경을 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경을 확인하는 값.
+ * @param i5 연결에만 사용되는 정적 값.
+ * @param v6 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate7(
@@ -370,38 +370,38 @@ export function ɵɵclassMapInterpolate7(
 
 /**
  *
- * Update an interpolated class on an element with 8 bound values surrounded by text.
+ * 8개의 바인드 값이 텍스트로 둘러싸인 요소의 보간된 클래스를 업데이트합니다.
  *
- * Used when the value passed to a property has 8 interpolated values in it:
+ * 속성에 전달된 값에 8개의 보간 값이 포함된 경우 사용됩니다:
  *
  * ```html
  * <div class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolate8(
  *  'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, '-', v7, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param i6 Static value used for concatenation only.
- * @param v7 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경을 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경을 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경을 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경을 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경을 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경을 확인하는 값.
+ * @param i5 연결에만 사용되는 정적 값.
+ * @param v6 변경을 확인하는 값.
+ * @param i6 연결에만 사용되는 정적 값.
+ * @param v7 변경을 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolate8(
@@ -448,16 +448,16 @@ export function ɵɵclassMapInterpolate8(
 }
 
 /**
- * Update an interpolated class on an element with 9 or more bound values surrounded by text.
+ * 텍스트로 둘러싸인 9개 이상의 바인드 값이 있는 요소의 보간 클래스를 업데이트합니다.
  *
- * Used when the number of interpolated values exceeds 8.
+ * 보간 값의 수가 8을 초과할 때 사용됩니다.
  *
  * ```html
  * <div
  *  class="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}-{{v8}}-{{v9}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 그것의 컴파일된 표현은:
  *
  * ```ts
  * ɵɵclassMapInterpolateV(
@@ -465,9 +465,8 @@ export function ɵɵclassMapInterpolate8(
  *  'suffix']);
  * ```
  *.
- * @param values The collection of values and the strings in-between those values, beginning with
- * a string prefix and ending with a string suffix.
- * (e.g. `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
+ * @param values 값의 모음 및 그 값들 사이의 문자열, 문자열 접두사로 시작하고 문자열 접미사로 끝납니다.
+ * (예: `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
  * @codeGenApi
  */
 export function ɵɵclassMapInterpolateV(values: any[]): void {

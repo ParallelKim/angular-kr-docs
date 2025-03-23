@@ -26,14 +26,14 @@ import {
 } from './i18n_util';
 
 /**
- * Converts `I18nCreateOpCodes` array into a human readable format.
+ * `I18nCreateOpCodes` 배열을 사람이 읽을 수 있는 형식으로 변환합니다.
  *
- * This function is attached to the `I18nCreateOpCodes.debug` property if `ngDevMode` is enabled.
- * This function provides a human readable view of the opcodes. This is useful when debugging the
- * application as well as writing more readable tests.
+ * 이 함수는 `ngDevMode`가 활성화된 경우 `I18nCreateOpCodes.debug` 속성에 연결됩니다.
+ * 이 함수는 opcode의 사람이 읽을 수 있는 뷰를 제공합니다. 이는 응용 프로그램을 디버깅할 때와
+ * 더 가독성 있는 테스트를 작성할 때 유용합니다.
  *
- * @param this `I18nCreateOpCodes` if attached as a method.
- * @param opcodes `I18nCreateOpCodes` if invoked as a function.
+ * @param this 메소드로 첨부된 경우의 `I18nCreateOpCodes`.
+ * @param opcodes 함수로 호출된 경우의 `I18nCreateOpCodes`.
  */
 export function i18nCreateOpCodesToString(
   this: I18nCreateOpCodes | void,
@@ -61,14 +61,14 @@ export function i18nCreateOpCodesToString(
 }
 
 /**
- * Converts `I18nUpdateOpCodes` array into a human readable format.
+ * `I18nUpdateOpCodes` 배열을 사람이 읽을 수 있는 형식으로 변환합니다.
  *
- * This function is attached to the `I18nUpdateOpCodes.debug` property if `ngDevMode` is enabled.
- * This function provides a human readable view of the opcodes. This is useful when debugging the
- * application as well as writing more readable tests.
+ * 이 함수는 `ngDevMode`가 활성화된 경우 `I18nUpdateOpCodes.debug` 속성에 연결됩니다.
+ * 이 함수는 opcode의 사람이 읽을 수 있는 뷰를 제공합니다. 이는 응용 프로그램을 디버깅할 때와
+ * 더 가독성 있는 테스트를 작성할 때 유용합니다.
  *
- * @param this `I18nUpdateOpCodes` if attached as a method.
- * @param opcodes `I18nUpdateOpCodes` if invoked as a function.
+ * @param this 메소드로 첨부된 경우의 `I18nUpdateOpCodes`.
+ * @param opcodes 함수로 호출된 경우의 `I18nUpdateOpCodes`.
  */
 export function i18nUpdateOpCodesToString(
   this: I18nUpdateOpCodes | void,
@@ -93,7 +93,7 @@ export function i18nUpdateOpCodesToString(
       case I18nUpdateOpCode.IcuUpdate:
         return `icuUpdateCase(${ref})`;
     }
-    throw new Error('unexpected OpCode');
+    throw new Error('예기치 않은 OpCode');
   }
 
   while (parser.hasMore()) {
@@ -107,12 +107,11 @@ export function i18nUpdateOpCodesToString(
       if (typeof value === 'string') {
         statement += value;
       } else if (value < 0) {
-        // Negative numbers are ref indexes
-        // Here `i` refers to current binding index. It is to signify that the value is relative,
-        // rather than absolute.
+        // 음수는 참조 인덱스입니다.
+        // 여기서 `i`는 현재 바인딩 인덱스를 나타냅니다. 이는 값이 절대적인 것이 아니라 상대적임을 의미합니다.
         statement += '${lView[i' + value + ']}';
       } else {
-        // Positive numbers are operations.
+        // 양수는 연산입니다.
         const opCodeText = consumeOpCode(value);
         statements.push(opCodeText.replace('$$$', '`' + statement + '`') + ';');
         statement = '';
@@ -124,14 +123,14 @@ export function i18nUpdateOpCodesToString(
 }
 
 /**
- * Converts `I18nCreateOpCodes` array into a human readable format.
+ * `I18nCreateOpCodes` 배열을 사람이 읽을 수 있는 형식으로 변환합니다.
  *
- * This function is attached to the `I18nCreateOpCodes.debug` if `ngDevMode` is enabled. This
- * function provides a human readable view of the opcodes. This is useful when debugging the
- * application as well as writing more readable tests.
+ * 이 함수는 `ngDevMode`가 활성화된 경우 `I18nCreateOpCodes.debug`에 첨부됩니다. 이
+ * 함수는 opcode의 사람이 읽을 수 있는 뷰를 제공합니다. 이는 응용 프로그램을 디버깅할 때와
+ * 더 가독성 있는 테스트를 작성할 때 유용합니다.
  *
- * @param this `I18nCreateOpCodes` if attached as a method.
- * @param opcodes `I18nCreateOpCodes` if invoked as a function.
+ * @param this 메소드로 첨부된 경우의 `I18nCreateOpCodes`.
+ * @param opcodes 함수로 호출된 경우의 `I18nCreateOpCodes`.
  */
 export function icuCreateOpCodesToString(
   this: IcuCreateOpCodes | void,
@@ -149,7 +148,7 @@ export function icuCreateOpCodesToString(
       case IcuCreateOpCode.Attr:
         return `(lView[${ref}] as Element).setAttribute("${parser.consumeString()}", "${parser.consumeString()}")`;
     }
-    throw new Error('Unexpected OpCode: ' + getInstructionFromIcuCreateOpCode(opCode));
+    throw new Error('예상치 못한 OpCode: ' + getInstructionFromIcuCreateOpCode(opCode));
   }
 
   let lastRef = -1;
@@ -170,7 +169,7 @@ export function icuCreateOpCodesToString(
       const line = consumeOpCode(value);
       line && lines.push(line);
     } else {
-      throw new Error('Unexpected value');
+      throw new Error('예상치 못한 값');
     }
   }
 
@@ -178,14 +177,14 @@ export function icuCreateOpCodesToString(
 }
 
 /**
- * Converts `I18nRemoveOpCodes` array into a human readable format.
+ * `I18nRemoveOpCodes` 배열을 사람이 읽을 수 있는 형식으로 변환합니다.
  *
- * This function is attached to the `I18nRemoveOpCodes.debug` if `ngDevMode` is enabled. This
- * function provides a human readable view of the opcodes. This is useful when debugging the
- * application as well as writing more readable tests.
+ * 이 함수는 `ngDevMode`가 활성화된 경우 `I18nRemoveOpCodes.debug`에 첨부됩니다. 이
+ * 함수는 opcode의 사람이 읽을 수 있는 뷰를 제공합니다. 이는 응용 프로그램을 디버깅할 때와
+ * 더 가독성 있는 테스트를 작성할 때 유용합니다.
  *
- * @param this `I18nRemoveOpCodes` if attached as a method.
- * @param opcodes `I18nRemoveOpCodes` if invoked as a function.
+ * @param this 메소드로 첨부된 경우의 `I18nRemoveOpCodes`.
+ * @param opcodes 함수로 호출된 경우의 `I18nRemoveOpCodes`.
  */
 export function i18nRemoveOpCodesToString(
   this: I18nRemoveOpCodes | void,
@@ -197,10 +196,10 @@ export function i18nRemoveOpCodesToString(
   for (let i = 0; i < removeCodes.length; i++) {
     const nodeOrIcuIndex = removeCodes[i] as number;
     if (nodeOrIcuIndex > 0) {
-      // Positive numbers are `RNode`s.
+      // 양수는 `RNode`입니다.
       lines.push(`remove(lView[${nodeOrIcuIndex}])`);
     } else {
-      // Negative numbers are ICUs
+      // 음수는 ICU입니다.
       lines.push(`removeNestedICU(${~nodeOrIcuIndex})`);
     }
   }
@@ -222,13 +221,13 @@ class OpCodeParser {
 
   consumeNumber(): number {
     let value = this.codes[this.i++];
-    assertNumber(value, 'expecting number in OpCode');
+    assertNumber(value, 'OpCode에서 숫자를 기대합니다.');
     return value;
   }
 
   consumeString(): string {
     let value = this.codes[this.i++];
-    assertString(value, 'expecting string in OpCode');
+    assertString(value, 'OpCode에서 문자열을 기대합니다.');
     return value;
   }
 
@@ -237,7 +236,7 @@ class OpCodeParser {
     if (value === null || typeof value === 'function') {
       return value;
     }
-    throw new Error('expecting function in OpCode');
+    throw new Error('OpCode에서 함수를 기대합니다.');
   }
 
   consumeNumberOrString(): number | string {
@@ -245,7 +244,7 @@ class OpCodeParser {
     if (typeof value === 'string') {
       return value;
     }
-    assertNumber(value, 'expecting number or string in OpCode');
+    assertNumber(value, 'OpCode에서 숫자 또는 문자열을 기대합니다.');
     return value;
   }
 
@@ -259,7 +258,7 @@ class OpCodeParser {
     ) {
       return value;
     }
-    assertNumber(value, 'expecting number, string, ICU_MARKER or ELEMENT_MARKER in OpCode');
+    assertNumber(value, 'OpCode에서 숫자, 문자열, ICU_MARKER 또는 ELEMENT_MARKER를 기대합니다.');
     return value;
   }
 }

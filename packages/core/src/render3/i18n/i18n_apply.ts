@@ -65,33 +65,29 @@ import {
 } from './i18n_util';
 
 /**
- * Keep track of which input bindings in `ɵɵi18nExp` have changed.
+ * `ɵɵi18nExp`에서 변경된 입력 바인딩을 추적합니다.
  *
- * This is used to efficiently update expressions in i18n only when the corresponding input has
- * changed.
+ * 이는 해당 입력이 변경될 때만 i18n 내 표현식을 효율적으로 업데이트하는 데 사용됩니다.
  *
- * 1) Each bit represents which of the `ɵɵi18nExp` has changed.
- * 2) There are 32 bits allowed in JS.
- * 3) Bit 32 is special as it is shared for all changes past 32. (In other words if you have more
- * than 32 `ɵɵi18nExp` then all changes past 32nd `ɵɵi18nExp` will be mapped to same bit. This means
- * that we may end up changing more than we need to. But i18n expressions with 32 bindings is rare
- * so in practice it should not be an issue.)
+ * 1) 각 비트는 변경된 `ɵɵi18nExp`를 나타냅니다.
+ * 2) JS에서는 32비트가 허용됩니다.
+ * 3) 32비트는 특별하며 32비트 이상의 모든 변경 사항에 대해 공유됩니다. (즉, 32개 이상의 `ɵɵi18nExp`가 있는 경우, 32번째 `ɵɵi18nExp` 이후의 모든 변경 사항은 동일한 비트로 매핑됩니다. 즉, 우리가 필요 이상으로 변경할 수 있습니다. 그러나 바인딩이 32개인 i18n 표현식은 드물므로 실제로 문제는 되지 않아야 합니다.)
  */
 let changeMask = 0b0;
 
 /**
- * Keeps track of which bit needs to be updated in `changeMask`
+ * `changeMask`에서 업데이트해야 하는 비트를 추적합니다.
  *
- * This value gets incremented on every call to `ɵɵi18nExp`
+ * 이 값은 `ɵɵi18nExp` 호출 시마다 증가합니다.
  */
 let changeMaskCounter = 0;
 
 /**
- * Keep track of which input bindings in `ɵɵi18nExp` have changed.
+ * `ɵɵi18nExp`에서 변경된 입력 바인딩을 추적합니다.
  *
- * `setMaskBit` gets invoked by each call to `ɵɵi18nExp`.
+ * `setMaskBit`는 각 `ɵɵi18nExp` 호출 시 호출됩니다.
  *
- * @param hasChange did `ɵɵi18nExp` detect a change.
+ * @param hasChange `ɵɵi18nExp`가 변경 사항을 감지했는지 여부.
  */
 export function setMaskBit(hasChange: boolean) {
   if (hasChange) {
@@ -102,16 +98,16 @@ export function setMaskBit(hasChange: boolean) {
 
 export function applyI18n(tView: TView, lView: LView, index: number) {
   if (changeMaskCounter > 0) {
-    ngDevMode && assertDefined(tView, `tView should be defined`);
+    ngDevMode && assertDefined(tView, `tView는 정의되어야 합니다.`);
     const tI18n = tView.data[index] as TI18n | I18nUpdateOpCodes;
-    // When `index` points to an `ɵɵi18nAttributes` then we have an array otherwise `TI18n`
+    // `index`가 `ɵɵi18nAttributes`를 가리킬 때 배열이 되고, 그렇지 않으면 `TI18n`이 됩니다.
     const updateOpCodes: I18nUpdateOpCodes = Array.isArray(tI18n)
       ? (tI18n as I18nUpdateOpCodes)
       : (tI18n as TI18n).update;
     const bindingsStartIndex = getBindingIndex() - changeMaskCounter - 1;
     applyUpdateOpCodes(tView, lView, updateOpCodes, bindingsStartIndex, changeMask);
   }
-  // Reset changeMask & maskBit to default for the next update cycle
+  // 다음 업데이트 주기를 위해 changeMask 및 maskBit를 기본값으로 재설정
   changeMask = 0b0;
   changeMaskCounter = 0;
 }
@@ -161,20 +157,20 @@ function locateOrCreateNodeImpl(
 
   const native = locateI18nRNodeByIndex(hydrationInfo!, noOffsetIndex) as RNode;
 
-  // TODO: Improve error handling
+  // TODO: 개선된 오류 처리
   //
-  // Other hydration paths use validateMatchingNode() in order to provide
-  // detailed information in development mode about the expected DOM.
-  // However, not every node in an i18n block has a TNode. Instead, we
-  // need to be able to use the AST to generate a similar message.
-  ngDevMode && assertDefined(native, 'expected native element');
-  ngDevMode && assertEqual((native as Node).nodeType, nodeType, 'expected matching nodeType');
+  // 다른 수분 경로는 validateMatchingNode()를 사용하여
+  // 개발 모드에서 예상되는 DOM에 대한 자세한 정보를 제공합니다.
+  // 그러나 i18n 블록의 모든 노드는 TNode가 없습니다. 대신,
+  // 우리는 유사한 메시지를 생성하기 위해 AST를 사용할 수 있어야 합니다.
+  ngDevMode && assertDefined(native, '기대되는 네이티브 요소입니다.');
+  ngDevMode && assertEqual((native as Node).nodeType, nodeType, '일치하는 nodeType 기대됨');
   ngDevMode &&
     nodeType === Node.ELEMENT_NODE &&
     assertEqual(
       (native as HTMLElement).tagName.toLowerCase(),
       textOrName.toLowerCase(),
-      'expecting matching tagName',
+      '일치하는 tagName을 기대합니다.',
     );
   ngDevMode && markRNodeAsClaimedByHydration(native);
 
@@ -186,15 +182,14 @@ export function enableLocateOrCreateI18nNodeImpl() {
 }
 
 /**
- * Apply `I18nCreateOpCodes` op-codes as stored in `TI18n.create`.
+ * `TI18n.create`에 저장된 `I18nCreateOpCodes` op-codes를 적용합니다.
  *
- * Creates text (and comment) nodes which are internationalized.
+ * 국제화된 텍스트(및 주석) 노드를 생성합니다.
  *
- * @param lView Current lView
- * @param createOpCodes Set of op-codes to apply
- * @param parentRNode Parent node (so that direct children can be added eagerly) or `null` if it is
- *     a root node.
- * @param insertInFrontOf DOM node that should be used as an anchor.
+ * @param lView 현재 lView
+ * @param createOpCodes 적용할 op-codes 집합
+ * @param parentRNode 부모 노드 (직접 자식을 미리 추가할 수 있도록) 또는 루트 노드인 경우 `null`.
+ * @param insertInFrontOf DOM 노드로 앵커로 사용해야 하는 노드.
  */
 export function applyCreateOpCodes(
   lView: LView,
@@ -213,8 +208,8 @@ export function applyCreateOpCodes(
     let rNode = lView[index];
     let lastNodeWasCreated = false;
     if (rNode === null) {
-      // We only create new DOM nodes if they don't already exist: If ICU switches case back to a
-      // case which was already instantiated, no need to create new DOM nodes.
+      // 이미 존재하지 않는 경우에만 새로운 DOM 노드를 생성합니다. ICU가 다시 이전
+      // 케이스로 전환되면 새로운 DOM 노드를 만들 필요가 없습니다.
       rNode = lView[index] = _locateOrCreateNode(
         lView,
         index,
@@ -230,12 +225,12 @@ export function applyCreateOpCodes(
 }
 
 /**
- * Apply `I18nMutateOpCodes` OpCodes.
+ * `I18nMutateOpCodes` OpCodes를 적용합니다.
  *
- * @param tView Current `TView`
- * @param mutableOpCodes Mutable OpCodes to process
- * @param lView Current `LView`
- * @param anchorRNode place where the i18n node should be inserted.
+ * @param tView 현재 `TView`
+ * @param mutableOpCodes 처리할 Mutable OpCodes
+ * @param lView 현재 `LView`
+ * @param anchorRNode i18n 노드가 삽입되어야 하는 위치.
  */
 export function applyMutableOpCodes(
   tView: TView,
@@ -266,9 +261,7 @@ export function applyMutableOpCodes(
         case IcuCreateOpCode.AppendChild:
           const parentIdx = getParentFromIcuCreateOpCode(opCode);
           if (rootIdx === null) {
-            // The first operation should save the `rootIdx` because the first operation
-            // must insert into the root. (Only subsequent operations can insert into a dynamic
-            // parent)
+            // 첫 번째 작업은 `rootIdx`를 저장해야 하며, 첫 번째 작업은 루트에 삽입해야 합니다.
             rootIdx = parentIdx;
             rootRNode = renderer.parentNode(anchorRNode);
           }
@@ -281,7 +274,7 @@ export function applyMutableOpCodes(
             insertInFrontOf = null;
             parentRNode = unwrapRNode(lView[parentIdx]) as RElement;
           }
-          // FIXME(misko): Refactor with `processI18nText`
+          // FIXME(misko): `processI18nText`로 리팩토링
           if (parentRNode !== null) {
             // This can happen if the `LView` we are adding to is not attached to a parent `LView`.
             // In such a case there is no "root" we can attach to. This is fine, as we still need to
@@ -327,7 +320,7 @@ export function applyMutableOpCodes(
           if (ngDevMode) {
             throw new RuntimeError(
               RuntimeErrorCode.INVALID_I18N_STRUCTURE,
-              `Unable to determine the type of mutate operation for "${opCode}"`,
+              `mutate 작업의 유형을 결정할 수 없습니다: "${opCode}"`,
             );
           }
       }
@@ -341,7 +334,7 @@ export function applyMutableOpCodes(
               assertEqual(
                 typeof commentValue,
                 'string',
-                `Expected "${commentValue}" to be a comment node value`,
+                `기대되는 주석 노드 값은 "${commentValue}"입니다.`,
               );
             ngDevMode && assertIndexInExpandoRange(lView, commentNodeIndex);
             const commentRNode = (lView[commentNodeIndex] = _locateOrCreateNode(
@@ -350,7 +343,6 @@ export function applyMutableOpCodes(
               commentValue,
               Node.COMMENT_NODE,
             ));
-            // FIXME(misko): Attaching patch data is only needed for the root (Also add tests)
             attachPatchData(commentRNode, lView);
           }
           break;
@@ -362,7 +354,7 @@ export function applyMutableOpCodes(
               assertEqual(
                 typeof tagName,
                 'string',
-                `Expected "${tagName}" to be an element node tag name`,
+                `기대되는 요소 노드 태그 이름은 "${tagName}"입니다.`,
               );
 
             ngDevMode && assertIndexInExpandoRange(lView, elementNodeIndex);
@@ -372,27 +364,24 @@ export function applyMutableOpCodes(
               tagName,
               Node.ELEMENT_NODE,
             ));
-            // FIXME(misko): Attaching patch data is only needed for the root (Also add tests)
             attachPatchData(elementRNode, lView);
           }
           break;
         default:
-          ngDevMode &&
-            throwError(`Unable to determine the type of mutate operation for "${opCode}"`);
+          ngDevMode && throwError(`mutate 작업의 유형을 결정할 수 없습니다: "${opCode}"`);
       }
     }
   }
 }
 
 /**
- * Apply `I18nUpdateOpCodes` OpCodes
+ * `I18nUpdateOpCodes` OpCodes를 적용합니다.
  *
- * @param tView Current `TView`
- * @param lView Current `LView`
- * @param updateOpCodes OpCodes to process
- * @param bindingsStartIndex Location of the first `ɵɵi18nApply`
- * @param changeMask Each bit corresponds to a `ɵɵi18nExp` (Counting backwards from
- *     `bindingsStartIndex`)
+ * @param tView 현재 `TView`
+ * @param lView 현재 `LView`
+ * @param updateOpCodes 처리할 OpCodes
+ * @param bindingsStartIndex 첫 번째 `ɵɵi18nApply`의 위치
+ * @param changeMask 각 비트는 `ɵɵi18nExp`에 해당합니다 (역방향으로 `bindingsStartIndex`에서 카운팅)
  */
 export function applyUpdateOpCodes(
   tView: TView,
@@ -424,7 +413,7 @@ export function applyUpdateOpCodes(
                 const propName = updateOpCodes[++j] as string;
                 const sanitizeFn = updateOpCodes[++j] as SanitizerFn | null;
                 const tNodeOrTagName = tView.data[nodeIndex] as TNode | string;
-                ngDevMode && assertDefined(tNodeOrTagName, 'Experting TNode or string');
+                ngDevMode && assertDefined(tNodeOrTagName, 'TNode 또는 문자열이 기대됩니다.');
                 if (typeof tNodeOrTagName === 'string') {
                   // IF we don't have a `TNode`, then we are an element in ICU (as ICU content does
                   // not have TNode), in which case we know that there are no directives, and hence
@@ -485,12 +474,12 @@ export function applyUpdateOpCodes(
 }
 
 /**
- * Apply OpCodes associated with updating an existing ICU.
+ * 기존 ICU 업데이트와 관련된 OpCodes를 적용합니다.
  *
- * @param tView Current `TView`
- * @param tIcu Current `TIcu`
- * @param bindingsStartIndex Location of the first `ɵɵi18nApply`
- * @param lView Current `LView`
+ * @param tView 현재 `TView`
+ * @param tIcu 현재 `TIcu`
+ * @param bindingsStartIndex 첫 번째 `ɵɵi18nApply`의 위치
+ * @param lView 현재 `LView`
  */
 function applyIcuUpdateCase(tView: TView, tIcu: TIcu, bindingsStartIndex: number, lView: LView) {
   ngDevMode && assertIndexInRange(lView, tIcu.currentCaseLViewIndex);
@@ -509,24 +498,22 @@ function applyIcuUpdateCase(tView: TView, tIcu: TIcu, bindingsStartIndex: number
 }
 
 /**
- * Apply OpCodes associated with switching a case on ICU.
+ * ICU에서 케이스를 전환하는 것과 관련된 OpCodes를 적용합니다.
  *
- * This involves tearing down existing case and than building up a new case.
+ * 기존 케이스를 제거하고 새로운 케이스를 구축하는 것을 포함합니다.
  *
- * @param tView Current `TView`
- * @param tIcu Current `TIcu`
- * @param lView Current `LView`
- * @param value Value of the case to update to.
+ * @param tView 현재 `TView`
+ * @param tIcu 현재 `TIcu`
+ * @param lView 현재 `LView`
+ * @param value 업데이트할 케이스의 값.
  */
 function applyIcuSwitchCase(tView: TView, tIcu: TIcu, lView: LView, value: string) {
-  // Rebuild a new case for this ICU
   const caseIndex = getCaseIndex(tIcu, value);
   let activeCaseIndex = getCurrentICUCaseIndex(tIcu, lView);
   if (activeCaseIndex !== caseIndex) {
     applyIcuSwitchCaseRemove(tView, tIcu, lView);
     lView[tIcu.currentCaseLViewIndex] = caseIndex === null ? null : ~caseIndex;
     if (caseIndex !== null) {
-      // Add the nodes for the new case
       const anchorRNode = lView[tIcu.anchorIdx];
       if (anchorRNode) {
         ngDevMode && assertDomNode(anchorRNode);
@@ -538,13 +525,13 @@ function applyIcuSwitchCase(tView: TView, tIcu: TIcu, lView: LView, value: strin
 }
 
 /**
- * Apply OpCodes associated with tearing ICU case.
+ * ICU 케이스를 제거하는 것과 관련된 OpCodes를 적용합니다.
  *
- * This involves tearing down existing case and than building up a new case.
+ * 기존 케이스를 제거하고 새로운 케이스를 구축하는 것을 포함합니다.
  *
- * @param tView Current `TView`
- * @param tIcu Current `TIcu`
- * @param lView Current `LView`
+ * @param tView 현재 `TView`
+ * @param tIcu 현재 `TIcu`
+ * @param lView 현재 `LView`
  */
 function applyIcuSwitchCaseRemove(tView: TView, tIcu: TIcu, lView: LView) {
   let activeCaseIndex = getCurrentICUCaseIndex(tIcu, lView);
@@ -553,11 +540,9 @@ function applyIcuSwitchCaseRemove(tView: TView, tIcu: TIcu, lView: LView) {
     for (let i = 0; i < removeCodes.length; i++) {
       const nodeOrIcuIndex = removeCodes[i] as number;
       if (nodeOrIcuIndex > 0) {
-        // Positive numbers are `RNode`s.
         const rNode = getNativeByIndex(nodeOrIcuIndex, lView);
         rNode !== null && nativeRemoveNode(lView[RENDERER], rNode);
       } else {
-        // Negative numbers are ICUs
         applyIcuSwitchCaseRemove(tView, getTIcu(tView, ~nodeOrIcuIndex)!, lView);
       }
     }
@@ -565,10 +550,10 @@ function applyIcuSwitchCaseRemove(tView: TView, tIcu: TIcu, lView: LView) {
 }
 
 /**
- * Returns the index of the current case of an ICU expression depending on the main binding value
+ * 주 바인딩 값에 따라 ICU 표현식의 현재 케이스 인덱스를 반환합니다.
  *
  * @param icuExpression
- * @param bindingValue The value of the main binding used by this ICU expression
+ * @param bindingValue 이 ICU 표현식에서 사용되는 주 바인딩의 값
  */
 function getCaseIndex(icuExpression: TIcu, bindingValue: string): number | null {
   let index = icuExpression.cases.indexOf(bindingValue);

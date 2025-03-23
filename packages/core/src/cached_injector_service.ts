@@ -13,11 +13,10 @@ import {OnDestroy} from './interface/lifecycle_hooks';
 import {createEnvironmentInjector} from './render3/ng_module_ref';
 
 /**
- * A service used by the framework to create and cache injector instances.
+ * 프레임워크에서 인젝터 인스턴스를 생성하고 캐시하는 데 사용되는 서비스입니다.
  *
- * This service is used to create a single injector instance for each defer
- * block definition, to avoid creating an injector for each defer block instance
- * of a certain type.
+ * 이 서비스는 각 지연 블록 정의에 대해 단일 인젝터 인스턴스를 생성하는 데 사용되며,
+ * 특정 유형의 각 지연 블록 인스턴스에 대해 인젝터를 생성하는 것을 방지합니다.
  */
 export class CachedInjectorService implements OnDestroy {
   private cachedInjectors = new Map<unknown, EnvironmentInjector | null>();

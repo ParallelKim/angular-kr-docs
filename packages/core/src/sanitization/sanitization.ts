@@ -27,17 +27,16 @@ import {SecurityContext} from './security';
 import {_sanitizeUrl as _sanitizeUrl} from './url_sanitizer';
 
 /**
- * An `html` sanitizer which converts untrusted `html` **string** into trusted string by removing
- * dangerous content.
+ * 신뢰할 수 없는 `html` **문자열**을 위험한 콘텐츠를 제거하여 신뢰할 수 있는 문자열로 변환하는 `html` sanitizer입니다.
  *
- * This method parses the `html` and locates potentially dangerous content (such as urls and
- * javascript) and removes it.
+ * 이 메소드는 `html`을 파싱하고 잠재적으로 위험한 콘텐츠(예: url 및
+ * javascript)를 찾아 제거합니다.
  *
- * It is possible to mark a string as trusted by calling {@link bypassSanitizationTrustHtml}.
+ * {@link bypassSanitizationTrustHtml}를 호출하여 문자열을 신뢰할 수 있는 것으로 표시할 수 있습니다.
  *
- * @param unsafeHtml untrusted `html`, typically from the user.
- * @returns `html` string which is safe to display to user, because all of the dangerous javascript
- * and urls have been removed.
+ * @param unsafeHtml 신뢰할 수 없는 `html`, 일반적으로 사용자로부터.
+ * @returns 사용자에게 표시하기에 안전한 `html` 문자열이 반환되며, 모든 위험한 javascript와
+ * url가 제거되었습니다.
  *
  * @codeGenApi
  */
@@ -53,13 +52,12 @@ export function ɵɵsanitizeHtml(unsafeHtml: any): TrustedHTML | string {
 }
 
 /**
- * A `style` sanitizer which converts untrusted `style` **string** into trusted string by removing
- * dangerous content.
+ * 신뢰할 수 없는 `style` **문자열**을 위험한 콘텐츠를 제거하여 신뢰할 수 있는 문자열로 변환하는 `style` sanitizer입니다.
  *
- * It is possible to mark a string as trusted by calling {@link bypassSanitizationTrustStyle}.
+ * {@link bypassSanitizationTrustStyle}를 호출하여 문자열을 신뢰할 수 있는 것으로 표시할 수 있습니다.
  *
- * @param unsafeStyle untrusted `style`, typically from the user.
- * @returns `style` string which is safe to bind to the `style` properties.
+ * @param unsafeStyle 신뢰할 수 없는 `style`, 일반적으로 사용자로부터.
+ * @returns `style` 문자열이 반환되며, 이는 `style` 속성에 바인딩하기에 안전합니다.
  *
  * @codeGenApi
  */
@@ -75,18 +73,15 @@ export function ɵɵsanitizeStyle(unsafeStyle: any): string {
 }
 
 /**
- * A `url` sanitizer which converts untrusted `url` **string** into trusted string by removing
- * dangerous
- * content.
+ * 신뢰할 수 없는 `url` **문자열**을 위험한 콘텐츠를 제거하여 신뢰할 수 있는 문자열로 변환하는 `url` sanitizer입니다.
  *
- * This method parses the `url` and locates potentially dangerous content (such as javascript) and
- * removes it.
+ * 이 메소드는 `url`을 파싱하고 잠재적으로 위험한 콘텐츠(예: javascript)를 찾아 제거합니다.
  *
- * It is possible to mark a string as trusted by calling {@link bypassSanitizationTrustUrl}.
+ * {@link bypassSanitizationTrustUrl}를 호출하여 문자열을 신뢰할 수 있는 것으로 표시할 수 있습니다.
  *
- * @param unsafeUrl untrusted `url`, typically from the user.
- * @returns `url` string which is safe to bind to the `src` properties such as `<img src>`, because
- * all of the dangerous javascript has been removed.
+ * @param unsafeUrl 신뢰할 수 없는 `url`, 일반적으로 사용자로부터.
+ * @returns 안전한 `url` 문자열이 반환되며, 이는 `<img src>`와 같은 `src` 속성에 바인딩하기에 안전합니다.
+ * 모든 위험한 javascript가 제거되었습니다.
  *
  * @codeGenApi
  */
@@ -102,13 +97,14 @@ export function ɵɵsanitizeUrl(unsafeUrl: any): string {
 }
 
 /**
- * A `url` sanitizer which only lets trusted `url`s through.
+ * 신뢰할 수 있는 `url`만 통과시키는 `url` sanitizer입니다.
  *
- * This passes only `url`s marked trusted by calling {@link bypassSanitizationTrustResourceUrl}.
+ * 이것은 {@link bypassSanitizationTrustResourceUrl}를 호출하여 신뢰할 수 있는 것으로 표시된
+ * `url`만 통과합니다.
  *
- * @param unsafeResourceUrl untrusted `url`, typically from the user.
- * @returns `url` string which is safe to bind to the `src` properties such as `<img src>`, because
- * only trusted `url`s have been allowed to pass.
+ * @param unsafeResourceUrl 신뢰할 수 없는 `url`, 일반적으로 사용자로부터.
+ * @returns 안전한 `url` 문자열이 반환되며, 이는 `<img src>`와 같은 `src` 속성에 바인딩하기에 안전합니다.
+ * 오직 신뢰할 수 있는 `url`만 통과되었습니다.
  *
  * @codeGenApi
  */
@@ -124,19 +120,19 @@ export function ɵɵsanitizeResourceUrl(unsafeResourceUrl: any): TrustedScriptUR
   }
   throw new RuntimeError(
     RuntimeErrorCode.UNSAFE_VALUE_IN_RESOURCE_URL,
-    ngDevMode && `unsafe value used in a resource URL context (see ${XSS_SECURITY_URL})`,
+    ngDevMode && `리소스 URL 컨텍스트에서 사용된 안전하지 않은 값 (see ${XSS_SECURITY_URL})`,
   );
 }
 
 /**
- * A `script` sanitizer which only lets trusted javascript through.
+ * 신뢰할 수 있는 javascript만 통과시키는 `script` sanitizer입니다.
  *
- * This passes only `script`s marked trusted by calling {@link
- * bypassSanitizationTrustScript}.
+ * 이것은 {@link bypassSanitizationTrustScript}를 호출하여 신뢰할 수 있는 것으로 표시된
+ * `script`만 통과합니다.
  *
- * @param unsafeScript untrusted `script`, typically from the user.
- * @returns `url` string which is safe to bind to the `<script>` element such as `<img src>`,
- * because only trusted `scripts` have been allowed to pass.
+ * @param unsafeScript 신뢰할 수 없는 `script`, 일반적으로 사용자로부터.
+ * @returns 안전한 `url` 문자열이 반환되며, 이는 `<script>` 요소와 같은 `<img src>`에 바인딩하기에 안전합니다.
+ * 오직 신뢰할 수 있는 `scripts`만 통과되었습니다.
  *
  * @codeGenApi
  */
@@ -152,68 +148,61 @@ export function ɵɵsanitizeScript(unsafeScript: any): TrustedScript | string {
   }
   throw new RuntimeError(
     RuntimeErrorCode.UNSAFE_VALUE_IN_SCRIPT,
-    ngDevMode && 'unsafe value used in a script context',
+    ngDevMode && '스크립트 컨텍스트에서 사용된 안전하지 않은 값',
   );
 }
 
 /**
- * A template tag function for promoting the associated constant literal to a
- * TrustedHTML. Interpolation is explicitly not allowed.
+ * 연결된 상수 리터럴을 TrustedHTML로 승격하기 위한 템플릿 태그 함수입니다. 보간은 명시적으로 허용되지 않습니다.
  *
- * @param html constant template literal containing trusted HTML.
- * @returns TrustedHTML wrapping `html`.
+ * @param html 신뢰할 수 있는 HTML을 포함하는 상수 템플릿 리터럴.
+ * @returns `html`을 감싸는 TrustedHTML.
  *
- * @security This is a security-sensitive function and should only be used to
- * convert constant values of attributes and properties found in
- * application-provided Angular templates to TrustedHTML.
+ * @security 이는 보안에 민감한 함수이며,
+ * 애플리케이션에서 제공하는 Angular 템플릿의 속치 및 속성의 상수 값을 TrustedHTML로 변환하는 데만 사용해야 합니다.
  *
  * @codeGenApi
  */
 export function ɵɵtrustConstantHtml(html: TemplateStringsArray): TrustedHTML | string {
-  // The following runtime check ensures that the function was called as a
-  // template tag (e.g. ɵɵtrustConstantHtml`content`), without any interpolation
-  // (e.g. not ɵɵtrustConstantHtml`content ${variable}`). A TemplateStringsArray
-  // is an array with a `raw` property that is also an array. The associated
-  // template literal has no interpolation if and only if the length of the
-  // TemplateStringsArray is 1.
+  // 다음 런타임 체크는 함수가 템플릿 태그로 호출되었는지 확인합니다
+  // (예: ɵɵtrustConstantHtml`content`), 보간 없이
+  // (예: ɵɵtrustConstantHtml`content ${variable}` 아님). TemplateStringsArray
+  // 는 `raw` 속성이 있는 배열입니다. 관련된 템플릿 리터럴이 보간이 없다면
+  // TemplateStringsArray의 길이가 1일 때만 가능합니다.
   if (ngDevMode && (!Array.isArray(html) || !Array.isArray(html.raw) || html.length !== 1)) {
-    throw new Error(`Unexpected interpolation in trusted HTML constant: ${html.join('?')}`);
+    throw new Error(`신뢰할 수 있는 HTML 상수에서 예상치 않은 보간: ${html.join('?')}`);
   }
   return trustedHTMLFromString(html[0]);
 }
 
 /**
- * A template tag function for promoting the associated constant literal to a
- * TrustedScriptURL. Interpolation is explicitly not allowed.
+ * 연결된 상수 리터럴을 TrustedScriptURL로 승격하기 위한 템플릿 태그 함수입니다. 보간은 명시적으로 허용되지 않습니다.
  *
- * @param url constant template literal containing a trusted script URL.
- * @returns TrustedScriptURL wrapping `url`.
+ * @param url 신뢰할 수 있는 스크립트 URL을 포함하는 상수 템플릿 리터럴.
+ * @returns `url`을 감싸는 TrustedScriptURL.
  *
- * @security This is a security-sensitive function and should only be used to
- * convert constant values of attributes and properties found in
- * application-provided Angular templates to TrustedScriptURL.
+ * @security 이는 보안에 민감한 함수이며,
+ * 애플리케이션에서 제공하는 Angular 템플릿의 속치 및 속성의 상수 값을 TrustedScriptURL로 변환하는 데만 사용해야 합니다.
  *
  * @codeGenApi
  */
 export function ɵɵtrustConstantResourceUrl(url: TemplateStringsArray): TrustedScriptURL | string {
-  // The following runtime check ensures that the function was called as a
-  // template tag (e.g. ɵɵtrustConstantResourceUrl`content`), without any
-  // interpolation (e.g. not ɵɵtrustConstantResourceUrl`content ${variable}`). A
-  // TemplateStringsArray is an array with a `raw` property that is also an
-  // array. The associated template literal has no interpolation if and only if
-  // the length of the TemplateStringsArray is 1.
+  // 다음 런타임 체크는 함수가 템플릿 태그로 호출되었는지 확인합니다
+  // (예: ɵɵtrustConstantResourceUrl`content`), 보간 없이
+  // (예: ɵɵtrustConstantResourceUrl`content ${variable}` 아님). A
+  // TemplateStringsArray는 `raw` 속성이 있는 배열입니다. 관련된 템플릿 리터럴이
+  // 보간이 없다면 TemplateStringsArray의 길이가 1일 때만 가능합니다.
   if (ngDevMode && (!Array.isArray(url) || !Array.isArray(url.raw) || url.length !== 1)) {
-    throw new Error(`Unexpected interpolation in trusted URL constant: ${url.join('?')}`);
+    throw new Error(`신뢰할 수 있는 URL 상수에서 예상치 않은 보간: ${url.join('?')}`);
   }
   return trustedScriptURLFromString(url[0]);
 }
 
 /**
- * Detects which sanitizer to use for URL property, based on tag name and prop name.
+ * 태그 이름과 속성 이름에 따라 URL 속성에 사용할 sanitizer를 감지합니다.
  *
- * The rules are based on the RESOURCE_URL context config from
- * `packages/compiler/src/schema/dom_security_schema.ts`.
- * If tag and prop names don't match Resource URL schema, use URL sanitizer.
+ * 규칙은 `packages/compiler/src/schema/dom_security_schema.ts`의 RESOURCE_URL 컨텍스트 구성에 기반합니다.
+ * 태그 및 속성 이름이 리소스 URL 스키마와 일치하지 않으면 URL sanitizer를 사용합니다.
  */
 export function getUrlSanitizer(tag: string, prop: string) {
   if (
@@ -231,17 +220,16 @@ export function getUrlSanitizer(tag: string, prop: string) {
 }
 
 /**
- * Sanitizes URL, selecting sanitizer function based on tag and property names.
+ * URL을 정리하며, 태그와 속성 이름에 따라 sanitizer 함수를 선택합니다.
  *
- * This function is used in case we can't define security context at compile time, when only prop
- * name is available. This happens when we generate host bindings for Directives/Components. The
- * host element is unknown at compile time, so we defer calculation of specific sanitizer to
- * runtime.
+ * 이 함수는 보안 컨텍스트를 컴파일 시간에 정의할 수 없을 때 사용되며,
+ * 단지 속성 이름만 제공됩니다. 이것은 디렉티브/컴포넌트를 위한 호스트 바인딩을
+ * 생성할 때 발생합니다. 호스트 요소는 컴파일 시간에 알 수 없으므로 특정 sanitizer 계산을 런타임으로 미룹니다.
  *
- * @param unsafeUrl untrusted `url`, typically from the user.
- * @param tag target element tag name.
- * @param prop name of the property that contains the value.
- * @returns `url` string which is safe to bind.
+ * @param unsafeUrl 신뢰할 수 없는 `url`, 일반적으로 사용자로부터.
+ * @param tag 대상 요소 태그 이름.
+ * @param prop 값이 포함된 속성의 이름.
+ * @returns 안전하게 바인딩할 수 있는 `url` 문자열.
  *
  * @codeGenApi
  */
@@ -252,10 +240,9 @@ export function ɵɵsanitizeUrlOrResourceUrl(unsafeUrl: any, tag: string, prop: 
 export function validateAgainstEventProperties(name: string) {
   if (name.toLowerCase().startsWith('on')) {
     const errorMessage =
-      `Binding to event property '${name}' is disallowed for security reasons, ` +
-      `please use (${name.slice(2)})=...` +
-      `\nIf '${name}' is a directive input, make sure the directive is imported by the` +
-      ` current module.`;
+      `이벤트 속성 '${name}'에 바인딩하는 것은 보안상의 이유로 부여되지 않습니다. ` +
+      `(${name.slice(2)})=...를 사용하세요.` +
+      `\n'${name}'가 지시자 입력이라면, 해당 지시자가 현재 모듈에 임포트되어 있는지 확인하세요.`;
     throw new RuntimeError(RuntimeErrorCode.INVALID_EVENT_BINDING, errorMessage);
   }
 }
@@ -263,8 +250,8 @@ export function validateAgainstEventProperties(name: string) {
 export function validateAgainstEventAttributes(name: string) {
   if (name.toLowerCase().startsWith('on')) {
     const errorMessage =
-      `Binding to event attribute '${name}' is disallowed for security reasons, ` +
-      `please use (${name.slice(2)})=...`;
+      `이벤트 속성 '${name}'에 바인딩하는 것은 보안상의 이유로 부여되지 않습니다. ` +
+      `(${name.slice(2)})=...를 사용하세요.`;
     throw new RuntimeError(RuntimeErrorCode.INVALID_EVENT_BINDING, errorMessage);
   }
 }

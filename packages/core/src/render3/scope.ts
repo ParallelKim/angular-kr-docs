@@ -24,11 +24,10 @@ import {
 import {isModuleWithProviders} from './jit/util';
 
 /**
- * Generated next to NgModules to monkey-patch directive and pipe references onto a component's
- * definition, when generating a direct reference in the component file would otherwise create an
- * import cycle.
+ * NgModules 옆에 생성되어 컴포넌트 정의에서 지시문 및 파이프 참조를 원숭이 패치하는 역할을 하며,
+ * 이는 컴포넌트 파일에서 직접 참조를 생성할 때 임포트 사이클을 발생시킬 수 있습니다.
  *
- * See [this explanation](https://hackmd.io/Odw80D0pR6yfsOjg_7XCJg?view) for more details.
+ * 더 자세한 정보는 [이 설명](https://hackmd.io/Odw80D0pR6yfsOjg_7XCJg?view)을 참조하세요.
  *
  * @codeGenApi
  */
@@ -43,12 +42,11 @@ export function ɵɵsetComponentScope(
 }
 
 /**
- * Adds the module metadata that is necessary to compute the module's transitive scope to an
- * existing module definition.
+ * 기존 모듈 정의에 모듈의 전이 범위를 계산하는 데 필요한 모듈 메타데이터를 추가합니다.
  *
- * Scope metadata of modules is not used in production builds, so calls to this function can be
- * marked pure to tree-shake it from the bundle, allowing for all referenced declarations
- * to become eligible for tree-shaking as well.
+ * 모듈의 범위 메타데이터는 프로덕션 빌드에서 사용되지 않으므로 이 함수의 호출은
+ * 순수한 것으로 표시되어 번들에서 제거될 수 있으며, 모든 참조된 선언이
+ * 트리 샤킹의 자격을 갖게 됩니다.
  *
  * @codeGenApi
  */
@@ -60,7 +58,7 @@ export function ɵɵsetNgModuleScope(type: any, scope: NgModuleScopeInfoFromDeco
     ngModuleDef.exports = convertToTypeArray(scope.exports || EMPTY_ARRAY);
 
     if (scope.bootstrap) {
-      // This only happens in local compilation mode.
+      // 이것은 로컬 컴파일 모드에서만 발생합니다.
       ngModuleDef.bootstrap = convertToTypeArray(scope.bootstrap);
     }
 

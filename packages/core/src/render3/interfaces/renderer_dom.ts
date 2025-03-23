@@ -9,49 +9,48 @@
 import {TrustedHTML, TrustedScript, TrustedScriptURL} from '../../util/security/trusted_type_defs';
 
 /**
- * The goal here is to make sure that the browser DOM API is the Renderer.
- * We do this by defining a subset of DOM API to be the renderer and then
- * use that at runtime for rendering.
+ * 여기서의 목표는 브라우저 DOM API가 Renderer가 되도록 하는 것입니다.
+ * 이를 위해 DOM API의 하위 집합을 정의하여 렌더러로 만들고
+ * 런타임에서 렌더링을 위해 이를 사용합니다.
  *
- * At runtime we can then use the DOM api directly, in server or web-worker
- * it will be easy to implement such API.
+ * 런타임에서 우리는 DOM API를 직접 사용할 수 있으며, 서버나 웹 워커에서
+ * 그러한 API를 쉽게 구현할 수 있습니다.
  */
 
-/** Subset of API needed for appending elements and text nodes. */
+/** 요소 및 텍스트 노드를 추가하는 데 필요한 API의 하위 집합. */
 export interface RNode {
   /**
-   * Returns the parent Element, Document, or DocumentFragment
+   * 부모 요소, 문서 또는 DocumentFragment를 반환합니다.
    */
   parentNode: RNode | null;
 
   /**
-   * Returns the parent Element if there is one
+   * 부모 요소가 있으면 반환합니다.
    */
   parentElement: RElement | null;
 
   /**
-   * Gets the Node immediately following this one in the parent's childNodes
+   * 부모의 childNodes에서 이 노드 바로 다음의 노드를 가져옵니다.
    */
   nextSibling: RNode | null;
 
   /**
-   * Insert a child node.
+   * 자식 노드를 삽입합니다.
    *
-   * Used exclusively for adding View root nodes into ViewAnchor location.
+   * View root 노드를 ViewAnchor 위치에 추가하는 데 사용할 전용입니다.
    */
   insertBefore(newChild: RNode, refChild: RNode | null, isViewRoot: boolean): void;
 
   /**
-   * Append a child node.
+   * 자식 노드를 추가합니다.
    *
-   * Used exclusively for building up DOM which are static (ie not View roots)
+   * 정적 DOM(즉, View 루트가 아닌)을 구축하는 데 사용할 전용입니다.
    */
   appendChild(newChild: RNode): RNode;
 }
 
 /**
- * Subset of API needed for writing attributes, properties, and setting up
- * listeners on Element.
+ * 속성, 프로퍼티를 작성하고 Element에서 리스너를 설정하는 데 필요한 API의 하위 집합.
  */
 export interface RElement extends RNode {
   firstChild: RNode | null;

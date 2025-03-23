@@ -81,10 +81,9 @@ const SUBTEMPLATE_REGEXP = /�\/?\*(\d+:\d+)�/gi;
 const PH_REGEXP = /�(\/?[#*]\d+):?\d*�/gi;
 
 /**
- * Angular uses the special entity &ngsp; as a placeholder for non-removable space.
- * It's replaced by the 0xE500 PUA (Private Use Areas) unicode character and later on replaced by a
- * space.
- * We are re-implementing the same idea since translations might contain this special character.
+ * Angular는 특수 엔티티 &ngsp;를 제거할 수 없는 공간의 플레이스홀더로 사용합니다.
+ * 이는 0xE500 PUA(Private Use Areas) 유니코드 문자로 대체되며 이후 공백으로 대체됩니다.
+ * 우리는 번역에 이 특수 문자가 포함될 수 있으므로 동일한 아이디어를 재구현하고 있습니다.
  */
 const NGSP_UNICODE_REGEXP = /\uE500/g;
 function replaceNgsp(value: string): string {
@@ -92,36 +91,35 @@ function replaceNgsp(value: string): string {
 }
 
 /**
- * Patch a `debug` property getter on top of the existing object.
+ * 기존 객체 위에 `debug` 속성 getter를 패치합니다.
  *
- * NOTE: always call this method with `ngDevMode && attachDebugObject(...)`
+ * 주의: 항상 `ngDevMode && attachDebugObject(...)`와 함께 이 메소드를 호출하십시오.
  *
- * @param obj Object to patch
- * @param debugGetter Getter returning a value to patch
+ * @param obj 패치할 객체
+ * @param debugGetter 값을 반환하는 getter
  */
 function attachDebugGetter<T>(obj: T, debugGetter: (this: T) => any): void {
   if (ngDevMode) {
     Object.defineProperty(obj, 'debug', {get: debugGetter, enumerable: false});
   } else {
     throw new Error(
-      'This method should be guarded with `ngDevMode` so that it can be tree shaken in production!',
+      '이 메소드는 `ngDevMode`로 보호되어야 하며, 그렇지 않으면 프로덕션에서 트리 섬유화될 수 없습니다!',
     );
   }
 }
 
 /**
- * Create dynamic nodes from i18n translation block.
+ * i18n 번역 블록에서 동적 노드를 생성합니다.
  *
- * - Text nodes are created synchronously
- * - TNodes are linked into tree lazily
+ * - 텍스트 노드는 동기적으로 생성됩니다.
+ * - TNodes는 게으르게 트리에 연결됩니다.
  *
- * @param tView Current `TView`
- * @parentTNodeIndex index to the parent TNode of this i18n block
- * @param lView Current `LView`
- * @param index Index of `ɵɵi18nStart` instruction.
- * @param message Message to translate.
- * @param subTemplateIndex Index into the sub template of message translation. (ie in case of
- *     `ngIf`) (-1 otherwise)
+ * @param tView 현재 `TView`
+ * @parentTNodeIndex 이 i18n 블록의 부모 TNode에 대한 인덱스
+ * @param lView 현재 `LView`
+ * @param index `ɵɵi18nStart` 명령의 인덱스.
+ * @param message 번역할 메시지.
+ * @param subTemplateIndex 메시지 번역의 서브 템플릿에 대한 인덱스입니다. (예: `ngIf`의 경우) (-1인 경우)
  */
 export function i18nStartFirstCreatePass(
   tView: TView,
@@ -146,14 +144,14 @@ export function i18nStartFirstCreatePass(
   for (let i = 0; i < msgParts.length; i++) {
     let value = msgParts[i];
     if ((i & 1) === 0) {
-      // Even indexes are text (including bindings & ICU expressions)
+      // 짝수 인덱스는 텍스트입니다 (바인딩 및 ICU 표현식 포함)
       const parts = i18nParseTextIntoPartsAndICU(value);
       for (let j = 0; j < parts.length; j++) {
         let part = parts[j];
         if ((j & 1) === 0) {
-          // `j` is odd therefore `part` is string
+          // `j`가 홀수이므로 `part`는 문자열입니다.
           const text = part as string;
-          ngDevMode && assertString(text, 'Parsed ICU part should be string');
+          ngDevMode && assertString(text, '구문 분석된 ICU 부분은 문자열이어야 합니다.');
           if (text !== '') {
             i18nStartFirstCreatePassProcessTextNode(
               astStack[0],
@@ -167,16 +165,12 @@ export function i18nStartFirstCreatePass(
             );
           }
         } else {
-          // `j` is Even therefor `part` is an `ICUExpression`
+          // `j`가 짝수이므로 `part`는 `ICUExpression`입니다.
           const icuExpression: IcuExpression = part as IcuExpression;
-          // Verify that ICU expression has the right shape. Translations might contain invalid
-          // constructions (while original messages were correct), so ICU parsing at runtime may
-          // not succeed (thus `icuExpression` remains a string).
-          // Note: we intentionally retain the error here by not using `ngDevMode`, because
-          // the value can change based on the locale and users aren't guaranteed to hit
-          // an invalid string while they're developing.
+          // ICU 표현식이 올바른 형태인지 확인합니다. 번역에는 잘못된 구성이 포함될 수 있습니다(원래 메시지는 올바른 경우에도), 따라서 런타임에서 ICU 구문 분석이 성공하지 않을 수 있습니다(따라서 `icuExpression`은 문자열로 남습니다).
+          // 참고: 우리는 `ngDevMode`를 사용하지 않아서 여기에 오류를 의도적으로 유지합니다. 왜냐하면 값은 로케일에 따라 변경될 수 있으며 사용자가 개발하는 동안 잘못된 문자열에 도달할 것이라는 보장이 없기 때문입니다.
           if (typeof icuExpression !== 'object') {
-            throw new Error(`Unable to parse ICU expression in "${message}" message.`);
+            throw new Error(`"${message}" 메시지에서 ICU 표현식을 파싱할 수 없습니다.`);
           }
           const icuContainerTNode = createTNodeAndAddOpCode(
             tView,
@@ -192,7 +186,7 @@ export function i18nStartFirstCreatePass(
             assertGreaterThanOrEqual(
               icuNodeIndex,
               HEADER_OFFSET,
-              'Index must be in absolute LView offset',
+              '인덱스는 절대 LView 오프셋에 있어야 합니다.',
             );
           icuStart(
             astStack[0],
@@ -206,8 +200,8 @@ export function i18nStartFirstCreatePass(
         }
       }
     } else {
-      // Odd indexes are placeholders (elements and sub-templates)
-      // At this point value is something like: '/#1:2' (originally coming from '�/#1:2�')
+      // 홀수 인덱스는 플레이스홀더입니다 (요소 및 서브 템플릿)
+      // 현재 값은 '/#1:2'와 같은 형태입니다. (원래는 '�/#1:2�'에서 오름)
       const isClosing = value.charCodeAt(0) === CharCode.SLASH;
       const type = value.charCodeAt(isClosing ? 1 : 0);
       ngDevMode && assertOneOf(type, CharCode.STAR, CharCode.HASH);
@@ -243,16 +237,15 @@ export function i18nStartFirstCreatePass(
 }
 
 /**
- * Allocate space in i18n Range add create OpCode instruction to create a text or comment node.
+ * i18n 범위에서 공간을 할당하고 텍스트 또는 주석 노드를 생성하는 OpCode 지시문을 추가합니다.
  *
- * @param tView Current `TView` needed to allocate space in i18n range.
- * @param rootTNode Root `TNode` of the i18n block. This node determines if the new TNode will be
- *     added as part of the `i18nStart` instruction or as part of the `TNode.insertBeforeIndex`.
- * @param existingTNodes internal state for `addTNodeAndUpdateInsertBeforeIndex`.
- * @param lView Current `LView` needed to allocate space in i18n range.
- * @param createOpCodes Array storing `I18nCreateOpCodes` where new opCodes will be added.
- * @param text Text to be added when the `Text` or `Comment` node will be created.
- * @param isICU true if a `Comment` node for ICU (instead of `Text`) node should be created.
+ * @param tView 현재 `TView`는 i18n 범위에서 공간을 할당하는 데 필요합니다.
+ * @param rootTNode i18n 블록의 루트 `TNode`. 이 노드는 새 TNode가 `i18nStart` 명령의 일부로 추가될지 또는 `TNode.insertBeforeIndex`의 일부로 추가될지를 결정합니다.
+ * @param existingTNodes `addTNodeAndUpdateInsertBeforeIndex`의 내부 상태.
+ * @param lView 현재 `LView`는 i18n 범위에서 공간을 할당하는 데 필요합니다.
+ * @param createOpCodes 새 opCodes가 추가될 `I18nCreateOpCodes`를 저장하는 배열입니다.
+ * @param text `Text` 또는 `Comment` 노드가 생성될 때 추가될 텍스트입니다.
+ * @param isICU `Comment` 노드가 ICU(대신 `Text`) 노드로 생성되어야 하면 true입니다.
  */
 function createTNodeAndAddOpCode(
   tView: TView,
@@ -268,16 +261,13 @@ function createTNodeAndAddOpCode(
   let parentTNode = getCurrentParentTNode();
 
   if (rootTNode === parentTNode) {
-    // FIXME(misko): A null `parentTNode` should represent when we fall of the `LView` boundary.
-    // (there is no parent), but in some circumstances (because we are inconsistent about how we set
-    // `previousOrParentTNode`) it could point to `rootTNode` So this is a work around.
+    // FIXME(misko): null `parentTNode`는 `LView` 경계를 벗어난 경우를 나타내야 합니다.
+    // (부모가 없음), 그러나 어떤 경우에는 (우리가 `previousOrParentTNode`를 설정하는 방식에 따라 불일치가 있기 때문에) `rootTNode`를 가리킬 수 있습니다. 그래서 이것은 우회입니다.
     parentTNode = null;
   }
   if (parentTNode === null) {
-    // If we don't have a parent that means that we can eagerly add nodes.
-    // If we have a parent than these nodes can't be added now (as the parent has not been created
-    // yet) and instead the `parentTNode` is responsible for adding it. See
-    // `TNode.insertBeforeIndex`
+    // 부모가 없는 경우 노드를 즉시 추가할 수 있음을 의미합니다.
+    // 부모가 있는 경우, 이 노드는 지금 추가될 수 없으며(부모가 아직 생성되지 않았음), 대신 `parentTNode`가 그것을 추가해야 합니다. `TNode.insertBeforeIndex`를 참조하십시오.
     opCode |= I18nCreateOpCode.APPEND_EAGERLY;
   }
   if (isICU) {
@@ -285,8 +275,7 @@ function createTNodeAndAddOpCode(
     ensureIcuContainerVisitorLoaded(loadIcuContainerVisitor);
   }
   createOpCodes.push(opCode, text === null ? '' : text);
-  // We store `{{?}}` so that when looking at debug `TNodeType.template` we can see where the
-  // bindings are.
+  // 우리가 `{{?}}`를 저장하므로 `debug`에서 `TNodeType.template`을 볼 때 바인딩이 어디에 있는지 볼 수 있습니다.
   const tNode = createTNodeAtIndex(
     tView,
     i18nNodeIdx,
@@ -296,33 +285,31 @@ function createTNodeAndAddOpCode(
   );
   addTNodeAndUpdateInsertBeforeIndex(existingTNodes, tNode);
   const tNodeIdx = tNode.index;
-  setCurrentTNode(tNode, false /* Text nodes are self closing */);
+  setCurrentTNode(tNode, false /* 텍스트 노드는 자체 종료됩니다. */);
   if (parentTNode !== null && rootTNode !== parentTNode) {
-    // We are a child of deeper node (rather than a direct child of `i18nStart` instruction.)
-    // We have to make sure to add ourselves to the parent.
+    // 우리는 더 깊은 노드의 자식입니다 (즉 `i18nStart` 명령의 직접적 자식이 아닙니다.)
+    // 우리는 부모에 추가해야 합니다.
     setTNodeInsertBeforeIndex(parentTNode, tNodeIdx);
   }
   return tNode;
 }
 
 /**
- * Processes text node in i18n block.
+ * i18n 블록의 텍스트 노드를 처리합니다.
  *
- * Text nodes can have:
- * - Create instruction in `createOpCodes` for creating the text node.
- * - Allocate spec for text node in i18n range of `LView`
- * - If contains binding:
- *    - bindings => allocate space in i18n range of `LView` to store the binding value.
- *    - populate `updateOpCodes` with update instructions.
+ * 텍스트 노드는 다음을 가질 수 있습니다:
+ * - 텍스트 노드를 생성하기 위한 `createOpCodes` 내의 생성 지시문.
+ * - `LView`의 i18n 범위에서 텍스트 노드의 사양을 할당합니다.
+ * - 바인딩이 포함되어 있는 경우:
+ *    - 바인딩 => 바인딩 값을 저장하기 위해 `LView`의 i18n 범위에서 공간을 할당합니다.
+ *    - 업데이트 지침으로 `updateOpCodes`를 채웁니다.
  *
- * @param tView Current `TView`
- * @param rootTNode Root `TNode` of the i18n block. This node determines if the new TNode will
- *     be added as part of the `i18nStart` instruction or as part of the
- *     `TNode.insertBeforeIndex`.
- * @param existingTNodes internal state for `addTNodeAndUpdateInsertBeforeIndex`.
- * @param createOpCodes Location where the creation OpCodes will be stored.
- * @param lView Current `LView`
- * @param text The translated text (which may contain binding)
+ * @param tView 현재 `TView`
+ * @param rootTNode i18n 블록의 루트 `TNode`. 이 노드는 새 TNode가 `i18nStart` 명령의 일부로 추가될지를 결정합니다.
+ * @param existingTNodes `addTNodeAndUpdateInsertBeforeIndex`의 내부 상태.
+ * @param createOpCodes 생성될 OpCodes가 저장될 위치.
+ * @param lView 현재 `LView`
+ * @param text 번역된 텍스트(바 인딩을 포함할 수 있음)
  */
 function i18nStartFirstCreatePassProcessTextNode(
   ast: I18nNode[],
@@ -352,7 +339,7 @@ function i18nStartFirstCreatePassProcessTextNode(
 }
 
 /**
- * See `i18nAttributes` above.
+ * 위의 `i18nAttributes`를 참조하십시오.
  */
 export function i18nAttributesFirstPass(tView: TView, index: number, values: string[]) {
   const previousElement = getCurrentTNode()!;
@@ -367,21 +354,15 @@ export function i18nAttributesFirstPass(tView: TView, index: number, values: str
       const message = values[i + 1];
 
       if (message !== '') {
-        // Check if attribute value contains an ICU and throw an error if that's the case.
-        // ICUs in element attributes are not supported.
-        // Note: we intentionally retain the error here by not using `ngDevMode`, because
-        // the `value` can change based on the locale and users aren't guaranteed to hit
-        // an invalid string while they're developing.
+        // 속성 값에 ICU가 포함되어 있는지 확인하고 그렇다면 오류를 발생시킵니다.
+        // 요소 속성의 ICU는 지원되지 않습니다.
+        // 참고: 우리는 `ngDevMode`를 사용하지 않아서 여기에 오류를 의도적으로 유지합니다. 왜냐하면 `value`는 로케일에 따라 변경될 수 있으며 사용자가 개발하는 동안 잘못된 문자열에 도달할 것이라는 보장이 없기 때문입니다.
         if (ICU_REGEXP.test(message)) {
-          throw new Error(
-            `ICU expressions are not supported in attributes. Message: "${message}".`,
-          );
+          throw new Error(`속성에 ICU 표현식이 지원되지 않습니다. 메시지: "${message}".`);
         }
 
-        // i18n attributes that hit this code path are guaranteed to have bindings, because
-        // the compiler treats static i18n attributes as regular attribute bindings.
-        // Since this may not be the first i18n attribute on this element we need to pass in how
-        // many previous bindings there have already been.
+        // 이 코드 경로에 도달하는 i18n 속성은 바인딩이 있는 것이 보장됩니다. 왜냐하면 컴파일러는 정적 i18n 속성을 정규 속성 바인딩으로 처리하기 때문입니다.
+        // 이 요소의 첫 번째 i18n 속성이 아닐 수 있으므로 이전에 몇 개의 바인딩이 있었는지 전달해야 합니다.
         generateBindingUpdateOpCodes(
           updateOpCodes,
           message,
@@ -397,15 +378,15 @@ export function i18nAttributesFirstPass(tView: TView, index: number, values: str
 }
 
 /**
- * Generate the OpCodes to update the bindings of a string.
+ * 문자열의 바인딩을 업데이트하는 OpCodes를 생성합니다.
  *
- * @param updateOpCodes Place where the update opcodes will be stored.
- * @param str The string containing the bindings.
- * @param destinationNode Index of the destination node which will receive the binding.
- * @param attrName Name of the attribute, if the string belongs to an attribute.
- * @param sanitizeFn Sanitization function used to sanitize the string after update, if necessary.
- * @param bindingStart The lView index of the next expression that can be bound via an opCode.
- * @returns The mask value for these bindings
+ * @param updateOpCodes 업데이트 opcodes가 저장될 장소입니다.
+ * @param str 바인딩을 포함하는 문자열.
+ * @param destinationNode 바인딩을 받을 대상 노드의 인덱스입니다.
+ * @param attrName 문자열이 속성에 속하는 경우 속성의 이름입니다.
+ * @param sanitizeFn 필요하다면 업데이트 후 문자열을 정리하는 데 사용되는 세정 함수입니다.
+ * @param bindingStart opCode를 통해 바인딩될 수 있는 다음 표현식의 lView 인덱스입니다.
+ * @returns 이러한 바인딩의 마스크 값
  */
 function generateBindingUpdateOpCodes(
   updateOpCodes: I18nUpdateOpCodes,
@@ -419,12 +400,12 @@ function generateBindingUpdateOpCodes(
     assertGreaterThanOrEqual(
       destinationNode,
       HEADER_OFFSET,
-      'Index must be in absolute LView offset',
+      '인덱스는 절대 LView 오프셋에 있어야 합니다.',
     );
-  const maskIndex = updateOpCodes.length; // Location of mask
-  const sizeIndex = maskIndex + 1; // location of size for skipping
-  updateOpCodes.push(null, null); // Alloc space for mask and size
-  const startIndex = maskIndex + 2; // location of first allocation.
+  const maskIndex = updateOpCodes.length; // 마스크의 위치
+  const sizeIndex = maskIndex + 1; // 건너뛰기를 위한 크기 위치
+  updateOpCodes.push(null, null); // 마스크와 크기 공간 할당
+  const startIndex = maskIndex + 2; // 첫 번째 할당 위치입니다.
   if (ngDevMode) {
     attachDebugGetter(updateOpCodes, i18nUpdateOpCodesToString);
   }
@@ -435,12 +416,12 @@ function generateBindingUpdateOpCodes(
     const textValue = textParts[j];
 
     if (j & 1) {
-      // Odd indexes are bindings
+      // 홀수 인덱스는 바인딩입니다.
       const bindingIndex = bindingStart + parseInt(textValue, 10);
       updateOpCodes.push(-1 - bindingIndex);
       mask = mask | toMaskBit(bindingIndex);
     } else if (textValue !== '') {
-      // Even indexes are text
+      // 짝수 인덱스는 텍스트입니다.
       updateOpCodes.push(textValue);
     }
   }
@@ -458,21 +439,17 @@ function generateBindingUpdateOpCodes(
 }
 
 /**
- * Count the number of bindings in the given `opCodes`.
+ * 주어진 `opCodes`에서 바인딩의 수를 계산합니다.
  *
- * It could be possible to speed this up, by passing the number of bindings found back from
- * `generateBindingUpdateOpCodes()` to `i18nAttributesFirstPass()` but this would then require more
- * complexity in the code and/or transient objects to be created.
+ * `generateBindingUpdateOpCodes()`에서 발견된 바인딩 수를 `i18nAttributesFirstPass()`로 전달하면 속도가 빨라질 수 있지만, 이렇게 하면 코드의 복잡성이 증가하거나 일시적인 객체를 생성해야 합니다.
  *
- * Since this function is only called once when the template is instantiated, is trivial in the
- * first instance (since `opCodes` will be an empty array), and it is not common for elements to
- * contain multiple i18n bound attributes, it seems like this is a reasonable compromise.
+ * 이 함수는 템플릿이 인스턴스화될 때 한 번만 호출되며, 첫 번째 인스턴스에서(옵코드가 빈 배열이므로) 사소하고 요소에 여러 개의 i18n 바인딩 속성이 포함되는 것은 흔치 않기 때문에 이는 합리적인 타협인 것 같습니다.
  */
 function countBindings(opCodes: I18nUpdateOpCodes): number {
   let count = 0;
   for (let i = 0; i < opCodes.length; i++) {
     const opCode = opCodes[i];
-    // Bindings are negative numbers.
+    // 바인딩은 음수입니다.
     if (typeof opCode === 'number' && opCode < 0) {
       count++;
     }
@@ -481,19 +458,16 @@ function countBindings(opCodes: I18nUpdateOpCodes): number {
 }
 
 /**
- * Convert binding index to mask bit.
+ * 바인딩 인덱스를 마스크 비트로 변환합니다.
  *
- * Each index represents a single bit on the bit-mask. Because bit-mask only has 32 bits, we make
- * the 32nd bit share all masks for all bindings higher than 32. Since it is extremely rare to
- * have more than 32 bindings this will be hit very rarely. The downside of hitting this corner
- * case is that we will execute binding code more often than necessary. (penalty of performance)
+ * 각 인덱스는 비트 마스크의 단일 비트를 나타냅니다. 비트 마스크에는 32비트만 있으므로 32비트를 초과하는 모든 바인딩에 대해 32비트가 공유되도록 합니다. 32개 이상의 바인딩이 있는 것은 극히 드물기 때문에 이 경우는 드물게 발생합니다. 이 코너 케이스가 발생하는 단점은 바인딩 코드를 필요 이상으로 자주 실행하게 된다는 것입니다. (성능의 페널티)
  */
 function toMaskBit(bindingIndex: number): number {
   return 1 << Math.min(bindingIndex, 31);
 }
 
 /**
- * Removes everything inside the sub-templates of a message.
+ * 메시지의 서브 템플릿 내부의 모든 것을 제거합니다.
  */
 function removeInnerTemplateTranslation(message: string): string {
   let match;
@@ -519,7 +493,7 @@ function removeInnerTemplateTranslation(message: string): string {
     assertEqual(
       inTemplate,
       false,
-      `Tag mismatch: unable to find the end of the sub-template in the translation "${message}"`,
+      `태그 불일치: 번역 "${message}"에서 서브 템플릿의 끝을 찾을 수 없습니다.`,
     );
 
   res += message.slice(index);
@@ -527,26 +501,24 @@ function removeInnerTemplateTranslation(message: string): string {
 }
 
 /**
- * Extracts a part of a message and removes the rest.
+ * 메시지의 일부를 추출하고 나머지를 제거합니다.
  *
- * This method is used for extracting a part of the message associated with a template. A
- * translated message can span multiple templates.
+ * 이 메소드는 템플릿과 관련된 메시지의 일부를 추출하는 데 사용됩니다. 번역된 메시지는 여러 템플릿에 걸칠 수 있습니다.
  *
- * Example:
+ * 예:
  * ```html
  * <div i18n>Translate <span *ngIf>me</span>!</div>
  * ```
  *
- * @param message The message to crop
- * @param subTemplateIndex Index of the sub-template to extract. If undefined it returns the
- * external template and removes all sub-templates.
+ * @param message 잘라낼 메시지
+ * @param subTemplateIndex 추출할 서브 템플릿의 인덱스입니다. 정의되지 않은 경우 외부 템플릿을 반환하고 모든 서브 템플릿을 제거합니다.
  */
 export function getTranslationForTemplate(message: string, subTemplateIndex: number) {
   if (isRootTemplateMessage(subTemplateIndex)) {
-    // We want the root template message, ignore all sub-templates
+    // 우리는 루트 템플릿 메시지를 원하므로 모든 서브 템플릿을 무시합니다.
     return removeInnerTemplateTranslation(message);
   } else {
-    // We want a specific sub-template
+    // 우리는 특정 서브 템플릿을 원합니다.
     const start =
       message.indexOf(`:${subTemplateIndex}${MARKER}`) + 2 + subTemplateIndex.toString().length;
     const end = message.search(new RegExp(`${MARKER}\\/\\*\\d+:${subTemplateIndex}${MARKER}`));
@@ -555,12 +527,12 @@ export function getTranslationForTemplate(message: string, subTemplateIndex: num
 }
 
 /**
- * Generate the OpCodes for ICU expressions.
+ * ICU 표현식에 대한 OpCodes를 생성합니다.
  *
  * @param icuExpression
- * @param index Index where the anchor is stored and an optional `TIcuContainerNode`
- *   - `lView[anchorIdx]` points to a `Comment` node representing the anchor for the ICU.
- *   - `tView.data[anchorIdx]` points to the `TIcuContainerNode` if ICU is root (`null` otherwise)
+ * @param index 앵커가 저장된 인덱스 및 선택적 `TIcuContainerNode`
+ *   - `lView[anchorIdx]`는 ICU의 앵커를 나타내는 `Comment` 노드를 가리킵니다.
+ *   - `tView.data[anchorIdx]`는 ICU가 루트인 경우(`null`이 아닌 경우) `TIcuContainerNode`를 가리킵니다.
  */
 function icuStart(
   ast: I18nNode[],
@@ -571,7 +543,7 @@ function icuStart(
   icuExpression: IcuExpression,
   anchorIdx: number,
 ) {
-  ngDevMode && assertDefined(icuExpression, 'ICU expression must be defined');
+  ngDevMode && assertDefined(icuExpression, 'ICU 표현식은 정의되어야 합니다.');
   let bindingMask = 0;
   const tIcu: TIcu = {
     type: icuExpression.type,
@@ -587,15 +559,15 @@ function icuStart(
   const values = icuExpression.values;
   const cases: I18nNode[][] = [];
   for (let i = 0; i < values.length; i++) {
-    // Each value is an array of strings & other ICU expressions
+    // 각 값은 문자열 및 기타 ICU 표현식의 배열입니다.
     const valueArr = values[i];
     const nestedIcus: IcuExpression[] = [];
     for (let j = 0; j < valueArr.length; j++) {
       const value = valueArr[j];
       if (typeof value !== 'string') {
-        // It is an nested ICU expression
+        // 이는 중첩된 ICU 표현식입니다.
         const icuIndex = nestedIcus.push(value as IcuExpression) - 1;
-        // Replace nested ICU expression by a comment node
+        // 중첩된 ICU 표현식을 주석 노드로 대체합니다.
         valueArr[j] = `<!--�${icuIndex}�-->`;
       }
     }
@@ -626,10 +598,10 @@ function icuStart(
 }
 
 /**
- * Parses text containing an ICU expression and produces a JSON object for it.
- * Original code from closure library, modified for Angular.
+ * ICU 표현식을 포함하는 텍스트를 파싱하고 JSON 객체를 생성합니다.
+ * 클로저 라이브러리에서 원래 코드로, Angular를 위해 수정되었습니다.
  *
- * @param pattern Text containing an ICU expression that needs to be parsed.
+ * @param pattern 파싱해야 하는 ICU 표현식이 포함된 텍스트입니다.
  *
  */
 function parseICUBlock(pattern: string): IcuExpression {
@@ -651,11 +623,11 @@ function parseICUBlock(pattern: string): IcuExpression {
   );
 
   const parts = i18nParseTextIntoPartsAndICU(pattern) as string[];
-  // Looking for (key block)+ sequence. One of the keys has to be "other".
+  // (key block)+ 시퀀스를 찾습니다. 키 중 하나는 "other"여야 합니다.
   for (let pos = 0; pos < parts.length; ) {
     let key = parts[pos++].trim();
     if (icuType === IcuType.plural) {
-      // Key can be "=x", we just want "x"
+      // 키는 "=x"일 수 있으며, 우리는 "x"만 원합니다.
       key = key.replace(/\s*(?:=)?(\w+)\s*/, '$1');
     }
     if (key.length) {
@@ -668,19 +640,19 @@ function parseICUBlock(pattern: string): IcuExpression {
     }
   }
 
-  // TODO(ocombe): support ICU expressions in attributes, see #21615
+  // TODO(ocombe): 속성에서 ICU 표현식을 지원하도록 해 주세요. #21615 참조
   return {type: icuType, mainBinding: mainBinding, cases, values};
 }
 
 /**
- * Breaks pattern into strings and top level {...} blocks.
- * Can be used to break a message into text and ICU expressions, or to break an ICU expression
- * into keys and cases. Original code from closure library, modified for Angular.
+ * 패턴을 문자열과 최상위 {...} 블록으로 나눕니다.
+ * 메시지를 텍스트와 ICU 표현식으로 나누거나 ICU 표현식을 키와 경우로 나눌 때 사용할 수 있습니다.
+ * 클로저 라이브러리에서 원래 코드로, Angular를 위해 수정되었습니다.
  *
- * @param pattern (sub)Pattern to be broken.
- * @returns An `Array<string|IcuExpression>` where:
- *   - odd positions: `string` => text between ICU expressions
- *   - even positions: `ICUExpression` => ICU expression parsed into `ICUExpression` record.
+ * @param pattern (서브)패턴을 나눕니다.
+ * @returns `Array<string|IcuExpression>`:
+ *   - 홀수 위치: `string` => ICU 표현식 사이의 텍스트
+ *   - 짝수 위치: `ICUExpression` => `ICUExpression` 레코드로 파싱된 ICU 표현식.
  */
 function i18nParseTextIntoPartsAndICU(pattern: string): (string | IcuExpression)[] {
   if (!pattern) {
@@ -691,7 +663,7 @@ function i18nParseTextIntoPartsAndICU(pattern: string): (string | IcuExpression)
   const braceStack = [];
   const results: (string | IcuExpression)[] = [];
   const braces = /[{}]/g;
-  // lastIndex doesn't get set to 0 so we have to.
+  // lastIndex는 0으로 설정되지 않으므로 그렇게 해야 합니다.
   braces.lastIndex = 0;
 
   let match;
@@ -701,7 +673,7 @@ function i18nParseTextIntoPartsAndICU(pattern: string): (string | IcuExpression)
       braceStack.pop();
 
       if (braceStack.length == 0) {
-        // End of the block.
+        // 블록의 끝.
         const block = pattern.substring(prevPos, pos);
         if (ICU_BLOCK_REGEXP.test(block)) {
           results.push(parseICUBlock(block));
@@ -727,7 +699,7 @@ function i18nParseTextIntoPartsAndICU(pattern: string): (string | IcuExpression)
 }
 
 /**
- * Parses a node, its children and its siblings, and generates the mutate & update OpCodes.
+ * 노드, 그 자식 및 형제들을 파싱하고 변형 및 업데이트 OpCodes를 생성합니다.
  *
  */
 function parseIcuCase(
@@ -756,7 +728,7 @@ function parseIcuCase(
 
   const inertBodyHelper = getInertBodyHelper(getDocument());
   const inertBodyElement = inertBodyHelper.getInertBodyElement(unsafeCaseHtml);
-  ngDevMode && assertDefined(inertBodyElement, 'Unable to generate inert body element');
+  ngDevMode && assertDefined(inertBodyElement, '상속된 body element 를 생성할 수 없습니다.');
   const inertRootNode = (getTemplateContent(inertBodyElement!) as Element) || inertBodyElement;
   if (inertRootNode) {
     return walkIcuTree(
@@ -808,7 +780,7 @@ function walkIcuTree(
             const attr = elAttrs.item(i)!;
             const lowerAttrName = attr.name.toLowerCase();
             const hasBinding = !!attr.value.match(BINDING_REGEXP);
-            // we assume the input string is safe, unless it's using a binding
+            // 우리는 입력 문자열이 안전할 것이라고 가정합니다. 바인딩을 사용하지 않는 경우
             if (hasBinding) {
               if (VALID_ATTRS.hasOwnProperty(lowerAttrName)) {
                 if (URI_ATTRS[lowerAttrName]) {
@@ -826,9 +798,8 @@ function walkIcuTree(
               } else {
                 ngDevMode &&
                   console.warn(
-                    `WARNING: ignoring unsafe attribute value ` +
-                      `${lowerAttrName} on element ${tagName} ` +
-                      `(see ${XSS_SECURITY_URL})`,
+                    `경고: 요소 ${tagName}에서 ${lowerAttrName}의 안전하지 않은 속성 값을 무시합니다. ` +
+                      `(자세한 내용은 ${XSS_SECURITY_URL})`,
                   );
               }
             } else {
@@ -841,7 +812,7 @@ function walkIcuTree(
             children: [],
           };
           ast.push(elementNode);
-          // Parse the children of this node (if any)
+          // 이 노드의 자식들을 파싱합니다. (있다면)
           bindingMask =
             walkIcuTree(
               elementNode.children,
@@ -875,16 +846,16 @@ function walkIcuTree(
         });
         break;
       case Node.COMMENT_NODE:
-        // Check if the comment node is a placeholder for a nested ICU
+        // 주석 노드가 중첩된 ICU를 위한 플레이스홀더인지 확인합니다.
         const isNestedIcu = NESTED_ICU.exec(currentNode.textContent || '');
         if (isNestedIcu) {
           const nestedIcuIndex = parseInt(isNestedIcu[1], 10);
           const icuExpression: IcuExpression = nestedIcus[nestedIcuIndex];
-          // Create the comment node that will anchor the ICU expression
+          // ICU 표현식의 앵커가 될 주석 노드를 생성합니다.
           addCreateNodeAndAppend(
             create,
             ICU_MARKER,
-            ngDevMode ? `nested ICU ${nestedIcuIndex}` : '',
+            ngDevMode ? `중첩 ICU ${nestedIcuIndex}` : '',
             parentIdx,
             newIndex,
           );
@@ -906,8 +877,8 @@ function addRemoveNode(remove: I18nRemoveOpCodes, index: number, depth: number) 
 
 function addRemoveNestedIcu(remove: I18nRemoveOpCodes, index: number, depth: number) {
   if (depth === 0) {
-    remove.push(~index); // remove ICU at `index`
-    remove.push(index); // remove ICU comment at `index`
+    remove.push(~index); // `index`에서 ICU를 제거합니다.
+    remove.push(index); // `index`에서 ICU 주석을 제거합니다.
   }
 }
 

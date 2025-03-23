@@ -25,10 +25,8 @@ import {wrapListener} from '../view/listeners';
 import {loadComponentRenderer} from './shared';
 
 /**
- * Contains a reference to a function that disables event replay feature
- * for server-side rendered applications. This function is overridden with
- * an actual implementation when the event replay feature is enabled via
- * `withEventReplay()` call.
+ * 서버 사이드 렌더링 애플리케이션을 위한 이벤트 재생 기능을 비활성화하는 함수에 대한 참조를 포함합니다.
+ * 이 함수는 `withEventReplay()` 호출을 통해 이벤트 재생 기능이 활성화될 때 실제 구현으로 재정의됩니다.
  */
 let stashEventListener = (el: RNode, eventName: string, listenerFn: (e?: any) => any) => {};
 
@@ -37,15 +35,13 @@ export function setStashFn(fn: typeof stashEventListener) {
 }
 
 /**
- * Adds an event listener to the current node.
+ * 현재 노드에 이벤트 리스너를 추가합니다.
  *
- * If an output exists on one of the node's directives, it also subscribes to the output
- * and saves the subscription for later cleanup.
+ * 노드의 지시문 중 하나에 출력이 존재하는 경우, 출력에 구독하고 나중에 정리를 위해 구독을 저장합니다.
  *
- * @param eventName Name of the event
- * @param listenerFn The function to be called when event emits
- * @param eventTargetResolver Function that returns global target information in case this listener
- * should be attached to a global object like window, document or body
+ * @param eventName 이벤트의 이름
+ * @param listenerFn 이벤트가 발생할 때 호출할 함수
+ * @param eventTargetResolver 이 리스너가 전역 객체(예: window, document 또는 body)에 연결되어야 하는 경우 전역 대상 정보를 반환하는 함수
  *
  * @codeGenApi
  */
@@ -70,23 +66,20 @@ export function ɵɵlistener(
 }
 
 /**
- * Registers a synthetic host listener (e.g. `(@foo.start)`) on a component or directive.
+ * 컴포넌트 또는 지시문에서 합성 호스트 리스너(예: `(@foo.start)`)를 등록합니다.
  *
- * This instruction is for compatibility purposes and is designed to ensure that a
- * synthetic host listener (e.g. `@HostListener('@foo.start')`) properly gets rendered
- * in the component's renderer. Normally all host listeners are evaluated with the
- * parent component's renderer, but, in the case of animation @triggers, they need
- * to be evaluated with the sub component's renderer (because that's where the
- * animation triggers are defined).
+ * 이 명령어는 호환성을 위한 것이며 합성 호스트 리스너(예: `@HostListener('@foo.start')`)가
+ * 컴포넌트의 렌더러에서 올바르게 렌더링되도록 설계되었습니다. 일반적으로 모든 호스트 리스너는
+ * 부모 컴포넌트의 렌더러로 평가되지만, 애니메이션 @triggers 의 경우, 하위 컴포넌트의 렌더러로
+ * 평가되어야 합니다(애니메이션 트리거가 정의되는 곳).
  *
- * Do not use this instruction as a replacement for `listener`. This instruction
- * only exists to ensure compatibility with the ViewEngine's host binding behavior.
+ * 이 명령어를 `listener`의 대체물로 사용하지 마세요. 이 명령어는 ViewEngine의 호스트 바인딩 동작과의
+ * 호환성을 보장하기 위해서만 존재합니다.
  *
- * @param eventName Name of the event
- * @param listenerFn The function to be called when event emits
- * @param useCapture Whether or not to use capture in event listener
- * @param eventTargetResolver Function that returns global target information in case this listener
- * should be attached to a global object like window, document or body
+ * @param eventName 이벤트의 이름
+ * @param listenerFn 이벤트가 발생할 때 호출할 함수
+ * @param useCapture 이벤트 리스너에서 캡처를 사용할지 여부
+ * @param eventTargetResolver 이 리스너가 전역 객체(예: window, document 또는 body)에 연결되어야 하는 경우 전역 대상 정보를 반환하는 함수
  *
  * @codeGenApi
  */
@@ -104,9 +97,8 @@ export function ɵɵsyntheticHostListener(
 }
 
 /**
- * A utility function that checks if a given element has already an event handler registered for an
- * event with a specified name. The TView.cleanup data structure is used to find out which events
- * are registered for a given element.
+ * 주어진 요소에 대해 특정 이름의 이벤트 핸들러가 이미 등록되어 있는지 확인하는 유틸리티 함수입니다.
+ * TView.cleanup 데이터 구조를 사용하여 특정 요소에 대해 등록된 이벤트를 확인합니다.
  */
 function findExistingListener(
   tView: TView,
@@ -119,18 +111,16 @@ function findExistingListener(
     for (let i = 0; i < tCleanup.length - 1; i += 2) {
       const cleanupEventName = tCleanup[i];
       if (cleanupEventName === eventName && tCleanup[i + 1] === tNodeIdx) {
-        // We have found a matching event name on the same node but it might not have been
-        // registered yet, so we must explicitly verify entries in the LView cleanup data
-        // structures.
+        // 동일한 노드에서 일치하는 이벤트 이름을 찾았지만 아직 등록되지 않았을 수 있으므로,
+        // LView 정리 데이터 구조의 항목을 명시적으로 확인해야 합니다.
         const lCleanup = lView[CLEANUP]!;
         const listenerIdxInLCleanup = tCleanup[i + 2];
         return lCleanup.length > listenerIdxInLCleanup ? lCleanup[listenerIdxInLCleanup] : null;
       }
-      // TView.cleanup can have a mix of 4-elements entries (for event handler cleanups) or
-      // 2-element entries (for directive and queries destroy hooks). As such we can encounter
-      // blocks of 4 or 2 items in the tView.cleanup and this is why we iterate over 2 elements
-      // first and jump another 2 elements if we detect listeners cleanup (4 elements). Also check
-      // documentation of TView.cleanup for more details of this data structure layout.
+      // TView.cleanup은 이벤트 핸들러 정리를 위한 4-요소 항목 또는 지시문 및 쿼리 제거 후크에 대한
+      // 2-요소 항목의 혼합을 가질 수 있습니다. 따라서 tView.cleanup에서 2 또는 4 항목 블록을 반복하며
+      // 리스너 정리(4 요소)를 탐지할 경우 2 요소를 건너뛰어야 합니다. 이 데이터 구조 레이아웃에 대한
+      // 자세한 내용은 TView.cleanup의 문서를 확인하세요.
       if (typeof cleanupEventName === 'string') {
         i += 2;
       }
@@ -153,19 +143,17 @@ export function listenerInternal(
   const tCleanup = firstCreatePass ? getOrCreateTViewCleanup(tView) : null;
   const context = lView[CONTEXT];
 
-  // When the ɵɵlistener instruction was generated and is executed we know that there is either a
-  // native listener or a directive output on this element. As such we we know that we will have to
-  // register a listener and store its cleanup function on LView.
+  // ɵɵlistener 명령문이 생성되어 실행될 때, 이 요소에 기본 리스너 또는 지시문 출력을
+  // 등록해야 한다고 알고 있습니다. 따라서 리스너를 등록하고 LView에 정리 함수를 저장해야 합니다.
   const lCleanup = getOrCreateLViewCleanup(lView);
 
   ngDevMode && assertTNodeType(tNode, TNodeType.AnyRNode | TNodeType.AnyContainer);
 
   let processOutputs = true;
 
-  // Adding a native event listener is applicable when:
-  // - The corresponding TNode represents a DOM element.
-  // - The event target has a resolver (usually resulting in a global object,
-  //   such as `window` or `document`).
+  // 네이티브 이벤트 리스너를 추가하는 것은 다음과 같은 경우에 적용됩니다:
+  // - 해당 TNode가 DOM 요소를 나타냅니다.
+  // - 이벤트 대상에 해결자가 있습니다(보통 전역 객체와 연결됩니다).
   if (tNode.type & TNodeType.AnyRNode || eventTargetResolver) {
     const native = getNativeByTNode(tNode, lView) as RElement;
     const target = eventTargetResolver ? eventTargetResolver(native) : native;
@@ -174,34 +162,26 @@ export function listenerInternal(
       ? (_lView: LView) => eventTargetResolver(unwrapRNode(_lView[tNode.index]))
       : tNode.index;
 
-    // In order to match current behavior, native DOM event listeners must be added for all
-    // events (including outputs).
+    // 현재 동작을 일치시키기 위해 모든 이벤트(출력을 포함하여)에 대해 기본 DOM 이벤트 리스너를 추가해야 합니다.
 
-    // There might be cases where multiple directives on the same element try to register an event
-    // handler function for the same event. In this situation we want to avoid registration of
-    // several native listeners as each registration would be intercepted by NgZone and
-    // trigger change detection. This would mean that a single user action would result in several
-    // change detections being invoked. To avoid this situation we want to have only one call to
-    // native handler registration (for the same element and same type of event).
+    // 동일한 이벤트에 대해 동일한 요소에서 여러 지시문이 이벤트 핸들러 함수를 등록하려고 할 수 있습니다.
+    // 이 경우 여러 기본 리스너 등록을 피하는 것이 좋습니다. 각 등록은 NgZone에 의해 가로채지며
+    // 변경 감지를 촉발하게 됩니다. 이는 단일 사용자 작업으로 여러 변경 감지가 발생하게 됩니다.
+    // 이러한 상황을 피하기 위해 동일한 요소와 동일한 유형의 이벤트에 대해 한 번만 기본 핸들러를 등록합니다.
     //
-    // In order to have just one native event handler in presence of multiple handler functions,
-    // we just register a first handler function as a native event listener and then chain
-    // (coalesce) other handler functions on top of the first native handler function.
+    // 여러 핸들러 함수가 있는 경우, 첫 번째 핸들러 함수를 기본 이벤트 리스너로 등록하고
+    // 이후 다른 핸들러 함수를 첫 번째 기본 핸들러 함수에 연결하여 처리합니다.
     let existingListener = null;
-    // Please note that the coalescing described here doesn't happen for events specifying an
-    // alternative target (ex. (document:click)) - this is to keep backward compatibility with the
-    // view engine.
-    // Also, we don't have to search for existing listeners is there are no directives
-    // matching on a given node as we can't register multiple event handlers for the same event in
-    // a template (this would mean having duplicate attributes).
+    // 연쇄 등록이 발생하지 않는 것은 대체 대상을 지정한 이벤트(ex. (document:click))에만 적용됩니다.
+    // 이는 뷰 엔진과의 하위 호환성을 유지하기 위한 것입니다.
+    // 주어진 노드에 지시문이 없으면 기존 리스너를 검색할 필요가 없습니다.
     if (!eventTargetResolver && isTNodeDirectiveHost) {
       existingListener = findExistingListener(tView, lView, eventName, tNode.index);
     }
     if (existingListener !== null) {
-      // Attach a new listener to coalesced listeners list, maintaining the order in which
-      // listeners are registered. For performance reasons, we keep a reference to the last
-      // listener in that list (in `__ngLastListenerFn__` field), so we can avoid going through
-      // the entire set each time we need to add a new listener.
+      // 중복된 리스너 리스트에 새로운 리스너를 추가하여 등록된 순서를 유지합니다.
+      // 성능상의 이유로, 마지막 리스너에 대한 참조를 유지하여 새로운 리스너를 추가할 때마다
+      // 전체 세트를 반복하지 않도록 합니다.
       const lastListenerFn = (<any>existingListener).__ngLastListenerFn__ || existingListener;
       lastListenerFn.__ngNextListenerFn__ = listenerFn;
       (<any>existingListener).__ngLastListenerFn__ = listenerFn;
@@ -215,8 +195,7 @@ export function listenerInternal(
       tCleanup && tCleanup.push(eventName, idxOrTargetGetter, lCleanupIndex, lCleanupIndex + 1);
     }
   } else {
-    // Even if there is no native listener to add, we still need to wrap the listener so that OnPush
-    // ancestors are marked dirty when an event occurs.
+    // 기본 리스너를 추가할 수 없는 경우에도, 리스너를 래핑하여 OnPush 조상들이 이벤트가 발생할 때 더러워지도록 합니다.
     listenerFn = wrapListener(tNode, lView, context, listenerFn);
   }
 

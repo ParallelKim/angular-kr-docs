@@ -12,32 +12,32 @@ import {getLView} from '../render3/state';
 import {removeLViewOnDestroy, storeLViewOnDestroy} from '../render3/util/view_utils';
 
 /**
- * `DestroyRef` lets you set callbacks to run for any cleanup or destruction behavior.
- * The scope of this destruction depends on where `DestroyRef` is injected. If `DestroyRef`
- * is injected in a component or directive, the callbacks run when that component or
- * directive is destroyed. Otherwise the callbacks run when a corresponding injector is destroyed.
+ * `DestroyRef`는 클린업 또는 파괴 동작을 위해 실행할 콜백을 설정할 수 있도록 해줍니다.
+ * 이 파괴의 범위는 `DestroyRef`가 주입된 위치에 따라 다릅니다. `DestroyRef`
+ *가 컴포넌트나 디렉티브에 주입되면, 콜백은 해당 컴포넌트나
+ * 디렉티브가 파괴될 때 실행됩니다. 그렇지 않으면 콜백은 해당 인젝터가 파괴될 때 실행됩니다.
  *
  * @publicApi
  */
 export abstract class DestroyRef {
-  // Here the `DestroyRef` acts primarily as a DI token. There are (currently) types of objects that
-  // can be returned from the injector when asking for this token:
-  // - `NodeInjectorDestroyRef` when retrieved from a node injector;
-  // - `EnvironmentInjector` when retrieved from an environment injector
+  // 여기서 `DestroyRef`는 주로 DI 토큰으로 작용합니다. 이 토큰을 요청할 때
+  // 인젝터에서 반환될 수 있는 객체의 (현재) 유형은 다음과 같습니다:
+  // - 노드 인젝터에서 검색할 때의 `NodeInjectorDestroyRef`;
+  // - 환경 인젝터에서 검색할 때의 `EnvironmentInjector`
 
   /**
-   * Registers a destroy callback in a given lifecycle scope.  Returns a cleanup function that can
-   * be invoked to unregister the callback.
+   * 주어진 생명주기 범위에 파괴 콜백을 등록합니다. 콜백 등록 해제를 위해 호출할 수 있는
+   * 클린업 함수가 반환됩니다.
    *
    * @usageNotes
-   * ### Example
+   * ### 예제
    * ```ts
    * const destroyRef = inject(DestroyRef);
    *
-   * // register a destroy callback
+   * // 파괴 콜백 등록
    * const unregisterFn = destroyRef.onDestroy(() => doSomethingOnDestroy());
    *
-   * // stop the destroy callback from executing if needed
+   * // 필요한 경우 파괴 콜백 실행 중지
    * unregisterFn();
    * ```
    */

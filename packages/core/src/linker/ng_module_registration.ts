@@ -11,32 +11,32 @@ import {NgModuleType} from '../metadata/ng_module_def';
 import {stringify} from '../util/stringify';
 
 /**
- * Map of module-id to the corresponding NgModule.
+ * 모듈 ID에 해당하는 NgModule의 맵.
  */
 const modules = new Map<string, NgModuleType>();
 
 /**
- * Whether to check for duplicate NgModule registrations.
+ * 중복 NgModule 등록 여부를 확인합니다.
  *
- * This can be disabled for testing.
+ * 테스트를 위해 비활성화할 수 있습니다.
  */
 let checkForDuplicateNgModules = true;
 
 function assertSameOrNotExisting(id: string, type: Type<any> | null, incoming: Type<any>): void {
   if (type && type !== incoming && checkForDuplicateNgModules) {
     throw new Error(
-      `Duplicate module registered for ${id} - ${stringify(type)} vs ${stringify(type.name)}`,
+      `${id}에 대해 중복 모듈이 등록되었습니다 - ${stringify(type)} vs ${stringify(type.name)}`,
     );
   }
 }
 
 /**
- * Adds the given NgModule type to Angular's NgModule registry.
+ * 주어진 NgModule 유형을 Angular의 NgModule 레지스트리에 추가합니다.
  *
- * This is generated as a side-effect of NgModule compilation. Note that the `id` is passed in
- * explicitly and not read from the NgModule definition. This is for two reasons: it avoids a
- * megamorphic read, and in JIT there's a chicken-and-egg problem where the NgModule may not be
- * fully resolved when it's registered.
+ * 이는 NgModule 컴파일의 부작용으로 생성됩니다. `id`가 명시적으로 전달되며
+ * NgModule 정의에서 읽히지 않는 점에 유의하십시오. 이는 두 가지 이유가 있습니다:
+ * 메가형식 읽기를 피하기 위함이며, JIT에서는 NgModule이 등록될 때 완전히
+ * 해결되지 않을 수 있는 문제 때문입니다.
  *
  * @codeGenApi
  */
@@ -55,11 +55,10 @@ export function getRegisteredNgModuleType(id: string): NgModuleType | undefined 
 }
 
 /**
- * Control whether the NgModule registration system enforces that each NgModule type registered has
- * a unique id.
+ * NgModule 등록 시스템이 등록된 각 NgModule 유형이 고유한 ID를 갖도록 enforce하는지 제어합니다.
  *
- * This is useful for testing as the NgModule registry cannot be properly reset between tests with
- * Angular's current API.
+ * 이는 Angular의 현재 API를 사용하여 테스트 간에 NgModule 레지스트리를 제대로
+ * 재설정할 수 없기 때문에 테스트에 유용합니다.
  */
 export function setAllowDuplicateNgModuleIdsForTest(allowDuplicates: boolean): void {
   checkForDuplicateNgModules = !allowDuplicates;

@@ -39,25 +39,25 @@ import {
 } from '../interfaces/view';
 
 /**
- * For efficiency reasons we often put several different data types (`RNode`, `LView`, `LContainer`)
- * in same location in `LView`. This is because we don't want to pre-allocate space for it
- * because the storage is sparse. This file contains utilities for dealing with such data types.
+ * 효율성 이유로 우리는 종종 여러 다른 데이터 타입(`RNode`, `LView`, `LContainer`)을
+ * `LView`의 같은 장소에 넣습니다. 이는 저장소가 희소하기 때문에 이를 위해 공간을
+ * 미리 할당하고 싶지 않기 때문입니다. 이 파일은 이러한 데이터 타입을 다루기 위한 유틸리티를 포함합니다.
  *
- * How do we know what is stored at a given location in `LView`.
- * - `Array.isArray(value) === false` => `RNode` (The normal storage value)
- * - `Array.isArray(value) === true` => then the `value[0]` represents the wrapped value.
+ * `LView`의 주어진 위치에 어떤 것이 저장되어 있는지 어떻게 알 수 있을까요?
+ * - `Array.isArray(value) === false` => `RNode` (정상 저장 값)
+ * - `Array.isArray(value) === true` => 그러면 `value[0]`는 래핑된 값을 나타냅니다.
  *   - `typeof value[TYPE] === 'object'` => `LView`
- *      - This happens when we have a component at a given location
+ *      - 이는 주어진 위치에 컴포넌트가 있을 때 발생합니다.
  *   - `typeof value[TYPE] === true` => `LContainer`
- *      - This happens when we have `LContainer` binding at a given location.
+ *      - 이는 주어진 위치에 `LContainer` 바인딩이 있을 때 발생합니다.
  *
  *
- * NOTE: it is assumed that `Array.isArray` and `typeof` operations are very efficient.
+ * 주의: `Array.isArray`와 `typeof` 작업이 매우 효율적이라고 가정합니다.
  */
 
 /**
- * Returns `RNode`.
- * @param value wrapped value of `RNode`, `LView`, `LContainer`
+ * `RNode`를 반환합니다.
+ * @param value `RNode`, `LView`, `LContainer`의 래핑된 값
  */
 export function unwrapRNode(value: RNode | LView | LContainer): RNode {
   while (Array.isArray(value)) {
@@ -67,13 +67,13 @@ export function unwrapRNode(value: RNode | LView | LContainer): RNode {
 }
 
 /**
- * Returns `LView` or `null` if not found.
- * @param value wrapped value of `RNode`, `LView`, `LContainer`
+ * `LView`를 반환하거나 발견되지 않으면 `null`을 반환합니다.
+ * @param value `RNode`, `LView`, `LContainer`의 래핑된 값
  */
 export function unwrapLView(value: RNode | LView | LContainer): LView | null {
   while (Array.isArray(value)) {
-    // This check is same as `isLView()` but we don't call at as we don't want to call
-    // `Array.isArray()` twice and give JITer more work for inlining.
+    // 이 체크는 `isLView()`와 동일하지만 두 번 호출하고 싶지 않기 때문에
+    // `Array.isArray()`를 두 번 호출하지 않습니다. JITer의 인라인화를 늘리지 않기 위해서입니다.
     if (typeof value[TYPE] === 'object') return value as LView;
     value = value[HOST] as any;
   }
@@ -81,19 +81,19 @@ export function unwrapLView(value: RNode | LView | LContainer): LView | null {
 }
 
 /**
- * Retrieves an element value from the provided `viewData`, by unwrapping
- * from any containers, component views, or style contexts.
+ * 제공된 `viewData`에서 요소 값을 검색합니다. 이는
+ * 모든 컨테이너, 컴포넌트 뷰 또는 스타일 컨텍스트에서 언랩하여 검색됩니다.
  */
 export function getNativeByIndex(index: number, lView: LView): RNode {
   ngDevMode && assertIndexInRange(lView, index);
-  ngDevMode && assertGreaterThanOrEqual(index, HEADER_OFFSET, 'Expected to be past HEADER_OFFSET');
+  ngDevMode && assertGreaterThanOrEqual(index, HEADER_OFFSET, 'HEADER_OFFSET을 초과해야 합니다.');
   return unwrapRNode(lView[index]);
 }
 
 /**
- * Retrieve an `RNode` for a given `TNode` and `LView`.
+ * 주어진 `TNode` 및 `LView`에 대한 `RNode`를 검색합니다.
  *
- * This function guarantees in dev mode to retrieve a non-null `RNode`.
+ * 이 함수는 개발 모드에서 널이 아닌 `RNode`를 검색하는 것을 보장합니다.
  *
  * @param tNode
  * @param lView
@@ -106,9 +106,9 @@ export function getNativeByTNode(tNode: TNode, lView: LView): RNode {
 }
 
 /**
- * Retrieve an `RNode` or `null` for a given `TNode` and `LView`.
+ * 주어진 `TNode` 및 `LView`에 대한 `RNode` 또는 `null`을 검색합니다.
  *
- * Some `TNode`s don't have associated `RNode`s. For example `Projection`
+ * 일부 `TNode`는 연결된 `RNode`가 없습니다. 예를 들어 `Projection`
  *
  * @param tNode
  * @param lView
@@ -123,50 +123,50 @@ export function getNativeByTNodeOrNull(tNode: TNode | null, lView: LView): RNode
   return null;
 }
 
-// fixme(misko): The return Type should be `TNode|null`
+// fixme(misko): 반환 타입은 `TNode|null`이어야 합니다.
 export function getTNode(tView: TView, index: number): TNode {
-  ngDevMode && assertGreaterThan(index, -1, 'wrong index for TNode');
-  ngDevMode && assertLessThan(index, tView.data.length, 'wrong index for TNode');
+  ngDevMode && assertGreaterThan(index, -1, 'TNode의 잘못된 인덱스');
+  ngDevMode && assertLessThan(index, tView.data.length, 'TNode의 잘못된 인덱스');
   const tNode = tView.data[index] as TNode;
   ngDevMode && tNode !== null && assertTNode(tNode);
   return tNode;
 }
 
-/** Retrieves a value from any `LView` or `TData`. */
+/** `LView` 또는 `TData`에서 값을 검색합니다. */
 export function load<T>(view: LView | TData, index: number): T {
   ngDevMode && assertIndexInRange(view, index);
   return view[index];
 }
 
 export function getComponentLViewByIndex(nodeIndex: number, hostView: LView): LView {
-  // Could be an LView or an LContainer. If LContainer, unwrap to find LView.
+  // LView 또는 LContainer일 수 있습니다. LContainer이면 언랩하여 LView를 찾습니다.
   ngDevMode && assertIndexInRange(hostView, nodeIndex);
   const slotValue = hostView[nodeIndex];
   const lView = isLView(slotValue) ? slotValue : slotValue[HOST];
   return lView;
 }
 
-/** Checks whether a given view is in creation mode */
+/** 주어진 뷰가 생성 모드인지 확인합니다. */
 export function isCreationMode(view: LView): boolean {
   return (view[FLAGS] & LViewFlags.CreationMode) === LViewFlags.CreationMode;
 }
 
 /**
- * Returns a boolean for whether the view is attached to the change detection tree.
+ * 뷰가 변경 감지 트리에 연결되어 있는지 여부에 대한 불리언을 반환합니다.
  *
- * Note: This determines whether a view should be checked, not whether it's inserted
- * into a container. For that, you'll want `viewAttachedToContainer` below.
+ * 주의: 이는 뷰가 체크되어야 하는지를 결정하지만, 컨테이너에 삽입되었는지를 결정하지 않습니다.
+ * 그에 대해선 아래의 `viewAttachedToContainer`를 확인해야 합니다.
  */
 export function viewAttachedToChangeDetector(view: LView): boolean {
   return (view[FLAGS] & LViewFlags.Attached) === LViewFlags.Attached;
 }
 
-/** Returns a boolean for whether the view is attached to a container. */
+/** 뷰가 컨테이너에 연결되어 있는지 여부에 대한 불리언을 반환합니다. */
 export function viewAttachedToContainer(view: LView): boolean {
   return isLContainer(view[PARENT]);
 }
 
-/** Returns a constant from `TConstants` instance. */
+/** `TConstants` 인스턴스에서 상수를 반환합니다. */
 export function getConstant<T>(consts: TConstants | null, index: null | undefined): null;
 export function getConstant<T>(consts: TConstants, index: number): T | null;
 export function getConstant<T>(
@@ -183,16 +183,15 @@ export function getConstant<T>(
 }
 
 /**
- * Resets the pre-order hook flags of the view.
- * @param lView the LView on which the flags are reset
+ * 뷰의 사전 주문 훅 플래그를 재설정합니다.
+ * @param lView 플래그가 재설정되는 LView
  */
 export function resetPreOrderHookFlags(lView: LView) {
   lView[PREORDER_HOOK_FLAGS] = 0 as PreOrderHookFlags;
 }
 
 /**
- * Adds the `RefreshView` flag from the lView and updates HAS_CHILD_VIEWS_TO_REFRESH flag of
- * parents.
+ * lView에서 `RefreshView` 플래그를 추가하고 부모의 HAS_CHILD_VIEWS_TO_REFRESH 플래그를 업데이트합니다.
  */
 export function markViewForRefresh(lView: LView) {
   if (lView[FLAGS] & LViewFlags.RefreshView) {
@@ -205,16 +204,16 @@ export function markViewForRefresh(lView: LView) {
 }
 
 /**
- * Walks up the LView hierarchy.
- * @param nestingLevel Number of times to walk up in hierarchy.
- * @param currentView View from which to start the lookup.
+ * LView 계층을 위로 걷습니다.
+ * @param nestingLevel 계층을 몇 번 위로 걷을지를 나타냅니다.
+ * @param currentView 검색을 시작할 뷰.
  */
 export function walkUpViews(nestingLevel: number, currentView: LView): LView {
   while (nestingLevel > 0) {
     ngDevMode &&
       assertDefined(
         currentView[DECLARATION_VIEW],
-        'Declaration view should be defined if nesting level is greater than 0.',
+        '중첩 수준이 0보다 큰 경우 선언 뷰는 정의되어야 합니다.',
       );
     currentView = currentView[DECLARATION_VIEW]!;
     nestingLevel--;
@@ -230,8 +229,7 @@ export function requiresRefreshOrTraversal(lView: LView) {
 }
 
 /**
- * Updates the `HasChildViewsToRefresh` flag on the parents of the `LView` as well as the
- * parents above.
+ * `LView`의 부모들에 대해 `HasChildViewsToRefresh` 플래그를 업데이트합니다.
  */
 export function updateAncestorTraversalFlagsOnAttach(lView: LView) {
   lView[ENVIRONMENT].changeDetectionScheduler?.notify(NotificationSource.ViewAttached);
@@ -244,18 +242,17 @@ export function updateAncestorTraversalFlagsOnAttach(lView: LView) {
 }
 
 /**
- * Ensures views above the given `lView` are traversed during change detection even when they are
- * not dirty.
+ * 주어진 `lView` 위의 뷰를 변경 감지 동안 더럽지 않아도 탐색되도록 보장합니다.
  *
- * This is done by setting the `HAS_CHILD_VIEWS_TO_REFRESH` flag up to the root, stopping when the
- * flag is already `true` or the `lView` is detached.
+ * 이는 `HAS_CHILD_VIEWS_TO_REFRESH` 플래그를 루트까지 설정하여 이미 `true`이거나
+ * `lView`가 분리될 때까지 중지됩니다.
  */
 export function markAncestorsForTraversal(lView: LView) {
   lView[ENVIRONMENT].changeDetectionScheduler?.notify(NotificationSource.MarkAncestorsForTraversal);
   let parent = getLViewParent(lView);
   while (parent !== null) {
-    // We stop adding markers to the ancestors once we reach one that already has the marker. This
-    // is to avoid needlessly traversing all the way to the root when the marker already exists.
+    // 우리는 이미 플래그가 있는 조상에게 도달하면 더 이상 마커를 추가하지 않습니다. 이는
+    // 마커가 이미 존재할 때 루트까지 불필요하게 탐색하는 것을 피하기 위함입니다.
     if (parent[FLAGS] & LViewFlags.HasChildViewsToRefresh) {
       break;
     }
@@ -269,13 +266,13 @@ export function markAncestorsForTraversal(lView: LView) {
 }
 
 /**
- * Stores a LView-specific destroy callback.
+ * LView 전용 파괴 콜백을 저장합니다.
  */
 export function storeLViewOnDestroy(lView: LView, onDestroyCallback: () => void) {
   if (isDestroyed(lView)) {
     throw new RuntimeError(
       RuntimeErrorCode.VIEW_ALREADY_DESTROYED,
-      ngDevMode && 'View has already been destroyed.',
+      ngDevMode && '뷰가 이미 파괴되었습니다.',
     );
   }
   if (lView[ON_DESTROY_HOOKS] === null) {
@@ -285,7 +282,7 @@ export function storeLViewOnDestroy(lView: LView, onDestroyCallback: () => void)
 }
 
 /**
- * Removes previously registered LView-specific destroy callback.
+ * 이전에 등록된 LView 전용 파괴 콜백을 제거합니다.
  */
 export function removeLViewOnDestroy(lView: LView, onDestroyCallback: () => void) {
   if (lView[ON_DESTROY_HOOKS] === null) return;
@@ -297,9 +294,9 @@ export function removeLViewOnDestroy(lView: LView, onDestroyCallback: () => void
 }
 
 /**
- * Gets the parent LView of the passed LView, if the PARENT is an LContainer, will get the parent of
- * that LContainer, which is an LView
- * @param lView the lView whose parent to get
+ * 전달된 LView의 부모 LView를 가져옵니다. PARENT가 LContainer인 경우
+ * 해당 LContainer의 부모를 가져오며, 이는 LView입니다.
+ * @param lView 부모를 가져올 LView
  */
 export function getLViewParent(lView: LView): LView | null {
   ngDevMode && assertLView(lView);
@@ -308,7 +305,7 @@ export function getLViewParent(lView: LView): LView | null {
 }
 
 export function getOrCreateLViewCleanup(view: LView): any[] {
-  // top level variables should not be exported for performance reasons (PERF_NOTES.md)
+  // 성능 이유로 상위 레벨 변수는 노출되지 않아야 합니다 (PERF_NOTES.md)
   return (view[CLEANUP] ??= []);
 }
 
@@ -317,11 +314,11 @@ export function getOrCreateTViewCleanup(tView: TView): any[] {
 }
 
 /**
- * Saves context for this cleanup function in LView.cleanupInstances.
+ * LView.cleanupInstances에 이 클린업 함수의 컨텍스트를 저장합니다.
  *
- * On the first template pass, saves in TView:
- * - Cleanup function
- * - Index of context we just saved in LView.cleanupInstances
+ * 첫 번째 템플릿 통과 시 TView에 저장합니다:
+ * - 클린업 함수
+ * - LView.cleanupInstances에 방금 저장한 컨텍스트의 인덱스
  */
 export function storeCleanupWithContext(
   tView: TView,
@@ -331,22 +328,19 @@ export function storeCleanupWithContext(
 ): void {
   const lCleanup = getOrCreateLViewCleanup(lView);
 
-  // Historically the `storeCleanupWithContext` was used to register both framework-level and
-  // user-defined cleanup callbacks, but over time those two types of cleanups were separated.
-  // This dev mode checks assures that user-level cleanup callbacks are _not_ stored in data
-  // structures reserved for framework-specific hooks.
+  // 역사적으로 `storeCleanupWithContext`는 프레임워크 수준과
+  // 사용자 정의 클린업 콜백을 모두 등록하는 데 사용되었지만, 시간이 지나면서
+  // 이 두 유형의 클린업이 분리되었습니다. 이 개발 모드 검사로 인해
+  // 사용자 수준의 클린업 콜백이 프레임워크 전용 훅을 위해 예약된 데이터 구조에 저장되지 않도록 합니다.
   ngDevMode &&
-    assertDefined(
-      context,
-      'Cleanup context is mandatory when registering framework-level destroy hooks',
-    );
+    assertDefined(context, '프레임워크 수준의 파괴 훅을 등록할 때 클린업 컨텍스트는 필수입니다.');
   lCleanup.push(context);
 
   if (tView.firstCreatePass) {
     getOrCreateTViewCleanup(tView).push(cleanupFn, lCleanup.length - 1);
   } else {
-    // Make sure that no new framework-level cleanup functions are registered after the first
-    // template pass is done (and TView data structures are meant to fully constructed).
+    // 첫 번째 템플릿 통과 후 새로운 프레임워크 수준 클린업 함수가 등록되지 않도록 합니다
+    // (TView 데이터 구조가 완전히 구성될 것을 의미합니다).
     if (ngDevMode) {
       Object.freeze(getOrCreateTViewCleanup(tView));
     }

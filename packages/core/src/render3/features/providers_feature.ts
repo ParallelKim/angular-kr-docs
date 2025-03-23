@@ -10,10 +10,10 @@ import {providersResolver} from '../di_setup';
 import {DirectiveDef} from '../interfaces/definition';
 
 /**
- * This feature resolves the providers of a directive (or component),
- * and publish them into the DI system, making it visible to others for injection.
+ * 이 기능은 지시어(또는 컴포넌트)의 프로바이더를 해결하고,
+ * DI 시스템에 등록하여 다른 부분에서 주입할 수 있도록 합니다.
  *
- * For example:
+ * 예시:
  * ```ts
  * class ComponentWithProviders {
  *   constructor(private greeter: GreeterDE) {}

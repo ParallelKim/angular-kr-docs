@@ -16,11 +16,11 @@ import {DestroyRef} from '../../linker/destroy_ref';
 import {OutputRef, OutputRefSubscription} from './output_ref';
 
 /**
- * An `OutputEmitterRef` is created by the `output()` function and can be
- * used to emit values to consumers of your directive or component.
+ * `OutputEmitterRef`는 `output()` 함수에 의해 생성되며,
+ * 지시어나 컴포넌트의 소비자에게 값을 방출하는 데 사용될 수 있습니다.
  *
- * Consumers of your directive/component can bind to the output and
- * subscribe to changes via the bound event syntax. For example:
+ * 지시어/컴포넌트의 소비자는 출력을 바인딩하고
+ * 바인딩된 이벤트 구문을 통해 변경 사항에 구독할 수 있습니다. 예를 들어:
  *
  * ```html
  * <my-comp (valueChange)="processNewValue($event)" />
@@ -37,7 +37,7 @@ export class OutputEmitterRef<T> implements OutputRef<T> {
   destroyRef: DestroyRef = inject(DestroyRef);
 
   constructor() {
-    // Clean-up all listeners and mark as destroyed upon destroy.
+    // 파괴 시 모든 리스너를 정리하고 파괴됨으로 표시합니다.
     this.destroyRef.onDestroy(() => {
       this.destroyed = true;
       this.listeners = null;
@@ -49,8 +49,8 @@ export class OutputEmitterRef<T> implements OutputRef<T> {
       throw new RuntimeError(
         RuntimeErrorCode.OUTPUT_REF_DESTROYED,
         ngDevMode &&
-          'Unexpected subscription to destroyed `OutputRef`. ' +
-            'The owning directive/component is destroyed.',
+          '파괴된 `OutputRef`에 대한 예기치 않은 구독입니다. ' +
+            '소유하는 지시어/컴포넌트가 파괴되었습니다.',
       );
     }
 
@@ -66,15 +66,15 @@ export class OutputEmitterRef<T> implements OutputRef<T> {
     };
   }
 
-  /** Emits a new value to the output. */
+  /** 출력을 위한 새 값을 방출합니다. */
   emit(value: T): void {
     if (this.destroyed) {
       console.warn(
         formatRuntimeError(
           RuntimeErrorCode.OUTPUT_REF_DESTROYED,
           ngDevMode &&
-            'Unexpected emit for destroyed `OutputRef`. ' +
-              'The owning directive/component is destroyed.',
+            '파괴된 `OutputRef`에 대한 예기치 않은 방출입니다. ' +
+              '소유하는 지시어/컴포넌트가 파괴되었습니다.',
         ),
       );
       return;
@@ -99,7 +99,7 @@ export class OutputEmitterRef<T> implements OutputRef<T> {
   }
 }
 
-/** Gets the owning `DestroyRef` for the given output. */
+/** 주어진 출력의 소유 `DestroyRef`를 가져옵니다. */
 export function getOutputDestroyRef(ref: OutputRef<unknown>): DestroyRef | undefined {
   return ref.destroyRef;
 }

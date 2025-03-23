@@ -35,27 +35,26 @@ import {
 import {getConstant} from '../util/view_utils';
 
 /**
- * Marks a block of text as translatable.
+ * 번역 가능한 텍스트 블록을 표시합니다.
  *
- * The instructions `i18nStart` and `i18nEnd` mark the translation block in the template.
- * The translation `message` is the value which is locale specific. The translation string may
- * contain placeholders which associate inner elements and sub-templates within the translation.
+ * `i18nStart` 및 `i18nEnd` 명령어는 템플릿에서 번역 블록을 표시합니다.
+ * 번역 `message`는 로케일에 따라 특정한 값입니다. 번역 문자열에는
+ * 번역 내의 내부 요소 및 하위 템플릿과 연관된 자리 표시자가 포함될 수 있습니다.
  *
- * The translation `message` placeholders are:
- * - `�{index}(:{block})�`: *Binding Placeholder*: Marks a location where an expression will be
- *   interpolated into. The placeholder `index` points to the expression binding index. An optional
- *   `block` that matches the sub-template in which it was declared.
- * - `�#{index}(:{block})�`/`�/#{index}(:{block})�`: *Element Placeholder*:  Marks the beginning
- *   and end of DOM element that were embedded in the original translation block. The placeholder
- *   `index` points to the element index in the template instructions set. An optional `block` that
- *   matches the sub-template in which it was declared.
- * - `�*{index}:{block}�`/`�/*{index}:{block}�`: *Sub-template Placeholder*: Sub-templates must be
- *   split up and translated separately in each angular template function. The `index` points to the
- *   `template` instruction index. A `block` that matches the sub-template in which it was declared.
+ * 번역 `message` 자리 표시자는 다음과 같습니다:
+ * - `�{index}(:{block})�`: *Binding Placeholder*: 표현식이 삽입될 위치를 표시합니다.
+ *   자리 표시자 `index`는 표현식 바인딩 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는
+ *   선택적 `block`이 있습니다.
+ * - `�#{index}(:{block})�`/`�/#{index}(:{block})�`: *Element Placeholder*: 원래 번역 블록에
+ *   삽입된 DOM 요소의 시작과 끝을 표시합니다. 자리 표시자 `index`는 템플릿 명령어 세트에서
+ *   요소 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는 선택적 `block`이 있습니다.
+ * - `�*{index}:{block}�`/`�/*{index}:{block}�`: *Sub-template Placeholder*: 하위 템플릿은
+ *   분할되어 각 Angular 템플릿 함수에서 별도로 번역되어야 합니다. `index`는
+ *   `template` 명령어 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는 `block`이 있습니다.
  *
- * @param index A unique index of the translation in the static block.
- * @param messageIndex An index of the translation message from the `def.consts` array.
- * @param subTemplateIndex Optional sub-template index in the `message`.
+ * @param index 정적 블록의 번역에 대한 고유 인덱스입니다.
+ * @param messageIndex `def.consts` 배열의 번역 메시지 인덱스입니다.
+ * @param subTemplateIndex 선택적 하위 템플릿 인덱스입니다.
  *
  * @codeGenApi
  */
@@ -67,7 +66,7 @@ export function ɵɵi18nStart(
   const tView = getTView();
   const lView = getLView();
   const adjustedIndex = HEADER_OFFSET + index;
-  ngDevMode && assertDefined(tView, `tView should be defined`);
+  ngDevMode && assertDefined(tView, `tView는 정의되어야 합니다.`);
   const message = getConstant<string>(tView.consts, messageIndex)!;
   const parentTNode = getCurrentParentTNode() as TElementNode | null;
   if (tView.firstCreatePass) {
@@ -81,12 +80,12 @@ export function ɵɵi18nStart(
     );
   }
 
-  // Set a flag that this LView has i18n blocks.
-  // The flag is later used to determine whether this component should
-  // be hydrated (currently hydration is not supported for i18n blocks).
+  // 이 LView가 i18n 블록을 가지고 있다는 플래그를 설정합니다.
+  // 이 플래그는 나중에 이 컴포넌트가 수화되어야 하는지 여부를 결정하는 데 사용됩니다.
+  // (현재 수화는 i18n 블록에 대해 지원되지 않습니다).
   if (tView.type === TViewType.Embedded) {
-    // Annotate host component's LView (not embedded view's LView),
-    // since hydration can be skipped on per-component basis only.
+    // 호스트 컴포넌트의 LView에 주석을 추가합니다(임베디드 뷰의 LView가 아닙니다).
+    // 수화는 컴포넌트 단위로만 건너뛸 수 있습니다.
     const componentLView = lView[DECLARATION_COMPONENT_VIEW];
     componentLView[FLAGS] |= LViewFlags.HasI18n;
   } else {
@@ -96,8 +95,8 @@ export function ɵɵi18nStart(
   const tI18n = tView.data[adjustedIndex] as TI18n;
   const sameViewParentTNode = parentTNode === lView[T_HOST] ? null : parentTNode;
   const parentRNode = getClosestRElement(tView, sameViewParentTNode, lView);
-  // If `parentTNode` is an `ElementContainer` than it has `<!--ng-container--->`.
-  // When we do inserts we have to make sure to insert in front of `<!--ng-container--->`.
+  // `parentTNode`가 `ElementContainer`인 경우 `<!--ng-container--->`가 있습니다.
+  // 삽입 시 `<!--ng-container--->` 앞에 삽입해야 합니다.
   const insertInFrontOf =
     parentTNode && parentTNode.type & TNodeType.ElementContainer ? lView[parentTNode.index] : null;
   prepareI18nBlockForHydration(lView, adjustedIndex, parentTNode, subTemplateIndex);
@@ -106,8 +105,8 @@ export function ɵɵi18nStart(
 }
 
 /**
- * Translates a translation block marked by `i18nStart` and `i18nEnd`. It inserts the text/ICU nodes
- * into the render tree, moves the placeholder nodes and removes the deleted nodes.
+ * `i18nStart` 및 `i18nEnd`로 표시된 번역 블록을 번역합니다. 텍스트/ICU 노드를
+ * 렌더 트리에 삽입하고, 자리 표시자 노드를 이동하고, 삭제된 노드를 제거합니다.
  *
  * @codeGenApi
  */
@@ -117,27 +116,26 @@ export function ɵɵi18nEnd(): void {
 
 /**
  *
- * Use this instruction to create a translation block that doesn't contain any placeholder.
- * It calls both {@link i18nStart} and {@link i18nEnd} in one instruction.
+ * 자리 표시자가 포함되지 않은 번역 블록을 만들기 위해 이 명령어를 사용합니다.
+ * {@link i18nStart} 및 {@link i18nEnd}를 단일 명령어에서 모두 호출합니다.
  *
- * The translation `message` is the value which is locale specific. The translation string may
- * contain placeholders which associate inner elements and sub-templates within the translation.
+ * 번역 `message`는 로케일에 따라 특정한 값입니다. 번역 문자열에는
+ * 번역 내의 내부 요소 및 하위 템플릿과 연관된 자리 표시자가 포함될 수 있습니다.
  *
- * The translation `message` placeholders are:
- * - `�{index}(:{block})�`: *Binding Placeholder*: Marks a location where an expression will be
- *   interpolated into. The placeholder `index` points to the expression binding index. An optional
- *   `block` that matches the sub-template in which it was declared.
- * - `�#{index}(:{block})�`/`�/#{index}(:{block})�`: *Element Placeholder*:  Marks the beginning
- *   and end of DOM element that were embedded in the original translation block. The placeholder
- *   `index` points to the element index in the template instructions set. An optional `block` that
- *   matches the sub-template in which it was declared.
- * - `�*{index}:{block}�`/`�/*{index}:{block}�`: *Sub-template Placeholder*: Sub-templates must be
- *   split up and translated separately in each angular template function. The `index` points to the
- *   `template` instruction index. A `block` that matches the sub-template in which it was declared.
+ * 번역 `message` 자리 표시자는 다음과 같습니다:
+ * - `�{index}(:{block})�`: *Binding Placeholder*: 표현식이 삽입될 위치를 표시합니다.
+ *   자리 표시자 `index`는 표현식 바인딩 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는
+ *   선택적 `block`이 있습니다.
+ * - `�#{index}(:{block})�`/`�/#{index}(:{block})�`: *Element Placeholder*: 원래 번역 블록에
+ *   삽입된 DOM 요소의 시작과 끝을 표시합니다. 자리 표시자 `index`는 템플릿 명령어 세트에서
+ *   요소 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는 선택적 `block`이 있습니다.
+ * - `�*{index}:{block}�`/`�/*{index}:{block}�`: *Sub-template Placeholder*: 하위 템플릿은
+ *   분할되어 각 Angular 템플릿 함수에서 별도로 번역되어야 합니다. `index`는
+ *   `template` 명령어 인덱스를 가리킵니다. 선언된 하위 템플릿과 일치하는 `block`이 있습니다.
  *
- * @param index A unique index of the translation in the static block.
- * @param messageIndex An index of the translation message from the `def.consts` array.
- * @param subTemplateIndex Optional sub-template index in the `message`.
+ * @param index 정적 블록의 번역에 대한 고유 인덱스입니다.
+ * @param messageIndex `def.consts` 배열의 번역 메시지 인덱스입니다.
+ * @param subTemplateIndex 선택적 하위 템플릿 인덱스입니다.
  *
  * @codeGenApi
  */
@@ -147,27 +145,26 @@ export function ɵɵi18n(index: number, messageIndex: number, subTemplateIndex?:
 }
 
 /**
- * Marks a list of attributes as translatable.
+ * 번역 가능한 속성 목록을 표시합니다.
  *
- * @param index A unique index in the static block
+ * @param index 정적 블록의 고유 인덱스입니다.
  * @param values
  *
  * @codeGenApi
  */
 export function ɵɵi18nAttributes(index: number, attrsIndex: number): void {
   const tView = getTView();
-  ngDevMode && assertDefined(tView, `tView should be defined`);
+  ngDevMode && assertDefined(tView, `tView는 정의되어야 합니다.`);
   const attrs = getConstant<string[]>(tView.consts, attrsIndex)!;
   i18nAttributesFirstPass(tView, index + HEADER_OFFSET, attrs);
 }
 
 /**
- * Stores the values of the bindings during each update cycle in order to determine if we need to
- * update the translated nodes.
+ * 번역된 노드를 업데이트해야 하는지 결정하기 위해 각 업데이트 주기 동안 바인딩 값을 저장합니다.
  *
- * @param value The binding's value
- * @returns This function returns itself so that it may be chained
- * (e.g. `i18nExp(ctx.name)(ctx.title)`)
+ * @param value 바인딩의 값입니다.
+ * @returns 이 함수는 자신을 반환하여 체인할 수 있도록 합니다.
+ * (예: `i18nExp(ctx.name)(ctx.title)`)
  *
  * @codeGenApi
  */
@@ -178,10 +175,10 @@ export function ɵɵi18nExp<T>(value: T): typeof ɵɵi18nExp {
 }
 
 /**
- * Updates a translation block or an i18n attribute when the bindings have changed.
+ * 바인딩이 변경되었을 때 번역 블록 또는 i18n 속성을 업데이트합니다.
  *
- * @param index Index of either {@link i18nStart} (translation block) or {@link i18nAttributes}
- * (i18n attribute) on which it should update the content.
+ * @param index {@link i18nStart} (번역 블록) 또는 {@link i18nAttributes}
+ * (i18n 속성) 중에서 업데이트할 내용을 지정하는 인덱스입니다.
  *
  * @codeGenApi
  */
@@ -190,22 +187,20 @@ export function ɵɵi18nApply(index: number) {
 }
 
 /**
- * Handles message string post-processing for internationalization.
+ * 국제화를 위한 메시지 문자열 후처리를 처리합니다.
  *
- * Handles message string post-processing by transforming it from intermediate
- * format (that might contain some markers that we need to replace) to the final
- * form, consumable by i18nStart instruction. Post processing steps include:
+ * 메시지 문자열 후처리를 처리하여 중간 형식(대체해야 하는 일부 마커가 포함될 수 있음)
+ * 에서 최종 형식으로 변환하여 i18nStart 명령어에서 소비할 수 있도록 합니다. 후처리 단계는 다음과 같습니다:
  *
- * 1. Resolve all multi-value cases (like [�*1:1��#2:1�|�#4:1�|�5�])
- * 2. Replace all ICU vars (like "VAR_PLURAL")
- * 3. Replace all placeholders used inside ICUs in a form of {PLACEHOLDER}
- * 4. Replace all ICU references with corresponding values (like �ICU_EXP_ICU_1�)
- *    in case multiple ICUs have the same placeholder name
+ * 1. 모든 다중 값 사례 해결 (예: [�*1:1��#2:1�|�#4:1�|�5�])
+ * 2. 모든 ICU 변수 대체 (예: "VAR_PLURAL")
+ * 3. ICU 내에서 사용된 모든 자리 표시자를 {PLACEHOLDER} 형식으로 대체
+ * 4. 여러 ICU가 동일한 자리 표시자 이름을 가질 경우 해당 값으로 모든 ICU 참조 대체
  *
- * @param message Raw translation string for post processing
- * @param replacements Set of replacements that should be applied
+ * @param message 후처리를 위한 원시 번역 문자열입니다.
+ * @param replacements 적용되어야 하는 대체 세트입니다.
  *
- * @returns Transformed string that can be consumed by i18nStart instruction
+ * @returns i18nStart 명령어에서 소비할 수 있는 변환된 문자열입니다.
  *
  * @codeGenApi
  */

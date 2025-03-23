@@ -33,34 +33,34 @@ import {
 import {getSignalGraph} from './signal_debug';
 
 /**
- * This file introduces series of globally accessible debug tools
- * to allow for the Angular debugging story to function.
+ * 이 파일은 Angular 디버깅 스토리가 작동하도록 허용하기 위해
+ * 전역적으로 접근 가능한 디버그 도구 시리즈를 도입합니다.
  *
- * To see this in action run the following command:
+ * 이를 실행해 보려면 다음 명령어를 실행하세요:
  *
  *   bazel run //packages/core/test/bundling/todo:devserver
  *
- *  Then load `localhost:5432` and start using the console tools.
+ *  그런 다음 `localhost:5432`를 로드하고 콘솔 도구를 사용하세요.
  */
 
 /**
- * This value reflects the property on the window where the dev
- * tools are patched (window.ng).
+ * 이 값은 dev 도구가 패치된 창의 속성을 반영합니다 (window.ng).
  * */
 export const GLOBAL_PUBLISH_EXPANDO_KEY = 'ng';
 
-// Typing for externally published global util functions
-// Ideally we should be able to use `NgGlobalPublishUtils` using declaration merging but that doesn't work with API extractor yet.
-// Have included the typings to have type safety when working with editors that support it (VSCode).
+// 외부에 게시된 전역 유틸리티 함수의 타입 지정
+// 이상적으로는 선언 병합을 사용하여 `NgGlobalPublishUtils`를 사용할 수 있어야 하지만,
+// API 추출기와는 아직 작동하지 않습니다.
+// 타입 안전성을 위해 지원하는 편집기(예: VSCode)에서 작업할 때 타입을 포함했습니다.
 interface NgGlobalPublishUtils {
   ɵgetLoadedRoutes(route: any): any;
 }
 
 const globalUtilsFunctions = {
   /**
-   * Warning: functions that start with `ɵ` are considered *INTERNAL* and should not be relied upon
-   * in application's code. The contract of those functions might be changed in any release and/or a
-   * function can be removed completely.
+   * 경고: `ɵ`로 시작하는 함수는 *내부*로 간주되며
+   * 애플리케이션 코드에서 의존해서는 안 됩니다. 이러한 함수의 계약은
+   * 모든 릴리스에서 변경될 수 있으며, 함수가 완전히 제거될 수도 있습니다.
    */
   'ɵgetDependenciesFromInjectable': getDependenciesFromInjectable,
   'ɵgetInjectorProviders': getInjectorProviders,
@@ -87,17 +87,17 @@ type ExternalGlobalUtilsFunctions = keyof NgGlobalPublishUtils;
 
 let _published = false;
 /**
- * Publishes a collection of default debug tools onto`window.ng`.
+ * 기본 디버그 도구 모음을 `window.ng`에 공개합니다.
  *
- * These functions are available globally when Angular is in development
- * mode and are automatically stripped away from prod mode is on.
+ * 이러한 함수는 Angular가 개발 모드에 있을 때 전역적으로 사용 가능하며,
+ * 프로덕션 모드에서는 자동으로 제거됩니다.
  */
 export function publishDefaultGlobalUtils() {
   if (!_published) {
     _published = true;
 
     if (typeof window !== 'undefined') {
-      // Only configure the injector profiler when running in the browser.
+      // 브라우저에서 실행할 때만 주입기 프로파일러를 구성합니다.
       setupFrameworkInjectorProfiler();
     }
 
@@ -108,15 +108,15 @@ export function publishDefaultGlobalUtils() {
 }
 
 /**
- * Default debug tools available under `window.ng`.
+ * `window.ng` 아래에서 사용할 수 있는 기본 디버그 도구입니다.
  */
 export type GlobalDevModeUtils = {
   [GLOBAL_PUBLISH_EXPANDO_KEY]: typeof globalUtilsFunctions;
 };
 
 /**
- * Publishes the given function to `window.ng` so that it can be
- * used from the browser console when an application is not in production.
+ * 주어진 함수를 `window.ng`에 게시하여
+ * 프로덕션이 아닐 때 브라우저 콘솔에서 사용할 수 있도록 합니다.
  */
 export function publishGlobalUtil<K extends CoreGlobalUtilsFunctions>(
   name: K,
@@ -126,8 +126,8 @@ export function publishGlobalUtil<K extends CoreGlobalUtilsFunctions>(
 }
 
 /**
- * Publishes the given function to `window.ng` from package other than @angular/core
- * So that it can be used from the browser console when an application is not in production.
+ * @angular/core가 아닌 패키지에서 `window.ng`에 주어진 함수를 게시합니다.
+ * 프로덕션이 아닐 때 브라우저 콘솔에서 사용될 수 있습니다.
  */
 export function publishExternalGlobalUtil<K extends ExternalGlobalUtilsFunctions>(
   name: K,
@@ -138,12 +138,11 @@ export function publishExternalGlobalUtil<K extends ExternalGlobalUtilsFunctions
 
 function publishUtil(name: string, fn: Function) {
   if (typeof COMPILED === 'undefined' || !COMPILED) {
-    // Note: we can't export `ng` when using closure enhanced optimization as:
-    // - closure declares globals itself for minified names, which sometimes clobber our `ng` global
-    // - we can't declare a closure extern as the namespace `ng` is already used within Google
-    //   for typings for AngularJS (via `goog.provide('ng....')`).
+    // 주의: Closure 최적화를 사용하는 경우 `ng`를 내보낼 수 없습니다:
+    // - Closure는 최소화된 이름에 대해 전역을 선언하므로, 때때로 우리의 `ng` 전역을 덮어쓸 수 있습니다.
+    // - Google 내에서 AngularJS에 대한 타이핑을 위해 우승 소스가 이미 사용되고 있는 네임스페이스 `ng`로 Closure extern을 선언할 수 없습니다.
     const w = global;
-    ngDevMode && assertDefined(fn, 'function not defined');
+    ngDevMode && assertDefined(fn, '함수가 정의되지 않음');
 
     w[GLOBAL_PUBLISH_EXPANDO_KEY] ??= {} as any;
     w[GLOBAL_PUBLISH_EXPANDO_KEY][name] = fn;

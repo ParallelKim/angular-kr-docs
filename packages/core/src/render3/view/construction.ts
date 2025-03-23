@@ -52,17 +52,17 @@ import {SchemaMetadata} from '../../metadata/schema';
 import {LContainer} from '../interfaces/container';
 
 /**
- * Creates a TView instance
+ * TView 인스턴스를 생성합니다.
  *
- * @param type Type of `TView`.
- * @param declTNode Declaration location of this `TView`.
- * @param templateFn Template function
- * @param decls The number of nodes, local refs, and pipes in this template
- * @param directives Registry of directives for this view
- * @param pipes Registry of pipes for this view
- * @param viewQuery View queries for this view
- * @param schemas Schemas for this view
- * @param consts Constants for this view
+ * @param type `TView`의 타입.
+ * @param declTNode 이 `TView`의 선언 위치.
+ * @param templateFn 템플릿 함수
+ * @param decls 이 템플릿의 노드 수, 로컬 refs 및 파이프
+ * @param directives 이 뷰의 지시문 레지스트리
+ * @param pipes 이 뷰의 파이프 레지스트리
+ * @param viewQuery 이 뷰의 뷰 쿼리
+ * @param schemas 이 뷰의 스키마
+ * @param consts 이 뷰의 상수
  */
 export function createTView(
   type: TViewType,
@@ -79,9 +79,8 @@ export function createTView(
 ): TView {
   ngDevMode && ngDevMode.tView++;
   const bindingStartIndex = HEADER_OFFSET + decls;
-  // This length does not yet contain host bindings from child directives because at this point,
-  // we don't know which directives are active on this template. As soon as a directive is matched
-  // that has a host binding, we will update the blueprint with that def's hostVars count.
+  // 이 길이는 현재 어떤 지시문이 이 템플릿에서 활성화되어 있는지 알 수 없으므로 자식 지시문으로부터의 호스트 바인딩을 포함하지 않습니다.
+  // 호스트 바인딩이 있는 지시문이 일치하면 해당 정의의 hostVars 수로 청사진을 업데이트합니다.
   const initialViewLength = bindingStartIndex + vars;
   const blueprint = createViewBlueprint(bindingStartIndex, initialViewLength);
   const consts = typeof constsOrFactory === 'function' ? constsOrFactory() : constsOrFactory;
@@ -119,9 +118,8 @@ export function createTView(
     ssrId,
   });
   if (ngDevMode) {
-    // For performance reasons it is important that the tView retains the same shape during runtime.
-    // (To make sure that all of the code is monomorphic.) For this reason we seal the object to
-    // prevent class transitions.
+    // 성능상의 이유로 tView가 런타임 동안 동일한 형태를 유지하는 것이 중요합니다.
+    // (모든 코드가 단일형이 되도록.) 이러한 이유로 객체를 봉인하여 클래스 전환을 방지합니다.
     Object.seal(tView);
   }
   return tView;
@@ -138,8 +136,7 @@ function createViewBlueprint(bindingStartIndex: number, initialViewLength: numbe
 }
 
 /**
- * Gets TView from a template function or creates a new TView
- * if it doesn't already exist.
+ * 템플릿 함수에서 TView를 가져오거나 존재하지 않으면 새로운 TView를 생성합니다.
  *
  * @param def ComponentDef
  * @returns TView
@@ -147,11 +144,11 @@ function createViewBlueprint(bindingStartIndex: number, initialViewLength: numbe
 export function getOrCreateComponentTView(def: ComponentDef<any>): TView {
   const tView = def.tView;
 
-  // Create a TView if there isn't one, or recreate it if the first create pass didn't
-  // complete successfully since we can't know for sure whether it's in a usable shape.
+  // TView가 없으면 생성하고, 첫 번째 생성 패스가 성공적으로 완료되지 않으면 다시 생성합니다.
+  // 사용할 수 있는 형체인지 확실히 알 수 없기 때문입니다.
   if (tView === null || tView.incompleteFirstPass) {
-    // Declaration node here is null since this function is called when we dynamically create a
-    // component and hence there is no declaration.
+    // 여기서 선언 노드는 null입니다. 이 함수는 동적으로 컴포넌트를 생성할 때 호출되므로
+    // 선언이 없습니다.
     const declTNode = null;
     return (def.tView = createTView(
       TViewType.Component,
@@ -232,8 +229,8 @@ export function createComponentLView<T>(
   const native = getNativeByTNode(hostTNode, lView) as RElement;
   const tView = getOrCreateComponentTView(def);
 
-  // Only component views should be added to the view tree directly. Embedded views are
-  // accessed through their containers because they may be removed / re-added later.
+  // 컴포넌트 뷰만 뷰 트리에 직접 추가되어야 합니다. 임베디드 뷰는
+  // 나중에 제거 / 다시 추가될 수 있기 때문에 컨테이너를 통해 접근됩니다.
   const rendererFactory = lView[ENVIRONMENT].rendererFactory;
   const componentView = addToEndOfViewTree(
     lView,
@@ -252,14 +249,14 @@ export function createComponentLView<T>(
     ),
   );
 
-  // Component view will always be created before any injected LContainers,
-  // so this is a regular element, wrap it with the component view
+  // 컴포넌트 뷰는 모든 주입된 LContainers 이전에 항상 생성되므로,
+  // 이는 일반 요소이며, 컴포넌트 뷰로 감싸줍니다.
   return (lView[hostTNode.index] = componentView);
 }
 
 /**
- * Gets the initial set of LView flags based on the component definition that the LView represents.
- * @param def Component definition from which to determine the flags.
+ * LView가 나타내는 컴포넌트 정의에 따라 초기 LView 플래그 집합을 가져옵니다.
+ * @param def 플래그를 결정하기 위한 컴포넌트 정의.
  */
 export function getInitialLViewFlagsFromDef(def: ComponentDef<unknown>): LViewFlags {
   let flags = LViewFlags.CheckAlways;
@@ -272,13 +269,13 @@ export function getInitialLViewFlagsFromDef(def: ComponentDef<unknown>): LViewFl
 }
 
 /**
- * When elements are created dynamically after a view blueprint is created (e.g. through
- * i18nApply()), we need to adjust the blueprint for future template passes.
+ * 뷰 청사진이 생성된 후 요소가 동적으로 생성될 때(i18nApply()를 통해),
+ * 향후 템플릿 패스를 위해 청사진을 조정해야 합니다.
  *
- * @param tView `TView` associated with `LView`
- * @param lView The `LView` containing the blueprint to adjust
- * @param numSlotsToAlloc The number of slots to alloc in the LView, should be >0
- * @param initialValue Initial value to store in blueprint
+ * @param tView `LView`와 관련된 `TView`
+ * @param lView 조정할 청사진을 포함하는 `LView`
+ * @param numSlotsToAlloc LView에서 할당할 슬롯의 수, 0보다 커야 함
+ * @param initialValue 청사진에 저장할 초기 값
  */
 export function allocExpando(
   tView: TView,
@@ -308,24 +305,23 @@ export function allocExpando(
 }
 
 /**
- * Adds LView or LContainer to the end of the current view tree.
+ * LView 또는 LContainer를 현재 뷰 트리의 끝에 추가합니다.
  *
- * This structure will be used to traverse through nested views to remove listeners
- * and call onDestroy callbacks.
+ * 이 구조는 중첩된 뷰를 통해 탐색하여 리스너를 제거하고
+ * onDestroy 콜백을 호출하는 데 사용됩니다.
  *
- * @param lView The view where LView or LContainer should be added
- * @param adjustedHostIndex Index of the view's host node in LView[], adjusted for header
- * @param lViewOrLContainer The LView or LContainer to add to the view tree
- * @returns The state passed in
+ * @param lView LView 또는 LContainer가 추가되어야 하는 뷰
+ * @param adjustedHostIndex LView[]에서 뷰의 호스트 노드의 인덱스, 헤더에 대해 조정됨
+ * @param lViewOrLContainer 추가할 LView 또는 LContainer
+ * @returns 전달된 상태
  */
 export function addToEndOfViewTree<T extends LView | LContainer>(
   lView: LView,
   lViewOrLContainer: T,
 ): T {
-  // TODO(benlesh/misko): This implementation is incorrect, because it always adds the LContainer
-  // to the end of the queue, which means if the developer retrieves the LContainers from RNodes out
-  // of order, the change detection will run out of order, as the act of retrieving the the
-  // LContainer from the RNode is what adds it to the queue.
+  // TODO(benlesh/misko): 이 구현은 잘못되었습니다. 항상 LContainer를 큐의 끝에 추가하기 때문에
+  // 개발자가 LContainers를 RNodes에서 순서 없이 검색하면 변경 감지가
+  // 순서 없이 실행됩니다. LNode로부터 LContainer를 검색하는 행위가 큐에 추가되기 때문입니다.
   if (lView[CHILD_HEAD]) {
     lView[CHILD_TAIL]![NEXT] = lViewOrLContainer;
   } else {

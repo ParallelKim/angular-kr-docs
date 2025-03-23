@@ -73,7 +73,7 @@ import {ApplicationRef} from '../application/application_ref';
 import {DEHYDRATED_VIEWS} from '../render3/interfaces/container';
 
 /**
- * Schedules triggering of a defer block for `on idle` and `on timer` conditions.
+ * 일정 지연 트리거를 예약합니다. `idle` 및 `timer` 조건에 대해.
  */
 export function scheduleDelayedTrigger(
   scheduleFn: (callback: VoidFunction, injector: Injector) => VoidFunction,
@@ -83,9 +83,8 @@ export function scheduleDelayedTrigger(
 
   renderPlaceholder(lView, tNode);
 
-  // Exit early to avoid invoking `scheduleFn`, which would
-  // add `setTimeout` call and potentially delay serialization
-  // on the server unnecessarily.
+  // 서버에서 불필요하게 직렬화를 지연할 수 있는 `setTimeout` 호출을 추가하지 않도록
+  // `scheduleFn`을 호출하지 않고 조기 종료합니다.
   if (!shouldTriggerDeferBlock(TriggerType.Regular, lView)) return;
 
   const injector = lView[INJECTOR];
@@ -99,9 +98,9 @@ export function scheduleDelayedTrigger(
 }
 
 /**
- * Schedules prefetching for `on idle` and `on timer` triggers.
+ * `idle` 및 `timer` 트리거에 대한 미리 가져오기를 예약합니다.
  *
- * @param scheduleFn A function that does the scheduling.
+ * @param scheduleFn 일정을 잡는 함수입니다.
  */
 export function scheduleDelayedPrefetching(
   scheduleFn: (callback: VoidFunction, injector: Injector) => VoidFunction,
@@ -112,8 +111,7 @@ export function scheduleDelayedPrefetching(
   const lView = getLView();
   const injector = lView[INJECTOR];
 
-  // Only trigger the scheduled trigger on the browser
-  // since we don't want to delay the server response.
+  // 서버 응답을 지연시키고 싶지 않기 때문에 브라우저에서만 예약된 트리거를 실행합니다.
   const tNode = getCurrentTNode()!;
   const tView = lView[TVIEW];
   const tDetails = getTDeferBlockDetails(tView, tNode);
@@ -127,7 +125,7 @@ export function scheduleDelayedPrefetching(
 }
 
 /**
- * Schedules hydration triggering of a defer block for `on idle` and `on timer` conditions.
+ * `idle` 및 `timer` 조건에 대한 수분 트리거를 예약합니다.
  */
 export function scheduleDelayedHydrating(
   scheduleFn: (callback: VoidFunction, injector: Injector) => VoidFunction,
@@ -136,8 +134,7 @@ export function scheduleDelayedHydrating(
 ) {
   if (typeof ngServerMode !== 'undefined' && ngServerMode) return;
 
-  // Only trigger the scheduled trigger on the browser
-  // since we don't want to delay the server response.
+  // 서버 응답을 지연시키고 싶지 않기 때문에 브라우저에서만 예약된 트리거를 실행합니다.
   const injector = lView[INJECTOR];
   const lDetails = getLDeferBlockDetails(lView, tNode);
   const ssrUniqueId = lDetails[SSR_UNIQUE_ID]!;
@@ -151,21 +148,21 @@ export function scheduleDelayedHydrating(
 }
 
 /**
- * Trigger prefetching of dependencies for a defer block.
+ * 지연 블록에 대한 의존성의 미리 가져오기를 트리거합니다.
  *
- * @param tDetails Static information about this defer block.
- * @param lView LView of a host view.
- * @param tNode TNode that represents a defer block.
+ * @param tDetails 이 지연 블록 대한 정적 정보입니다.
+ * @param lView 호스트 뷰의 LView입니다.
+ * @param tNode 지연 블록을 나타내는 TNode입니다.
  */
 export function triggerPrefetching(tDetails: TDeferBlockDetails, lView: LView, tNode: TNode) {
   triggerResourceLoading(tDetails, lView, tNode);
 }
 
 /**
- * Trigger loading of defer block dependencies if the process hasn't started yet.
+ * 프로세스가 아직 시작되지 않은 경우 지연 블록 의존성을 로드하는 트리거를 트리거합니다.
  *
- * @param tDetails Static information about this defer block.
- * @param lView LView of a host view.
+ * @param tDetails 이 지연 블록 대한 정적 정보입니다.
+ * @param lView 호스트 뷰의 LView입니다.
  */
 export function triggerResourceLoading(
   tDetails: TDeferBlockDetails,
@@ -176,25 +173,24 @@ export function triggerResourceLoading(
   const tView = lView[TVIEW];
 
   if (tDetails.loadingState !== DeferDependenciesLoadingState.NOT_STARTED) {
-    // If the loading status is different from initial one, it means that
-    // the loading of dependencies is in progress and there is nothing to do
-    // in this function. All details can be obtained from the `tDetails` object.
+    // 로딩 상태가 초기 상태와 다른 경우 의존성 로딩 중이며
+    // 이 함수에서 수행할 작업이 없습니다.
     return tDetails.loadingPromise ?? Promise.resolve();
   }
 
   const lDetails = getLDeferBlockDetails(lView, tNode);
   const primaryBlockTNode = getPrimaryBlockTNode(tView, tDetails);
 
-  // Switch from NOT_STARTED -> IN_PROGRESS state.
+  // NOT_STARTED에서 IN_PROGRESS 상태로 전환합니다.
   tDetails.loadingState = DeferDependenciesLoadingState.IN_PROGRESS;
 
-  // Prefetching is triggered, cleanup all registered prefetch triggers.
+  // 미리 가져오기가 트리거되면 등록된 모든 미리 가져오기 트리거를 정리합니다.
   invokeTriggerCleanupFns(TriggerType.Prefetch, lDetails);
 
   let dependenciesFn = tDetails.dependencyResolverFn;
 
   if (ngDevMode) {
-    // Check if dependency function interceptor is configured.
+    // 의존성 함수 인터셉터가 구성되어 있는지 확인합니다.
     const deferDependencyInterceptor = injector.get(DEFER_BLOCK_DEPENDENCY_INTERCEPTOR, null, {
       optional: true,
     });
@@ -204,13 +200,12 @@ export function triggerResourceLoading(
     }
   }
 
-  // Indicate that an application is not stable and has a pending task.
+  // 애플리케이션이 안정적이지 않고 보류 중인 작업이 있음을 표시합니다.
   const pendingTasks = injector.get(PendingTasksInternal);
   const taskId = pendingTasks.add();
 
-  // The `dependenciesFn` might be `null` when all dependencies within
-  // a given defer block were eagerly referenced elsewhere in a file,
-  // thus no dynamic `import()`s were produced.
+  // `dependenciesFn`은 모든 의존성이 파일 내에서 미리 참조되었을 때
+  // 동적 `import()`가 생성되지 않기 때문에 `null`일 수 있습니다.
   if (!dependenciesFn) {
     tDetails.loadingPromise = Promise.resolve().then(() => {
       tDetails.loadingPromise = null;
@@ -220,7 +215,7 @@ export function triggerResourceLoading(
     return tDetails.loadingPromise;
   }
 
-  // Start downloading of defer block dependencies.
+  // 지연 블록 의존성을 다운로드하기 시작합니다.
   tDetails.loadingPromise = Promise.allSettled(dependenciesFn()).then((results) => {
     let failed = false;
     const directiveDefs: DirectiveDefList = [];
@@ -244,8 +239,8 @@ export function triggerResourceLoading(
       }
     }
 
-    // Loading is completed, we no longer need the loading Promise
-    // and a pending task should also be removed.
+    // 로딩이 완료되면 더 이상 로딩 약속이 필요하지 않으며
+    // 보류 중인 작업도 제거되어야 합니다.
     tDetails.loadingPromise = null;
     pendingTasks.remove(taskId);
 
@@ -266,7 +261,7 @@ export function triggerResourceLoading(
     } else {
       tDetails.loadingState = DeferDependenciesLoadingState.COMPLETE;
 
-      // Update directive and pipe registries to add newly downloaded dependencies.
+      // 새로 다운로드된 의존성을 추가하기 위해 지시자 및 파이프 레지스트리를 업데이트합니다.
       const primaryBlockTView = primaryBlockTNode.tView!;
       if (directiveDefs.length > 0) {
         primaryBlockTView.directiveRegistry = addDepsToRegistry<DirectiveDefList>(
@@ -274,8 +269,7 @@ export function triggerResourceLoading(
           directiveDefs,
         );
 
-        // Extract providers from all NgModules imported by standalone components
-        // used within this defer block.
+        // 이 지연 블록 내에서 사용되는 독립형 구성 요소로 가져온 모든 NgModule에서 제공자를 추출합니다.
         const directiveTypes = directiveDefs.map((def) => def.type);
         const providers = internalImportProvidersFrom(false, ...directiveTypes);
         tDetails.providers = providers;
@@ -292,15 +286,15 @@ export function triggerResourceLoading(
 }
 
 /**
- * Defines whether we should proceed with triggering a given defer block.
+ * 주어진 지연 블록을 트리거할지 여부를 정의합니다.
  */
 function shouldTriggerDeferBlock(triggerType: TriggerType, lView: LView): boolean {
-  // prevents triggering regular triggers when on the server.
+  // 서버에서 일반 트리거가 트리거되는 것을 방지합니다.
   if (triggerType === TriggerType.Regular && typeof ngServerMode !== 'undefined' && ngServerMode) {
     return false;
   }
 
-  // prevents triggering in the case of a test run with manual defer block configuration.
+  // 수동 지연 블록 구성으로 테스트 실행의 경우 트리거를 방지합니다.
   const injector = lView[INJECTOR];
   const config = injector.get(DEFER_BLOCK_CONFIG, null, {optional: true});
   if (config?.behavior === DeferBlockBehavior.Manual) {
@@ -310,9 +304,9 @@ function shouldTriggerDeferBlock(triggerType: TriggerType, lView: LView): boolea
 }
 
 /**
- * Attempts to trigger loading of defer block dependencies.
- * If the block is already in a loading, completed or an error state -
- * no additional actions are taken.
+ * 지연 블록 의존성을 로드하기 위한 트리거를 시도합니다.
+ * 블록이 이미 로드 중이거나 완료되었거나 오류 상태인 경우 -
+ * 추가 작업이 수행되지 않습니다.
  */
 export function triggerDeferBlock(triggerType: TriggerType, lView: LView, tNode: TNode) {
   const tView = lView[TVIEW];
@@ -324,7 +318,7 @@ export function triggerDeferBlock(triggerType: TriggerType, lView: LView, tNode:
   const lDetails = getLDeferBlockDetails(lView, tNode);
   const tDetails = getTDeferBlockDetails(tView, tNode);
 
-  // Defer block is triggered, cleanup all registered trigger functions.
+  // 지연 블록이 트리거되고 모든 등록된 트리거 함수를 정리합니다.
   invokeAllTriggerCleanupFns(lDetails);
 
   switch (tDetails.loadingState) {
@@ -332,7 +326,7 @@ export function triggerDeferBlock(triggerType: TriggerType, lView: LView, tNode:
       renderDeferBlockState(DeferBlockState.Loading, tNode, lContainer);
       triggerResourceLoading(tDetails, lView, tNode);
 
-      // The `loadingState` might have changed to "loading".
+      // `loadingState`가 "로딩"으로 변경되었을 수 있습니다.
       if (
         (tDetails.loadingState as DeferDependenciesLoadingState) ===
         DeferDependenciesLoadingState.IN_PROGRESS
@@ -359,14 +353,12 @@ export function triggerDeferBlock(triggerType: TriggerType, lView: LView, tNode:
 }
 
 /**
- * The core mechanism for incremental hydration. This triggers or
- * queues hydration for all the blocks in the tree that need to be hydrated
- * and keeps track of all those blocks that were hydrated along the way.
+ * 점진적 수분에 대한 핵심 메커니즘입니다. 이것은 수분이 필요한 모든 블록의 트리거를
+ * 수행하거나 대기열을 설정하고 수분된 모든 블록을 추적합니다.
  *
- * Note: the `replayQueuedEventsFn` is only provided when hydration is invoked
- * as a result of an event replay (via JsAction). When hydration is invoked from
- * an instruction set (e.g. `deferOnImmediate`) - there is no need to replay any
- * events.
+ * 참고: `replayQueuedEventsFn`은 수분이 이벤트 재생의 결과로 호출될 때만 제공됩니다
+ * (JsAction을 통해). `deferOnImmediate`와 같은 명령 집합에서 수분이 호출되면 -
+ * 이벤트를 다시 재생할 필요가 없습니다.
  */
 export async function triggerHydrationFromBlockName(
   injector: Injector,
@@ -376,45 +368,44 @@ export async function triggerHydrationFromBlockName(
   const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
   const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
 
-  // Make sure we don't hydrate/trigger the same thing multiple times
+  // 동일한 작업을 여러 번 수분 처리/트리거하지 않도록 합니다.
   if (blocksBeingHydrated.has(blockName)) {
     return;
   }
 
-  // Trigger resource loading and hydration for the blocks in the queue in the order of highest block
-  // to lowest block. Once a block has finished resource loading, after next render fires after hydration
-  // finishes. The new block will have its defer instruction called and will be in the registry.
-  // Due to timing related to potential nested control flow, this has to be scheduled after the next render.
+  // 큐에서 블록의 리소스 로딩 및 수분을 상위 블록의
+  // 가장 높은 블록에서 가장 낮은 블록 순서로 트리거합니다. 블록이 리소스 로딩을 마치면
+  // 수분이 완료된 후 다음 렌더링이 트리거됩니다. 새 블록은 지연 지시문이 호출되고 레지스트리에
+  // 추가됩니다. 잠재적인 중첩 제어 흐름과 관련된 타이밍으로 인해 이 작업은 다음 렌더링 후에 예약해야 합니다.
   const {parentBlockPromise, hydrationQueue} = getParentBlockHydrationQueue(blockName, injector);
   if (hydrationQueue.length === 0) return;
 
-  // It's possible that the hydrationQueue topmost item is actually in the process of hydrating and has
-  // a promise already. In that case, we don't want to destroy that promise and queue it again.
+  // 수분 대기열의 가장 상위 항목이 실제로 수분 처리 중일 수 있으며
+  // 이미 약속이 있을 수 있습니다. 그런 경우 해당 약속을 파괴하고 다시 대기열에 추가하지 않습니다.
   if (parentBlockPromise !== null) {
     hydrationQueue.shift();
   }
 
-  // The hydrating map in the registry prevents re-triggering hydration for a block that's already in
-  // the hydration queue. Here we generate promises for each of the blocks about to be hydrated
+  // 레지스트리의 수분 맵은 이미 수분 대기열에 있는 블록을
+  // 재트리거하는 것을 방지합니다. 여기에서 수분 상태에 대한 약속을 생성합니다.
   populateHydratingStateForQueue(dehydratedBlockRegistry, hydrationQueue);
 
-  // We await this after populating the hydration state so we can prevent re-triggering hydration for
-  // the same blocks while this promise is being awaited.
+  // 이 약속을 대기하는 동안 동일한 블록에 대해 수분을 다시 트리거하는 것을 방지합니다.
   if (parentBlockPromise !== null) {
     await parentBlockPromise;
   }
 
   const topmostParentBlock = hydrationQueue[0];
   if (dehydratedBlockRegistry.has(topmostParentBlock)) {
-    // the topmost parent block is already in the registry and we can proceed
-    // with hydration.
+    // 가장 상위 부모 블록이 이미 레지스트리에 있으므로
+    // 수분을 진행할 수 있습니다.
     await triggerHydrationForBlockQueue(injector, hydrationQueue, replayQueuedEventsFn);
   } else {
-    // the topmost parent block is not yet in the registry, which may mean
-    // a lazy loaded route, a control flow branch was taken, a route has
-    // been navigated, etc. So we need to queue up the hydration process
-    // so that it can be finished after the top block has had its defer
-    // instruction executed.
+    // 가장 상위 부모 블록이 아직 레지스트리에 없는 경우
+    // 지연 로드된 경로일 수 있으며,
+    // 제어 흐름 분기가 발생했거나
+    // 경로가 이동되었을 수 있습니다. 따라서 수분 프로세스를 대기열에 추가해야 하므로
+    // 첫 번째 블록의 지연 지시문이 실행된 후 완료될 수 있습니다.
     dehydratedBlockRegistry.awaitParentBlock(
       topmostParentBlock,
       async () =>
@@ -424,14 +415,12 @@ export async function triggerHydrationFromBlockName(
 }
 
 /**
- * The core mechanism for incremental hydration. This triggers
- * hydration for all the blocks in the tree that need to be hydrated
- * and keeps track of all those blocks that were hydrated along the way.
+ * 점진적 수분에 대한 핵심 메커니즘입니다. 이것은 수분이 필요한 모든 블록의 트리거를
+ * 수행하고 수분된 모든 블록을 추적합니다.
  *
- * Note: the `replayQueuedEventsFn` is only provided when hydration is invoked
- * as a result of an event replay (via JsAction). When hydration is invoked from
- * an instruction set (e.g. `deferOnImmediate`) - there is no need to replay any
- * events.
+ * 참고: `replayQueuedEventsFn`은 수분이 이벤트 재생의 결과로 호출될 때만 제공됩니다
+ * (JsAction을 통해). `deferOnImmediate`와 같은 명령 집합에서 수분이 호출되면 -
+ * 이벤트를 다시 재생할 필요가 없습니다.
  */
 export async function triggerHydrationForBlockQueue(
   injector: Injector,
@@ -441,28 +430,28 @@ export async function triggerHydrationForBlockQueue(
   const dehydratedBlockRegistry = injector.get(DEHYDRATED_BLOCK_REGISTRY);
   const blocksBeingHydrated = dehydratedBlockRegistry.hydrating;
 
-  // Indicate that we have some pending async work.
+  // 보류 중인 비동기 작업이 있음을 표시합니다.
   const pendingTasks = injector.get(PendingTasksInternal);
   const taskId = pendingTasks.add();
 
-  // Actually do the triggering and hydration of the queue of blocks
+  // 실제로 대기열의 블록을 트리거하고 수분 처리합니다.
   for (let blockQueueIdx = 0; blockQueueIdx < hydrationQueue.length; blockQueueIdx++) {
     const dehydratedBlockId = hydrationQueue[blockQueueIdx];
     const dehydratedDeferBlock = dehydratedBlockRegistry.get(dehydratedBlockId);
 
     if (dehydratedDeferBlock != null) {
-      // trigger the block resources and await next render for hydration. This should result
-      // in the next block ɵɵdefer instruction being called and that block being added to the dehydrated registry.
+      // 리소스를 트리거하고 수분 처리를 위해 다음 렌더링을 대기합니다. 이는 다음 블록의
+      // ɵɵdefer 지시문이 호출되고 해당 블록이 탈수된 레지스트리에 추가되는 것을 초래합니다.
       await triggerResourceLoadingForHydration(dehydratedDeferBlock);
       await nextRender(injector);
 
-      // if the content has changed since server rendering, we need to check for the expected block
-      // being in the registry or if errors occurred. In that case, we need to clean up the remaining expected
-      // content that won't be rendered or fetched.
+      // 서버 렌더링 이후 내용이 변경되었다면
+      // 예상 블록이 레지스트리에 있는지 또는 오류가 발생했는지 확인해야 합니다.
       if (deferBlockHasErrored(dehydratedDeferBlock)) {
-        // Either the expected block has not yet had its ɵɵdefer instruction called or the block errored out when fetching
-        // resources. In the former case, either we're hydrating too soon or the client and server differ. In both cases,
-        // we need to clean up child content and promises.
+        // 예상 블록이 아직 ɵɵdefer 지시문이 호출되지 않았거나,
+        // 리소스 가져오는 도중 오류가 발생했습니다. 전자의 경우
+        // 너무 빨리 수분 처리 중이거나 클라이언트와 서버가 다를 수 있습니다.
+        // 두 경우 모두 자식 콘텐츠 및 약속을 정리해야 합니다.
         removeDehydratedViewList(dehydratedDeferBlock);
         cleanupRemainingHydrationQueue(
           hydrationQueue.slice(blockQueueIdx),
@@ -470,12 +459,13 @@ export async function triggerHydrationForBlockQueue(
         );
         break;
       }
-      // The defer block has not errored and we've finished fetching resources and rendering.
-      // At this point it is safe to resolve the hydration promise.
+      // 지연 블록이 오류가 없고 리소스를 가져오고 렌더링을 완료했습니다.
+      // 이 시점에서 수분 약속을 해결하는 것이 안전합니다.
       blocksBeingHydrated.get(dehydratedBlockId)!.resolve();
     } else {
-      // The expected block has not yet had its ɵɵdefer instruction called. This is likely due to content changing between
-      // client and server. We need to clean up the dehydrated DOM in the container since it no longer is valid.
+      // 예상 블록이 아직 ɵɵdefer 지시문이 호출되지 않았습니다.
+      // 이는 클라이언트와 서버 간의 콘텐츠 변경으로 인해 발생합니다.
+      // 이제 더 이상 유효하지 않으므로 컨테이너에서 탈수된 DOM을 정리해야 합니다.
       cleanupParentContainer(blockQueueIdx, hydrationQueue, dehydratedBlockRegistry);
       cleanupRemainingHydrationQueue(hydrationQueue.slice(blockQueueIdx), dehydratedBlockRegistry);
       break;
@@ -484,18 +474,20 @@ export async function triggerHydrationForBlockQueue(
 
   const lastBlockName = hydrationQueue[hydrationQueue.length - 1];
 
-  // Await hydration completion for the last block.
+  // 마지막 블록의 수분 완료를 대기합니다.
   await blocksBeingHydrated.get(lastBlockName)?.promise;
 
-  // All async work is done, remove the taskId from the registry.
+  // 모든 비동기 작업이 완료되었으므로
+  // 레지스트리에서 taskId를 제거합니다.
   pendingTasks.remove(taskId);
 
-  // Replay any queued events, if any exist and the replay operation was requested.
+  // 대기 열에 있는 이벤트가 존재하고 재생 작업이 요청되었다면
+  // 모든 대기 이벤트를 재생합니다.
   if (replayQueuedEventsFn) {
     replayQueuedEventsFn(hydrationQueue);
   }
 
-  // Cleanup after hydration of all affected defer blocks.
+  // 영향을 받는 모든 지연 블록의 수분 후 정리합니다.
   cleanupHydratedDeferBlocks(
     dehydratedBlockRegistry.get(lastBlockName),
     hydrationQueue,
@@ -512,17 +504,16 @@ export function deferBlockHasErrored(deferBlock: DehydratedDeferBlock): boolean 
 }
 
 /**
- * Clean up the parent container of a block where content changed between server and client.
- * The parent of a block going through `triggerHydrationFromBlockName` will contain the
- * dehydrated content that needs to be cleaned up. So we have to do the clean up from that location
- * in the tree.
+ * 서버와 클라이언트 간에 내용이 변경된 블록의 상위 컨테이너를 정리합니다.
+ * `triggerHydrationFromBlockName`를 통해 진행 중인 블록의 상위는
+ * 정리해야 할 탈수 콘텐츠를 포함할 것입니다. 따라서 트리에서 해당 위치에서 정리를 수행해야 합니다.
  */
 function cleanupParentContainer(
   currentBlockIdx: number,
   hydrationQueue: string[],
   dehydratedBlockRegistry: DehydratedBlockRegistry,
 ) {
-  // If a parent block exists, it's in the hydration queue in front of the current block.
+  // 부모 블록이 존재하는 경우 현재 블록 앞에 있는 수분 대기열에 있습니다.
   const parentDeferBlockIdx = currentBlockIdx - 1;
   const parentDeferBlock =
     parentDeferBlockIdx > -1
@@ -545,7 +536,7 @@ function cleanupRemainingHydrationQueue(
 }
 
 /**
- * Generates a new promise for every defer block in the hydrating queue
+ * 수분 대기열에 있는 모든 지연 블록에 대해 새 약속을 생성합니다.
  */
 function populateHydratingStateForQueue(registry: DehydratedBlockRegistry, queue: string[]) {
   for (let blockId of queue) {
@@ -553,7 +544,7 @@ function populateHydratingStateForQueue(registry: DehydratedBlockRegistry, queue
   }
 }
 
-// Waits for the next render cycle to complete
+// 다음 렌더링 주기가 완료될 때까지 대기합니다.
 function nextRender(injector: Injector): Promise<void> {
   return new Promise<void>((resolveFn) => afterNextRender(resolveFn, {injector}));
 }
@@ -571,8 +562,7 @@ async function triggerResourceLoadingForHydration(
 }
 
 /**
- * Registers cleanup functions for a defer block when the block has finished
- * fetching and rendering
+ * 블록의 로딩 및 렌더링이 완료된 후 지연 블록에 대한 정리 함수를 등록합니다.
  */
 function onDeferBlockCompletion(lDetails: LDeferBlockDetails, callback: VoidFunction) {
   if (!Array.isArray(lDetails[ON_COMPLETE_FNS])) {
@@ -582,8 +572,8 @@ function onDeferBlockCompletion(lDetails: LDeferBlockDetails, callback: VoidFunc
 }
 
 /**
- * Determines whether specific trigger types should be attached during an instruction firing
- * to ensure the proper triggers for a given type are used.
+ * 특정 트리거 유형이 명령이 발생할 때 첨부되어야 하는지 여부를 결정합니다.
+ * 특정 유형에 적합한 트리거가 사용되도록 합니다.
  */
 export function shouldAttachTrigger(triggerType: TriggerType, lView: LView, tNode: TNode): boolean {
   if (triggerType === TriggerType.Regular) {
@@ -591,15 +581,13 @@ export function shouldAttachTrigger(triggerType: TriggerType, lView: LView, tNod
   } else if (triggerType === TriggerType.Hydrate) {
     return !shouldAttachRegularTrigger(lView, tNode);
   }
-  // TriggerType.Prefetch is active only on the client
+  // TriggerType.Prefetch는 클라이언트에서만 활성화됩니다.
   return !(typeof ngServerMode !== 'undefined' && ngServerMode);
 }
 
 /**
- * Defines whether a regular trigger logic (e.g. "on viewport") should be attached
- * to a defer block. This function defines a condition, which mutually excludes
- * `deferOn*` and `deferHydrateOn*` triggers, to make sure only one of the trigger
- * types is active for a block with the current state.
+ * 일반 트리거 로직("on viewport")이 지연 블록에 첨부되어야 하는지 정의합니다. 이 함수는
+ * 지연 지시문을 사용 가능한 경우 MutualExclude를 정의합니다.
  */
 function shouldAttachRegularTrigger(lView: LView, tNode: TNode): boolean {
   const injector = lView[INJECTOR];
@@ -611,15 +599,15 @@ function shouldAttachRegularTrigger(lView: LView, tNode: TNode): boolean {
     (tDetails.flags & TDeferDetailsFlags.HasHydrateTriggers) ===
       TDeferDetailsFlags.HasHydrateTriggers;
 
-  // On the server:
+  // 서버에서:
   if (typeof ngServerMode !== 'undefined' && ngServerMode) {
-    // Regular triggers are activated on the server when:
-    //  - Either Incremental Hydration is *not* enabled
-    //  - Or Incremental Hydration is enabled, but a given block doesn't have "hydrate" triggers
+    // 서버에서 일반 트리거가 활성화되는 경우:
+    //  - 점진적 수분이 *비활성*인 경우
+    //  - 또는 점진적 수분이 활성화되었지만 특정 블록에 "수분" 트리거가 없는 경우
     return !incrementalHydrationEnabled || !hasHydrateTriggers;
   }
 
-  // On the client:
+  // 클라이언트에서:
   const lDetails = getLDeferBlockDetails(lView, tNode);
   const wasServerSideRendered = lDetails[SSR_UNIQUE_ID] !== null;
 
@@ -630,7 +618,7 @@ function shouldAttachRegularTrigger(lView: LView, tNode: TNode): boolean {
 }
 
 /**
- * Retrives a Defer Block's list of hydration triggers
+ * 지연 블록의 수분 트리거 목록을 가져옵니다.
  */
 export function getHydrateTriggers(
   tView: TView,
@@ -641,8 +629,8 @@ export function getHydrateTriggers(
 }
 
 /**
- * Loops through all defer block summaries and ensures all the blocks triggers are
- * properly initialized
+ * 모든 지연 블록 요약을 반복하고 모든 블록의 트리거가
+ * 적절하게 초기화되었는지 확인합니다.
  */
 export function processAndInitTriggers(
   injector: Injector,
@@ -723,8 +711,8 @@ function setTimerTriggers(injector: Injector, elementTriggers: ElementTrigger[])
 
 function setImmediateTriggers(injector: Injector, elementTriggers: ElementTrigger[]) {
   for (const elementTrigger of elementTriggers) {
-    // Note: we intentionally avoid awaiting each call and instead kick off
-    // the hydration process simultaneously for all defer blocks with this trigger;
+    // 주의: 우리는 의도적으로 각 호출을 대기하는 것을 피하고
+    // 동시에 모든 지연 블록에 대한 수분 처리를 시작합니다.
     triggerHydrationFromBlockName(injector, elementTrigger.blockName);
   }
 }

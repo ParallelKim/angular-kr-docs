@@ -11,9 +11,9 @@ import {getComponentDef} from '../def_getters';
 import {ClassDebugInfo} from '../interfaces/definition';
 
 /**
- * Sets the debug info for an Angular class.
+ * Angular 클래스의 디버그 정보를 설정합니다.
  *
- * This runtime is guarded by ngDevMode flag.
+ * 이 런타임은 ngDevMode 플래그로 보호됩니다.
  */
 export function ɵsetClassDebugInfo(type: Type<any>, debugInfo: ClassDebugInfo): void {
   const def = getComponentDef(type);

@@ -9,16 +9,16 @@
 import {Subscribable} from 'rxjs';
 
 /**
- * Determine if the argument is shaped like a Promise
+ * 인수가 Promise 형태인지 판단합니다.
  */
 export function isPromise<T = any>(obj: any): obj is Promise<T> {
-  // allow any Promise/A+ compliant thenable.
-  // It's up to the caller to ensure that obj.then conforms to the spec
+  // 모든 Promise/A+ 호환 thenable을 허용합니다.
+  // obj.then이 사양을 준수하도록 호출자가 보장해야 합니다.
   return !!obj && typeof obj.then === 'function';
 }
 
 /**
- * Determine if the argument is a Subscribable
+ * 인수가 Subscribable인지 판단합니다.
  */
 export function isSubscribable<T>(obj: any | Subscribable<T>): obj is Subscribable<T> {
   return !!obj && typeof obj.subscribe === 'function';

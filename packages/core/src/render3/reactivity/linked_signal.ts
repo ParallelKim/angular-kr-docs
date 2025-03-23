@@ -21,7 +21,7 @@ import {signalAsReadonlyFn, WritableSignal} from './signal';
 const identityFn = <T>(v: T) => v;
 
 /**
- * Creates a writable signal whose value is initialized and reset by the linked, reactive computation.
+ * 연결된 반응적 계산에 의해 값이 초기화되고 재설정되는 쓰기 가능한 신호를 생성합니다.
  *
  * @developerPreview
  */
@@ -31,10 +31,10 @@ export function linkedSignal<D>(
 ): WritableSignal<D>;
 
 /**
- * Creates a writable signal whose value is initialized and reset by the linked, reactive computation.
- * This is an advanced API form where the computation has access to the previous value of the signal and the computation result.
+ * 연결된 반응적 계산에 의해 값이 초기화되고 재설정되는 쓰기 가능한 신호를 생성합니다.
+ * 이는 계산이 신호의 이전 값과 계산 결과에 접근할 수 있는 고급 API 형태입니다.
  *
- * Note: The computation is reactive, meaning the linked signal will automatically update whenever any of the signals used within the computation change.
+ * 참고: 계산은 반응적이며, 연결된 신호는 계산 내에서 사용되는 신호 중 하나가 변경될 때마다 자동으로 업데이트됩니다.
  *
  * @developerPreview
  */

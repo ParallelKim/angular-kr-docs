@@ -16,19 +16,15 @@ import {DestroyRef} from './linker/destroy_ref';
 import {PendingTasksInternal} from './pending_tasks';
 
 /**
- * Use in components with the `@Output` directive to emit custom events
- * synchronously or asynchronously, and register handlers for those events
- * by subscribing to an instance.
+ * `@Output` 디렉티브가 있는 구성 요소에서 사용자 정의 이벤트를
+ * 동기적 또는 비동기적으로 방출하고, 해당 이벤트에 대한 핸들러를 등록하는 데 사용합니다.
  *
  * @usageNotes
  *
- * Extends
- * [RxJS `Subject`](https://rxjs.dev/api/index/class/Subject)
- * for Angular by adding the `emit()` method.
+ * RxJS `Subject`를 확장하여 `emit()` 메서드를 추가하여 Angular에서 사용합니다.
  *
- * In the following example, a component defines two output properties
- * that create event emitters. When the title is clicked, the emitter
- * emits an open or close event to toggle the current visibility state.
+ * 다음 예에서, 구성 요소는 이벤트 방출기를 생성하는 두 개의 출력 속성을 정의합니다.
+ * 제목을 클릭하면, 방출기는 현재 가시성 상태를 전환하기 위해 열기 또는 닫기 이벤트를 방출합니다.
  *
  * ```angular-ts
  * @Component({
@@ -56,8 +52,7 @@ import {PendingTasksInternal} from './pending_tasks';
  * }
  * ```
  *
- * Access the event object with the `$event` argument passed to the output event
- * handler:
+ * `$event` 인수를 통해 이벤트 객체에 접근하여 출력 이벤트 핸들러에서 사용할 수 있습니다:
  *
  * ```html
  * <zippy (open)="onOpen($event)" (close)="onClose($event)"></zippy>
@@ -72,26 +67,24 @@ export interface EventEmitter<T> extends Subject<T>, OutputRef<T> {
   __isAsync: boolean;
 
   /**
-   * Creates an instance of this class that can
-   * deliver events synchronously or asynchronously.
+   * 동기적 또는 비동기적으로 이벤트를 전달할 수 있는 이 클래스의 인스턴스를 생성합니다.
    *
-   * @param [isAsync=false] When true, deliver events asynchronously.
+   * @param [isAsync=false] true일 경우, 비동기적으로 이벤트를 전달합니다.
    *
    */
   new (isAsync?: boolean): EventEmitter<T>;
 
   /**
-   * Emits an event containing a given value.
-   * @param value The value to emit.
+   * 주어진 값을 포함하는 이벤트를 방출합니다.
+   * @param value 방출할 값.
    */
   emit(value?: T): void;
 
   /**
-   * Registers handlers for events emitted by this instance.
-   * @param next When supplied, a custom handler for emitted events.
-   * @param error When supplied, a custom handler for an error notification from this emitter.
-   * @param complete When supplied, a custom handler for a completion notification from this
-   *     emitter.
+   * 이 인스턴스에 의해 방출된 이벤트에 대한 핸들러를 등록합니다.
+   * @param next 제공되는 경우, 방출된 이벤트에 대한 사용자 정의 핸들러.
+   * @param error 제공되는 경우, 이 방출기에서의 오류 알림에 대한 사용자 정의 핸들러.
+   * @param complete 제공되는 경우, 이 방출기에서 완료 알림에 대한 사용자 정의 핸들러.
    */
   subscribe(
     next?: (value: T) => void,
@@ -99,12 +92,10 @@ export interface EventEmitter<T> extends Subject<T>, OutputRef<T> {
     complete?: () => void,
   ): Subscription;
   /**
-   * Registers handlers for events emitted by this instance.
-   * @param observerOrNext When supplied, a custom handler for emitted events, or an observer
-   *     object.
-   * @param error When supplied, a custom handler for an error notification from this emitter.
-   * @param complete When supplied, a custom handler for a completion notification from this
-   *     emitter.
+   * 이 인스턴스에 의해 방출된 이벤트에 대한 핸들러를 등록합니다.
+   * @param observerOrNext 제공되는 경우, 방출된 이벤트에 대한 사용자 정의 핸들러 또는 관찰자 객체.
+   * @param error 제공되는 경우, 이 방출기에서의 오류 알림에 대한 사용자 정의 핸들러.
+   * @param complete 제공되는 경우, 이 방출기에서 완료 알림에 대한 사용자 정의 핸들러.
    */
   subscribe(observerOrNext?: any, error?: any, complete?: any): Subscription;
 }
@@ -119,12 +110,12 @@ class EventEmitter_ extends Subject<any> implements OutputRef<any> {
     super();
     this.__isAsync = isAsync;
 
-    // Attempt to retrieve a `DestroyRef` and `PendingTasks` optionally.
-    // For backwards compatibility reasons, this cannot be required.
+    // `DestroyRef` 및 `PendingTasks`를 선택적으로 검색하려고 시도합니다.
+    // 이전 버전과의 호환성 이유로 요구할 수 없습니다.
     if (isInInjectionContext()) {
-      // `DestroyRef` is optional because it is not available in all contexts.
-      // But it is useful to properly complete the `EventEmitter` if used with `outputToObservable`
-      // when the component/directive is destroyed. (See `outputToObservable` for more details.)
+      // `DestroyRef`는 모든 컨텍스트에서 사용할 수 없기 때문에 선택적입니다.
+      // 하지만 컴포넌트/디렉티브가 파괴될 때 `outputToObservable`과 함께 사용되면
+      // `EventEmitter`를 적절히 완료하는 데 유용합니다. (자세한 내용은 `outputToObservable`을 참조하세요.)
       this.destroyRef = inject(DestroyRef, {optional: true}) ?? undefined;
       this.pendingTasks = inject(PendingTasksInternal, {optional: true}) ?? undefined;
     }

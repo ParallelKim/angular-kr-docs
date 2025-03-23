@@ -17,69 +17,65 @@ import {
 } from '../interfaces/definition';
 
 /**
- * Represents the set of dependencies of a type in a certain context.
+ * 특정 컨텍스트에서 타입의 종속성 집합을 나타냅니다.
  */
 interface ScopeData {
   pipes: Set<PipeType<any>>;
   directives: Set<DirectiveType<any> | ComponentType<any> | Type<any>>;
 
   /**
-   * If true it indicates that calculating this scope somehow was not successful. The consumers
-   * should interpret this as empty dependencies. The application of this flag is when calculating
-   * scope recursively, the presence of this flag in a scope dependency implies that the scope is
-   * also poisoned and thus we can return immediately without having to continue the recursion. The
-   * reason for this error is displayed as an error message in the console as per JIT behavior
-   * today. In addition to that, in local compilation the other build/compilations run in parallel
-   * with local compilation may or may not reveal some details about the error as well.
+   * true인 경우, 이 범위를 계산하는 것이 성공적이지 않았음을 나타냅니다. 소비자는
+   * 이 내용을 빈 종속성으로 해석해야 합니다. 이 플래그의 적용은 범위를 재귀적으로 계산할 때,
+   * 범위 종속성에서 이 플래그가 존재하면 범위도 오염된 것이며 따라서 재귀를 계속할 필요 없이
+   * 즉시 반환할 수 있습니다. 이 오류의 이유는 오늘날 JIT 동작에 따라 콘솔의 오류 메시지로 표시됩니다.
+   * 또한 로컬 컴파일의 경우, 로컬 컴파일과 병렬로 실행되는 다른 빌드/컴파일이 오류에 대한
+   * 일부 세부 정보를 드러낼 수 있습니다.
    */
   isPoisoned?: boolean;
 }
 
 /**
- * Represents scope data for standalone components as calculated during runtime by the deps
- * tracker.
+ * deps 추적기가 런타임 동안 계산한 독립형 컴포넌트를 위한 범위 데이터를 나타냅니다.
  */
 interface StandaloneCompScopeData extends ScopeData {
-  // Standalone components include the imported NgModules in their dependencies in order to
-  // determine their injector info. The following field stores the set of such NgModules.
+  // 독립형 컴포넌트는 주입기 정보를 결정하기 위해 종속성에 가져온 NgModules를 포함합니다.
+  // 다음 필드는 이러한 NgModules의 집합을 저장합니다.
   ngModules: Set<NgModuleType<any>>;
 }
 
-/** Represents scope data for NgModule as calculated during runtime by the deps tracker. */
+/** deps 추적기가 런타임 동안 계산한 NgModule을 위한 범위 데이터를 나타냅니다. */
 export interface NgModuleScope {
   compilation: ScopeData;
   exported: ScopeData;
 }
 
 /**
- * Represents scope data for standalone component as calculated during runtime by the deps tracker.
+ * deps 추적기가 런타임 동안 계산한 독립형 컴포넌트를 위한 범위 데이터를 나타냅니다.
  */
 export interface StandaloneComponentScope {
   compilation: StandaloneCompScopeData;
 }
 
-/** Component dependencies info as calculated during runtime by the deps tracker. */
+/** deps 추적기가 런타임 동안 계산한 컴포넌트 종속성 정보를 나타냅니다. */
 export interface ComponentDependencies {
   dependencies: DependencyTypeList;
 }
 
 /**
- * Public API for runtime deps tracker (RDT).
+ * 런타임 deps 추적기(RDT)에 대한 공개 API입니다.
  *
- * All downstream tools should only use these methods.
+ * 모든 하위 도구는 이러한 메소드만 사용해야 합니다.
  */
 export interface DepsTrackerApi {
   /**
-   * Computes the component dependencies, i.e., a set of components/directive/pipes that could be
-   * present in the component's template (This set might contain directives/components/pipes not
-   * necessarily used in the component's template depending on the implementation).
+   * 컴포넌트의 템플릿에 존재할 수 있는 컴포넌트/디렉티브/파이프의 집합인
+   * 컴포넌트 종속성을 계산합니다(이 집합은 구현에 따라 컴포넌트의 템플릿에서
+   * 반드시 사용되지 않는 디렉티브/컴포넌트/파이프를 포함할 수 있습니다).
    *
-   * Standalone components should specify `rawImports` as this information is not available from
-   * their type. The consumer (e.g., {@link getStandaloneDefFunctions}) is expected to pass this
-   * parameter.
+   * 독립형 컴포넌트는 이 정보가 타입에서 사용 가능하지 않기 때문에 `rawImports`를 명시해야 합니다.
+   * 소비자(예: {@link getStandaloneDefFunctions})는 이 매개변수를 전달할 것으로 예상됩니다.
    *
-   * The implementation is expected to use some caching mechanism in order to optimize the resources
-   * needed to do this computation.
+   * 구현은 이 계산을 최적화하기 위해 일부 캐싱 메커니즘을 사용할 것으로 기대됩니다.
    */
   getComponentDependencies(
     cmp: ComponentType<any>,
@@ -87,40 +83,39 @@ export interface DepsTrackerApi {
   ): ComponentDependencies;
 
   /**
-   * Registers an NgModule into the tracker with the given scope info.
+   * 주어진 범위 정보로 추적기에 NgModule을 등록합니다.
    *
-   * This method should be called for every NgModule whether it is compiled in local mode or not.
-   * This is needed in order to compute component's dependencies as some dependencies might be in
-   * different compilation units with different compilation mode.
+   * 이 방법은 로컬 모드로 컴파일되든 상관없이 모든 NgModule에 대해 호출되어야 합니다.
+   * 일부 종속성이 서로 다른 컴파일 유닛에서 서로 다른 컴파일 모드로 존재할 수 있기 때문에
+   * 컴포넌트의 종속성을 계산하는 데 필요합니다.
    */
   registerNgModule(type: Type<any>, scopeInfo: NgModuleScopeInfoFromDecorator): void;
 
   /**
-   * Clears the scope cache for NgModule or standalone component. This will force re-calculation of
-   * the scope, which could be an expensive operation as it involves aggregating transitive closure.
+   * NgModule 또는 독립형 컴포넌트의 범위 캐시를 지웁니다. 이는 범위를 재계산하도록 강제하며,
+   * 이 작업은 전이 폐쇄를 집계하는 것을 포함하기 때문에 비용이 많이 들 수 있습니다.
    *
-   * The main application of this method is for test beds where we want to clear the cache to
-   * enforce scope update after overriding.
+   * 이 방법의 주요 용도는 테스트 베드로, 캐시를 지워서 재정의 후 범위 업데이트를 강제하고자 할 때입니다.
    */
   clearScopeCacheFor(type: Type<any>): void;
 
   /**
-   * Returns the scope of NgModule. Mainly to be used by JIT and test bed.
+   * NgModule의 범위를 반환합니다. 주로 JIT 및 테스트 베드에서 사용됩니다.
    *
-   * The scope value here is memoized. To enforce a new calculation bust the cache by using
-   * `clearScopeCacheFor` method.
+   * 여기의 범위 값은 메모이즈됩니다. 새 계산을 강제하려면
+   * `clearScopeCacheFor` 메소드를 사용하여 캐시를 지우십시오.
    */
   getNgModuleScope(type: NgModuleType<any>): NgModuleScope;
 
   /**
-   * Returns the scope of standalone component. Mainly to be used by JIT. This method should be
-   * called lazily after the initial parsing so that all the forward refs can be resolved.
+   * 독립형 컴포넌트의 범위를 반환합니다. 주로 JIT에서 사용됩니다. 이 방법은
+   * 모든 순방향 참조를 해결할 수 있도록 초기 파싱 후 지연 호출해야 합니다.
    *
-   * @param rawImports the imports statement as appears on the component decorate which consists of
-   *     Type as well as forward refs.
+   * @param rawImports 컴포넌트 장식자에 나타나는 가져오기 문으로,
+   *     타입뿐만 아니라 순방향 참조로 구성됩니다.
    *
-   * The scope value here is memoized. To enforce a new calculation bust the cache by using
-   * `clearScopeCacheFor` method.
+   * 여기의 범위 값은 메모이즈됩니다. 새 계산을 강제하려면
+   * `clearScopeCacheFor` 메소드를 사용하여 캐시를 지우십시오.
    */
   getStandaloneComponentScope(
     type: ComponentType<any>,
@@ -128,8 +123,8 @@ export interface DepsTrackerApi {
   ): StandaloneComponentScope;
 
   /**
-   * Checks if the NgModule declaring the component is not loaded into the browser yet. Always
-   * returns false for standalone components.
+   * 컴포넌트를 선언하는 NgModule이 브라우저에 아직 로드되지 않았는지 확인합니다.
+   * 독립형 컴포넌트에는 항상 false를 반환합니다.
    */
   isOrphanComponent(cmp: ComponentType<any>): boolean;
 }

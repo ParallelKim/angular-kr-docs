@@ -86,8 +86,8 @@ export function executeTemplate<T>(
   try {
     setSelectedIndex(-1);
     if (isUpdatePhase && lView.length > HEADER_OFFSET) {
-      // When we're updating, inherently select 0 so we don't
-      // have to generate that instruction for most update blocks.
+      // 업데이트 중일 때 기본적으로 0을 선택하여 대부분의 업데이트 블록에 대한
+      // 해당 지시문을 생성할 필요가 없습니다.
       selectIndexInternal(tView, lView, HEADER_OFFSET, !!ngDevMode && isInCheckNoChangesMode());
     }
 
@@ -107,7 +107,7 @@ export function executeTemplate<T>(
 }
 
 /**
- * Creates directive instances.
+ * 지시문 인스턴스를 생성합니다.
  */
 export function createDirectivesInstances(tView: TView, lView: LView, tNode: TDirectiveHostNode) {
   instantiateAllDirectives(tView, lView, tNode);
@@ -117,8 +117,8 @@ export function createDirectivesInstances(tView: TView, lView: LView, tNode: TDi
 }
 
 /**
- * Takes a list of local names and indices and pushes the resolved local variable values
- * to LView in the same order as they are loaded in the template with load().
+ * 로컬 이름 목록과 인덱스를 가져와서 로드된 템플릿과 동일한 순서로
+ * LView에 해결된 로컬 변수 값을 푸시합니다.
  */
 export function saveResolvedLocalsInData(
   viewData: LView,
@@ -143,12 +143,12 @@ export function saveResolvedLocalsInData(
 }
 
 /**
- * Locates the host native element, used for bootstrapping existing nodes into rendering pipeline.
+ * 호스트 네이티브 요소를 찾고, 렌더링 파이프라인에 기존 노드를 부트스트랩하는 데 사용됩니다.
  *
- * @param renderer the renderer used to locate the element.
- * @param elementOrSelector Render element or CSS selector to locate the element.
- * @param encapsulation View Encapsulation defined for component that requests host element.
- * @param injector Root view injector instance.
+ * @param renderer 요소를 찾는 데 사용되는 렌더러입니다.
+ * @param elementOrSelector 렌더 요소 또는 요소를 찾기 위한 CSS 선택기입니다.
+ * @param encapsulation 호스트 요소를 요청하는 구성요소에 대해 정의된 뷰 캡슐화입니다.
+ * @param injector 루트 뷰 주입기 인스턴스입니다.
  */
 export function locateHostElement(
   renderer: Renderer,
@@ -156,16 +156,16 @@ export function locateHostElement(
   encapsulation: ViewEncapsulation,
   injector: Injector,
 ): RElement {
-  // Note: we use default value for the `PRESERVE_HOST_CONTENT` here even though it's a
-  // tree-shakable one (providedIn:'root'). This code path can be triggered during dynamic
-  // component creation (after calling ViewContainerRef.createComponent) when an injector
-  // instance can be provided. The injector instance might be disconnected from the main DI
-  // tree, thus the `PRESERVE_HOST_CONTENT` would not be able to instantiate. In this case, the
-  // default value will be used.
+  // 참고: 이것은 기본 값이므로, `PRESERVE_HOST_CONTENT`는,
+  // tree-shakable 것(제공된 예: 'root')입니다. 이 코드 경로는 동적
+  // 구성 요소 생성 중에(예: ViewContainerRef.createComponent 호출 후)
+  // 인젝터 인스턴스가 제공될 수 있습니다. 인젝터 인스턴스는 메인 DI
+  // 트리에서 분리될 수 있으므로 `PRESERVE_HOST_CONTENT`를 인스턴스화할 수 없습니다.
+  // 이 경우 기본 값이 사용됩니다.
   const preserveHostContent = injector.get(PRESERVE_HOST_CONTENT, PRESERVE_HOST_CONTENT_DEFAULT);
 
-  // When using native Shadow DOM, do not clear host element to allow native slot
-  // projection.
+  // 네이티브 섀도우 DOM을 사용하는 경우 네이티브 슬롯 프로젝션을 허용하기 위해
+  // 호스트 요소를 지우지 않습니다.
   const preserveContent = preserveHostContent || encapsulation === ViewEncapsulation.ShadowDom;
   const rootElement = renderer.selectRootElement(elementOrSelector, preserveContent);
   applyRootElementTransform(rootElement as HTMLElement);
@@ -173,36 +173,34 @@ export function locateHostElement(
 }
 
 /**
- * Applies any root element transformations that are needed. If hydration is enabled,
- * this will process corrupted text nodes.
+ * 필요한 경우 루트 요소에 변환을 적용합니다. 수화가 활성화되면
+ * 손상된 텍스트 노드를 처리합니다.
  *
- * @param rootElement the app root HTML Element
+ * @param rootElement 앱 루트 HTML 요소
  */
 export function applyRootElementTransform(rootElement: HTMLElement) {
   _applyRootElementTransformImpl(rootElement as HTMLElement);
 }
 
 /**
- * Reference to a function that applies transformations to the root HTML element
- * of an app. When hydration is enabled, this processes any corrupt text nodes
- * so they are properly hydratable on the client.
+ * 앱의 루트 HTML 요소에 변환을 적용하는 함수에 대한 참조입니다.
+ * 수화가 활성화되면 손상된 텍스트 노드를 처리하여 클라이언트에서 올바르게 수화할 수 있도록 합니다.
  *
- * @param rootElement the app root HTML Element
+ * @param rootElement 앱 루트 HTML 요소
  */
 let _applyRootElementTransformImpl: typeof applyRootElementTransformImpl = () => null;
 
 /**
- * Processes text node markers before hydration begins. This replaces any special comment
- * nodes that were added prior to serialization are swapped out to restore proper text
- * nodes before hydration.
+ * 수화가 시작되기 전에 텍스트 노드 마커를 처리합니다.
+ * 이는 직렬화 이전에 추가된 특수 주석 노드를 교체하여 수화 전에
+ * 적절한 텍스트 노드를 복원합니다.
  *
- * @param rootElement the app root HTML Element
+ * @param rootElement 앱 루트 HTML 요소
  */
 export function applyRootElementTransformImpl(rootElement: HTMLElement) {
   if (hasSkipHydrationAttrOnRElement(rootElement)) {
-    // Handle a situation when the `ngSkipHydration` attribute is applied
-    // to the root node of an application. In this case, we should clear
-    // the contents and render everything from scratch.
+    // `ngSkipHydration` 속성이 애플리케이션의 루트 노드에 적용된 경우를 처리합니다.
+    // 이 경우, 우리는 내용을 지우고 모든 것을 처음부터 다시 렌더링해야 합니다.
     clearElementContents(rootElement as RElement);
   } else {
     processTextNodeMarkersBeforeHydration(rootElement);
@@ -210,21 +208,20 @@ export function applyRootElementTransformImpl(rootElement: HTMLElement) {
 }
 
 /**
- * Sets the implementation for the `applyRootElementTransform` function.
+ * `applyRootElementTransform` 함수의 구현을 설정합니다.
  */
 export function enableApplyRootElementTransformImpl() {
   _applyRootElementTransformImpl = applyRootElementTransformImpl;
 }
 
 /**
- * Mapping between attributes names that don't correspond to their element property names.
+ * 속성 이름과 해당 요소 속성 이름이 일치하지 않는 매핑입니다.
  *
- * Performance note: this function is written as a series of if checks (instead of, say, a property
- * object lookup) for performance reasons - the series of `if` checks seems to be the fastest way of
- * mapping property names. Do NOT change without benchmarking.
+ * 성능 주의: 이 함수는 성능상의 이유로 일련의 if 검사로 작성되었습니다.
+ * 일련의 `if` 검사가 속성 이름 매핑의 가장 빠른 방법인 것으로 보입니다.
+ * 벤치마킹 없이 변경하지 마십시오.
  *
- * Note: this mapping has to be kept in sync with the equally named mapping in the template
- * type-checking machinery of ngtsc.
+ * 참고: 이 매핑은 ngtsc의 템플릿 유형 검사 기계 내에서 같은 이름의 매핑과 동기화되어야 합니다.
  */
 function mapPropName(name: string): string {
   if (name === 'class') return 'className';
@@ -254,7 +251,7 @@ export function elementPropertyInternal<T>(
     if (hasSetInput) {
       isComponentHost(tNode) && markDirtyIfOnPush(lView, tNode.index);
       ngDevMode && setNgReflectProperties(lView, tView, tNode, propName, value);
-      return; // Stop propcessing if we've matched at least one input.
+      return; // 일치하는 입력이 적어도 하나 있는 경우 처리 중지.
     }
   }
 
@@ -269,20 +266,18 @@ export function elementPropertyInternal<T>(
       }
     }
 
-    // It is assumed that the sanitizer is only added when the compiler determines that the
-    // property is risky, so sanitization can be done without further checks.
+    // 속성이 위험하다고 판단되면, sanitizer는 추가 확인 없이 사용됩니다.
     value = sanitizer != null ? (sanitizer(value, tNode.value || '', propName) as any) : value;
     renderer.setProperty(element as RElement, propName, value);
   } else if (tNode.type & TNodeType.AnyContainer) {
-    // If the node is a container and the property didn't
-    // match any of the inputs or schemas we should throw.
+    // 노드가 컨테이너이고 속성이 입력이나 스키마와 일치하지 않으면 오류를 발생시켜야 합니다.
     if (ngDevMode && !matchingSchemas(tView.schemas, tNode.value)) {
       handleUnknownPropertyError(propName, tNode.value, tNode.type, lView);
     }
   }
 }
 
-/** If node is an OnPush component, marks its LView dirty. */
+/** 노드가 OnPush 구성 요소인 경우 해당 LView를 더럽힙니다. */
 export function markDirtyIfOnPush(lView: LView, viewIndex: number): void {
   ngDevMode && assertLView(lView);
   const childComponentLView = getComponentLViewByIndex(viewIndex, lView);
@@ -333,7 +328,7 @@ function setNgReflectProperties(
     }
   }
 
-  // Note: we set the private name of the input as the reflected property, not the public one.
+  // Note: 우리는 반사된 속성으로 입력의 비공식 이름을 설정합니다, 공용 이름이 아닙니다.
   if (inputConfig) {
     for (const index of inputConfig) {
       const def = tView.data[index] as DirectiveDef<unknown>;
@@ -343,14 +338,14 @@ function setNgReflectProperties(
 }
 
 /**
- * Instantiate all the directives that were previously resolved on the current node.
+ * 현재 노드에서 이전에 해결된 모든 지시문을 인스턴스화합니다.
  */
 function instantiateAllDirectives(tView: TView, lView: LView, tNode: TDirectiveHostNode) {
   const start = tNode.directiveStart;
   const end = tNode.directiveEnd;
 
-  // The component view needs to be created before creating the node injector
-  // since it is used to inject some special symbols like `ChangeDetectorRef`.
+  // 일부 특별한 기호를 주입하기 위해 노드 주입기를 생성하기 전에 컴포넌트 뷰
+  //를 생성해야 합니다.
   if (isComponentHost(tNode)) {
     ngDevMode && assertTNodeType(tNode, TNodeType.AnyRNode);
     createComponentLView(
@@ -403,10 +398,10 @@ export function invokeDirectivesHostBindings(tView: TView, lView: LView, tNode: 
 }
 
 /**
- * Invoke the host bindings in creation mode.
+ * 생성 모드에서 호스트 바인딩을 호출합니다.
  *
- * @param def `DirectiveDef` which may contain the `hostBindings` function.
- * @param directive Instance of directive.
+ * @param def `hostBindings` 함수를 포함할 수 있는 `DirectiveDef`입니다.
+ * @param directive 지시문 인스턴스입니다.
  */
 export function invokeHostBindingsInCreationMode(def: DirectiveDef<any>, directive: any) {
   if (def.hostBindings !== null) {
@@ -415,8 +410,8 @@ export function invokeHostBindingsInCreationMode(def: DirectiveDef<any>, directi
 }
 
 /**
- * Matches the current node against all available selectors.
- * If a component is matched (at most one), it is returned in first position in the array.
+ * 현재 노드를 모든 사용 가능한 선택기와 대조합니다.
+ * 구성 요소가 일치하면, 배열의 첫 번째 위치에 반환됩니다(최대 1개).
  */
 export function findDirectiveDefMatches(
   tView: TView,
@@ -438,8 +433,8 @@ export function findDirectiveDefMatches(
             assertTNodeType(
               tNode,
               TNodeType.Element,
-              `"${tNode.value}" tags cannot be used as component hosts. ` +
-                `Please use a different tag to activate the ${stringify(def.type)} component.`,
+              `"${tNode.value}" 태그는 구성 요소 호스트로 사용할 수 없습니다. ` +
+                `다른 태그를 사용하여 ${stringify(def.type)} 구성 요소를 활성화하십시오.`,
             );
 
             if (matches.length && isComponentDef(matches[0])) {
@@ -472,8 +467,8 @@ export function elementAttributeInternal(
     assertTNodeType(
       tNode,
       TNodeType.Element,
-      `Attempted to set attribute \`${name}\` on a container node. ` +
-        `Host bindings are not valid on ng-container or ng-template.`,
+      `컨테이너 노드에 대해 \`${name}\` 속성을 설정하려고 시도했습니다. ` +
+        `호스트 바인딩은 ng-container 또는 ng-template에서 유효하지 않습니다.`,
     );
   }
   const element = getNativeByTNode(tNode, lView) as RElement;
@@ -500,13 +495,13 @@ export function setElementAttribute(
 }
 
 /**
- * Sets initial input properties on directive instances from attribute data
+ * 속성 데이터에서 지시문 인스턴스에 대한 초기 입력 속성을 설정합니다.
  *
- * @param lView Current LView that is being processed.
- * @param directiveIndex Index of the directive in directives array
- * @param instance Instance of the directive on which to set the initial inputs
- * @param def The directive def that contains the list of inputs
- * @param tNode The static data for this node
+ * @param lView 현재 처리 중인 LView입니다.
+ * @param directiveIndex 지시문의 인덱스입니다(지시문 배열 내).
+ * @param instance 초기 입력을 설정할 지시문 인스턴스입니다.
+ * @param def 입력 목록을 포함하는 지시문 정의입니다.
+ * @param tNode 이 노드에 대한 정적 데이터입니다.
  */
 function setInputsFromAttrs<T>(
   lView: LView,
@@ -532,29 +527,27 @@ function setInputsFromAttrs<T>(
 }
 
 ///////////////////////////////
-//// Bindings & interpolations
+//// 바인딩 및 보간
 ///////////////////////////////
 
 /**
- * Stores meta-data for a property binding to be used by TestBed's `DebugElement.properties`.
+ * TestBed의 `DebugElement.properties`에 의해 사용되는 속성 바인딩에 대한 메타데이터를 저장합니다.
  *
- * In order to support TestBed's `DebugElement.properties` we need to save, for each binding:
- * - a bound property name;
- * - a static parts of interpolated strings;
+ * TestBed의 `DebugElement.properties`를 지원하기 위해, 각 바인딩에 대해
+ * - 바운드 속성 이름;
+ * - 보간된 문자열의 정적 부분이 필요합니다;
  *
- * A given property metadata is saved at the binding's index in the `TView.data` (in other words, a
- * property binding metadata will be stored in `TView.data` at the same index as a bound value in
- * `LView`). Metadata are represented as `INTERPOLATION_DELIMITER`-delimited string with the
- * following format:
- * - `propertyName` for bound properties;
- * - `propertyName�prefix�interpolation_static_part1�..interpolation_static_partN�suffix` for
- * interpolated properties.
+ * 주어진 속성 메타데이터는 `TView.data`의 바인딩 인덱스에 저장됩니다.
+ * 즉, 속성 바인딩 메타데이터는 `LView`에서 바인딩된 값과 같은 인덱스에
+ * `TView.data`에 저장됩니다. 메타데이터는 다음 형식의 `INTERPOLATION_DELIMITER`로 구분된 문자열로 나타냅니다:
+ * - 바운드 속성에 대한 `propertyName`;
+ * - 보간된 속성에 대한 `propertyName�prefix�interpolation_static_part1�..interpolation_static_partN�suffix`.
  *
- * @param tData `TData` where meta-data will be saved;
- * @param tNode `TNode` that is a target of the binding;
- * @param propertyName bound property name;
- * @param bindingIndex binding index in `LView`
- * @param interpolationParts static interpolation parts (for property interpolations)
+ * @param tData 메타데이터가 저장될 `TData`;
+ * @param tNode 바인딩의 대상인 `TNode`;
+ * @param propertyName 바운드 속성 이름;
+ * @param bindingIndex `LView`의 바인딩 인덱스
+ * @param interpolationParts 정적 보간 부분(속성 보간에 대해서)
  */
 export function storePropertyBindingMetadata(
   tData: TData,
@@ -563,9 +556,9 @@ export function storePropertyBindingMetadata(
   bindingIndex: number,
   ...interpolationParts: string[]
 ) {
-  // Binding meta-data are stored only the first time a given property instruction is processed.
-  // Since we don't have a concept of the "first update pass" we need to check for presence of the
-  // binding meta-data to decide if one should be stored (or if was stored already).
+  // 바인딩 메타데이터는 주어진 속성 지시문이 첫 번째로 처리될 때만 저장됩니다.
+  // "첫 번째 업데이트 패스"의 개념이 없기 때문에
+  // 바인딩 메타데이터의 존재를 확인하여 저장 여부를 결정해야 합니다.
   if (tData[bindingIndex] === null) {
     if (!tNode.inputs?.[propertyName] && !tNode.hostDirectiveInputs?.[propertyName]) {
       const propBindingIdxs = tNode.propertyBindings || (tNode.propertyBindings = []);
@@ -581,8 +574,8 @@ export function storePropertyBindingMetadata(
 }
 
 /**
- * There are cases where the sub component's renderer needs to be included
- * instead of the current renderer (see the componentSyntheticHost* instructions).
+ * 서브 컴포넌트의 렌더러가 현재 렌더러 대신 포함되어야 하는 경우가 있습니다.
+ * (see the componentSyntheticHost* instructions).
  */
 export function loadComponentRenderer(
   currentDef: DirectiveDef<any> | null,

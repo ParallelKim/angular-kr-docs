@@ -10,10 +10,10 @@ import {Injector, inject, ɵɵdefineInjectable} from '../di';
 import {NgZone} from '../zone';
 
 /**
- * Helper function to schedule a callback to be invoked when a browser becomes idle.
+ * 브라우저가 유휴 상태가 되었을 때 호출될 콜백을 예약하는 도우미 함수입니다.
  *
- * @param callback A function to be invoked when a browser becomes idle.
- * @param injector injector for the app
+ * @param callback 브라우저가 유휴 상태가 되었을 때 호출될 함수.
+ * @param injector 앱에 대한 injector
  */
 export function onIdle(callback: VoidFunction, injector: Injector) {
   const scheduler = injector.get(IdleScheduler);
@@ -23,11 +23,9 @@ export function onIdle(callback: VoidFunction, injector: Injector) {
 }
 
 /**
- * Use shims for the `requestIdleCallback` and `cancelIdleCallback` functions for
- * environments where those functions are not available (e.g. Node.js and Safari).
+ * 이 함수들은 해당 함수들이 사용 가능한 환경(예: Node.js 및 Safari)에서 `requestIdleCallback` 및 `cancelIdleCallback`의 shim을 사용합니다.
  *
- * Note: we wrap the `requestIdleCallback` call into a function, so that it can be
- * overridden/mocked in test environment and picked up by the runtime code.
+ * 참고: 테스트 환경에서 오버라이드/모킹할 수 있도록 `requestIdleCallback` 호출을 함수로 감쌉니다.
  */
 const _requestIdleCallback = () =>
   typeof requestIdleCallback !== 'undefined' ? requestIdleCallback : setTimeout;
@@ -35,22 +33,20 @@ const _cancelIdleCallback = () =>
   typeof requestIdleCallback !== 'undefined' ? cancelIdleCallback : clearTimeout;
 
 /**
- * Helper service to schedule `requestIdleCallback`s for batches of defer blocks,
- * to avoid calling `requestIdleCallback` for each defer block (e.g. if
- * defer blocks are defined inside a for loop).
+ * 지연 블록(batch of defer blocks)에 대해 `requestIdleCallback`을 예약하는 도우미 서비스로, 각 지연 블록에 대해 `requestIdleCallback`을 호출하지 않도록 합니다.
  */
 export class IdleScheduler {
-  // Indicates whether current callbacks are being invoked.
+  // 현재 콜백이 호출되고 있는지 여부를 나타냅니다.
   executingCallbacks = false;
 
-  // Currently scheduled idle callback id.
+  // 현재 예약된 유휴 콜백 ID입니다.
   idleId: number | null = null;
 
-  // Set of callbacks to be invoked next.
+  // 다음에 호출될 콜백 집합입니다.
   current = new Set<VoidFunction>();
 
-  // Set of callbacks collected while invoking current set of callbacks.
-  // Those callbacks are scheduled for the next idle period.
+  // 현재 콜백을 호출하는 동안 수집된 콜백의 집합입니다.
+  // 이러한 콜백은 다음 유휴 기간을 위해 예약됩니다.
   deferred = new Set<VoidFunction>();
 
   ngZone = inject(NgZone);
@@ -72,8 +68,8 @@ export class IdleScheduler {
     current.delete(callback);
     deferred.delete(callback);
 
-    // If the last callback was removed and there is a pending
-    // idle callback - cancel it.
+    // 마지막 콜백이 제거되고 대기 중인
+    // 유휴 콜백이 있는 경우 - 이를 취소합니다.
     if (current.size === 0 && deferred.size === 0) {
       this.cancelIdleCallback();
     }
@@ -92,9 +88,8 @@ export class IdleScheduler {
 
       this.executingCallbacks = false;
 
-      // If there are any callbacks added during an invocation
-      // of the current ones - make them "current" and schedule
-      // a new idle callback.
+      // 현재 호출 중에 추가된 콜백이 있는 경우
+      // 이를 "현재"로 만들고 새로운 유휴 콜백을 예약합니다.
       if (this.deferred.size > 0) {
         for (const callback of this.deferred) {
           this.current.add(callback);
@@ -103,8 +98,8 @@ export class IdleScheduler {
         this.scheduleIdleCallback();
       }
     };
-    // Ensure that the callback runs in the NgZone since
-    // the `requestIdleCallback` is not currently patched by Zone.js.
+    // `requestIdleCallback`이 현재 Zone.js에 의해 패치되지 않았으므로
+    // 콜백이 NgZone 내에서 실행되도록 보장합니다.
     this.idleId = this.requestIdleCallbackFn(() => this.ngZone.run(callback)) as number;
   }
 

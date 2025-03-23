@@ -13,17 +13,17 @@ export interface PlatformReflectionCapabilities {
   hasLifecycleHook(type: any, lcProperty: string): boolean;
 
   /**
-   * Return a list of annotations/types for constructor parameters
+   * 생성자 매개변수에 대한 주석/유형의 목록을 반환합니다.
    */
   parameters(type: Type<any>): any[][];
 
   /**
-   * Return a list of annotations declared on the class
+   * 클래스에 선언된 주석의 목록을 반환합니다.
    */
   annotations(type: Type<any>): any[];
 
   /**
-   * Return a object literal which describes the annotations on Class fields/properties.
+   * 클래스 필드/속성에 대한 주석을 설명하는 객체 리터럴을 반환합니다.
    */
   propMetadata(typeOrFunc: Type<any>): {[key: string]: any[]};
 }

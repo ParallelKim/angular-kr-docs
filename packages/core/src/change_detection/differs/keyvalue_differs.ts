@@ -12,26 +12,26 @@ import {RuntimeError, RuntimeErrorCode} from '../../errors';
 import {DefaultKeyValueDifferFactory} from './default_keyvalue_differ';
 
 /**
- * A differ that tracks changes made to an object over time.
+ * 시간이 지남에 따라 객체에 가해진 변화를 추적하는 differ입니다.
  *
  * @publicApi
  */
 export interface KeyValueDiffer<K, V> {
   /**
-   * Compute a difference between the previous state and the new `object` state.
+   * 이전 상태와 새로운 `object` 상태 간의 차이를 계산합니다.
    *
-   * @param object containing the new value.
-   * @returns an object describing the difference. The return value is only valid until the next
-   * `diff()` invocation.
+   * @param object 새로운 값을 포함하는 객체입니다.
+   * @returns 차이를 설명하는 객체입니다. 반환 값은 다음
+   * `diff()` 호출까지 유효합니다.
    */
   diff(object: Map<K, V>): KeyValueChanges<K, V> | null;
 
   /**
-   * Compute a difference between the previous state and the new `object` state.
+   * 이전 상태와 새로운 `object` 상태 간의 차이를 계산합니다.
    *
-   * @param object containing the new value.
-   * @returns an object describing the difference. The return value is only valid until the next
-   * `diff()` invocation.
+   * @param object 새로운 값을 포함하는 객체입니다.
+   * @returns 차이를 설명하는 객체입니다. 반환 값은 다음
+   * `diff()` 호출까지 유효합니다.
    */
   diff(object: {[key: string]: V}): KeyValueChanges<string, V> | null;
   // TODO(TS2.1): diff<KP extends string>(this: KeyValueDiffer<KP, V>, object: Record<KP, V>):
@@ -39,75 +39,72 @@ export interface KeyValueDiffer<K, V> {
 }
 
 /**
- * An object describing the changes in the `Map` or `{[k:string]: string}` since last time
- * `KeyValueDiffer#diff()` was invoked.
+ * 마지막 `KeyValueDiffer#diff()` 호출 이후 `Map` 또는 `{[k:string]: string}`의 변화를 설명하는 객체입니다.
  *
  * @publicApi
  */
 export interface KeyValueChanges<K, V> {
   /**
-   * Iterate over all changes. `KeyValueChangeRecord` will contain information about changes
-   * to each item.
+   * 모든 변경 사항을 반복합니다. `KeyValueChangeRecord`는 각 항목에 대한 변경 정보가 포함됩니다.
    */
   forEachItem(fn: (r: KeyValueChangeRecord<K, V>) => void): void;
 
   /**
-   * Iterate over changes in the order of original Map showing where the original items
-   * have moved.
+   * 원래 Map의 순서로 변경 사항을 반복하여 원래 항목이 이동한 위치를 보여줍니다.
    */
   forEachPreviousItem(fn: (r: KeyValueChangeRecord<K, V>) => void): void;
 
   /**
-   * Iterate over all keys for which values have changed.
+   * 값이 변경된 모든 키를 반복합니다.
    */
   forEachChangedItem(fn: (r: KeyValueChangeRecord<K, V>) => void): void;
 
   /**
-   * Iterate over all added items.
+   * 추가된 모든 항목을 반복합니다.
    */
   forEachAddedItem(fn: (r: KeyValueChangeRecord<K, V>) => void): void;
 
   /**
-   * Iterate over all removed items.
+   * 제거된 모든 항목을 반복합니다.
    */
   forEachRemovedItem(fn: (r: KeyValueChangeRecord<K, V>) => void): void;
 }
 
 /**
- * Record representing the item change information.
+ * 항목 변경 정보를 나타내는 레코드입니다.
  *
  * @publicApi
  */
 export interface KeyValueChangeRecord<K, V> {
   /**
-   * Current key in the Map.
+   * Map의 현재 키입니다.
    */
   readonly key: K;
 
   /**
-   * Current value for the key or `null` if removed.
+   * 키에 대한 현재 값 또는 제거된 경우 `null`입니다.
    */
   readonly currentValue: V | null;
 
   /**
-   * Previous value for the key or `null` if added.
+   * 키에 대한 이전 값 또는 추가된 경우 `null`입니다.
    */
   readonly previousValue: V | null;
 }
 
 /**
- * Provides a factory for {@link KeyValueDiffer}.
+ * {@link KeyValueDiffer}의 팩토리를 제공합니다.
  *
  * @publicApi
  */
 export interface KeyValueDifferFactory {
   /**
-   * Test to see if the differ knows how to diff this kind of object.
+   * differ가 이 종류의 객체를 diff하는 방법을 알고 있는지 테스트합니다.
    */
   supports(objects: any): boolean;
 
   /**
-   * Create a `KeyValueDiffer`.
+   * `KeyValueDiffer`를 생성합니다.
    */
   create<K, V>(): KeyValueDiffer<K, V>;
 }
@@ -117,7 +114,7 @@ export function defaultKeyValueDiffersFactory() {
 }
 
 /**
- * A repository of different Map diffing strategies used by NgClass, NgStyle, and others.
+ * NgClass, NgStyle 및 기타에서 사용되는 여러 Map diffing 전략의 저장소입니다.
  *
  * @publicApi
  */
@@ -144,16 +141,15 @@ export class KeyValueDiffers {
   }
 
   /**
-   * Takes an array of {@link KeyValueDifferFactory} and returns a provider used to extend the
-   * inherited {@link KeyValueDiffers} instance with the provided factories and return a new
-   * {@link KeyValueDiffers} instance.
+   * {@link KeyValueDifferFactory}의 배열을 받아들여 제공된 팩토리로 상속된 {@link KeyValueDiffers} 인스턴스를 확장하고 새로운
+   * {@link KeyValueDiffers} 인스턴스를 반환하는 공급자를 반환합니다.
    *
    * @usageNotes
-   * ### Example
+   * ### 예제
    *
-   * The following example shows how to extend an existing list of factories,
-   * which will only be applied to the injector for this component and its children.
-   * This step is all that's required to make a new {@link KeyValueDiffer} available.
+   * 다음 예제에서는 기존의 팩토리 목록을 확장하는 방법을 보여줍니다.
+   * 이는 이 컴포넌트와 그 자식의 주입기에만 적용됩니다.
+   * 이 단계는 새로운 {@link KeyValueDiffer}를 사용할 수 있도록 하기 위해 필요한 전부입니다.
    *
    * ```ts
    * @Component({
@@ -167,12 +163,12 @@ export class KeyValueDiffers {
     return {
       provide: KeyValueDiffers,
       useFactory: (parent: KeyValueDiffers) => {
-        // if parent is null, it means that we are in the root injector and we have just overridden
-        // the default injection mechanism for KeyValueDiffers, in such a case just assume
-        // `defaultKeyValueDiffersFactory`.
+        // 부모가 null인 경우, 우리는 루트 주입기에 있으며
+        // KeyValueDiffers의 기본 주입 메커니즘을 덮어썼음을 의미합니다. 그런 경우
+        // `defaultKeyValueDiffersFactory`를 가정합니다.
         return KeyValueDiffers.create(factories, parent || defaultKeyValueDiffersFactory());
       },
-      // Dependency technically isn't optional, but we can provide a better error message this way.
+      // 의존성은 기술적으로 선택적이지 않지만, 이렇게 하면 더 나은 오류 메시지를 제공할 수 있습니다.
       deps: [[KeyValueDiffers, new SkipSelf(), new Optional()]],
     };
   }
@@ -184,7 +180,7 @@ export class KeyValueDiffers {
     }
     throw new RuntimeError(
       RuntimeErrorCode.NO_SUPPORTING_DIFFER_FACTORY,
-      ngDevMode && `Cannot find a differ supporting object '${kv}'`,
+      ngDevMode && `서포트하는 differ factory를 찾을 수 없습니다 '${kv}'`,
     );
   }
 }

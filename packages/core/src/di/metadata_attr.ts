@@ -10,28 +10,27 @@ import {ɵɵinjectAttribute} from '../render3/instructions/di_attr';
 import {makeParamDecorator} from '../util/decorators';
 
 /**
- * Type of the Attribute decorator / constructor function.
+ * Attribute decorator / constructor function의 타입.
  *
  * @publicApi
  */
 export interface AttributeDecorator {
   /**
-   * Parameter decorator for a directive constructor that designates
-   * a host-element attribute whose value is injected as a constant string literal.
+   * 상수 문자열 리터럴로 주입되는 호스트 요소 속성을 지정하는 지시자 생성자의 매개변수 데코레이터.
    *
    * @usageNotes
    *
-   * Suppose we have an `<input>` element and want to know its `type`.
+   * `<input>` 요소가 있고 그 `type`을 알고 싶다고 가정해 보겠습니다.
    *
    * ```html
    * <input type="text">
    * ```
    *
-   * The following example uses the decorator to inject the string literal `text` in a directive.
+   * 다음 예제는 지시자에서 문자열 리터럴 `text`를 주입하기 위해 데코레이터를 사용하는 방법입니다.
    *
    * {@example core/ts/metadata/metadata.ts region='attributeMetadata'}
    *
-   * The following example uses the decorator in a component constructor.
+   * 다음 예제는 구성 요소 생성자에서 데코레이터를 사용하는 방법입니다.
    *
    * {@example core/ts/metadata/metadata.ts region='attributeFactory'}
    *
@@ -41,19 +40,19 @@ export interface AttributeDecorator {
 }
 
 /**
- * Type of the Attribute metadata.
+ * Attribute 메타데이터의 타입.
  *
  * @publicApi
  */
 export interface Attribute {
   /**
-   * The name of the attribute whose value can be injected.
+   * 주입할 수 있는 속성의 이름입니다.
    */
   attributeName: string;
 }
 
 /**
- * Attribute decorator and metadata.
+ * Attribute 데코레이터 및 메타데이터.
  *
  * @Annotation
  * @publicApi

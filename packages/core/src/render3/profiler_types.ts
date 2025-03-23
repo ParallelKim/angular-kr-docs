@@ -11,153 +11,142 @@
 // an error saying `Unable to follow symbol for "Profiler"`.
 
 /**
- * Profiler events is an enum used by the profiler to distinguish between different calls of user
- * code invoked throughout the application lifecycle.
+ * Profiler events은 프로파일러가 애플리케이션 생명주기 전체에서 호출된 사용자 코드를 구별하는 데 사용하는 열거형입니다.
  */
 export const enum ProfilerEvent {
   /**
-   * Corresponds to the point in time before the runtime has called the template function of a
-   * component with `RenderFlags.Create`.
+   * `RenderFlags.Create`로 구성 요소의 템플릿 함수를 런타임이 호출하기 전 시점에 해당합니다.
    */
   TemplateCreateStart,
 
   /**
-   * Corresponds to the point in time after the runtime has called the template function of a
-   * component with `RenderFlags.Create`.
+   * `RenderFlags.Create`로 구성 요소의 템플릿 함수를 런타임이 호출한 후 시점에 해당합니다.
    */
   TemplateCreateEnd,
 
   /**
-   * Corresponds to the point in time before the runtime has called the template function of a
-   * component with `RenderFlags.Update`.
+   * `RenderFlags.Update`로 구성 요소의 템플릿 함수를 런타임이 호출하기 전 시점에 해당합니다.
    */
   TemplateUpdateStart,
 
   /**
-   * Corresponds to the point in time after the runtime has called the template function of a
-   * component with `RenderFlags.Update`.
+   * `RenderFlags.Update`로 구성 요소의 템플릿 함수를 런타임이 호출한 후 시점에 해당합니다.
    */
   TemplateUpdateEnd,
 
   /**
-   * Corresponds to the point in time before the runtime has called a lifecycle hook of a component
-   * or directive.
+   * 구성 요소 또는 지시문의 생명주기 훅을 런타임이 호출하기 전 시점에 해당합니다.
    */
   LifecycleHookStart,
 
   /**
-   * Corresponds to the point in time after the runtime has called a lifecycle hook of a component
-   * or directive.
+   * 구성 요소 또는 지시문의 생명주기 훅을 런타임이 호출한 후 시점에 해당합니다.
    */
   LifecycleHookEnd,
 
   /**
-   * Corresponds to the point in time before the runtime has evaluated an expression associated with
-   * an event or an output.
+   * 이벤트 또는 출력을 연결된 표현식을 런타임이 평가하기 전 시점에 해당합니다.
    */
   OutputStart,
 
   /**
-   * Corresponds to the point in time after the runtime has evaluated an expression associated with
-   * an event or an output.
+   * 이벤트 또는 출력을 연결된 표현식을 런타임이 평가한 후 시점에 해당합니다.
    */
   OutputEnd,
 
   /**
-   * Corresponds to the point in time just before application bootstrap.
+   * 애플리케이션 부트스트랩 바로 직전 시점에 해당합니다.
    */
   BootstrapApplicationStart,
 
   /**
-   * Corresponds to the point in time after application bootstrap.
+   * 애플리케이션 부트스트랩 후 시점에 해당합니다.
    */
   BootstrapApplicationEnd,
 
   /**
-   * Corresponds to the point in time just before root component bootstrap.
+   * 루트 구성 요소의 부트스트랩 직전 시점에 해당합니다.
    */
   BootstrapComponentStart,
 
   /**
-   * Corresponds to the point in time after root component bootstrap.
+   * 루트 구성 요소의 부트스트랩 후 시점에 해당합니다.
    */
   BootstrapComponentEnd,
 
   /**
-   * Corresponds to the point in time just before Angular starts a change detection tick.
+   * Angular가 변경 감지 틱을 시작하기 직전 시점에 해당합니다.
    */
   ChangeDetectionStart,
 
   /**
-   * Corresponds to the point in time after Angular ended a change detection tick.
+   * Angular가 변경 감지 틱을 종료한 후 시점에 해당합니다.
    */
   ChangeDetectionEnd,
 
   /**
-   * Corresponds to the point in time just before Angular starts a new synchronization pass of change detection tick.
+   * Angular가 변경 감지 틱의 새로운 동기화 패스를 시작하기 직전 시점에 해당합니다.
    */
   ChangeDetectionSyncStart,
 
   /**
-   * Corresponds to the point in time after Angular ended a synchronization pass.
+   * Angular가 동기화 패스를 종료한 후 시점에 해당합니다.
    */
   ChangeDetectionSyncEnd,
 
   /**
-   * Corresponds to the point in time just before Angular executes after render hooks.
+   * Angular가 렌더 후 훅을 실행하기 직전 시점에 해당합니다.
    */
   AfterRenderHooksStart,
 
   /**
-   * Corresponds to the point in time after Angular executed after render hooks.
+   * Angular가 렌더 후 훅을 실행한 후 시점에 해당합니다.
    */
   AfterRenderHooksEnd,
 
   /**
-   * Corresponds to the point in time just before Angular starts processing a component (create or update).
+   * Angular가 구성 요소를 처리하기 시작하기 직전 시점에 해당합니다 (생성 또는 업데이트).
    */
   ComponentStart,
 
   /**
-   * Corresponds to the point in time after Angular finished processing a component.
+   * Angular가 구성 요소 처리를 완료한 후 시점에 해당합니다.
    */
   ComponentEnd,
 
   /**
-   * Corresponds to the point in time just before a defer block transitions between states.
+   * 지연 블록이 상태 간 전환되기 직전 시점에 해당합니다.
    */
   DeferBlockStateStart,
 
   /**
-   * Corresponds to the point in time after a defer block transitioned between states.
+   * 지연 블록이 상태 간 전환된 후 시점에 해당합니다.
    */
   DeferBlockStateEnd,
 
   /**
-   * Corresponds to the point in time just before a component instance is created dynamically.
+   * 구성 요소 인스턴스가 동적으로 생성되기 직전 시점에 해당합니다.
    */
   DynamicComponentStart,
 
   /**
-   * Corresponds to the point in time after a a component instance is created dynamically.
+   * 구성 요소 인스턴스가 동적으로 생성된 후 시점에 해당합니다.
    */
   DynamicComponentEnd,
 
   /**
-   * Corresponds to the point in time before the runtime has called the host bindings function
-   * of a directive.
+   * 런타임이 지시문의 호스트 바인딩 함수를 호출하기 전 시점에 해당합니다.
    */
   HostBindingsUpdateStart,
 
   /**
-   * Corresponds to the point in time after the runtime has called the host bindings function
-   * of a directive.
+   * 런타임이 지시문의 호스트 바인딩 함수를 호출한 후 시점에 해당합니다.
    */
   HostBindingsUpdateEnd,
 }
 
 /**
- * Profiler function which the runtime will invoke before and after user code.
+ * 런타임이 사용자 코드 전후에 호출하는 프로파일러 함수입니다.
  */
 export interface Profiler {
   (event: ProfilerEvent, instance?: {} | null, eventFn?: Function): void;

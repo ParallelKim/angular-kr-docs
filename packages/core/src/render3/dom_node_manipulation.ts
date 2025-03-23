@@ -26,11 +26,11 @@ export function createCommentNode(renderer: Renderer, value: string): RComment {
 }
 
 /**
- * Creates a native element from a tag name, using a renderer.
- * @param renderer A renderer to use
- * @param name the tag name
- * @param namespace Optional namespace for element.
- * @returns the element created
+ * 태그 이름을 사용하여 네이티브 요소를 생성하고 렌더러를 사용합니다.
+ * @param renderer 사용할 렌더러
+ * @param name 태그 이름
+ * @param namespace 요소의 선택적 네임스페이스입니다.
+ * @returns 생성된 요소
  */
 export function createElementNode(
   renderer: Renderer,
@@ -41,8 +41,8 @@ export function createElementNode(
 }
 
 /**
- * Inserts a native node before another native node for a given parent.
- * This is a utility function that can be used when native nodes were determined.
+ * 주어진 부모를 위해 다른 네이티브 노드 앞에 네이티브 노드를 삽입합니다.
+ * 이것은 네이티브 노드가 결정되었을 때 사용할 수 있는 유틸리티 함수입니다.
  */
 export function nativeInsertBefore(
   renderer: Renderer,
@@ -55,7 +55,7 @@ export function nativeInsertBefore(
 }
 
 export function nativeAppendChild(renderer: Renderer, parent: RElement, child: RNode): void {
-  ngDevMode && assertDefined(parent, 'parent node must be defined');
+  ngDevMode && assertDefined(parent, '부모 노드는 정의되어야 합니다');
   renderer.appendChild(parent, child);
 }
 
@@ -74,63 +74,63 @@ export function nativeAppendOrInsertBefore(
 }
 
 /**
- * Removes a native node itself using a given renderer. To remove the node we are looking up its
- * parent from the native tree as not all platforms / browsers support the equivalent of
- * node.remove().
+ * 주어진 렌더러를 사용하여 네이티브 노드 자체를 제거합니다. 노드를 제거하기 위해 우리는
+ * 네이티브 트리에서 그것의 부모를 조회하고 모든 플랫폼/브라우저가
+ * node.remove()와 동등한 것을 지원하지 않기 때문입니다.
  *
- * @param renderer A renderer to be used
- * @param rNode The native node that should be removed
- * @param isHostElement A flag indicating if a node to be removed is a host of a component.
+ * @param renderer 사용할 렌더러
+ * @param rNode 제거해야 할 네이티브 노드
+ * @param isHostElement 컴포넌트의 호스트인 노드인지 여부를 나타내는 플래그.
  */
 export function nativeRemoveNode(renderer: Renderer, rNode: RNode, isHostElement?: boolean): void {
   renderer.removeChild(null, rNode, isHostElement);
 }
 
 /**
- * Clears the contents of a given RElement.
+ * 주어진 RElement의 내용을 지웁니다.
  *
- * @param rElement the native RElement to be cleared
+ * @param rElement 지워야 할 네이티브 RElement
  */
 export function clearElementContents(rElement: RElement): void {
   rElement.textContent = '';
 }
 
 /**
- * Write `cssText` to `RElement`.
+ * `cssText`를 `RElement`에 씁니다.
  *
- * This function does direct write without any reconciliation. Used for writing initial values, so
- * that static styling values do not pull in the style parser.
+ * 이 함수는 어떤 조정 없이 직접 쓰기를 수행합니다. 초기 값을 쓰기 위해 사용되며,
+ * 정적 스타일링 값이 스타일 파서를 불러오지 않도록 합니다.
  *
- * @param renderer Renderer to use
- * @param element The element which needs to be updated.
- * @param newValue The new class list to write.
+ * @param renderer 사용할 렌더러
+ * @param element 업데이트해야 할 요소.
+ * @param newValue 쓸 새로운 클래스 리스트.
  */
 function writeDirectStyle(renderer: Renderer, element: RElement, newValue: string) {
-  ngDevMode && assertString(newValue, "'newValue' should be a string");
+  ngDevMode && assertString(newValue, "'newValue'는 문자열이어야 합니다");
   renderer.setAttribute(element, 'style', newValue);
 }
 
 /**
- * Write `className` to `RElement`.
+ * `className`을 `RElement`에 씁니다.
  *
- * This function does direct write without any reconciliation. Used for writing initial values, so
- * that static styling values do not pull in the style parser.
+ * 이 함수는 어떤 조정 없이 직접 쓰기를 수행합니다. 초기 값을 쓰기 위해 사용되며,
+ * 정적 스타일링 값이 스타일 파서를 불러오지 않도록 합니다.
  *
- * @param renderer Renderer to use
- * @param element The element which needs to be updated.
- * @param newValue The new class list to write.
+ * @param renderer 사용할 렌더러
+ * @param element 업데이트해야 할 요소.
+ * @param newValue 쓸 새로운 클래스 리스트.
  */
 function writeDirectClass(renderer: Renderer, element: RElement, newValue: string) {
-  ngDevMode && assertString(newValue, "'newValue' should be a string");
+  ngDevMode && assertString(newValue, "'newValue'는 문자열이어야 합니다");
   if (newValue === '') {
-    // There are tests in `google3` which expect `element.getAttribute('class')` to be `null`.
+    // `google3`에서 `element.getAttribute('class')`가 `null`일 것으로 기대하는 테스트가 있습니다.
     renderer.removeAttribute(element, 'class');
   } else {
     renderer.setAttribute(element, 'class', newValue);
   }
 }
 
-/** Sets up the static DOM attributes on an `RNode`. */
+/** `RNode`에서 정적 DOM 속성을 설정합니다. */
 export function setupStaticAttributes(renderer: Renderer, element: RElement, tNode: TNode) {
   const {mergedAttrs, classes, styles} = tNode;
 

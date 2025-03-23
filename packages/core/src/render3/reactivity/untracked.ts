@@ -9,8 +9,7 @@
 import {untracked as untrackedPrimitive} from '@angular/core/primitives/signals';
 
 /**
- * Execute an arbitrary function in a non-reactive (non-tracking) context. The executed function
- * can, optionally, return a value.
+ * 비반응성(비추적) 컨텍스트에서 임의의 함수를 실행합니다. 실행된 함수는 선택적으로 값을 반환할 수 있습니다.
  */
 export function untracked<T>(nonReactiveReadsFn: () => T): T {
   return untrackedPrimitive(nonReactiveReadsFn);

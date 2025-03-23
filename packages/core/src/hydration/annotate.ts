@@ -94,10 +94,10 @@ import {
 import {Injector} from '../di';
 
 /**
- * A collection that tracks all serialized views (`ngh` DOM annotations)
- * to avoid duplication. An attempt to add a duplicate view results in the
- * collection returning the index of the previously collected serialized view.
- * This reduces the number of annotations needed for a given page.
+ * 모든 직렬화된 뷰(`ngh` DOM 주석)를 추적하는 컬렉션으로,
+ * 중복을 피하기 위해 사용됩니다. 중복 뷰를 추가하려고 하면
+ * 컬렉션은 이전에 수집된 직렬화된 뷰의 인덱스를 반환합니다.
+ * 이는 특정 페이지에 필요한 주석의 수를 줄입니다.
  */
 class SerializedViewCollection {
   private views: SerializedView[] = [];
@@ -120,18 +120,16 @@ class SerializedViewCollection {
 }
 
 /**
- * Global counter that is used to generate a unique id for TViews
- * during the serialization process.
+ * TViews에 대한 고유한 id를 생성하는 데 사용되는 글로벌 카운터입니다.
+ * 직렬화 프로세스 중에 사용됩니다.
  */
 let tViewSsrId = 0;
 
 /**
- * Generates a unique id for a given TView and returns this id.
- * The id is also stored on this instance of a TView and reused in
- * subsequent calls.
+ * 주어진 TView에 대한 고유한 id를 생성하고 이 id를 반환합니다.
+ * id는 이 TView의 인스턴스에 저장되며 후속 호출에서 재사용됩니다.
  *
- * This id is needed to uniquely identify and pick up dehydrated views
- * at runtime.
+ * 이 id는 런타임에 탈수된 뷰를 고유하게 식별하고 가져오는 데 필요합니다.
  */
 function getSsrId(tView: TView): string {
   if (!tView.ssrId) {
@@ -141,9 +139,8 @@ function getSsrId(tView: TView): string {
 }
 
 /**
- * Describes a context available during the serialization
- * process. The context is used to share and collect information
- * during the serialization.
+ * 직렬화 프로세스 중에 사용 가능한 컨텍스트를 설명합니다.
+ * 이 컨텍스트는 직렬화 중에 정보를 공유하고 수집하는 데 사용됩니다.
  */
 export interface HydrationContext {
   serializedViewCollection: SerializedViewCollection;
@@ -153,13 +150,13 @@ export interface HydrationContext {
   i18nChildren: Map<TView, Set<number> | null>;
   eventTypesToReplay: {regular: Set<string>; capture: Set<string>};
   shouldReplayEvents: boolean;
-  appId: string; // the value of `APP_ID`
+  appId: string; // `APP_ID`의 값
   deferBlocks: Map<string /* defer block id, e.g. `d0` */, SerializedDeferBlock>;
 }
 
 /**
- * Computes the number of root nodes in a given view
- * (or child nodes in a given container if a tNode is provided).
+ * 주어진 뷰에서 루트 노드의 수를 계산합니다
+ * (tNode가 제공된 경우 주어진 컨테이너에서 자식 노드).
  */
 function calcNumRootNodes(tView: TView, lView: LView, tNode: TNode | null): number {
   const rootNodes: unknown[] = [];
@@ -168,7 +165,7 @@ function calcNumRootNodes(tView: TView, lView: LView, tNode: TNode | null): numb
 }
 
 /**
- * Computes the number of root nodes in all views in a given LContainer.
+ * 주어진 LContainer에 있는 모든 뷰에서 루트 노드의 수를 계산합니다.
  */
 function calcNumRootNodesInLContainer(lContainer: LContainer): number {
   const rootNodes: unknown[] = [];
@@ -177,8 +174,8 @@ function calcNumRootNodesInLContainer(lContainer: LContainer): number {
 }
 
 /**
- * Annotates root level component's LView for hydration,
- * see `annotateHostElementForHydration` for additional information.
+ * 수화를 위해 루트 수준 컴포넌트의 LView에 주석을 추가합니다.
+ * 추가 정보는 `annotateHostElementForHydration`를 참조하십시오.
  */
 function annotateComponentLViewForHydration(
   lView: LView,
@@ -186,8 +183,8 @@ function annotateComponentLViewForHydration(
   injector: Injector,
 ): number | null {
   const hostElement = lView[HOST];
-  // Root elements might also be annotated with the `ngSkipHydration` attribute,
-  // check if it's present before starting the serialization process.
+  // 루트 요소는 `ngSkipHydration` 속성으로 주석이 추가될 수 있으며,
+  // 직렬화 프로세스가 시작되기 전에 존재하는지 확인하십시오.
   if (hostElement && !(hostElement as HTMLElement).hasAttribute(SKIP_HYDRATION_ATTR_NAME)) {
     return annotateHostElementForHydration(hostElement as HTMLElement, lView, null, context);
   }
@@ -195,10 +192,10 @@ function annotateComponentLViewForHydration(
 }
 
 /**
- * Annotates root level LContainer for hydration. This happens when a root component
- * injects ViewContainerRef, thus making the component an anchor for a view container.
- * This function serializes the component itself as well as all views from the view
- * container.
+ * 수화를 위해 루트 수준 LContainer에 주석을 추가합니다.
+ * 이는 루트 컴포넌트가 ViewContainerRef를 주입할 때 발생합니다.
+ * 따라서 컴포넌트가 뷰 컨테이너의 앵커가 됩니다.
+ * 이 함수는 컴포넌트 자체와 뷰 컨테이너의 모든 뷰를 직렬화합니다.
  */
 function annotateLContainerForHydration(
   lContainer: LContainer,
@@ -207,7 +204,7 @@ function annotateLContainerForHydration(
 ) {
   const componentLView = unwrapLView(lContainer[HOST]) as LView<unknown>;
 
-  // Serialize the root component itself.
+  // 루트 컴포넌트 자체를 직렬화합니다.
   const componentLViewNghIndex = annotateComponentLViewForHydration(
     componentLView,
     context,
@@ -215,42 +212,40 @@ function annotateLContainerForHydration(
   );
 
   if (componentLViewNghIndex === null) {
-    // Component was not serialized (for example, if hydration was skipped by adding
-    // the `ngSkipHydration` attribute or this component uses i18n blocks in the template,
-    // but `withI18nSupport()` was not added), avoid annotating host element with the `ngh`
-    // attribute.
+    // 컴포넌트가 직렬화되지 않았습니다 (예: 수화가 `ngSkipHydration` 속성을 추가하여 건너뛰어졌거나
+    // 이 컴포넌트가 템플릿에 i18n 블록을 사용하지만 `withI18nSupport()`가 추가되지 않았습니다)
+    // 호스트 요소에 `ngh` 속성으로 주석을 추가하는 것을 피하십시오.
     return;
   }
 
   const hostElement = unwrapRNode(componentLView[HOST]!) as HTMLElement;
 
-  // Serialize all views within this view container.
+  // 이 뷰 컨테이너 내의 모든 뷰를 직렬화합니다.
   const rootLView = lContainer[PARENT];
   const rootLViewNghIndex = annotateHostElementForHydration(hostElement, rootLView, null, context);
 
   const renderer = componentLView[RENDERER] as Renderer2;
 
-  // For cases when a root component also acts as an anchor node for a ViewContainerRef
-  // (for example, when ViewContainerRef is injected in a root component), there is a need
-  // to serialize information about the component itself, as well as an LContainer that
-  // represents this ViewContainerRef. Effectively, we need to serialize 2 pieces of info:
-  // (1) hydration info for the root component itself and (2) hydration info for the
-  // ViewContainerRef instance (an LContainer). Each piece of information is included into
-  // the hydration data (in the TransferState object) separately, thus we end up with 2 ids.
-  // Since we only have 1 root element, we encode both bits of info into a single string:
-  // ids are separated by the `|` char (e.g. `10|25`, where `10` is the ngh for a component view
-  // and 25 is the `ngh` for a root view which holds LContainer).
+  // 루트 컴포넌트가 ViewContainerRef의 앵커 노드 역할을 할 때
+  // (예를 들어 루트 컴포넌트에 ViewContainerRef가 주입된 경우) 컴포넌트 자체에 대한 정보를
+  // 직렬화하고 이 ViewContainerRef를 나타내는 LContainer도 직렬화해야 합니다.
+  // 효과적으로 두 개의 정보를 직렬화해야 합니다:
+  // (1) 루트 컴포넌트 자체에 대한 수화 정보와 (2) ViewContainerRef 인스턴스에 대한 수화 정보 (LContainer).
+  // 각 정보 조각은 수화 데이터(TransferState 객체)에 따로 포함되어 마침내 2개의 id가 생성됩니다.
+  // 하나의 루트 요소만 있으므로, 두 정보를 하나의 문자열로 인코딩합니다:
+  // id는 `|` 문자로 구분됩니다 (예: `10|25`, 여기서 `10`은 컴포넌트 뷰의 ngh이고
+  // `25`는 LContainer를 포함하고 있는 루트 뷰의 ngh입니다).
   const finalIndex = `${componentLViewNghIndex}|${rootLViewNghIndex}`;
   renderer.setAttribute(hostElement, NGH_ATTR_NAME, finalIndex);
 }
 
 /**
- * Annotates all components bootstrapped in a given ApplicationRef
- * with info needed for hydration.
+ * 주어진 ApplicationRef에서 부트스트랩된 모든 컴포넌트에
+ * 수화에 필요한 정보를 주석을 추가합니다.
  *
- * @param appRef An instance of an ApplicationRef.
- * @param doc A reference to the current Document instance.
- * @return event types that need to be replayed
+ * @param appRef ApplicationRef 인스턴스입니다.
+ * @param doc 현재 Document 인스턴스에 대한 참조입니다.
+ * @return 재생해야 하는 이벤트 유형
  */
 export function annotateForHydration(appRef: ApplicationRef, doc: Document) {
   const injector = appRef.injector;
@@ -269,8 +264,8 @@ export function annotateForHydration(appRef: ApplicationRef, doc: Document) {
   for (const viewRef of viewRefs) {
     const lNode = getLNodeForHydration(viewRef);
 
-    // An `lView` might be `null` if a `ViewRef` represents
-    // an embedded view (not a component view).
+    // `lView`가 `null`일 수 있으며, 이는 `ViewRef`가
+    // 내장 뷰(컴포넌트 뷰가 아님)를 나타내는 경우입니다.
     if (lNode !== null) {
       const context: HydrationContext = {
         serializedViewCollection,
@@ -292,11 +287,11 @@ export function annotateForHydration(appRef: ApplicationRef, doc: Document) {
     }
   }
 
-  // Note: we *always* include hydration info key and a corresponding value
-  // into the TransferState, even if the list of serialized views is empty.
-  // This is needed as a signal to the client that the server part of the
-  // hydration logic was setup and enabled correctly. Otherwise, if a client
-  // hydration doesn't find a key in the transfer state - an error is produced.
+  // 참고: 우리는 *항상* 수화 정보 키와 해당 값을
+  // TransferState에 포함합니다. 직렬화된 뷰 목록이 비어 있더라도 말입니다.
+  // 이는 서버 측 수화 논리가 올바르게 설정되고 활성화되었음을
+  // 클라이언트에 알리기 위한 신호가 필요합니다.
+  // 그렇지 않으면 클라이언트 수화가 전송 상태에서 키를 찾지 못하면 에러가 발생합니다.
   const serializedViews = serializedViewCollection.getAll();
   const transferState = injector.get(TransferState);
   transferState.set(NGH_DATA_KEY, serializedViews);
@@ -313,15 +308,15 @@ export function annotateForHydration(appRef: ApplicationRef, doc: Document) {
 }
 
 /**
- * Serializes the lContainer data into a list of SerializedView objects,
- * that represent views within this lContainer.
+ * lContainer 데이터를 SerializedView 객체 목록으로 직렬화합니다.
+ * 이 객체는 이 lContainer 내의 뷰를 나타냅니다.
  *
- * @param lContainer the lContainer we are serializing
- * @param tNode the TNode that contains info about this LContainer
- * @param lView that hosts this LContainer
- * @param parentDeferBlockId the defer block id of the parent if it exists
- * @param context the hydration context
- * @returns an array of the `SerializedView` objects
+ * @param lContainer 우리가 직렬화하는 lContainer
+ * @param tNode 이 LContainer에 대한 정보를 포함하고 있는 TNode
+ * @param lView 이 LContainer를 호스팅하는 LView
+ * @param parentDeferBlockId 존재하는 경우 부모의 defer block id
+ * @param context 수화 컨텍스트
+ * @returns `SerializedView` 객체의 배열
  */
 function serializeLContainer(
   lContainer: LContainer,
@@ -341,19 +336,19 @@ function serializeLContainer(
     let serializedView: SerializedContainerView | undefined;
 
     if (isRootView(childLView)) {
-      // If this is a root view, get an LView for the underlying component,
-      // because it contains information about the view to serialize.
+      // 이것이 루트 뷰인 경우, 기본 컴포넌트에 대한 LView를 가져옵니다.
+      // 이 정보는 직렬화해야 할 뷰에 대한 정보입니다.
       childLView = childLView[HEADER_OFFSET];
 
-      // If we have an LContainer at this position, this indicates that the
-      // host element was used as a ViewContainerRef anchor (e.g. a `ViewContainerRef`
-      // was injected within the component class). This case requires special handling.
+      // 이 위치에 LContainer가 있으면, 이는
+      // 호스트 요소가 ViewContainerRef 앵커로 사용되었음을 나타냅니다.
+      // 이 경우 특별한 처리가 필요합니다.
       if (isLContainer(childLView)) {
-        // Calculate the number of root nodes in all views in a given container
-        // and increment by one to account for an anchor node itself, i.e. in this
-        // scenario we'll have a layout that would look like this:
+        // 주어진 컨테이너의 모든 뷰에서 루트 노드의 수를 계산하고
+        // 본질적으로 앵커 노드를 고려하여 1을 추가합니다.
+        // 이 시나리오에서는 레이아웃이 다음과 같이 표시됩니다:
         // `<app-root /><#VIEW1><#VIEW2>...<!--container-->`
-        // The `+1` is to capture the `<app-root />` element.
+        // `+1`은 `<app-root />` 요소를 포착하기 위해 추가됩니다.
         numRootNodes = calcNumRootNodesInLContainer(childLView) + 1;
 
         annotateLContainerForHydration(childLView, context, lView[INJECTOR]);
@@ -373,8 +368,7 @@ function serializeLContainer(
       if (childTView.type === TViewType.Component) {
         template = childTView.ssrId!;
 
-        // This is a component view, thus it has only 1 root node: the component
-        // host node itself (other nodes would be inside that host node).
+        // 이것은 컴포넌트 뷰이므로 1개의 루트 노드만 있습니다: 컴포넌트의 호스트 노드 자체입니다.
         numRootNodes = 1;
       } else {
         template = getSsrId(childTView);
@@ -388,7 +382,7 @@ function serializeLContainer(
 
       let isHydrateNeverBlock = false;
 
-      // If this is a defer block, serialize extra info.
+      // 이것이 defer 블록인 경우, 추가 정보를 직렬화합니다.
       if (isDeferBlock(lView[TVIEW], tNode)) {
         const lDetails = getLDeferBlockDetails(lView, tNode);
         const tDetails = getTDeferBlockDetails(lView[TVIEW], tNode);
@@ -403,7 +397,7 @@ function serializeLContainer(
           let rootNodes: any[] = [];
           collectNativeNodesInLContainer(lContainer, rootNodes);
 
-          // Add defer block into info context.deferBlocks
+          // 정보 컨텍스트에 defer 블록을 추가합니다.
           const deferBlockInfo: SerializedDeferBlock = {
             [NUM_ROOT_NODES]: rootNodes.length,
             [DEFER_BLOCK_STATE]: lDetails[CURRENT_DEFER_BLOCK_STATE],
@@ -415,7 +409,7 @@ function serializeLContainer(
           }
 
           if (parentDeferBlockId !== null) {
-            // Serialize parent id only when it's present.
+            // 부모 id는 존재할 때만 직렬화합니다.
             deferBlockInfo[DEFER_PARENT_BLOCK_ID] = parentDeferBlockId;
           }
 
@@ -435,21 +429,21 @@ function serializeLContainer(
           }
 
           if (!isHydrateNeverBlock) {
-            // Add JSAction attributes for root nodes that use some hydration triggers
+            // 수화 트리igers를 사용하는 루트 노드에 JSAction 속성을 추가합니다.
             annotateDeferBlockRootNodesWithJsAction(tDetails, rootNodes, deferBlockId, context);
           }
 
-          // Use current block id as parent for nested routes.
+          // 현재 블록 id를 중첩 경로의 부모로 사용합니다.
           parentDeferBlockId = deferBlockId;
 
-          // Serialize extra info into the view object.
-          // TODO(incremental-hydration): this should be serialized and included at a different level
-          // (not at the view level).
+          // 뷰 객체에 추가 정보를 직렬화합니다.
+          // TODO(incremental-hydration): 이 정보는 직렬화되어 다른 수준에서 포함되어야 합니다
+          // (뷰 수준이 아닌).
           serializedView[DEFER_BLOCK_ID] = deferBlockId;
         }
-        // DEFER_BLOCK_STATE is used for reconciliation in hydration, both regular and incremental.
-        // We need to know which template is rendered when hydrating. So we serialize this state
-        // regardless of hydration type.
+        // DEFER_BLOCK_STATE는 수화의 조정에 사용되며, 일반 및 점진적 모두에서 사용됩니다.
+        // 수화될 때 어떤 템플릿이 렌더링되었는지 알아야 합니다. 따라서 이 상태를 직렬화합니다.
+        // 수화 유형에 상관없이.
         serializedView[DEFER_BLOCK_STATE] = lDetails[CURRENT_DEFER_BLOCK_STATE];
       }
 
@@ -461,16 +455,15 @@ function serializeLContainer(
       }
     }
 
-    // Check if the previous view has the same shape (for example, it was
-    // produced by the *ngFor), in which case bump the counter on the previous
-    // view instead of including the same information again.
+    // 이전 뷰가 동일한 형태인지 확인합니다 (예: *ngFor에 의해 생성된 경우),
+    // 그 경우 이전 뷰에서 카운터를 증가시키고 같은 정보를 다시 포함시키지 않습니다.
     const currentViewAsString = JSON.stringify(serializedView);
     if (views.length > 0 && currentViewAsString === lastViewAsString) {
       const previousView = views[views.length - 1];
       previousView[MULTIPLIER] ??= 1;
       previousView[MULTIPLIER]++;
     } else {
-      // Record this view as most recently added.
+      // 이 뷰를 가장 최근에 추가된 것으로 기록합니다.
       lastViewAsString = currentViewAsString;
       views.push(serializedView);
     }
@@ -501,9 +494,9 @@ function serializeHydrateTriggers(
 }
 
 /**
- * Helper function to produce a node path (which navigation steps runtime logic
- * needs to take to locate a node) and stores it in the `NODES` section of the
- * current serialized view.
+ * 노드 경로를 생성하는 도우미 함수입니다.
+ * 이 경로는 런타임 로직이 노드를 찾기 위해 취해야 하는 탐색 단계를 나타냅니다.
+ * 현재 직렬화된 뷰의 `NODES` 섹션에 저장합니다.
  */
 function appendSerializedNodePath(
   ngh: SerializedView,
@@ -513,14 +506,14 @@ function appendSerializedNodePath(
 ) {
   const noOffsetIndex = tNode.index - HEADER_OFFSET;
   ngh[NODES] ??= {};
-  // Ensure we don't calculate the path multiple times.
+  // 경로를 여러 번 계산하지 않도록 합니다.
   ngh[NODES][noOffsetIndex] ??= calcPathForNode(tNode, lView, excludedParentNodes);
 }
 
 /**
- * Helper function to append information about a disconnected node.
- * This info is needed at runtime to avoid DOM lookups for this element
- * and instead, the element would be created from scratch.
+ * 분리된 노드에 대한 정보를 추가하는 도우미 함수입니다.
+ * 런타임에서는 이 요소에 대한 DOM 조회를 피하기 위해
+ * 이러한 정보를 필요로 하며 대신 요소를 처음부터 생성해야 합니다.
  */
 function appendDisconnectedNodeIndex(ngh: SerializedView, tNodeOrNoOffsetIndex: TNode | number) {
   const noOffsetIndex =
@@ -534,13 +527,12 @@ function appendDisconnectedNodeIndex(ngh: SerializedView, tNodeOrNoOffsetIndex: 
 }
 
 /**
- * Serializes the lView data into a SerializedView object that will later be added
- * to the TransferState storage and referenced using the `ngh` attribute on a host
- * element.
+ * lView 데이터를 SerializedView 객체로 직렬화합니다.
+ * 이 객체는 나중에 TransferState 저장소에 추가되어 호스트에서 `ngh` 속성을 통해 참조됩니다.
  *
- * @param lView the lView we are serializing
- * @param context the hydration context
- * @returns the `SerializedView` object containing the data to be added to the host node
+ * @param lView 우리가 직렬화하는 lView
+ * @param context 수화 컨텍스트
+ * @returns 호스트 노드에 추가될 데이터가 포함된 `SerializedView` 객체
  */
 function serializeLView(
   lView: LView,
@@ -553,13 +545,13 @@ function serializeLView(
   const nativeElementsToEventTypes = context.shouldReplayEvents
     ? collectDomEventsInfo(tView, lView, context.eventTypesToReplay)
     : null;
-  // Iterate over DOM element references in an LView.
+  // LView의 DOM 요소 참조를 반복합니다.
   for (let i = HEADER_OFFSET; i < tView.bindingStartIndex; i++) {
     const tNode = tView.data[i];
     const noOffsetIndex = i - HEADER_OFFSET;
 
-    // Attempt to serialize any i18n data for the given slot. We do this first, as i18n
-    // has its own process for serialization.
+    // 주어진 슬롯에 대한 모든 i18n 데이터를 직렬화하려고 시도합니다.
+    // 먼저 이를 수행하는 이유는 i18n이 직렬화에 대한 자체 프로세스를 갖고 있기 때문입니다.
     const i18nData = trySerializeI18nBlock(lView, i, context);
     if (i18nData) {
       ngh[I18N_DATA] ??= {};
@@ -578,30 +570,30 @@ function serializeLView(
       continue;
     }
 
-    // Skip processing of a given slot in the following cases:
-    // - Local refs (e.g. <div #localRef>) take up an extra slot in LViews
-    //   to store the same element. In this case, there is no information in
-    //   a corresponding slot in TNode data structure.
-    // - When a slot contains something other than a TNode. For example, there
-    //   might be some metadata information about a defer block or a control flow block.
+    // 주어진 슬롯의 처리를 건너뛰는 경우:
+    // - 지역 참조 (예: <div #localRef>)는 동일한 요소를 저장하기 위해
+    //   LViews에서 추가 슬롯을 차지합니다. 이 경우, TNode 데이터 구조에
+    //   해당 슬롯에 대한 정보가 없습니다.
+    // - 슬롯에 TNode가 아닌 다른 것이 포함되어 있는 경우. 예를 들면,
+    //   defer 블록이나 제어 흐름 블록에 대한 메타데이터 정보가 있을 수 있습니다.
     if (!isTNodeShape(tNode)) {
       continue;
     }
 
-    // Skip any nodes that are in an i18n block but are considered detached (i.e. not
-    // present in the template). These nodes are disconnected from the DOM tree, and
-    // so we don't want to serialize any information about them.
+    // i18n 블록에 있지만 분리된 것으로 간주되는 노드를 건너뜁니다
+    // (즉, 템플릿에 존재하지 않습니다). 이러한 노드는 DOM 트리에서 분리되어 있으므로,
+    // 이에 대한 정보를 직렬화하고 싶지 않습니다.
     if (isDetachedByI18n(tNode)) {
       continue;
     }
 
-    // Check if a native node that represents a given TNode is disconnected from the DOM tree.
-    // Such nodes must be excluded from the hydration (since the hydration won't be able to
-    // find them), so the TNode ids are collected and used at runtime to skip the hydration.
+    // 주어진 TNode를 나타내는 기본 노드가 DOM 트리에서 분리되어 있는지 확인합니다.
+    // 이러한 노드는 수화에서 제외되어야 하므로,
+    // TNode id를 수집하고 런타임에 수화에서 건너뛰도록 사용합니다.
     //
-    // This situation may happen during the content projection, when some nodes don't make it
-    // into one of the content projection slots (for example, when there is no default
-    // <ng-content /> slot in projector component's template).
+    // 이러한 상황은 콘텐츠 프로젝션 중에 발생할 수 있으며,
+    // 일부 노드가 콘텐츠 프로젝션 슬롯 중 하나에 들어가지 않을 때 발생합니다
+    // (예: 프로젝터 컴포넌트 템플릿에 기본 <ng-content /> 슬롯이 없는 경우).
     if (isDisconnectedNode(tNode, lView) && isContentProjectedNode(tNode)) {
       appendDisconnectedNodeIndex(ngh, tNode);
       continue;
@@ -609,37 +601,30 @@ function serializeLView(
 
     if (Array.isArray(tNode.projection)) {
       for (const projectionHeadTNode of tNode.projection) {
-        // We may have `null`s in slots with no projected content.
+        // 프로젝트된 콘텐츠가 없는 슬롯에 `null`이 있을 수 있습니다.
         if (!projectionHeadTNode) continue;
 
         if (!Array.isArray(projectionHeadTNode)) {
-          // If we process re-projected content (i.e. `<ng-content>`
-          // appears at projection location), skip annotations for this content
-          // since all DOM nodes in this projection were handled while processing
-          // a parent lView, which contains those nodes.
+          // 재투영된 콘텐츠를 처리하는 경우 (즉, `<ng-content>`
+          //가 프로젝션 위치에 나타나는 경우), 이 콘텐츠에 대한 주석은 건너뛰어야 합니다.
+          // 이 노드는 부모 lView를 처리하는 동안 처리되었기 때문입니다.
           if (
             !isProjectionTNode(projectionHeadTNode) &&
             !isInSkipHydrationBlock(projectionHeadTNode)
           ) {
             if (isDisconnectedNode(projectionHeadTNode, lView)) {
-              // Check whether this node is connected, since we may have a TNode
-              // in the data structure as a projection segment head, but the
-              // content projection slot might be disabled (e.g.
-              // <ng-content *ngIf="false" />).
+              // 이 노드가 연결되어 있는지 확인합니다.
               appendDisconnectedNodeIndex(ngh, projectionHeadTNode);
             } else {
               appendSerializedNodePath(ngh, projectionHeadTNode, lView, i18nChildren);
             }
           }
         } else {
-          // If a value is an array, it means that we are processing a projection
-          // where projectable nodes were passed in as DOM nodes (for example, when
-          // calling `ViewContainerRef.createComponent(CmpA, {projectableNodes: [...]})`).
-          //
-          // In this scenario, nodes can come from anywhere (either created manually,
-          // accessed via `document.querySelector`, etc) and may be in any state
-          // (attached or detached from the DOM tree). As a result, we can not reliably
-          // restore the state for such cases during hydration.
+          // 값이 배열이면, 이는 재투영된 콘텐츠가 DOM 노드로 전달된 경우를 나타냅니다.
+          // (예: `ViewContainerRef.createComponent(CmpA, {projectableNodes: [...]})`를 호출할 때).
+          // 이 시나리오에서는 노드가 어디서든 올 수 있으며(수동으로 생성되거나
+          // `document.querySelector`를 통해 액세스되는 등) 여기에 연결되어 있어서
+          // 수화 중에 이러한 상태를 신뢰할 수 없게 됩니다.
 
           throw unsupportedProjectionOfDomNodes(unwrapRNode(lView[i]));
         }
@@ -648,21 +633,21 @@ function serializeLView(
 
     conditionallyAnnotateNodePath(ngh, tNode, lView, i18nChildren);
     if (isLContainer(lView[i])) {
-      // Serialize information about a template.
+      // 템플릿에 대한 정보를 직렬화합니다.
       const embeddedTView = tNode.tView;
       if (embeddedTView !== null) {
         ngh[TEMPLATES] ??= {};
         ngh[TEMPLATES][noOffsetIndex] = getSsrId(embeddedTView);
       }
 
-      // Serialize views within this LContainer.
-      const hostNode = lView[i][HOST]!; // host node of this container
+      // 이 LContainer 내의 뷰를 직렬화합니다.
+      const hostNode = lView[i][HOST]!; // 이 컨테이너의 호스트 노드
 
-      // LView[i][HOST] can be of 2 different types:
-      // - either a DOM node
-      // - or an array that represents an LView of a component
+      // LView[i][HOST]는 2가지 다른 유형이 있을 수 있습니다:
+      // - DOM 노드이거나
+      // - 배열로, 컴포넌트의 LView를 나타냅니다.
       if (Array.isArray(hostNode)) {
-        // This is a component, serialize info about it.
+        // 이것은 컴포넌트로, 그에 대한 정보를 직렬화합니다.
         const targetNode = unwrapRNode(hostNode as LView) as RElement;
         if (!(targetNode as HTMLElement).hasAttribute(SKIP_HYDRATION_ATTR_NAME)) {
           annotateHostElementForHydration(
@@ -683,9 +668,7 @@ function serializeLView(
         context,
       );
     } else if (Array.isArray(lView[i]) && !isLetDeclaration(tNode)) {
-      // This is a component, annotate the host node with an `ngh` attribute.
-      // Note: Let declarations that return an array are also storing an array in the LView,
-      // we need to exclude them.
+      // 이것은 컴포넌트입니다. `ngh` 속성으로 호스트 노드에 주석을 추가합니다.
       const targetNode = unwrapRNode(lView[i][HOST]!);
       if (!(targetNode as HTMLElement).hasAttribute(SKIP_HYDRATION_ATTR_NAME)) {
         annotateHostElementForHydration(
@@ -696,19 +679,19 @@ function serializeLView(
         );
       }
     } else {
-      // <ng-container> case
+      // <ng-container> 경우
       if (tNode.type & TNodeType.ElementContainer) {
-        // An <ng-container> is represented by the number of
-        // top-level nodes. This information is needed to skip over
-        // those nodes to reach a corresponding anchor node (comment node).
+        // <ng-container>는 최상위 노드의 수로 표시됩니다.
+        // 이 정보는 해당 노드를 건너뛰고
+        // 해당 앵커 노드(주석 노드)에 도달하는 데 필요합니다.
         ngh[ELEMENT_CONTAINERS] ??= {};
         ngh[ELEMENT_CONTAINERS][noOffsetIndex] = calcNumRootNodes(tView, lView, tNode.child);
       } else if (tNode.type & (TNodeType.Projection | TNodeType.LetDeclaration)) {
-        // Current TNode represents an `<ng-content>` slot or `@let` declaration,
-        // thus it has no DOM elements associated with it, so the **next sibling**
-        // node would not be able to find an anchor. In this case, use full path instead.
+        // 현재 TNode는 `<ng-content>` 슬롯이나 `@let` 선언을 나타냅니다.
+        // 따라서 이와 관련된 DOM 요소가 없으므로 **다음 형제**
+        // 노드는 앵커를 찾을 수 없습니다. 이 경우 전체 경로를 대신 사용합니다.
         let nextTNode = tNode.next;
-        // Skip over all `<ng-content>` slots and `@let` declarations in a row.
+        // 모든 `<ng-content>` 슬롯과 `@let` 선언을 건너뜁니다.
         while (
           nextTNode !== null &&
           nextTNode.type & (TNodeType.Projection | TNodeType.LetDeclaration)
@@ -716,7 +699,7 @@ function serializeLView(
           nextTNode = nextTNode.next;
         }
         if (nextTNode && !isInSkipHydrationBlock(nextTNode)) {
-          // Handle a tNode after the `<ng-content>` slot.
+          // `<ng-content>` 슬롯 뒤에 있는 tNode를 처리합니다.
           appendSerializedNodePath(ngh, nextTNode, lView, i18nChildren);
         }
       } else if (tNode.type & TNodeType.Text) {
@@ -725,8 +708,8 @@ function serializeLView(
       }
     }
 
-    // Attach `jsaction` attribute to elements that have registered listeners,
-    // thus potentially having a need to do an event replay.
+    // 등록된 리스너가 있는 요소에 `jsaction` 속성을 추가합니다.
+    // 따라서 이벤트 재생이 필요할 수 있습니다.
     if (nativeElementsToEventTypes && tNode.type & TNodeType.Element) {
       const nativeElement = unwrapRNode(lView[i]) as Element;
       if (nativeElementsToEventTypes.has(nativeElement)) {
@@ -742,16 +725,16 @@ function serializeLView(
 }
 
 /**
- * Serializes node location in cases when it's needed, specifically:
+ * 필요한 경우 노드 위치를 직렬화합니다. 특히:
  *
- *  1. If `tNode.projectionNext` is different from `tNode.next` - it means that
- *     the next `tNode` after projection is different from the one in the original
- *     template. Since hydration relies on `tNode.next`, this serialized info
- *     is required to help runtime code find the node at the correct location.
- *  2. In certain content projection-based use-cases, it's possible that only
- *     a content of a projected element is rendered. In this case, content nodes
- *     require an extra annotation, since runtime logic can't rely on parent-child
- *     connection to identify the location of a node.
+ *  1. `tNode.projectionNext`가 `tNode.next`와 다르면,
+ *     프로젝션 이후의 다음 `tNode`가 원래 템플릿의 것과 다르다는 것을 의미합니다.
+ *     수화가 `tNode.next`에 의존하기 때문에, 이 직렬화된 정보가
+ *     런타임 코드가 정확한 위치에서 노드를 찾는 데 필요합니다.
+ *  2. 특정 콘텐츠 프로젝션 기반 사용 사례의 경우,
+ *     프로젝션된 요소의 콘텐츠만 렌더링될 가능성이 있습니다.
+ *     이 경우 콘텐츠 노드는 추가 주석을 요구합니다.
+ *     런타임 로직은 부모-자식 연결을 기반으로 노드의 위치를 식별할 수 없기 때문입니다.
  */
 function conditionallyAnnotateNodePath(
   ngh: SerializedView,
@@ -760,12 +743,12 @@ function conditionallyAnnotateNodePath(
   excludedParentNodes: Set<number> | null,
 ) {
   if (isProjectionTNode(tNode)) {
-    // Do not annotate projection nodes (<ng-content />), since
-    // they don't have a corresponding DOM node representing them.
+    // 프로젝션 노드(<ng-content />)에는 주석을 추가하지 마십시오.
+    // 이러한 노드는 해당 DOM 노드를 나타내는 것이 없습니다.
     return;
   }
 
-  // Handle case #1 described above.
+  // 위에서 설명한 경우 #1을 처리합니다.
   if (
     tNode.projectionNext &&
     tNode.projectionNext !== tNode.next &&
@@ -774,10 +757,10 @@ function conditionallyAnnotateNodePath(
     appendSerializedNodePath(ngh, tNode.projectionNext, lView, excludedParentNodes);
   }
 
-  // Handle case #2 described above.
-  // Note: we only do that for the first node (i.e. when `tNode.prev === null`),
-  // the rest of the nodes would rely on the current node location, so no extra
-  // annotation is needed.
+  // 위에서 설명한 경우 #2를 처리합니다.
+  // 참고: 우리는 첫 번째 노드에 대해서만 이를 수행합니다
+  // (즉, `tNode.prev === null`일 때),
+  // 나머지 노드는 현재 노드 위치를 기준으로, 추가 주석이 필요하지 않습니다.
   if (
     tNode.prev === null &&
     tNode.parent !== null &&
@@ -789,8 +772,8 @@ function conditionallyAnnotateNodePath(
 }
 
 /**
- * Determines whether a component instance that is represented
- * by a given LView uses `ViewEncapsulation.ShadowDom`.
+ * 주어진 LView로 표현된 컴포넌트 인스턴스가
+ * `ViewEncapsulation.ShadowDom`를 사용하는지 결정합니다.
  */
 function componentUsesShadowDomEncapsulation(lView: LView): boolean {
   const instance = lView[CONTEXT];
@@ -800,17 +783,17 @@ function componentUsesShadowDomEncapsulation(lView: LView): boolean {
 }
 
 /**
- * Annotates component host element for hydration:
- * - by either adding the `ngh` attribute and collecting hydration-related info
- *   for the serialization and transferring to the client
- * - or by adding the `ngSkipHydration` attribute in case Angular detects that
- *   component contents is not compatible with hydration.
+ * 수화를 위해 컴포넌트 호스트 요소에 주석을 추가합니다:
+ * - `ngh` 속성을 추가하여 수화와 관련된 정보를 수집하고
+ *   직렬화 및 클라이언트로 전송합니다.
+ * - Angular가 컴포넌트 콘텐츠가 수화에 호환되지 않는다고 감지하는 경우,
+ *   `ngSkipHydration` 속성을 추가합니다.
  *
- * @param element The Host element to be annotated
- * @param lView The associated LView
- * @param context The hydration context
- * @returns An index of serialized view from the transfer state object
- *          or `null` when a given component can not be serialized.
+ * @param element 주석을 추가할 호스트 요소
+ * @param lView 관련 LView
+ * @param context 수화 컨텍스트
+ * @returns 전송 상태 객체에서의 직렬화된 뷰 인덱스
+ *          또는 주어진 컴포넌트를 직렬화할 수 없는 경우 `null`.
  */
 function annotateHostElementForHydration(
   element: RElement,
@@ -823,11 +806,8 @@ function annotateHostElementForHydration(
     (hasI18n(lView) && !isI18nHydrationSupportEnabled()) ||
     componentUsesShadowDomEncapsulation(lView)
   ) {
-    // Attach the skip hydration attribute if this component:
-    // - either has i18n blocks, since hydrating such blocks is not yet supported
-    // - or uses ShadowDom view encapsulation, since Domino doesn't support
-    //   shadow DOM, so we can not guarantee that client and server representations
-    //   would exactly match
+    // 이 컴포넌트가 i18n 블록이 있거나,
+    // ShadowDom 뷰 캡슐화를 사용하므로 수화가 가능한지 확인하십시오.
     renderer.setAttribute(element, SKIP_HYDRATION_ATTR_NAME, '');
     return null;
   } else {
@@ -839,23 +819,23 @@ function annotateHostElementForHydration(
 }
 
 /**
- * Annotates defer block comment node for hydration:
+ * 수화를 위한 defer 블록 주석 노드를 주석을 추가합니다:
  *
- * @param comment The Host element to be annotated
- * @param deferBlockId the id of the target defer block
+ * @param comment 주석을 추가할 호스트 요소
+ * @param deferBlockId 목표 defer 블록의 ID
  */
 function annotateDeferBlockAnchorForHydration(comment: RComment, deferBlockId: string): void {
   comment.textContent = `ngh=${deferBlockId}`;
 }
 
 /**
- * Physically inserts the comment nodes to ensure empty text nodes and adjacent
- * text node separators are preserved after server serialization of the DOM.
- * These get swapped back for empty text nodes or separators once hydration happens
- * on the client.
+ * 비어 있는 텍스트 노드와 인접한
+ * 텍스트 노드 구분 기호를 보존하기 위해 주석 노드를 물리적으로 삽입합니다.
+ * 이러한 노드는 클라이언트에서 수화가 발생할 때 비어 있는 텍스트 노드나
+ * 구분 기호를 대상으로 바뀌게 됩니다.
  *
- * @param corruptedTextNodes The Map of text nodes to be replaced with comments
- * @param doc The document
+ * @param corruptedTextNodes 주석으로 교체될 텍스트 노드의 맵
+ * @param doc 문서
  */
 function insertCorruptedTextNodeMarkers(
   corruptedTextNodes: Map<HTMLElement, string>,
@@ -867,14 +847,13 @@ function insertCorruptedTextNodeMarkers(
 }
 
 /**
- * Detects whether a given TNode represents a node that
- * is being content projected.
+ * 주어진 TNode가 콘텐츠가 프로젝션된 노드를 나타내는지 감지합니다.
  */
 function isContentProjectedNode(tNode: TNode): boolean {
   let currentTNode = tNode;
   while (currentTNode != null) {
-    // If we come across a component host node in parent nodes -
-    // this TNode is in the content projection section.
+    // 부모 노드에서 컴포넌트 호스트 노드를 만나면
+    // 이 TNode는 콘텐츠 프로젝션 섹션에 있습니다.
     if (isComponentHost(currentTNode)) {
       return true;
     }
@@ -884,11 +863,10 @@ function isContentProjectedNode(tNode: TNode): boolean {
 }
 
 /**
- * Incremental hydration requires that any defer block root node
- * with interaction or hover triggers have all of their root nodes
- * trigger hydration with those events. So we need to make sure all
- * the root nodes of that block have the proper jsaction attribute
- * to ensure hydration is triggered, since the content is dehydrated
+ * 점진적인 수화는 모든 defer 블록 루트 노드에
+ * 상호작용 또는 호버 트리거가 있어야 하는 경우에는
+ * 모든 루트 노드가 해당 이벤트로 수화를 트리거해야 합니다.
+ * 따라서, 모든 루트 노드가 적절한 jsaction 속성을 가지도록 해야 합니다.
  */
 function annotateDeferBlockRootNodesWithJsAction(
   tDetails: TDeferBlockDetails,

@@ -56,7 +56,7 @@ export function asNativeElements(debugEls: DebugElement[]): any {
  */
 export class DebugNode {
   /**
-   * The underlying DOM node.
+   * 기본 DOM 노드.
    */
   readonly nativeNode: any;
 
@@ -65,7 +65,7 @@ export class DebugNode {
   }
 
   /**
-   * The `DebugElement` parent. Will be `null` if this is the root element.
+   * `DebugElement` 부모. 이 요소가 루트 요소이면 `null`이 됩니다.
    */
   get parent(): DebugElement | null {
     const parent = this.nativeNode.parentNode as Element;
@@ -73,14 +73,14 @@ export class DebugNode {
   }
 
   /**
-   * The host dependency injector. For example, the root element's component instance injector.
+   * 호스트 의존성 주입기. 예를 들어, 루트 요소의 컴포넌트 인스턴스 주입기입니다.
    */
   get injector(): Injector {
     return getInjector(this.nativeNode);
   }
 
   /**
-   * The element's own component instance, if it has one.
+   * 해당 요소의 개인 컴포넌트 인스턴스가 있을 경우 그것을 반환합니다.
    */
   get componentInstance(): any {
     const nativeElement = this.nativeNode;
@@ -90,36 +90,33 @@ export class DebugNode {
   }
 
   /**
-   * An object that provides parent context for this element. Often an ancestor component instance
-   * that governs this element.
+   * 이 요소에 대한 부모 컨텍스트를 제공하는 객체입니다. 종종 이 요소를 관리하는
+   * 조상 컴포넌트 인스턴스입니다.
    *
-   * When an element is repeated within *ngFor, the context is an `NgForOf` whose `$implicit`
-   * property is the value of the row instance value. For example, the `hero` in `*ngFor="let hero
-   * of heroes"`.
+   * 요소가 *ngFor 내에서 반복될 때, 컨텍스트는 `$implicit` 속성이 행 인스턴스 값의 값인
+   * `NgForOf`입니다. 예를 들어, `*ngFor="let hero of heroes"`에서의 `hero`입니다.
    */
   get context(): any {
     return getComponent(this.nativeNode as Element) || getContext(this.nativeNode as Element);
   }
 
   /**
-   * The callbacks attached to the component's @Output properties and/or the element's event
-   * properties.
+   * 컴포넌트의 @Output 속성 및/또는 요소의 이벤트 속성에 연결된 콜백입니다.
    */
   get listeners(): DebugEventListener[] {
     return getListeners(this.nativeNode as Element).filter((listener) => listener.type === 'dom');
   }
 
   /**
-   * Dictionary of objects associated with template local variables (e.g. #foo), keyed by the local
-   * variable name.
+   * 템플릿 지역 변수를 나타내는 객체의 사전입니다 (예: #foo), 지역 변수 이름으로 키가 지정됩니다.
    */
   get references(): {[key: string]: any} {
     return getLocalRefs(this.nativeNode);
   }
 
   /**
-   * This component's injector lookup tokens. Includes the component itself plus the tokens that the
-   * component lists in its providers metadata.
+   * 이 컴포넌트의 주입기 조회 토큰입니다. 컴포넌트 자체와 함께 컴포넌트가
+   * 제공자 메타데이터에 나열하는 토큰을 포함합니다.
    */
   get providerTokens(): any[] {
     return getInjectionTokens(this.nativeNode as Element);
@@ -129,9 +126,9 @@ export class DebugNode {
 /**
  * @publicApi
  *
- * @see [Component testing scenarios](guide/testing/components-scenarios)
- * @see [Basics of testing components](guide/testing/components-basics)
- * @see [Testing utility APIs](guide/testing/utility-apis)
+ * @see [컴포넌트 테스트 시나리오](guide/testing/components-scenarios)
+ * @see [컴포넌트 테스트의 기초](guide/testing/components-basics)
+ * @see [테스트 유틸리티 API](guide/testing/utility-apis)
  */
 export class DebugElement extends DebugNode {
   constructor(nativeNode: Element) {
@@ -140,14 +137,14 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * The underlying DOM element at the root of the component.
+   * 컴포넌트의 루트에 있는 기본 DOM 요소입니다.
    */
   get nativeElement(): any {
     return this.nativeNode.nodeType == Node.ELEMENT_NODE ? (this.nativeNode as Element) : null;
   }
 
   /**
-   * The element tag name, if it is an element.
+   * 요소인 경우 요소 태그 이름을 반환합니다.
    */
   get name(): string {
     const context = getLContext(this.nativeNode)!;
@@ -163,16 +160,16 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   *  Gets a map of property names to property values for an element.
+   * 요소에 대한 속성 이름과 속성 값의 맵을 가져옵니다.
    *
-   *  This map includes:
-   *  - Regular property bindings (e.g. `[id]="id"`)
-   *  - Host property bindings (e.g. `host: { '[id]': "id" }`)
-   *  - Interpolated property bindings (e.g. `id="{{ value }}")
+   * 이 맵에는 다음이 포함됩니다:
+   * - 일반 속성 바인딩 (예: `[id]="id"`)
+   * - 호스트 속성 바인딩 (예: `host: { '[id]': "id" }`)
+   * - 보간된 속성 바인딩 (예: `id="{{ value }}"`)
    *
-   *  It does not include:
-   *  - input property bindings (e.g. `[myCustomInput]="value"`)
-   *  - attribute bindings (e.g. `[attr.role]="menu"`)
+   * 포함되지 않는 항목:
+   * - 입력 속성 바인딩 (예: `[myCustomInput]="value"`)
+   * - 속성 바인딩 (예: `[attr.role]="menu"`)
    */
   get properties(): {[key: string]: any} {
     const context = getLContext(this.nativeNode)!;
@@ -186,18 +183,18 @@ export class DebugElement extends DebugNode {
     const tNode = tData[context.nodeIndex] as TNode;
 
     const properties: {[key: string]: string} = {};
-    // Collect properties from the DOM.
+    // DOM에서 속성을 수집합니다.
     copyDomProperties(this.nativeElement, properties);
-    // Collect properties from the bindings. This is needed for animation renderer which has
-    // synthetic properties which don't get reflected into the DOM.
+    // 바인딩에서 속성을 수집합니다. 이것은 애니메이션 렌더러에 필요하며,
+    // DOM에 반영되지 않는 합성 속성이 있습니다.
     collectPropertyBindings(properties, tNode, lView, tData);
     return properties;
   }
 
   /**
-   *  A map of attribute names to attribute values for an element.
+   * 요소에 대한 속성 이름과 속성 값의 맵을 가져옵니다.
    */
-  // TODO: replace null by undefined in the return type
+  // TODO: 반환 유형에서 null을 undefined로 대체
   get attributes(): {[key: string]: string | null} {
     const attributes: {[key: string]: string | null} = {};
     const element = this.nativeElement as Element | undefined;
@@ -216,20 +213,17 @@ export class DebugElement extends DebugNode {
     const tNodeAttrs = (lView[TVIEW].data[context.nodeIndex] as TNode).attrs;
     const lowercaseTNodeAttrs: string[] = [];
 
-    // For debug nodes we take the element's attribute directly from the DOM since it allows us
-    // to account for ones that weren't set via bindings (e.g. ViewEngine keeps track of the ones
-    // that are set through `Renderer2`). The problem is that the browser will lowercase all names,
-    // however since we have the attributes already on the TNode, we can preserve the case by going
-    // through them once, adding them to the `attributes` map and putting their lower-cased name
-    // into an array. Afterwards when we're going through the native DOM attributes, we can check
-    // whether we haven't run into an attribute already through the TNode.
+    // 디버그 노드의 경우, DOM에서 직접 요소의 속성을 가져와야 합니다. 이렇게 하면
+    // 바인딩을 통해 설정되지 않은 속성을 고려할 수 있습니다 (예: ViewEngine은 `Renderer2`
+    // 를 통해 설정된 속성을 추적합니다). 단점은 브라우저가 모든 이름을 소문자로 만들 수 있는
+    // 반면, TNode에 이미 있는 속성을 통해 대소문자를 보존할 수 있습니다.
     if (tNodeAttrs) {
       let i = 0;
       while (i < tNodeAttrs.length) {
         const attrName = tNodeAttrs[i];
 
-        // Stop as soon as we hit a marker. We only care about the regular attributes. Everything
-        // else will be handled below when we read the final attributes off the DOM.
+        // 마커가 발견되면 중지합니다. 일반 속성만을 고려합니다.
+        // 나머지는 DOM에서 최종 속성을 읽을 때 처리됩니다.
         if (typeof attrName !== 'string') break;
 
         const attrValue = tNodeAttrs[i + 1];
@@ -241,8 +235,8 @@ export class DebugElement extends DebugNode {
     }
 
     for (const attr of element.attributes) {
-      // Make sure that we don't assign the same attribute both in its
-      // case-sensitive form and the lower-cased one from the browser.
+      // 동일한 속성을 대소문자 구분 형식과 브라우저에서의 소문자 형식 모두에 할당하지
+      // 않도록 확인합니다.
       if (!lowercaseTNodeAttrs.includes(attr.name)) {
         attributes[attr.name] = attr.value;
       }
@@ -252,21 +246,21 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * The inline styles of the DOM element.
+   * DOM 요소의 인라인 스타일입니다.
    */
-  // TODO: replace null by undefined in the return type
+  // TODO: 반환 유형에서 null을 undefined로 대체
   get styles(): {[key: string]: string | null} {
     const element = this.nativeElement as HTMLElement | null;
     return (element?.style ?? {}) as {[key: string]: string | null};
   }
 
   /**
-   * A map containing the class names on the element as keys.
+   * 요소에서 클래스 이름을 키로 포함하는 맵입니다.
    *
-   * This map is derived from the `className` property of the DOM element.
+   * 이 맵은 DOM 요소의 `className` 속성에서 파생됩니다.
    *
-   * Note: The values of this object will always be `true`. The class key will not appear in the KV
-   * object if it does not exist on the element.
+   * 주의: 이 객체의 값은 항상 `true`입니다. 클래스 키가 요소에 존재하지 않으면 KV
+   * 객체에 나타나지 않습니다.
    *
    * @see [Element.className](https://developer.mozilla.org/en-US/docs/Web/API/Element/className)
    */
@@ -274,7 +268,7 @@ export class DebugElement extends DebugNode {
     const result: {[key: string]: boolean} = {};
     const element = this.nativeElement as HTMLElement | SVGElement;
 
-    // SVG elements return an `SVGAnimatedString` instead of a plain string for the `className`.
+    // SVG 요소는 `className`에 대해 단순 문자열 대신 `SVGAnimatedString`을 반환합니다.
     const className = element.className as string | SVGAnimatedString;
     const classes =
       typeof className !== 'string' ? className.baseVal.split(' ') : className.split(' ');
@@ -285,7 +279,7 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * The `childNodes` of the DOM element as a `DebugNode` array.
+   * DOM 요소의 `childNodes`를 `DebugNode` 배열로 반환합니다.
    *
    * @see [Node.childNodes](https://developer.mozilla.org/en-US/docs/Web/API/Node/childNodes)
    */
@@ -300,7 +294,7 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * The immediate `DebugElement` children. Walk the tree by descending through `children`.
+   * 즉각적인 `DebugElement` 자식. `children`을 통해 트리를 따라 내려갑니다.
    */
   get children(): DebugElement[] {
     const nativeElement = this.nativeElement;
@@ -315,7 +309,7 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * @returns the first `DebugElement` that matches the predicate at any depth in the subtree.
+   * @returns 하위 트리의 모든 깊이에서 조건에 일치하는 첫 번째 `DebugElement`.
    */
   query(predicate: Predicate<DebugElement>): DebugElement {
     const results = this.queryAll(predicate);
@@ -323,7 +317,7 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * @returns All `DebugElement` matches for the predicate at any depth in the subtree.
+   * @returns 하위 트리의 모든 깊이에서 조건과 일치하는 모든 `DebugElement`.
    */
   queryAll(predicate: Predicate<DebugElement>): DebugElement[] {
     const matches: DebugElement[] = [];
@@ -332,7 +326,7 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * @returns All `DebugNode` matches for the predicate at any depth in the subtree.
+   * @returns 하위 트리의 모든 깊이에서 조건과 일치하는 모든 `DebugNode`.
    */
   queryAllNodes(predicate: Predicate<DebugNode>): DebugNode[] {
     const matches: DebugNode[] = [];
@@ -341,16 +335,15 @@ export class DebugElement extends DebugNode {
   }
 
   /**
-   * Triggers the event by its name if there is a corresponding listener in the element's
-   * `listeners` collection.
+   * 해당 요소의 `listeners` 컬렉션에 해당하는 리스너가 있는 경우 이벤트를 발생시킵니다.
    *
-   * If the event lacks a listener or there's some other problem, consider
-   * calling `nativeElement.dispatchEvent(eventObject)`.
+   * 이벤트에 리스너가 없거나 다른 문제가 있는 경우, `nativeElement.dispatchEvent(eventObject)`를
+   * 호출을 고려하십시오.
    *
-   * @param eventName The name of the event to trigger
-   * @param eventObj The _event object_ expected by the handler
+   * @param eventName 트리거할 이벤트의 이름
+   * @param eventObj 핸들러가 예상하는 _이벤트 객체_
    *
-   * @see [Testing components scenarios](guide/testing/components-scenarios#trigger-event-handler)
+   * @see [테스트 컴포넌트 시나리오](guide/testing/components-scenarios#trigger-event-handler)
    */
   triggerEventHandler(eventName: string, eventObj?: any): void {
     const node = this.nativeNode as any;
@@ -364,19 +357,19 @@ export class DebugElement extends DebugNode {
       }
     });
 
-    // We need to check whether `eventListeners` exists, because it's something
-    // that Zone.js only adds to `EventTarget` in browser environments.
+    // `eventListeners`가 존재하는지 확인합니다. 이는 Zone.js가 browser 환경에서
+    // `EventTarget`에만 추가하는 것입니다.
     if (typeof node.eventListeners === 'function') {
-      // Note that in Ivy we wrap event listeners with a call to `event.preventDefault` in some
-      // cases. We use '__ngUnwrap__' as a special token that gives us access to the actual event
-      // listener.
+      // Ivy에서는 경우에 따라 이벤트 리스너를 `event.preventDefault`를 호출하여 감싸는 것이
+      // 있습니다. 우리는 '.__ngUnwrap__'를 특별한 토큰으로 사용하여 실제 이벤트
+      // 리스너에 접근합니다.
       node.eventListeners(eventName).forEach((listener: Function) => {
-        // In order to ensure that we can detect the special __ngUnwrap__ token described above, we
-        // use `toString` on the listener and see if it contains the token. We use this approach to
-        // ensure that it still worked with compiled code since it cannot remove or rename string
-        // literals. We also considered using a special function name (i.e. if(listener.name ===
-        // special)) but that was more cumbersome and we were also concerned the compiled code could
-        // strip the name, turning the condition in to ("" === "") and always returning true.
+        // 우리는 위에서 설명한 특별한 __ngUnwrap__ 토큰을 감지할 수 있도록 하기 위해,
+        // 리스너에 대해 `toString`을 사용하고 토큰이 포함되어 있는지 확인합니다.
+        // 이 접근 방식은 컴파일된 코드와 연산의 상관없이 여전히 작동하기 위해 사용됩니다,
+        // 문자열 리터럴을 제거하거나 이름을 변경할 수 없기 때문입니다.
+        // 우리는 특별한 함수 이름(예: if(listener.name === special))을 사용하는 것을
+        // 고려했지만 더 번거로웠고 컴파일된 코드가 이름을 제거할 수 있다는 우려가 있었습니다.
         if (listener.toString().indexOf('__ngUnwrap__') !== -1) {
           const unwrappedListener = listener('__ngUnwrap__');
           return (
@@ -391,16 +384,16 @@ export class DebugElement extends DebugNode {
 
 function copyDomProperties(element: Element | null, properties: {[name: string]: string}): void {
   if (element) {
-    // Skip own properties (as those are patched)
+    // 자기 속성을 건너뜁니다 (이것들은 패치됩니다)
     let obj = Object.getPrototypeOf(element);
     const NodePrototype: any = Node.prototype;
     while (obj !== null && obj !== NodePrototype) {
       const descriptors = Object.getOwnPropertyDescriptors(obj);
       for (let key in descriptors) {
         if (!key.startsWith('__') && !key.startsWith('on')) {
-          // don't include properties starting with `__` and `on`.
-          // `__` are patched values which should not be included.
-          // `on` are listeners which also should not be included.
+          // `__`와 `on`으로 시작하는 속성을 포함하지 않습니다.
+          // `__`는 포함되어서는 안 되는 패치된 값입니다.
+          // `on`은 포함되어서는 안 되는 리스너입니다.
           const value = (element as any)[key];
           if (isPrimitiveValue(value)) {
             properties[key] = value;
@@ -422,12 +415,12 @@ function isPrimitiveValue(value: any): boolean {
 }
 
 /**
- * Walk the TNode tree to find matches for the predicate.
+ * TNode 트리를 탐색하여 조건에 일치하는 항목을 찾습니다.
  *
- * @param parentElement the element from which the walk is started
- * @param predicate the predicate to match
- * @param matches the list of positive matches
- * @param elementsOnly whether only elements should be searched
+ * @param parentElement 탐색이 시작되는 요소
+ * @param predicate 일치할 조건
+ * @param matches 긍정적인 일치 목록
+ * @param elementsOnly 요소만 검색해야 하는지 여부
  */
 function _queryAll(
   parentElement: DebugElement,
@@ -460,21 +453,20 @@ function _queryAll(
       parentElement.nativeNode,
     );
   } else {
-    // If the context is null, then `parentElement` was either created with Renderer2 or native DOM
-    // APIs.
+    // context가 null이면, `parentElement`는 Renderer2 또는 기본 DOM API로 생성된 것입니다.
     _queryNativeNodeDescendants(parentElement.nativeNode, predicate, matches, elementsOnly);
   }
 }
 
 /**
- * Recursively match the current TNode against the predicate, and goes on with the next ones.
+ * 현재 TNode를 조건과 비교하고 다음 것으로 진행합니다.
  *
- * @param tNode the current TNode
- * @param lView the LView of this TNode
- * @param predicate the predicate to match
- * @param matches the list of positive matches
- * @param elementsOnly whether only elements should be searched
- * @param rootNativeNode the root native node on which predicate should not be matched
+ * @param tNode 현재 TNode
+ * @param lView 이 TNode의 LView
+ * @param predicate 일치할 조건
+ * @param matches 긍정적인 일치 목록
+ * @param elementsOnly 요소만 검색해야 하는지 여부
+ * @param rootNativeNode 조건과 일치하지 않아야 하는 루트 기본 노드
  */
 function _queryNodeChildren(
   tNode: TNode,
@@ -486,14 +478,14 @@ function _queryNodeChildren(
 ) {
   ngDevMode && assertTNodeForLView(tNode, lView);
   const nativeNode = getNativeByTNodeOrNull(tNode, lView);
-  // For each type of TNode, specific logic is executed.
+  // 각 TNode 유형에 대해 특정 논리가 실행됩니다.
   if (tNode.type & (TNodeType.AnyRNode | TNodeType.ElementContainer)) {
-    // Case 1: the TNode is an element
-    // The native node has to be checked.
+    // Case 1: TNode가 요소인 경우
+    // 기본 노드를 체크해야 합니다.
     _addQueryMatch(nativeNode, predicate, matches, elementsOnly, rootNativeNode);
     if (isComponentHost(tNode)) {
-      // If the element is the host of a component, then all nodes in its view have to be processed.
-      // Note: the component's content (tNode.child) will be processed from the insertion points.
+      // 요소가 컴포넌트의 호스트인 경우 해당 뷰의 모든 노드를 처리해야 합니다.
+      // 참고: 컴포넌트의 컨텐츠(tNode.child)는 삽입 지점에서 처리됩니다.
       const componentView = getComponentLViewByIndex(tNode.index, lView);
       if (componentView && componentView[TVIEW].firstChild) {
         _queryNodeChildren(
@@ -507,21 +499,20 @@ function _queryNodeChildren(
       }
     } else {
       if (tNode.child) {
-        // Otherwise, its children have to be processed.
+        // 그렇지 않으면, 자식을 처리해야 합니다.
         _queryNodeChildren(tNode.child, lView, predicate, matches, elementsOnly, rootNativeNode);
       }
 
-      // We also have to query the DOM directly in order to catch elements inserted through
-      // Renderer2. Note that this is __not__ optimal, because we're walking similar trees multiple
-      // times. ViewEngine could do it more efficiently, because all the insertions go through
-      // Renderer2, however that's not the case in Ivy. This approach is being used because:
-      // 1. Matching the ViewEngine behavior would mean potentially introducing a dependency
-      //    from `Renderer2` to Ivy which could bring Ivy code into ViewEngine.
-      // 2. It allows us to capture nodes that were inserted directly via the DOM.
+      // Renderer2를 통해 삽입된 요소를 포착하려면 DOM에서 직접 쿼리해야 합니다.
+      // 이는 최적화하지 않는 방법이며, 비슷한 트리를 여러 번 탐색하게 됩니다.
+      // ViewEngine은 모든 삽입이 Renderer2를 거치기 때문에 더 효율적으로 처리할 수 있지만,
+      // Ivy에서는 그렇지 않습니다. 이 접근 방식은 다음과 같은 이유로 사용됩니다:
+      // 1. ViewEngine 동작과 일치하려면, `Renderer2`와 Ivy 간의 의존성을 도입할 가능성이 있으며,
+      //    이는 Ivy 코드를 ViewEngine으로 가져올 수 있습니다.
+      // 2. DOM을 통해 직접 삽입된 노드를 포착할 수 있습니다.
       nativeNode && _queryNativeNodeDescendants(nativeNode, predicate, matches, elementsOnly);
     }
-    // In all cases, if a dynamic container exists for this node, each view inside it has to be
-    // processed.
+    // 모든 경우에, 이 노드에 대한 동적 컨테이너가 존재하는 경우 각 뷰를 처리해야 합니다.
     const nodeOrContainer = lView[tNode.index];
     if (isLContainer(nodeOrContainer)) {
       _queryNodeChildrenInContainer(
@@ -533,15 +524,15 @@ function _queryNodeChildren(
       );
     }
   } else if (tNode.type & TNodeType.Container) {
-    // Case 2: the TNode is a container
-    // The native node has to be checked.
+    // Case 2: TNode가 컨테이너인 경우
+    // 기본 노드를 체크해야 합니다.
     const lContainer = lView[tNode.index];
     _addQueryMatch(lContainer[NATIVE], predicate, matches, elementsOnly, rootNativeNode);
-    // Each view inside the container has to be processed.
+    // 각 컨테이너 내의 뷰를 처리해야 합니다.
     _queryNodeChildrenInContainer(lContainer, predicate, matches, elementsOnly, rootNativeNode);
   } else if (tNode.type & TNodeType.Projection) {
-    // Case 3: the TNode is a projection insertion point (i.e. a <ng-content>).
-    // The nodes projected at this location all need to be processed.
+    // Case 3: TNode가 프로젝션 삽입 지점(예: <ng-content>)인 경우
+    // 이 위치에에서 프로젝션된 모든 노드를 처리해야 합니다.
     const componentView = lView![DECLARATION_COMPONENT_VIEW];
     const componentHost = componentView[T_HOST] as TElementNode;
     const head: TNode | null = (componentHost.projection as (TNode | null)[])[
@@ -558,14 +549,14 @@ function _queryNodeChildren(
       _queryNodeChildren(nextTNode, nextLView, predicate, matches, elementsOnly, rootNativeNode);
     }
   } else if (tNode.child) {
-    // Case 4: the TNode is a view.
+    // Case 4: TNode가 뷰인 경우
     _queryNodeChildren(tNode.child, lView, predicate, matches, elementsOnly, rootNativeNode);
   }
 
-  // We don't want to go to the next sibling of the root node.
+  // 우리는 루트 노드의 다음 형제로 가지 않기를 원합니다.
   if (rootNativeNode !== nativeNode) {
-    // To determine the next node to be processed, we need to use the next or the projectionNext
-    // link, depending on whether the current node has been projected.
+    // 처리할 다음 노드를 결정하기 위해, 다음 링크 또는 프로젝션 다음 링크를 사용해야 합니다.
+    // 현재 노드가 프로젝션되었는지 여부에 따라 다릅니다.
     const nextTNode = tNode.flags & TNodeFlags.isProjected ? tNode.projectionNext : tNode.next;
     if (nextTNode) {
       _queryNodeChildren(nextTNode, lView, predicate, matches, elementsOnly, rootNativeNode);
@@ -574,13 +565,13 @@ function _queryNodeChildren(
 }
 
 /**
- * Process all TNodes in a given container.
+ * 주어진 컨테이너의 모든 TNodes를 처리합니다.
  *
- * @param lContainer the container to be processed
- * @param predicate the predicate to match
- * @param matches the list of positive matches
- * @param elementsOnly whether only elements should be searched
- * @param rootNativeNode the root native node on which predicate should not be matched
+ * @param lContainer 처리할 컨테이너
+ * @param predicate 일치할 조건
+ * @param matches 긍정적인 일치 목록
+ * @param elementsOnly 요소만 검색해야 하는지 여부
+ * @param rootNativeNode 조건과 일치하지 않아야 하는 루트 기본 노드
  */
 function _queryNodeChildrenInContainer(
   lContainer: LContainer,
@@ -599,13 +590,13 @@ function _queryNodeChildrenInContainer(
 }
 
 /**
- * Match the current native node against the predicate.
+ * 현재 기본 노드를 조건과 비교합니다.
  *
- * @param nativeNode the current native node
- * @param predicate the predicate to match
- * @param matches the list of positive matches
- * @param elementsOnly whether only elements should be searched
- * @param rootNativeNode the root native node on which predicate should not be matched
+ * @param nativeNode 현재 기본 노드
+ * @param predicate 일치할 조건
+ * @param matches 긍정적인 일치 목록
+ * @param elementsOnly 요소만 검색해야 하는지 여부
+ * @param rootNativeNode 조건과 일치하지 않아야 하는 루트 기본 노드
  */
 function _addQueryMatch(
   nativeNode: any,
@@ -619,9 +610,9 @@ function _addQueryMatch(
     if (!debugNode) {
       return;
     }
-    // Type of the "predicate and "matches" array are set based on the value of
-    // the "elementsOnly" parameter. TypeScript is not able to properly infer these
-    // types with generics, so we manually cast the parameters accordingly.
+    // "predicate"와 "matches" 배열의 유형은 "elementsOnly" 매개변수의 값에 따라 설정됩니다.
+    // TypeScript는 이러한 유형을 제네릭으로 적절하게 추론할 수 없으므로 매개변수를
+    // 수동으로 캐스팅합니다.
     if (
       elementsOnly &&
       debugNode instanceof DebugElement &&
@@ -640,12 +631,12 @@ function _addQueryMatch(
 }
 
 /**
- * Match all the descendants of a DOM node against a predicate.
+ * DOM 노드의 모든 자손을 조건과 일치시킵니다.
  *
- * @param nativeNode the current native node
- * @param predicate the predicate to match
- * @param matches the list where matches are stored
- * @param elementsOnly whether only elements should be searched
+ * @param nativeNode 현재 기본 노드
+ * @param predicate 일치할 조건
+ * @param matches 저장할 일치 목록
+ * @param elementsOnly 요소만 검색해야 하는지 여부
  */
 function _queryNativeNodeDescendants(
   parentNode: any,
@@ -682,9 +673,9 @@ function _queryNativeNodeDescendants(
 }
 
 /**
- * Iterates through the property bindings for a given node and generates
- * a map of property names to values. This map only contains property bindings
- * defined in templates, not in host bindings.
+ * 주어진 노드에 대한 속성 바인딩을 반복하고
+ * 속성 이름과 값을 매핑합니다. 이 맵은 템플릿에서 정의된
+ * 속성 바인딩만 포함합니다.
  */
 function collectPropertyBindings(
   properties: {[key: string]: string},
@@ -713,7 +704,7 @@ function collectPropertyBindings(
   }
 }
 
-// Need to keep the nodes in a global Map so that multiple angular apps are supported.
+// 여러 개의 Angular 앱을 지원하기 위해 노드를 전역 Map에 유지해야 합니다.
 const _nativeNodeToDebugNode = new Map<any, DebugNode>();
 
 const NG_DEBUG_PROPERTY = '__ng_debug__';
@@ -747,8 +738,8 @@ export function removeDebugNodeFromIndex(node: DebugNode) {
 }
 
 /**
- * A boolean-valued function over a value, possibly including context information
- * regarding that value's position in an array.
+ * 주어진 값을 기반으로 하는 부울 값의 함수입니다.
+ * 해당 값의 위치와 관련된 컨텍스트 정보를 포함할 수 있습니다.
  *
  * @publicApi
  */

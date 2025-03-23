@@ -15,13 +15,13 @@ import {getOrCreateTNode} from '../tnode_manipulation';
 import {load} from '../util/view_utils';
 import {store} from './storage';
 
-/** Object that indicates the value of a `@let` declaration that hasn't been initialized yet. */
+/** 초기화되지 않은 `@let` 선언의 값을 나타내는 객체. */
 const UNINITIALIZED_LET = {};
 
 /**
- * Declares an `@let` at a specific data slot. Returns itself to allow chaining.
+ * 특정 데이터 슬롯에 `@let`을 선언합니다. 체이닝을 허용하기 위해 자신을 반환합니다.
  *
- * @param index Index at which to declare the `@let`.
+ * @param index `@let`을 선언할 인덱스.
  *
  * @codeGenApi
  */
@@ -36,8 +36,8 @@ export function ɵɵdeclareLet(index: number): typeof ɵɵdeclareLet {
 }
 
 /**
- * Instruction that stores the value of a `@let` declaration on the current view.
- * Returns the value to allow usage inside variable initializers.
+ * 현재 뷰에 `@let` 선언의 값을 저장하는 명령입니다.
+ * 변수 초기화 내에서 사용을 허용하기 위해 값을 반환합니다.
  *
  * @codeGenApi
  */
@@ -51,9 +51,9 @@ export function ɵɵstoreLet<T>(value: T): T {
 }
 
 /**
- * Retrieves the value of a `@let` declaration defined in a parent view.
+ * 부모 뷰에서 정의된 `@let` 선언의 값을 검색합니다.
  *
- * @param index Index of the declaration within the view.
+ * @param index 뷰 내에서 선언의 인덱스.
  *
  * @codeGenApi
  */
@@ -64,7 +64,7 @@ export function ɵɵreadContextLet<T>(index: number): T {
   if (value === UNINITIALIZED_LET) {
     throw new RuntimeError(
       RuntimeErrorCode.UNINITIALIZED_LET_ACCESS,
-      ngDevMode && 'Attempting to access a @let declaration whose value is not available yet',
+      ngDevMode && '@let 선언의 값이 아직 사용 가능하지 않은 시도입니다',
     );
   }
 

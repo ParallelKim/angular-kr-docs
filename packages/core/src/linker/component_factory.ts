@@ -17,93 +17,91 @@ import type {NgModuleRef} from './ng_module_factory';
 import type {ViewRef} from './view_ref';
 
 /**
- * Represents a component created by a `ComponentFactory`.
- * Provides access to the component instance and related objects,
- * and provides the means of destroying the instance.
+ * `ComponentFactory`에 의해 생성된 컴포넌트를 나타냅니다.
+ * 컴포넌트 인스턴스와 관련된 객체에 대한 액세스를 제공하며,
+ * 인스턴스를 파괴하는 수단을 제공합니다.
  *
  * @publicApi
  */
 export abstract class ComponentRef<C> {
   /**
-   * Updates a specified input name to a new value. Using this method will properly mark for check
-   * component using the `OnPush` change detection strategy. It will also assure that the
-   * `OnChanges` lifecycle hook runs when a dynamically created component is change-detected.
+   * 지정된 입력 이름을 새 값으로 업데이트합니다. 이 방법을 사용하면 `OnPush` 변경 감지 전략을 사용하는
+   * 컴포넌트가 적절하게 확인 표시됩니다. 또한 동적으로 생성된 컴포넌트가 변경 감지될 때
+   * `OnChanges` 생명 주기 훅이 실행되도록 보장합니다.
    *
-   * @param name The name of an input.
-   * @param value The new value of an input.
+   * @param name 입력의 이름입니다.
+   * @param value 입력의 새 값입니다.
    */
   abstract setInput(name: string, value: unknown): void;
 
   /**
-   * The host or anchor element for this component instance.
+   * 이 컴포넌트 인스턴스를 위한 호스트 또는 앵커 요소입니다.
    */
   abstract get location(): ElementRef;
 
   /**
-   * The dependency injector for this component instance.
+   * 이 컴포넌트 인스턴스에 대한 의존성 주입기입니다.
    */
   abstract get injector(): Injector;
 
   /**
-   * This component instance.
+   * 이 컴포넌트 인스턴스입니다.
    */
   abstract get instance(): C;
 
   /**
-   * The host view defined by the template
-   * for this component instance.
+   * 이 컴포넌트 인스턴스를 위한 템플릿에 의해 정의된 호스트 뷰입니다.
    */
   abstract get hostView(): ViewRef;
 
   /**
-   * The change detector for this component instance.
+   * 이 컴포넌트 인스턴스의 변경 감지기입니다.
    */
   abstract get changeDetectorRef(): ChangeDetectorRef;
 
   /**
-   * The type of this component (as created by a `ComponentFactory` class).
+   * 이 컴포넌트의 유형( `ComponentFactory` 클래스에 의해 생성됨)입니다.
    */
   abstract get componentType(): Type<any>;
 
   /**
-   * Destroys the component instance and all of the data structures associated with it.
+   * 컴포넌트 인스턴스 및 이에 관련된 모든 데이터 구조를 파괴합니다.
    */
   abstract destroy(): void;
 
   /**
-   * A lifecycle hook that provides additional developer-defined cleanup
-   * functionality for the component.
-   * @param callback A handler function that cleans up developer-defined data
-   * associated with this component. Called when the `destroy()` method is invoked.
+   * 컴포넌트에 대한 추가 개발자 정의 정리 기능을 제공하는 생명 주기 훅입니다.
+   * @param callback 이 컴포넌트와 관련된 개발자 정의 데이터를 정리하는 핸들러 함수입니다.
+   * `destroy()` 메서드를 호출할 때 호출됩니다.
    */
   abstract onDestroy(callback: Function): void;
 }
 
 /**
- * Base class for a factory that can create a component dynamically.
- * Instantiate a factory for a given type of component with `resolveComponentFactory()`.
- * Use the resulting `ComponentFactory.create()` method to create a component of that type.
+ * 동적으로 컴포넌트를 생성할 수 있는 팩토리의 기본 클래스입니다.
+ * `resolveComponentFactory()`를 사용하여 주어진 유형의 컴포넌트에 대한 팩토리를 인스턴스화합니다.
+ * 결과적인 `ComponentFactory.create()` 메서드를 사용하여 해당 유형의 컴포넌트를 생성합니다.
  *
  * @publicApi
  *
- * @deprecated Angular no longer requires Component factories. Please use other APIs where
- *     Component class can be used directly.
+ * @deprecated Angular는 더 이상 컴포넌트 팩토리를 요구하지 않습니다. 컴포넌트 클래스가 직접 사용할 수 있는
+ *     다른 API를 사용해 주십시오.
  */
 export abstract class ComponentFactory<C> {
   /**
-   * The component's HTML selector.
+   * 컴포넌트의 HTML 선택자입니다.
    */
   abstract get selector(): string;
   /**
-   * The type of component the factory will create.
+   * 팩토리가 생성할 컴포넌트의 유형입니다.
    */
   abstract get componentType(): Type<any>;
   /**
-   * Selector for all <ng-content> elements in the component.
+   * 컴포넌트의 모든 <ng-content> 요소의 선택자입니다.
    */
   abstract get ngContentSelectors(): string[];
   /**
-   * The inputs of the component.
+   * 컴포넌트의 입력 값입니다.
    */
   abstract get inputs(): {
     propName: string;
@@ -112,11 +110,11 @@ export abstract class ComponentFactory<C> {
     isSignal: boolean;
   }[];
   /**
-   * The outputs of the component.
+   * 컴포넌트의 출력 값입니다.
    */
   abstract get outputs(): {propName: string; templateName: string}[];
   /**
-   * Creates a new component.
+   * 새 컴포넌트를 생성합니다.
    */
   abstract create(
     injector: Injector,

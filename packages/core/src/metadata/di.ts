@@ -10,25 +10,25 @@ import {ProviderToken} from '../di/provider_token';
 import {makePropDecorator} from '../util/decorators';
 
 /**
- * Type of the `Attribute` decorator / constructor function.
+ * `Attribute` 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @publicApi
  */
 export interface AttributeDecorator {
   /**
-   * Specifies that a constant attribute value should be injected.
+   * 상수 속성 값이 주입되어야 함을 지정합니다.
    *
-   * The directive can inject constant string literals of host element attributes.
+   * 지시자는 호스트 요소 속성의 상수 문자열 리터럴을 주입할 수 있습니다.
    *
    * @usageNotes
    *
-   * Suppose we have an `<input>` element and want to know its `type`.
+   * `<input>` 요소가 있고 그 `type`을 알고 싶다고 가정합니다.
    *
    * ```html
    * <input type="text">
    * ```
    *
-   * A decorator can inject string literal `text` as in the following example.
+   * 데코레이터는 다음 예와 같이 문자열 리터럴 `text`를 주입할 수 있습니다.
    *
    * {@example core/ts/metadata/metadata.ts region='attributeMetadata'}
    *
@@ -39,19 +39,19 @@ export interface AttributeDecorator {
 }
 
 /**
- * Type of the Attribute metadata.
+ * Attribute 메타데이터의 타입입니다.
  *
  * @publicApi
  */
 export interface Attribute {
   /**
-   * The name of the attribute to be injected into the constructor.
+   * 생성자에 주입될 속성의 이름입니다.
    */
   attributeName?: string;
 }
 
 /**
- * Type of the Query metadata.
+ * 쿼리 메타데이터의 타입입니다.
  *
  * @publicApi
  */
@@ -67,24 +67,22 @@ export interface Query {
   /**
    * @internal
    *
-   * Whether the query is a signal query.
+   * 쿼리가 신호 쿼리인지 여부입니다.
    *
-   * This option exists for JIT compatibility. Users are not expected to use this.
-   * Angular needs a way to capture queries from classes so that the internal query
-   * functions can be generated. This needs to happen before the component is instantiated.
-   * Due to this, for JIT compilation, signal queries need an additional decorator
-   * declaring the query. Angular provides a TS transformer to automatically handle this
-   * for JIT usage (e.g. in tests).
+   * 이 옵션은 JIT 호환성을 위해 존재합니다. 사용자가 이 옵션을 사용할 것으로 예상하지 않습니다.
+   * Angular는 내부 쿼리 기능을 생성할 수 있도록 클래스로부터 쿼리를 캡처하는 방법이 필요합니다.
+   * 이는 구성 요소가 인스턴스화되기 전에 발생해야 합니다.
+   * 이로 인해 JIT 컴파일을 위해 신호 쿼리는 쿼리를 선언하는 추가 데코레이터가 필요합니다.
+   * Angular는 JIT 사용에 대해 이를 자동으로 처리하는 TS 변환기를 제공합니다(예: 테스트에서).
    */
   isSignal?: boolean;
 }
 
-// Stores the default value of `emitDistinctChangesOnly` when the `emitDistinctChangesOnly` is not
-// explicitly set.
+// `emitDistinctChangesOnly`가 명시적으로 설정되지 않았을 때의 기본값을 저장합니다.
 export const emitDistinctChangesOnlyDefaultValue = true;
 
 /**
- * Base class for query metadata.
+ * 쿼리 메타데이터의 기본 클래스입니다.
  *
  * @see {@link ContentChildren}
  * @see {@link ContentChild}
@@ -96,7 +94,7 @@ export const emitDistinctChangesOnlyDefaultValue = true;
 export abstract class Query {}
 
 /**
- * Type of the ContentChildren decorator / constructor function.
+ * ContentChildren 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @see {@link ContentChildren}
  * @publicApi
@@ -104,60 +102,59 @@ export abstract class Query {}
 export interface ContentChildrenDecorator {
   /**
    * @description
-   * Property decorator that configures a content query.
+   * 콘텐츠 쿼리를 구성하는 속성 데코레이터입니다.
    *
-   * Use to get the `QueryList` of elements or directives from the content DOM.
-   * Any time a child element is added, removed, or moved, the query list will be
-   * updated, and the changes observable of the query list will emit a new value.
+   * 콘텐츠 DOM에서 요소 또는 지시자의 `QueryList`를 가져오는 데 사용합니다.
+   * 자식 요소가 추가, 제거 또는 이동할 때마다 쿼리 리스트가 업데이트되고,
+   * 쿼리 리스트의 변경 관찰자는 새 값을 방출합니다.
    *
-   * Content queries are set before the `ngAfterContentInit` callback is called.
+   * 콘텐츠 쿼리는 `ngAfterContentInit` 콜백이 호출되기 전에 설정됩니다.
    *
-   * Does not retrieve elements or directives that are in other components' templates,
-   * since a component's template is always a black box to its ancestors.
+   * 구성 요소의 템플릿은 항상 조상에게 블랙 박스이므로 다른 구성 요소의 템플릿에 있는 요소
+   * 또는 지시자를 검색하지 않습니다.
    *
-   * **Metadata Properties**:
+   * **메타데이터 속성**:
    *
-   * * **selector** - The directive type or the name used for querying.
-   * * **descendants** - If `true` include all descendants of the element. If `false` then only
-   * query direct children of the element.
-   * * **emitDistinctChangesOnly** - The ` QueryList#changes` observable will emit new values only
-   *   if the QueryList result has changed. When `false` the `changes` observable might emit even
-   *   if the QueryList has not changed.
-   *   ** Note: *** This config option is **deprecated**, it will be permanently set to `true` and
-   *   removed in future versions of Angular.
-   * * **read** - Used to read a different token from the queried elements.
+   * * **selector** - 쿼리에 사용되는 지시자 유형 또는 이름입니다.
+   * * **descendants** - `true`인 경우 요소의 모든 하위 요소를 포함합니다. `false`인 경우
+   *   요소의 직접 자식만 쿼리합니다.
+   * * **emitDistinctChangesOnly** - `QueryList#changes` 관찰자는 QueryList 결과가 변경된 경우에만
+   *   새 값을 방출합니다. `false`인 경우 QueryList가 변경되지 않아도 `changes` 관찰자가
+   *   방출될 수 있습니다.
+   *   **주: ** 이 구성 옵션은 **사용 중단**, 영구적으로 `true`로 설정되며,
+   *   향후 Angular 버전에서 제거됩니다.
+   * * **read** - 쿼리된 요소에서 다른 토큰을 읽는 데 사용됩니다.
    *
-   * The following selectors are supported.
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * A template reference variable as a string (e.g. query `<my-component #cmp></my-component>`
-   * with `@ContentChildren('cmp')`)
-   *   * Any provider defined in the child component tree of the current component (e.g.
-   * `@ContentChildren(SomeService) someService: SomeService`)
-   *   * Any provider defined through a string token (e.g. `@ContentChildren('someToken')
-   * someTokenVal: any`)
-   *   * A `TemplateRef` (e.g. query `<ng-template></ng-template>` with
-   * `@ContentChildren(TemplateRef) template;`)
+   * 다음 선택자가 지원됩니다.
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 문자열로서의 템플릿 참조 변수 (예: `<my-component #cmp></my-component>` 쿼리와 함께
+   *   `@ContentChildren('cmp')`)
+   *   * 현재 구성 요소의 자식 구성 요소 트리에서 정의된 모든 공급자 (예:
+   *   `@ContentChildren(SomeService) someService: SomeService`)
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `@ContentChildren('someToken')
+   *   someTokenVal: any`)
+   *   * `TemplateRef` (예: `<ng-template></ng-template>` 쿼리와 함께
+   *   `@ContentChildren(TemplateRef) template;`)
    *
-   * In addition, multiple string selectors can be separated with a comma (e.g.
+   * 추가로, 여러 개의 문자열 선택자는 쉼표로 구분할 수 있습니다 (예:
    * `@ContentChildren('cmp1,cmp2')`)
    *
-   * The following values are supported by `read`:
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * Any provider defined on the injector of the component that is matched by the `selector` of
-   * this query
-   *   * Any provider defined through a string token (e.g. `{provide: 'token', useValue: 'val'}`)
-   *   * `TemplateRef`, `ElementRef`, and `ViewContainerRef`
+   * `read`에서 지원되는 다음 값:
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 이 쿼리의 `selector`에 의해 일치하는 구성 요소의 인젝터에 정의된 모든 공급자
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `{provide: 'token', useValue: 'val'}`)
+   *   * `TemplateRef`, `ElementRef`, 및 `ViewContainerRef`
    *
    * @usageNotes
    *
-   * Here is a simple demonstration of how the `ContentChildren` decorator can be used.
+   * 아래는 `ContentChildren` 데코레이터를 사용하는 방법에 대한 간단한 시연입니다.
    *
    * {@example core/di/ts/contentChildren/content_children_howto.ts region='HowTo'}
    *
-   * ### Tab-pane example
+   * ### 탭 패널 예시
    *
-   * Here is a slightly more realistic example that shows how `ContentChildren` decorators
-   * can be used to implement a tab pane component.
+   * 아래는 `ContentChildren` 데코레이터를 사용하여 탭 패널 구성 요소를 구현하는 방법을
+   * 보여주는 약간 더 현실적인 예시입니다.
    *
    * {@example core/di/ts/contentChildren/content_children_example.ts region='Component'}
    *
@@ -178,8 +175,7 @@ export interface ContentChildrenDecorator {
 }
 
 /**
- * Type of the ContentChildren metadata.
- *
+ * ContentChildren 메타데이터의 타입입니다.
  *
  * @Annotation
  * @publicApi
@@ -187,8 +183,7 @@ export interface ContentChildrenDecorator {
 export type ContentChildren = Query;
 
 /**
- * ContentChildren decorator and metadata.
- *
+ * ContentChildren 데코레이터 및 메타데이터입니다.
  *
  * @Annotation
  * @publicApi
@@ -207,65 +202,63 @@ export const ContentChildren: ContentChildrenDecorator = makePropDecorator(
 );
 
 /**
- * Type of the ContentChild decorator / constructor function.
+ * ContentChild 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @publicApi
  */
 export interface ContentChildDecorator {
   /**
    * @description
-   * Property decorator that configures a content query.
+   * 콘텐츠 쿼리를 구성하는 속성 데코레이터입니다.
    *
-   * Use to get the first element or the directive matching the selector from the content DOM.
-   * If the content DOM changes, and a new child matches the selector,
-   * the property will be updated.
+   * 콘텐츠 DOM에서 선택자와 일치하는 첫 번째 요소 또는 지시자를 가져오는 데 사용합니다.
+   * 콘텐츠 DOM이 변경되고 새로운 자식이 선택자와 일치하면,
+   * 속성이 업데이트됩니다.
    *
-   * Does not retrieve elements or directives that are in other components' templates,
-   * since a component's template is always a black box to its ancestors.
+   * 구성 요소의 템플릿은 항상 조상에게 블랙 박스이므로 다른 구성 요소의 템플릿에 있는 요소
+   * 또는 지시자를 검색하지 않습니다.
    *
-   * **Metadata Properties**:
+   * **메타데이터 속성**:
    *
-   * * **selector** - The directive type or the name used for querying.
-   * * **descendants** - If `true` (default) include all descendants of the element. If `false` then
-   * only query direct children of the element.
-   * * **read** - Used to read a different token from the queried element.
-   * * **static** - True to resolve query results before change detection runs,
-   * false to resolve after change detection. Defaults to false.
+   * * **selector** - 쿼리에 사용되는 지시자 유형 또는 이름입니다.
+   * * **descendants** - `true` (기본값)인 경우 요소의 모든 하위 요소를 포함합니다. `false`인 경우
+   *   요소의 직접 자식만 쿼리합니다.
+   * * **read** - 쿼리된 요소에서 다른 토큰을 읽는 데 사용됩니다.
+   * * **static** - 변경 감지 실행 전에 쿼리 결과를 해결하려면 `true`로,
+   * 변경 감지 후에 해결하려면 `false`로 설정합니다. 기본값은 false입니다.
    *
-   * The following selectors are supported.
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * A template reference variable as a string (e.g. query `<my-component #cmp></my-component>`
-   * with `@ContentChild('cmp')`)
-   *   * Any provider defined in the child component tree of the current component (e.g.
-   * `@ContentChild(SomeService) someService: SomeService`)
-   *   * Any provider defined through a string token (e.g. `@ContentChild('someToken') someTokenVal:
+   * 다음 선택자가 지원됩니다.
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 문자열로서의 템플릿 참조 변수 (예: `<my-component #cmp></my-component>` 쿼리와 함께
+   *   `@ContentChild('cmp')`)
+   *   * 현재 구성 요소의 자식 구성 요소 트리에서 정의된 모든 공급자 (예:
+   *   `@ContentChild(SomeService) someService: SomeService`)
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `@ContentChild('someToken') someTokenVal:
    * any`)
-   *   * A `TemplateRef` (e.g. query `<ng-template></ng-template>` with `@ContentChild(TemplateRef)
-   * template;`)
+   *   * `TemplateRef` (예: `<ng-template></ng-template>` 쿼리와 함께
+   *   `@ContentChild(TemplateRef) template;`)
    *
-   * The following values are supported by `read`:
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * Any provider defined on the injector of the component that is matched by the `selector` of
-   * this query
-   *   * Any provider defined through a string token (e.g. `{provide: 'token', useValue: 'val'}`)
-   *   * `TemplateRef`, `ElementRef`, and `ViewContainerRef`
+   * `read`에서 지원되는 다음 값:
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 이 쿼리의 `selector`에 의해 일치하는 구성 요소의 인젝터에 정의된 모든 공급자
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `{provide: 'token', useValue: 'val'}`)
+   *   * `TemplateRef`, `ElementRef`, 및 `ViewContainerRef`
    *
-   * Difference between dynamic and static queries:
+   * 동적 쿼리와 정적 쿼리의 차이:
    *
-   * | Queries                             | Details |
-   * |:---                                 |:---     |
-   * | Dynamic queries \(`static: false`\) | The query resolves before the `ngAfterContentInit()`
-   * callback is called. The result will be updated for changes to your view, such as changes to
-   * `ngIf` and `ngFor` blocks. | | Static queries \(`static: true`\)   | The query resolves once
-   * the view has been created, but before change detection runs (before the `ngOnInit()` callback
-   * is called). The result, though, will never be updated to reflect changes to your view, such as
-   * changes to `ngIf` and `ngFor` blocks.  |
+   * | 쿼리                             | 세부사항 |
+   * |:---                               |:---     |
+   * | 동적 쿼리 \(`static: false`\)   | 쿼리는 `ngAfterContentInit()` 콜백이 호출되기 전에 해결됩니다.
+   *   결과는 `ngIf` 및 `ngFor` 블록에 대한 변경 사항과 같은 뷰 변경 사항에 대해 업데이트됩니다. |
+   * | 정적 쿼리 \(`static: true`\)     | 쿼리는 뷰가 생성된 후 한 번만 해결되지만
+   *   변경 감지가 실행되기 전 ( `ngOnInit()` 콜백이 호출되기 전에) 해결됩니다.
+   *   그러나 결과는 뷰의 변경 사항(예: `ngIf` 및 `ngFor` 블록의 변경 사항)을 반영하도록 업데이트되지 않습니다.  |
    *
    * @usageNotes
    *
    * {@example core/di/ts/contentChild/content_child_howto.ts region='HowTo'}
    *
-   * ### Example
+   * ### 예시
    *
    * {@example core/di/ts/contentChild/content_child_example.ts region='Component'}
    *
@@ -282,15 +275,14 @@ export interface ContentChildDecorator {
 }
 
 /**
- * Type of the ContentChild metadata.
+ * ContentChild 메타데이터의 타입입니다.
  *
  * @publicApi
  */
 export type ContentChild = Query;
 
 /**
- * ContentChild decorator and metadata.
- *
+ * ContentChild 데코레이터 및 메타데이터입니다.
  *
  * @Annotation
  *
@@ -309,7 +301,7 @@ export const ContentChild: ContentChildDecorator = makePropDecorator(
 );
 
 /**
- * Type of the ViewChildren decorator / constructor function.
+ * ViewChildren 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @see {@link ViewChildren}
  *
@@ -318,50 +310,49 @@ export const ContentChild: ContentChildDecorator = makePropDecorator(
 export interface ViewChildrenDecorator {
   /**
    * @description
-   * Property decorator that configures a view query.
+   * 뷰 쿼리를 구성하는 속성 데코레이터입니다.
    *
-   * Use to get the `QueryList` of elements or directives from the view DOM.
-   * Any time a child element is added, removed, or moved, the query list will be updated,
-   * and the changes observable of the query list will emit a new value.
+   * 뷰 DOM에서 요소 또는 지시자의 `QueryList`를 가져오는 데 사용합니다.
+   * 자식 요소가 추가, 제거 또는 이동할 때마다 쿼리 리스트가 업데이트되고,
+   * 쿼리 리스트의 변경 관찰자는 새 값을 방출합니다.
    *
-   * View queries are set before the `ngAfterViewInit` callback is called.
+   * View 쿼리는 `ngAfterViewInit` 콜백이 호출되기 전에 설정됩니다.
    *
-   * **Metadata Properties**:
+   * **메타데이터 속성**:
    *
-   * * **selector** - The directive type or the name used for querying.
-   * * **read** - Used to read a different token from the queried elements.
-   * * **emitDistinctChangesOnly** - The ` QueryList#changes` observable will emit new values only
-   *   if the QueryList result has changed. When `false` the `changes` observable might emit even
-   *   if the QueryList has not changed.
-   *   ** Note: *** This config option is **deprecated**, it will be permanently set to `true` and
-   * removed in future versions of Angular.
+   * * **selector** - 쿼리에 사용되는 지시자 유형 또는 이름입니다.
+   * * **read** - 쿼리된 요소에서 다른 토큰을 읽는 데 사용됩니다.
+   * * **emitDistinctChangesOnly** - `QueryList#changes` 관찰자는 QueryList 결과가 변경된 경우에만
+   *   새 값을 방출합니다. `false`인 경우 QueryList가 변경되지 않아도 `changes` 관찰자가
+   *   방출될 수 있습니다.
+   *   **주: ** 이 구성 옵션은 **사용 중단**, 영구적으로 `true`로 설정되며
+   *   향후 Angular 버전에서 제거됩니다.
    *
-   * The following selectors are supported.
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * A template reference variable as a string (e.g. query `<my-component #cmp></my-component>`
-   * with `@ViewChildren('cmp')`)
-   *   * Any provider defined in the child component tree of the current component (e.g.
-   * `@ViewChildren(SomeService) someService!: SomeService`)
-   *   * Any provider defined through a string token (e.g. `@ViewChildren('someToken')
-   * someTokenVal!: any`)
-   *   * A `TemplateRef` (e.g. query `<ng-template></ng-template>` with `@ViewChildren(TemplateRef)
-   * template;`)
+   * 다음 선택자가 지원됩니다.
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 문자열로서의 템플릿 참조 변수 (예: `<my-component #cmp></my-component>`
+   *   쿼리와 함께 `@ViewChildren('cmp')`)
+   *   * 현재 구성 요소의 자식 구성 요소 트리에서 정의된 모든 공급자 (예:
+   *   `@ViewChildren(SomeService) someService!: SomeService`)
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `@ViewChildren('someToken')
+   *   someTokenVal!: any`)
+   *   * `TemplateRef` (예: `<ng-template></ng-template>` 쿼리와 함께
+   *   `@ViewChildren(TemplateRef) template;`)
    *
-   * In addition, multiple string selectors can be separated with a comma (e.g.
-   * `@ViewChildren('cmp1,cmp2')`)
+   * 추가로, 여러 개의 문자열 선택자는 쉼표로 구분할 수 있습니다 (예:
+   *   `@ViewChildren('cmp1,cmp2')`)
    *
-   * The following values are supported by `read`:
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * Any provider defined on the injector of the component that is matched by the `selector` of
-   * this query
-   *   * Any provider defined through a string token (e.g. `{provide: 'token', useValue: 'val'}`)
-   *   * `TemplateRef`, `ElementRef`, and `ViewContainerRef`
+   * `read`에서 지원되는 다음 값:
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 이 쿼리의 `selector`에 의해 일치하는 구성 요소의 인젝터에 정의된 모든 공급자
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `{provide: 'token', useValue: 'val'}`)
+   *   * `TemplateRef`, `ElementRef`, 및 `ViewContainerRef`
    *
    * @usageNotes
    *
    * {@example core/di/ts/viewChildren/view_children_howto.ts region='HowTo'}
    *
-   * ### Another example
+   * ### 또 다른 예시
    *
    * {@example core/di/ts/viewChildren/view_children_example.ts region='Component'}
    *
@@ -378,14 +369,14 @@ export interface ViewChildrenDecorator {
 }
 
 /**
- * Type of the ViewChildren metadata.
+ * ViewChildren 메타데이터의 타입입니다.
  *
  * @publicApi
  */
 export type ViewChildren = Query;
 
 /**
- * ViewChildren decorator and metadata.
+ * ViewChildren 데코레이터 및 메타데이터입니다.
  *
  * @Annotation
  * @publicApi
@@ -404,7 +395,7 @@ export const ViewChildren: ViewChildrenDecorator = makePropDecorator(
 );
 
 /**
- * Type of the ViewChild decorator / constructor function.
+ * ViewChild 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @see {@link ViewChild}
  * @publicApi
@@ -412,53 +403,51 @@ export const ViewChildren: ViewChildrenDecorator = makePropDecorator(
 export interface ViewChildDecorator {
   /**
    * @description
-   * Property decorator that configures a view query.
-   * The change detector looks for the first element or the directive matching the selector
-   * in the view DOM. If the view DOM changes, and a new child matches the selector,
-   * the property is updated.
+   * 뷰 쿼리를 구성하는 속성 데코레이터입니다.
+   * 변경 감지기는 뷰 DOM에서 선택자와 일치하는 첫 번째 요소 또는 지시자를 찾습니다.
+   * 뷰 DOM이 변경되고 새로운 자식이 선택자와 일치하면,
+   * 속성이 업데이트됩니다.
    *
-   * **Metadata Properties**:
+   * **메타데이터 속성**:
    *
-   * * **selector** - The directive type or the name used for querying.
-   * * **read** - Used to read a different token from the queried elements.
-   * * **static** - `true` to resolve query results before change detection runs,
-   * `false` to resolve after change detection. Defaults to `false`.
+   * * **selector** - 쿼리에 사용되는 지시자 유형 또는 이름입니다.
+   * * **read** - 쿼리된 요소에서 다른 토큰을 읽는 데 사용됩니다.
+   * * **static** - 변경 감지 실행 전에 쿼리 결과를 해결하려면 `true`로,
+   *   변경 감지 후에 해결하려면 `false`로 설정합니다. 기본값은 `false`입니다.
    *
    *
-   * The following selectors are supported.
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * A template reference variable as a string (e.g. query `<my-component #cmp></my-component>`
-   * with `@ViewChild('cmp')`)
-   *   * Any provider defined in the child component tree of the current component (e.g.
-   * `@ViewChild(SomeService) someService: SomeService`)
-   *   * Any provider defined through a string token (e.g. `@ViewChild('someToken') someTokenVal:
+   * 다음 선택자가 지원됩니다.
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 문자열로서의 템플릿 참조 변수 (예: `<my-component #cmp></my-component>`
+   *   쿼리와 함께 `@ViewChild('cmp')`)
+   *   * 현재 구성 요소의 자식 구성 요소 트리에서 정의된 모든 공급자 (예:
+   *   `@ViewChild(SomeService) someService: SomeService`)
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `@ViewChild('someToken') someTokenVal:
    * any`)
-   *   * A `TemplateRef` (e.g. query `<ng-template></ng-template>` with `@ViewChild(TemplateRef)
-   * template;`)
+   *   * `TemplateRef` (예: `<ng-template></ng-template>` 쿼리와 함께
+   *   `@ViewChild(TemplateRef) template;`)
    *
-   * The following values are supported by `read`:
-   *   * Any class with the `@Component` or `@Directive` decorator
-   *   * Any provider defined on the injector of the component that is matched by the `selector` of
-   * this query
-   *   * Any provider defined through a string token (e.g. `{provide: 'token', useValue: 'val'}`)
-   *   * `TemplateRef`, `ElementRef`, and `ViewContainerRef`
+   * `read`에서 지원되는 다음 값:
+   *   * `@Component` 또는 `@Directive` 데코레이터가 있는 모든 클래스
+   *   * 이 쿼리의 `selector`에 의해 일치하는 구성 요소의 인젝터에 정의된 모든 공급자
+   *   * 문자열 토큰을 통해 정의된 모든 공급자 (예: `{provide: 'token', useValue: 'val'}`)
+   *   * `TemplateRef`, `ElementRef`, 및 `ViewContainerRef`
    *
-   * Difference between dynamic and static queries:
-   *   * Dynamic queries \(`static: false`\) - The query resolves before the `ngAfterViewInit()`
-   * callback is called. The result will be updated for changes to your view, such as changes to
-   * `ngIf` and `ngFor` blocks.
-   *   * Static queries \(`static: true`\) - The query resolves once
-   * the view has been created, but before change detection runs (before the `ngOnInit()` callback
-   * is called). The result, though, will never be updated to reflect changes to your view, such as
-   * changes to `ngIf` and `ngFor` blocks.
+   * 동적 쿼리와 정적 쿼리의 차이:
+   *   * 동적 쿼리 \(`static: false`\) - 쿼리는 `ngAfterViewInit()` 콜백이 호출되기 전에
+   *   해결됩니다. 결과는 `ngIf` 및 `ngFor` 블록과 같은 뷰 변경 사항에 대해 업데이트됩니다.
+   *   * 정적 쿼리 \(`static: true`\) - 쿼리는 뷰가 생성된 후 한 번만 해결되지만,
+   *   변경 감지 실행 전 ( `ngOnInit()` 콜백이 호출되기 전에) 해결됩니다.
+   *   그러나 결과는 뷰의 변경 사항(예: `ngIf` 및 `ngFor` 블록의 변경 사항)을 반영하도록
+   *   업데이트되지 않습니다.
    *
    * @usageNotes
    *
-   * ### Example 1
+   * ### 예시 1
    *
    * {@example core/di/ts/viewChild/view_child_example.ts region='Component'}
    *
-   * ### Example 2
+   * ### 예시 2
    *
    * {@example core/di/ts/viewChild/view_child_howto.ts region='HowTo'}
    *
@@ -475,14 +464,14 @@ export interface ViewChildDecorator {
 }
 
 /**
- * Type of the ViewChild metadata.
+ * ViewChild 메타데이터의 타입입니다.
  *
  * @publicApi
  */
 export type ViewChild = Query;
 
 /**
- * ViewChild decorator and metadata.
+ * ViewChild 데코레이터 및 메타데이터입니다.
  *
  * @Annotation
  * @publicApi

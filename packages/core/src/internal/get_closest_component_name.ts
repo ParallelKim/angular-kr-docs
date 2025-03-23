@@ -13,10 +13,10 @@ import {HEADER_OFFSET, HOST, TVIEW} from '../render3/interfaces/view';
 import {getTNode} from '../render3/util/view_utils';
 
 /**
- * Gets the class name of the closest component to a node.
- * Warning! this function will return minified names if the name of the component is minified. The
- * consumer of the function is responsible for resolving the minified name to its original name.
- * @param node Node from which to start the search.
+ * 노드에 가장 가까운 컴포넌트의 클래스 이름을 가져옵니다.
+ * 경고! 이 함수는 컴포넌트의 이름이 축소된 경우 축소된 이름을 반환합니다.
+ * 함수의 소비자는 축소된 이름을 원래 이름으로 해결해야 합니다.
+ * @param node 검색을 시작할 노드.
  */
 export function getClosestComponentName(node: Node): string | null {
   let currentNode = node as Node | null;
@@ -38,8 +38,8 @@ export function getClosestComponentName(node: Node): string | null {
           const def = tView.data[tNode.directiveStart + tNode.componentOffset] as ComponentDef<{}>;
           const name = def.debugInfo?.className || def.type.name;
 
-          // Note: the name may be an empty string if the class name is
-          // dropped due to minification. In such cases keep going up the tree.
+          // 참고: 클래스 이름이 축소로 인해 비어 있는 문자열일 수 있습니다.
+          // 이러한 경우에는 계속 트리를 올라갑니다.
           if (name) {
             return name;
           } else {

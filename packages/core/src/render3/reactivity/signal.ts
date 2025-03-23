@@ -17,61 +17,60 @@ import {
 
 import {isSignal, Signal, ValueEqualityFn} from './api';
 
-/** Symbol used distinguish `WritableSignal` from other non-writable signals and functions. */
+/** `WritableSignal`을 다른 비쓰기 가능한 신호 및 함수와 구별하는 데 사용되는 심볼입니다. */
 export const ɵWRITABLE_SIGNAL = /* @__PURE__ */ Symbol('WRITABLE_SIGNAL');
 
 /**
- * A `Signal` with a value that can be mutated via a setter interface.
+ * 설정자 인터페이스를 통해 변형할 수 있는 값을 가진 `Signal`입니다.
  */
 export interface WritableSignal<T> extends Signal<T> {
   [ɵWRITABLE_SIGNAL]: T;
 
   /**
-   * Directly set the signal to a new value, and notify any dependents.
+   * 신호를 새로운 값으로 직접 설정하고 모든 종속성에 알립니다.
    */
   set(value: T): void;
 
   /**
-   * Update the value of the signal based on its current value, and
-   * notify any dependents.
+   * 현재 값을 기반으로 신호의 값을 업데이트하고
+   * 모든 종속성에 알립니다.
    */
   update(updateFn: (value: T) => T): void;
 
   /**
-   * Returns a readonly version of this signal. Readonly signals can be accessed to read their value
-   * but can't be changed using set or update methods. The readonly signals do _not_ have
-   * any built-in mechanism that would prevent deep-mutation of their value.
+   * 이 신호의 읽기 전용 버전을 반환합니다. 읽기 전용 신호는 값을 읽기 위해 접근할 수 있지만
+   * set 또는 update 메소드를 사용하여 변경할 수 없습니다. 읽기 전용 신호는 _아니요_
+   * 값의 깊은 변화를 방지하는 내장 메커니즘을 가지고 있지 않습니다.
    */
   asReadonly(): Signal<T>;
 }
 
 /**
- * Utility function used during template type checking to extract the value from a `WritableSignal`.
+ * `WritableSignal`에서 값을 추출하기 위해 템플릿 타입 확인 중에 사용되는 유틸리티 함수입니다.
  * @codeGenApi
  */
 export function ɵunwrapWritableSignal<T>(value: T | {[ɵWRITABLE_SIGNAL]: T}): T {
-  // Note: the function uses `WRITABLE_SIGNAL` as a brand instead of `WritableSignal<T>`,
-  // because the latter incorrectly unwraps non-signal getter functions.
+  // 주의: 이 함수는 비신호 getter 함수를 잘못 풀지 않기 위해 브랜드 대신 `WRITABLE_SIGNAL`을 사용합니다.
   return null!;
 }
 
 /**
- * Options passed to the `signal` creation function.
+ * `signal` 생성 함수에 전달된 옵션입니다.
  */
 export interface CreateSignalOptions<T> {
   /**
-   * A comparison function which defines equality for signal values.
+   * 신호 값의 동등성을 정의하는 비교 함수입니다.
    */
   equal?: ValueEqualityFn<T>;
 
   /**
-   * A debug name for the signal. Used in Angular DevTools to identify the signal.
+   * 신호에 대한 디버그 이름입니다. Angular DevTools에서 신호를 식별하는 데 사용됩니다.
    */
   debugName?: string;
 }
 
 /**
- * Create a `Signal` that can be set or updated directly.
+ * 직접 설정하거나 업데이트할 수 있는 `Signal`을 생성합니다.
  */
 export function signal<T>(initialValue: T, options?: CreateSignalOptions<T>): WritableSignal<T> {
   const signalFn = createSignal(initialValue, options?.equal) as SignalGetter<T> &
@@ -102,7 +101,7 @@ export function signalAsReadonlyFn<T>(this: SignalGetter<T>): Signal<T> {
 }
 
 /**
- * Checks if the given `value` is a writeable signal.
+ * 주어진 `value`가 쓸 수 있는 신호인지 확인합니다.
  */
 export function isWritableSignal(value: unknown): value is WritableSignal<unknown> {
   return isSignal(value) && typeof (value as any).set === 'function';

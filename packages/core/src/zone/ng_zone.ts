@@ -14,8 +14,8 @@ import {noop} from '../util/noop';
 
 import {AsyncStackTaggingZoneSpec} from './async-stack-tagging';
 
-// The below is needed as otherwise a number of targets fail in G3 due to:
-// ERROR - [JSC_UNDEFINED_VARIABLE] variable Zone is undeclared
+// 아래는 G3에서 여러 대상을 실패하게 하는 오류를 방지하기 위해 필요합니다:
+// ERROR - [JSC_UNDEFINED_VARIABLE] 변수 Zone이 선언되지 않았습니다
 declare const Zone: any;
 
 const isAngularZoneProperty = 'isAngularZone';
@@ -24,20 +24,18 @@ export const angularZoneInstanceIdProperty = isAngularZoneProperty + '_ID';
 let ngZoneInstanceId = 0;
 
 /**
- * An injectable service for executing work inside or outside of the Angular zone.
+ * Angular 존 내 또는 외부에서 작업을 실행하기 위한 주입 가능한 서비스입니다.
  *
- * The most common use of this service is to optimize performance when starting a work consisting of
- * one or more asynchronous tasks that don't require UI updates or error handling to be handled by
- * Angular. Such tasks can be kicked off via {@link #runOutsideAngular} and if needed, these tasks
- * can reenter the Angular zone via {@link #run}.
+ * 이 서비스의 가장 일반적인 사용은 UI 업데이트나 오류 처리를 Angular가 처리할 필요가 없는 하나 이상의 비동기 작업으로 구성된 작업을 시작할 때 성능을 최적화하는 것입니다.
+ * 이러한 작업은 {@link #runOutsideAngular}를 통해 시작될 수 있으며, 필요에 따라 {@link #run}을 통해 Angular 존으로 다시 들어올 수 있습니다.
  *
- * <!-- TODO: add/fix links to:
- *   - docs explaining zones and the use of zones in Angular and change-detection
- *   - link to runOutsideAngular/run (throughout this file!)
+ * <!-- TODO: 링크 추가/수정:
+ *   - Angular에서의 존과 존 사용, 변경 감지에 대한 문서 설명
+ *   - runOutsideAngular/run에 대한 링크 (이 파일 전체에서!)
  *   -->
  *
  * @usageNotes
- * ### Example
+ * ### 예제
  *
  * ```ts
  * import {Component, NgZone} from '@angular/core';
@@ -46,13 +44,13 @@ let ngZoneInstanceId = 0;
  * @Component({
  *   selector: 'ng-zone-demo',
  *   template: `
- *     <h2>Demo: NgZone</h2>
+ *     <h2>예제: NgZone</h2>
  *
- *     <p>Progress: {{progress}}%</p>
- *     <p *ngIf="progress >= 100">Done processing {{label}} of Angular zone!</p>
+ *     <p>진행 상황: {{progress}}%</p>
+ *     <p *ngIf="progress >= 100">Angular 존의 {{label}} 처리가 완료되었습니다!</p>
  *
- *     <button (click)="processWithinAngularZone()">Process within Angular zone</button>
- *     <button (click)="processOutsideOfAngularZone()">Process outside of Angular zone</button>
+ *     <button (click)="processWithinAngularZone()">Angular 존 내에서 처리하기</button>
+ *     <button (click)="processOutsideOfAngularZone()">Angular 존 외부에서 처리하기</button>
  *   `,
  * })
  * export class NgZoneDemo {
@@ -61,30 +59,30 @@ let ngZoneInstanceId = 0;
  *
  *   constructor(private _ngZone: NgZone) {}
  *
- *   // Loop inside the Angular zone
- *   // so the UI DOES refresh after each setTimeout cycle
+ *   // Angular 존 내에서 반복
+ *   // 각 setTimeout 주기 후 UI가 새로 고침됩니다
  *   processWithinAngularZone() {
  *     this.label = 'inside';
  *     this.progress = 0;
- *     this._increaseProgress(() => console.log('Inside Done!'));
+ *     this._increaseProgress(() => console.log('내부 완료!'));
  *   }
  *
- *   // Loop outside of the Angular zone
- *   // so the UI DOES NOT refresh after each setTimeout cycle
+ *   // Angular 존 외부에서 반복
+ *   // 각 setTimeout 주기 후 UI가 새로 고침되지 않습니다
  *   processOutsideOfAngularZone() {
  *     this.label = 'outside';
  *     this.progress = 0;
  *     this._ngZone.runOutsideAngular(() => {
  *       this._increaseProgress(() => {
- *         // reenter the Angular zone and display done
- *         this._ngZone.run(() => { console.log('Outside Done!'); });
+ *         // Angular 존으로 돌아가서 완료를 표시합니다
+ *         this._ngZone.run(() => { console.log('외부 완료!'); });
  *       });
  *     });
  *   }
  *
  *   _increaseProgress(doneCallback: () => void) {
  *     this.progress += 1;
- *     console.log(`Current progress: ${this.progress}%`);
+ *     console.log(`현재 진행 상황: ${this.progress}%`);
  *
  *     if (this.progress < 100) {
  *       window.setTimeout(() => this._increaseProgress(doneCallback), 10);
@@ -102,31 +100,31 @@ export class NgZone {
   readonly hasPendingMicrotasks: boolean = false;
 
   /**
-   * Whether there are no outstanding microtasks or macrotasks.
+   * 미확인 마이크로작업이나 매크로작업이 없는지 여부.
    */
   readonly isStable: boolean = true;
 
   /**
-   * Notifies when code enters Angular Zone. This gets fired first on VM Turn.
+   * 코드가 Angular 존에 들어갈 때 알림을 보냅니다. VM 턴에서 가장 먼저 호출됩니다.
    */
   readonly onUnstable: EventEmitter<any> = new EventEmitter(false);
 
   /**
-   * Notifies when there is no more microtasks enqueued in the current VM Turn.
-   * This is a hint for Angular to do change detection, which may enqueue more microtasks.
-   * For this reason this event can fire multiple times per VM Turn.
+   * 현재 VM 턴에서 더 이상 대기 중인 마이크로작업이 없을 때 알림을 보냅니다.
+   * 이는 Angular가 변경 감지를 수행하게 하여 더 많은 마이크로작업을 큐에 추가할 수 있습니다.
+   * 이러한 이유로 이 이벤트는 VM 턴당 여러 번 호출될 수 있습니다.
    */
   readonly onMicrotaskEmpty: EventEmitter<any> = new EventEmitter(false);
 
   /**
-   * Notifies when the last `onMicrotaskEmpty` has run and there are no more microtasks, which
-   * implies we are about to relinquish VM turn.
-   * This event gets called just once.
+   * 마지막 `onMicrotaskEmpty`가 실행되고 더 이상 마이크로작업이 없을 때 알림을 보냅니다.
+   * 이는 우리는 곧 VM 턴을 넘기려 하고 있음을 의미합니다.
+   * 이 이벤트는 한 번만 호출됩니다.
    */
   readonly onStable: EventEmitter<any> = new EventEmitter(false);
 
   /**
-   * Notifies that an error has been delivered.
+   * 오류가 발생했음을 알립니다.
    */
   readonly onError: EventEmitter<any> = new EventEmitter(false);
 
@@ -145,7 +143,7 @@ export class NgZone {
     if (typeof Zone == 'undefined') {
       throw new RuntimeError(
         RuntimeErrorCode.MISSING_ZONEJS,
-        ngDevMode && `In this configuration Angular requires Zone.js`,
+        ngDevMode && `Angular는 이 구성에서 Zone.js가 필요합니다.`,
       );
     }
 
@@ -155,11 +153,10 @@ export class NgZone {
 
     self._outer = self._inner = Zone.current;
 
-    // AsyncStackTaggingZoneSpec provides `linked stack traces` to show
-    // where the async operation is scheduled. For more details, refer
-    // to this article, https://developer.chrome.com/blog/devtools-better-angular-debugging/
-    // And we only import this AsyncStackTaggingZoneSpec in development mode,
-    // in the production mode, the AsyncStackTaggingZoneSpec will be tree shaken away.
+    // AsyncStackTaggingZoneSpec는 비동기 작업이 예약된 위치를 표시하는 '연결된 스택 추적'을 제공합니다.
+    // 더 자세한 내용은 이 기사를 참조하십시오, https://developer.chrome.com/blog/devtools-better-angular-debugging/
+    // 우리는 개발 모드에서만 이 AsyncStackTaggingZoneSpec을 가져옵니다.
+    // 프로덕션 모드에서는 AsyncStackTaggingZoneSpec이 트리 쉐이킹됩니다.
     if (ngDevMode) {
       self._inner = self._inner.fork(new AsyncStackTaggingZoneSpec('Angular'));
     }
@@ -171,8 +168,8 @@ export class NgZone {
     if (enableLongStackTrace && (Zone as any)['longStackTraceZoneSpec']) {
       self._inner = self._inner.fork((Zone as any)['longStackTraceZoneSpec']);
     }
-    // if shouldCoalesceRunChangeDetection is true, all tasks including event tasks will be
-    // coalesced, so shouldCoalesceEventChangeDetection option is not necessary and can be skipped.
+    // shouldCoalesceRunChangeDetection이 true이면 모든 작업, 이벤트 작업을 포함하여
+    // 묶일 것이고, 따라서 shouldCoalesceEventChangeDetection 옵션은 필요하지 않으며 건너뛸 수 있습니다.
     self.shouldCoalesceEventChangeDetection =
       !shouldCoalesceRunChangeDetection && shouldCoalesceEventChangeDetection;
     self.shouldCoalesceRunChangeDetection = shouldCoalesceRunChangeDetection;
@@ -182,64 +179,64 @@ export class NgZone {
   }
 
   /**
-    This method checks whether the method call happens within an Angular Zone instance.
+    이 메서드는 메서드 호출이 Angular Zone 인스턴스 내에서 이루어지는지 확인합니다.
   */
   static isInAngularZone(): boolean {
-    // Zone needs to be checked, because this method might be called even when NoopNgZone is used.
+    // Zone은 확인해야 합니다. 왜냐하면 이 메서드는 NoopNgZone이 사용된 경우에도 호출될 수 있기 때문입니다.
     return typeof Zone !== 'undefined' && Zone.current.get(isAngularZoneProperty) === true;
   }
 
   /**
-    Assures that the method is called within the Angular Zone, otherwise throws an error.
+    메서드가 Angular Zone 내에서 호출되도록 보장합니다. 그렇지 않으면 오류를 발생시킵니다.
   */
   static assertInAngularZone(): void {
     if (!NgZone.isInAngularZone()) {
       throw new RuntimeError(
         RuntimeErrorCode.UNEXPECTED_ZONE_STATE,
-        ngDevMode && 'Expected to be in Angular Zone, but it is not!',
+        ngDevMode && 'Angular Zone 내에 있어야 하지만 그렇지 않습니다!',
       );
     }
   }
 
   /**
-    Assures that the method is called outside of the Angular Zone, otherwise throws an error.
+    메서드가 Angular Zone 외부에서 호출되도록 보장합니다. 그렇지 않으면 오류를 발생시킵니다.
   */
   static assertNotInAngularZone(): void {
     if (NgZone.isInAngularZone()) {
       throw new RuntimeError(
         RuntimeErrorCode.UNEXPECTED_ZONE_STATE,
-        ngDevMode && 'Expected to not be in Angular Zone, but it is!',
+        ngDevMode && 'Angular Zone 내에 있지 않아야 하지만 그렇습니다!',
       );
     }
   }
 
   /**
-   * Executes the `fn` function synchronously within the Angular zone and returns value returned by
-   * the function.
+   * Angular 존 내에서 `fn` 함수를 동기적으로 실행하고,
+   * 함수가 반환한 값을 반환합니다.
    *
-   * Running functions via `run` allows you to reenter Angular zone from a task that was executed
-   * outside of the Angular zone (typically started via {@link #runOutsideAngular}).
+   * `run`을 통한 함수 실행은 Angular 존 외부에서 실행된 작업에서 Angular 존으로 다시 들어오는 것을 허용합니다
+   * (일반적으로 {@link #runOutsideAngular}를 통해 시작된).
    *
-   * Any future tasks or microtasks scheduled from within this function will continue executing from
-   * within the Angular zone.
+   * 이 함수 내에서 예약된 모든 향후 작업이나 마이크로 작업은
+   * Angular 존 내에서 계속 실행됩니다.
    *
-   * If a synchronous error happens it will be rethrown and not reported via `onError`.
+   * 동기 오류가 발생하면 재발생되어 `onError`로 보고되지 않습니다.
    */
   run<T>(fn: (...args: any[]) => T, applyThis?: any, applyArgs?: any[]): T {
     return (this as any as NgZonePrivate)._inner.run(fn, applyThis, applyArgs);
   }
 
   /**
-   * Executes the `fn` function synchronously within the Angular zone as a task and returns value
-   * returned by the function.
+   * Angular 존 내에서 `fn` 함수를 동기적으로 작업으로 실행하고,
+   * 함수가 반환한 값을 반환합니다.
    *
-   * Running functions via `runTask` allows you to reenter Angular zone from a task that was executed
-   * outside of the Angular zone (typically started via {@link #runOutsideAngular}).
+   * `runTask`를 통한 함수 실행은 Angular 존 외부에서 실행된 작업에서 Angular 존으로 다시 들어오는 것을 허용합니다
+   * (일반적으로 {@link #runOutsideAngular}를 통해 시작된).
    *
-   * Any future tasks or microtasks scheduled from within this function will continue executing from
-   * within the Angular zone.
+   * 이 함수 내에서 예약된 모든 향후 작업이나 마이크로 작업은
+   * Angular 존 내에서 계속 실행됩니다.
    *
-   * If a synchronous error happens it will be rethrown and not reported via `onError`.
+   * 동기 오류가 발생하면 재발생되어 `onError`로 보고되지 않습니다.
    */
   runTask<T>(fn: (...args: any[]) => T, applyThis?: any, applyArgs?: any[], name?: string): T {
     const zone = (this as any as NgZonePrivate)._inner;
@@ -252,25 +249,24 @@ export class NgZone {
   }
 
   /**
-   * Same as `run`, except that synchronous errors are caught and forwarded via `onError` and not
-   * rethrown.
+   * `run`과 동일하지만 동기 오류는 잡아서 `onError`로 전달되며
+   * 재발생되지 않습니다.
    */
   runGuarded<T>(fn: (...args: any[]) => T, applyThis?: any, applyArgs?: any[]): T {
     return (this as any as NgZonePrivate)._inner.runGuarded(fn, applyThis, applyArgs);
   }
 
   /**
-   * Executes the `fn` function synchronously in Angular's parent zone and returns value returned by
-   * the function.
+   * Angular의 부모 존 내에서 `fn` 함수를 동기적으로 실행하고,
+   * 함수가 반환한 값을 반환합니다.
    *
-   * Running functions via {@link #runOutsideAngular} allows you to escape Angular's zone and do
-   * work that
-   * doesn't trigger Angular change-detection or is subject to Angular's error handling.
+   * {@link #runOutsideAngular}를 통한 함수 실행은 Angular의 존에서 벗어나 작업을 수행할 수 있으며,
+   * 이는 Angular 변경 감지를 유발하지 않거나 Angular의 오류 처리를 받습니다.
    *
-   * Any future tasks or microtasks scheduled from within this function will continue executing from
-   * outside of the Angular zone.
+   * 이 함수 내에서 예약된 모든 향후 작업이나 마이크로 작업은
+   * Angular 존 외부에서 계속 실행됩니다.
    *
-   * Use {@link #run} to reenter the Angular zone and do work that updates the application model.
+   * Angular 존으로 다시 들어오려면 {@link #run}을 사용하여 애플리케이션 모델을 업데이트하는 작업을 수행하십시오.
    */
   runOutsideAngular<T>(fn: (...args: any[]) => T): T {
     return (this as any as NgZonePrivate)._outer.run(fn);
@@ -289,78 +285,69 @@ export interface NgZonePrivate extends NgZone {
   hasPendingMicrotasks: boolean;
   callbackScheduled: boolean;
   /**
-   * A flag to indicate if NgZone is currently inside
-   * checkStable and to prevent re-entry. The flag is
-   * needed because it is possible to invoke the change
-   * detection from within change detection leading to
-   * incorrect behavior.
+   * NgZone이 현재 checkStable에 있는지 여부를 나타내는 플래그로 재진입을 방지합니다.
+   * 이 플래그는 변경 감지를 내부에서 호출하여 잘못된 동작을 초래할 수 있기 때문에 필요합니다.
    *
-   * For detail, please refer here,
+   * 자세한 내용은 여기를 참조하십시오,
    * https://github.com/angular/angular/pull/40540
    */
   isCheckStableRunning: boolean;
   isStable: boolean;
   /**
-   * Optionally specify coalescing event change detections or not.
-   * Consider the following case.
+   * 이벤트 변경 감지를 묶을지 여부를 선택적으로 지정합니다.
+   * 다음의 경우를 고려하십시오.
    *
    * <div (click)="doSomething()">
    *   <button (click)="doSomethingElse()"></button>
    * </div>
    *
-   * When button is clicked, because of the event bubbling, both
-   * event handlers will be called and 2 change detections will be
-   * triggered. We can coalesce such kind of events to trigger
-   * change detection only once.
+   * 버튼이 클릭될 때 이벤트 버블링 때문에 두 이벤트 핸들러가 호출되고 2번의 변경 감지가 발생합니다.
+   * 우리는 이러한 종류의 이벤트를 묶어 변경 감지가 한 번만 발생하도록 할 수 있습니다.
    *
-   * By default, this option will be false. So the events will not be
-   * coalesced and the change detection will be triggered multiple times.
-   * And if this option be set to true, the change detection will be
-   * triggered async by scheduling it in an animation frame. So in the case above,
-   * the change detection will only be trigged once.
+   * 기본적으로 이 옵션은 false입니다. 따라서 이벤트는 묶이지 않고 변경 감지가 여러 번 발생합니다.
+   * 또한 이 옵션이 true로 설정되면 변경 감지가 비동기적으로 애니메이션 프레임에 예약됩니다. 따라서 위의 경우에서
+   * 변경 감지는 한 번만 발생합니다.
    */
   shouldCoalesceEventChangeDetection: boolean;
   /**
-   * Optionally specify if `NgZone#run()` method invocations should be coalesced
-   * into a single change detection.
+   * `NgZone#run()` 메서드 호출이 단일 변경 감지로 묶일지 여부를 선택적으로 지정합니다.
    *
-   * Consider the following case.
+   * 다음 경우를 고려하십시오.
    *
    * for (let i = 0; i < 10; i ++) {
    *   ngZone.run(() => {
-   *     // do something
+   *     // 작업 수행
    *   });
    * }
    *
-   * This case triggers the change detection multiple times.
-   * With ngZoneRunCoalescing options, all change detections in an event loops trigger only once.
-   * In addition, the change detection executes in requestAnimation.
+   * 이 경우 변경 감지는 여러 번 발생합니다.
+   * ngZoneRunCoalescing 옵션을 사용하면 이벤트 루프에서 모든 변경 감지가 한 번만 발생합니다.
+   * 또한 변경 감지는 requestAnimation에서 실행됩니다.
    *
    */
   shouldCoalesceRunChangeDetection: boolean;
 
   /**
-   * Whether to schedule the coalesced change detection in the root zone
+   * 루트 존에서 묶인 변경 감지를 예약할지 여부
    */
   scheduleInRootZone: boolean;
 }
 
 function checkStable(zone: NgZonePrivate) {
-  // TODO: @JiaLiPassion, should check zone.isCheckStableRunning to prevent
-  // re-entry. The case is:
+  // TODO: @JiaLiPassion, 재진입을 방지하기 위해 zone.isCheckStableRunning를 확인해야 합니다.
+  // 다음과 같은 경우:
   //
   // @Component({...})
   // export class AppComponent {
   // constructor(private ngZone: NgZone) {
   //   this.ngZone.onStable.subscribe(() => {
-  //     this.ngZone.run(() => console.log('stable'););
+  //     this.ngZone.run(() => console.log('안정적이다'););
   //   });
   // }
   //
-  // The onStable subscriber run another function inside ngZone
-  // which causes `checkStable()` re-entry.
-  // But this fix causes some issues in g3, so this fix will be
-  // launched in another PR.
+  // onStable 구독자는 ngZone 내부에서 다른 함수를 실행하여
+  // checkStable()의 재진입을 초래합니다.
+  // 그러나 이 수정은 g3에서 일부 문제를 일으키므로 다른 PR에서 구현됩니다.
   if (zone._nesting == 0 && !zone.hasPendingMicrotasks && !zone.isStable) {
     try {
       zone._nesting++;
@@ -380,17 +367,15 @@ function checkStable(zone: NgZonePrivate) {
 
 function delayChangeDetectionForEvents(zone: NgZonePrivate) {
   /**
-   * We also need to check _nesting here
-   * Consider the following case with shouldCoalesceRunChangeDetection = true
+   * 여기서 _nesting도 확인해야 합니다
+   * shouldCoalesceRunChangeDetection = true인 경우 다음과 같이 고려하십시오.
    *
    * ngZone.run(() => {});
    * ngZone.run(() => {});
    *
-   * We want the two `ngZone.run()` only trigger one change detection
-   * when shouldCoalesceRunChangeDetection is true.
-   * And because in this case, change detection run in async way(requestAnimationFrame),
-   * so we also need to check the _nesting here to prevent multiple
-   * change detections.
+   * 우리는 두 `ngZone.run()`이 shouldCoalesceRunChangeDetection이 true일 때 한 번만 변경 감지를 유발하도록 하고 싶습니다.
+   * 그리고 이 경우 변경 감지는 비동기 방식(requestAnimationFrame)으로 실행되므로,
+   * 우리는 여러 번의 변경 감지를 방지하기 위해 여기서도 _nesting을 확인해야 합니다.
    */
   if (zone.isCheckStableRunning || zone.callbackScheduled) {
     return;
@@ -437,7 +422,7 @@ function forkInnerZoneWithAngularBehavior(zone: NgZonePrivate) {
       applyThis: any,
       applyArgs: any,
     ): any => {
-      // Prevent triggering change detection when the flag is detected.
+      // 플래그가 감지되면 변경 감지를 유발하지 않도록 합니다.
       if (shouldBeIgnoredByZone(applyArgs)) {
         return delegate.invokeTask(target, task, applyThis, applyArgs);
       }
@@ -471,15 +456,15 @@ function forkInnerZoneWithAngularBehavior(zone: NgZonePrivate) {
       } finally {
         if (
           zone.shouldCoalesceRunChangeDetection &&
-          // Do not delay change detection when the task is the scheduler's tick.
-          // We need to synchronously trigger the stability logic so that the
-          // zone-based scheduler can prevent a duplicate ApplicationRef.tick
-          // by first checking if the scheduler tick is running. This does seem a bit roundabout,
-          // but we _do_ still want to trigger all the correct events when we exit the zone.run
-          // (`onMicrotaskEmpty` and `onStable` _should_ emit; developers can have code which
-          // relies on these events happening after change detection runs).
-          // Note: `zone.callbackScheduled` is already in delayChangeDetectionForEventsDelegate
-          // but is added here as well to prevent reads of applyArgs when not necessary
+          // 스케줄러의 틱이 아닌 경우 변경 감지를 지연하지 않습니다.
+          // 우리는 안정성 논리를 동기적으로 트리거할 필요가 있습니다.
+          // 이는 zone 기반 스케줄러가 중복 ApplicationRef.tick을 방지할 수 있도록 하기 위해서입니다.
+          // 이 로직은 다소 우회적이긴 하지만,
+          // 우리는 여전히 zone.run을 종료할 때 모든 올바른 이벤트를 트리거하고 싶습니다
+          // (`onMicrotaskEmpty` 및 `onStable`이 발생해야 함; 개발자는 이러한 이벤트가
+          // 변경 감지가 실행된 후 발생하는 코드가 있을 수 있습니다).
+          // 참고: `zone.callbackScheduled`는 이미 delayChangeDetectionForEventsDelegate에 있지만
+          // 불필요한 applyArgs 읽기를 방지하기 위해 여기에도 추가됩니다.
           !zone.callbackScheduled &&
           !isSchedulerTick(applyArgs)
         ) {
@@ -497,8 +482,8 @@ function forkInnerZoneWithAngularBehavior(zone: NgZonePrivate) {
     ) => {
       delegate.hasTask(target, hasTaskState);
       if (current === target) {
-        // We are only interested in hasTask events which originate from our zone
-        // (A child hasTask event is not interesting to us)
+        // 우리는 우리의 존에서 발생하는 hasTask 이벤트에만 관심이 있습니다.
+        // (자식 hasTask 이벤트는 우리에게 흥미롭지 않습니다)
         if (hasTaskState.change == 'microTask') {
           zone._hasPendingMicrotasks = hasTaskState.microTask;
           updateMicroTaskStatus(zone);
@@ -543,8 +528,7 @@ function onLeave(zone: NgZonePrivate) {
 }
 
 /**
- * Provides a noop implementation of `NgZone` which does nothing. This zone requires explicit calls
- * to framework to perform rendering.
+ * 아무것도 하지 않는 `NgZone`의 noop 구현을 제공합니다. 이 존은 렌더링을 수행하기 위해 프레임워크에 대한 명시적인 호출이 필요합니다.
  */
 export class NoopNgZone implements NgZone {
   readonly hasPendingMicrotasks = false;
@@ -585,8 +569,8 @@ function hasApplyArgsData(applyArgs: unknown, key: string) {
     return false;
   }
 
-  // We should only ever get 1 arg passed through to invokeTask.
-  // Short circuit here incase that behavior changes.
+  // invokeTask에 전달되는 인수가 하나만 있기를 원합니다.
+  // 이 동작이 변경될 경우를 대비하여 여기에서 단숨에 확인합니다.
   if (applyArgs.length !== 1) {
     return false;
   }
@@ -594,7 +578,7 @@ function hasApplyArgsData(applyArgs: unknown, key: string) {
   return applyArgs[0]?.data?.[key] === true;
 }
 
-// Set of options recognized by the NgZone.
+// NgZone에서 인식하는 옵션 집합.
 export interface InternalNgZoneOptions {
   enableLongStackTrace?: boolean;
   shouldCoalesceEventChangeDetection?: boolean;

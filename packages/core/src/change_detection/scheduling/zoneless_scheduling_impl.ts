@@ -49,8 +49,8 @@ function trackMicrotaskNotificationForDebugging() {
   if (consecutiveMicrotaskNotifications === CONSECUTIVE_MICROTASK_NOTIFICATION_LIMIT) {
     throw new RuntimeError(
       RuntimeErrorCode.INFINITE_CHANGE_DETECTION,
-      'Angular could not stabilize because there were endless change notifications within the browser event loop. ' +
-        'The stack from the last several notifications: \n' +
+      'Angular는 브라우저 이벤트 루프 내에서 끝없는 변경 알림이 있었기 때문에 안정화될 수 없었습니다. ' +
+        '마지막 몇 개의 알림에서의 스택: \n' +
         stackFromLastFewNotifications.join('\n'),
     );
   }
@@ -85,9 +85,9 @@ export class ChangeDetectionSchedulerImpl implements ChangeDetectionScheduler {
   constructor() {
     this.subscriptions.add(
       this.appRef.afterTick.subscribe(() => {
-        // If the scheduler isn't running a tick but the application ticked, that means
-        // someone called ApplicationRef.tick manually. In this case, we should cancel
-        // any change detections that had been scheduled so we don't run an extra one.
+        // 스케줄러가 틱을 실행하지 않지만 애플리케이션이 틱을 실행한 경우는
+        // 누군가가 ApplicationRef.tick을 수동으로 호출했음을 의미합니다. 이 경우,
+        // 스케줄되었던 모든 변경 감지를 취소해야 추가로 실행되지 않도록 해야 합니다.
         if (!this.runningTick) {
           this.cleanup();
         }
@@ -95,35 +95,28 @@ export class ChangeDetectionSchedulerImpl implements ChangeDetectionScheduler {
     );
     this.subscriptions.add(
       this.ngZone.onUnstable.subscribe(() => {
-        // If the zone becomes unstable when we're not running tick (this happens from the zone.run),
-        // we should cancel any scheduled change detection here because at this point we
-        // know that the zone will stabilize at some point and run change detection itself.
+        // 우리가 틱을 실행하지 않고 영역이 불안정해지면(이 경우 zone.run에서 발생함),
+        // 이 시점에서 영역이 일정 시점에 안정될 것이라는 것을 알므로
+        // 예정된 변경 감지를 취소해야 합니다.
         if (!this.runningTick) {
           this.cleanup();
         }
       }),
     );
 
-    // TODO(atscott): These conditions will need to change when zoneless is the default
-    // Instead, they should flip to checking if ZoneJS scheduling is provided
+    // TODO(atscott): 이러한 조건은 zoneless가 기본 옵션이 될 때 변경해야 합니다.
+    // 대신, ZoneJS 스케줄링이 제공되는지 확인하도록 변경해야 합니다.
     this.disableScheduling ||=
       !this.zonelessEnabled &&
-      // NoopNgZone without enabling zoneless means no scheduling whatsoever
+      // NoopNgZone를 사용하여 zoneless를 활성화하지 않으면 스케줄링이 전혀 없음을 의미합니다.
       (this.ngZone instanceof NoopNgZone ||
-        // The same goes for the lack of Zone without enabling zoneless scheduling
+        // Zoneless 스케줄링을 활성화하지 않은 상태에서 Zone이 없으면 마찬가지입니다.
         !this.zoneIsDefined);
   }
 
   notify(source: NotificationSource): void {
     if (!this.zonelessEnabled && source === NotificationSource.Listener) {
-      // When the notification comes from a listener, we skip the notification unless the
-      // application has enabled zoneless. Ideally, listeners wouldn't notify the scheduler at all
-      // automatically. We do not know that a developer made a change in the listener callback that
-      // requires an `ApplicationRef.tick` (synchronize templates / run render hooks). We do this
-      // only for an easier migration from OnPush components to zoneless. Because listeners are
-      // usually executed inside the Angular zone and listeners automatically call `markViewDirty`,
-      // developers never needed to manually use `ChangeDetectorRef.markForCheck` or some other API
-      // to make listener callbacks work correctly with `OnPush` components.
+      // 알림이 리스너에서 오는 경우, 애플리케이션이 zoneless를 활성화하지 않은 한 알림을 건너뜁니다.
       return;
     }
 
@@ -242,13 +235,13 @@ export class ChangeDetectionSchedulerImpl implements ChangeDetectionScheduler {
   }
 
   /**
-   * Calls ApplicationRef._tick inside the `NgZone`.
+   * NgZone 안에서 ApplicationRef._tick을 호출합니다.
    *
-   * Calling `tick` directly runs change detection and cancels any change detection that had been
-   * scheduled previously.
+   * 직접적으로 tick을 호출하면 변경 감지가 실행되며, 이전에 예정되어 있던 모든
+   * 변경 감지가 취소됩니다.
    *
-   * @param shouldRefreshViews Passed directly to `ApplicationRef._tick` and skips straight to
-   *     render hooks when `false`.
+   * @param shouldRefreshViews 직접적으로 ApplicationRef._tick에 전달되며 `false`일 경우
+   *     렌더 후크로 바로 건너뜁니다.
    */
   private tick(): void {
     // When ngZone.run below exits, onMicrotaskEmpty may emit if the zone is
@@ -335,28 +328,24 @@ export class ChangeDetectionSchedulerImpl implements ChangeDetectionScheduler {
 }
 
 /**
- * Provides change detection without ZoneJS for the application bootstrapped using
- * `bootstrapApplication`.
+ * `bootstrapApplication`을 사용하여 부트스트랩된 애플리케이션에 대해 ZoneJS 없이 변경 감지를 제공합니다.
  *
- * This function allows you to configure the application to not use the state/state changes of
- * ZoneJS to schedule change detection in the application. This will work when ZoneJS is not present
- * on the page at all or if it exists because something else is using it (either another Angular
- * application which uses ZoneJS for scheduling or some other library that relies on ZoneJS).
+ * 이 함수는 애플리케이션이 ZoneJS의 상태/상태 변경을 사용하여 변경 감지를 설정하지 않도록 구성할 수 있게 합니다.
+ * ZoneJS가 전혀 페이지에 없거나 다른 Angular 애플리케이션이 ZoneJS를 사용하여 스케줄링하는 경우에도 작동합니다.
  *
- * This can also be added to the `TestBed` providers to configure the test environment to more
- * closely match production behavior. This will help give higher confidence that components are
- * compatible with zoneless change detection.
+ * 이 기능은 `TestBed` 제공자에 추가되어 테스트 환경이 실제 환경의 동작에 더 가깝게 일치하도록 구성할 수 있습니다.
+ * 이는 구성 요소가 zoneless 변경 감지와 호환되는지에 대한 신뢰도를 높이는 데 도움이 됩니다.
  *
- * ZoneJS uses browser events to trigger change detection. When using this provider, Angular will
- * instead use Angular APIs to schedule change detection. These APIs include:
+ * ZoneJS는 브라우저 이벤트를 사용하여 변경 감지를 트리거합니다. 이 제공자를 사용할 때는 Angular가
+ * 대신 Angular API를 사용하여 변경 감지를 스케줄링합니다. 이 API에는 다음이 포함됩니다:
  *
  * - `ChangeDetectorRef.markForCheck`
  * - `ComponentRef.setInput`
- * - updating a signal that is read in a template
- * - when bound host or template listeners are triggered
- * - attaching a view that was marked dirty by one of the above
- * - removing a view
- * - registering a render hook (templates are only refreshed if render hooks do one of the above)
+ * - 템플릿에서 읽는 신호 업데이트
+ * - 바인딩된 호스트 또는 템플릿 리스너가 실행될 때
+ * - 위에서 더러움으로 표시된 뷰 첨부
+ * - 뷰 제거
+ * - 렌더 후크 등록 (렌더 후크가 위에서 몇 가지 작업을 하면 템플릿이 새로 고쳐집니다)
  *
  * @usageNotes
  * ```ts
@@ -365,9 +354,9 @@ export class ChangeDetectionSchedulerImpl implements ChangeDetectionScheduler {
  * ]});
  * ```
  *
- * This API is experimental. Neither the shape, nor the underlying behavior is stable and can change
- * in patch versions. There are known feature gaps and API ergonomic considerations. We will iterate
- * on the exact API based on the feedback and our understanding of the problem and solution space.
+ * 이 API는 실험적입니다. 형태도, 기본 동작도 안정적이지 않으며 패치 버전에서 변경될 수 있습니다.
+ * 알려진 기능 격차와 API 사용 편의성 고려 사항이 있습니다. 피드백과 문제 및 솔루션 공간에 대한 이해를 바탕으로
+ * 정확한 API를 반복할 것입니다.
  *
  * @publicApi
  * @experimental
@@ -379,9 +368,9 @@ export function provideExperimentalZonelessChangeDetection(): EnvironmentProvide
   if ((typeof ngDevMode === 'undefined' || ngDevMode) && typeof Zone !== 'undefined' && Zone) {
     const message = formatRuntimeError(
       RuntimeErrorCode.UNEXPECTED_ZONEJS_PRESENT_IN_ZONELESS_MODE,
-      `The application is using zoneless change detection, but is still loading Zone.js. ` +
-        `Consider removing Zone.js to get the full benefits of zoneless. ` +
-        `In applications using the Angular CLI, Zone.js is typically included in the "polyfills" section of the angular.json file.`,
+      `애플리케이션이 zoneless 변경 감지를 사용하고 있지만 여전히 Zone.js를 로드하고 있습니다. ` +
+        `zoneless의 모든 이점을 얻으려면 Zone.js를 제거하십시오. ` +
+        `Angular CLI를 사용하는 애플리케이션에서는 일반적으로 angular.json 파일의 "polyfills" 섹션에 Zone.js가 포함됩니다.`,
     );
     console.warn(message);
   }

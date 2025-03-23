@@ -34,22 +34,21 @@ import {DestroyHookData, LView, TData, TVIEW, TView} from './interfaces/view';
 import {getCurrentTNode, getLView, getTView} from './state';
 
 /**
- * Resolves the providers which are defined in the DirectiveDef.
+ * DirectiveDef에 정의된 프로바이더를 해결합니다.
  *
- * When inserting the tokens and the factories in their respective arrays, we can assume that
- * this method is called first for the component (if any), and then for other directives on the same
- * node.
- * As a consequence,the providers are always processed in that order:
- * 1) The view providers of the component
- * 2) The providers of the component
- * 3) The providers of the other directives
- * This matches the structure of the injectables arrays of a view (for each node).
- * So the tokens and the factories can be pushed at the end of the arrays, except
- * in one case for multi providers.
+ * 토큰과 팩토리를 각각의 배열에 삽입할 때, 우리는 이 메소드가 먼저 컴포넌트를 위해 호출되고(있는 경우),
+ * 이후 같은 노드의 다른 디렉티브를 위해 호출된다고 가정할 수 있습니다.
+ * 결과적으로 프로바이더는 항상 다음과 같은 순서로 처리됩니다:
+ * 1) 컴포넌트의 뷰 프로바이더
+ * 2) 컴포넌트의 프로바이더
+ * 3) 다른 디렉티브의 프로바이더
+ * 이는 뷰의 인젝터블 배열 구조와 일치합니다 (각 노드마다).
+ * 따라서 토큰과 팩토리는 배열의 끝에 추가될 수 있으며,
+ * 멀티 프로바이더의 경우에만 예외가 존재합니다.
  *
- * @param def the directive definition
- * @param providers: Array of `providers`.
- * @param viewProviders: Array of `viewProviders`.
+ * @param def 디렉티브 정의
+ * @param providers: `providers` 배열.
+ * @param viewProviders: `viewProviders` 배열.
  */
 export function providersResolver<T>(
   def: DirectiveDef<T>,
@@ -60,16 +59,16 @@ export function providersResolver<T>(
   if (tView.firstCreatePass) {
     const isComponent = isComponentDef(def);
 
-    // The list of view providers is processed first, and the flags are updated
+    // 뷰 프로바이더 목록이 먼저 처리되며, 플래그가 업데이트됩니다.
     resolveProvider(viewProviders, tView.data, tView.blueprint, isComponent, true);
 
-    // Then, the list of providers is processed, and the flags are updated
+    // 그런 다음 프로바이더 목록이 처리되며, 플래그가 업데이트됩니다.
     resolveProvider(providers, tView.data, tView.blueprint, isComponent, false);
   }
 }
 
 /**
- * Resolves a provider and publishes it to the DI system.
+ * 프로바이더를 해결하고 DI 시스템에 게시합니다.
  */
 function resolveProvider(
   provider: Provider,
@@ -80,9 +79,9 @@ function resolveProvider(
 ): void {
   provider = resolveForwardRef(provider);
   if (Array.isArray(provider)) {
-    // Recursively call `resolveProvider`
-    // Recursion is OK in this case because this code will not be in hot-path once we implement
-    // cloning of the initial state.
+    // 'resolveProvider'를 재귀적으로 호출합니다.
+    // 이 경우 재귀가 허용되는 이유는 초기 상태 복제를 구현한 후
+    // 이 코드가 핫 패스에 있지 않기 때문입니다.
     for (let i = 0; i < provider.length; i++) {
       resolveProvider(
         provider[i],
@@ -115,7 +114,7 @@ function resolveProvider(
       tNode.providerIndexes >> TNodeProviderIndexes.CptViewProvidersCountShift;
 
     if (isTypeProvider(provider) || !provider.multi) {
-      // Single provider case: the factory is created and pushed immediately
+      // 단일 프로바이더의 경우: 팩토리가 즉시 생성되고 추가됩니다.
       const factory = new NodeInjectorFactory(providerFactory, isViewProvider, ɵɵdirectiveInject);
       const existingFactoryIndex = indexOf(
         token,
@@ -146,26 +145,25 @@ function resolveProvider(
         lView[existingFactoryIndex] = factory;
       }
     } else {
-      // Multi provider case:
-      // We create a multi factory which is going to aggregate all the values.
-      // Since the output of such a factory depends on content or view injection,
-      // we create two of them, which are linked together.
+      // 멀티 프로바이더의 경우:
+      // 모든 값을 집계할 멀티 팩토리를 생성합니다.
+      // 이러한 팩토리의 출력은 콘텐츠 또는 뷰 인젝션에 따라 달라지므로,
+      // 서로 연결된 두 개의 팩토리를 생성합니다.
       //
-      // The first one (for view providers) is always in the first block of the injectables array,
-      // and the second one (for providers) is always in the second block.
-      // This is important because view providers have higher priority. When a multi token
-      // is being looked up, the view providers should be found first.
-      // Note that it is not possible to have a multi factory in the third block (directive block).
+      // 첫 번째(뷰 프로바이더에 대한)는 항상 인젝터블 배열의 첫 번째 블록에 있고,
+      // 두 번째(프로바이더에 대한)는 항상 두 번째 블록에 있습니다.
+      // 이는 뷰 프로바이더가 더 높은 우선 순위를 가지므로 중요합니다. 멀티 토큰을 조회할 때
+      // 뷰 프로바이더가 먼저 발견되어야 합니다.
+      // 디렉티브 블록(세 번째 블록) 내에 멀티 팩토리가 존재할 수는 없습니다.
       //
-      // The algorithm to process multi providers is as follows:
-      // 1) If the multi provider comes from the `viewProviders` of the component:
-      //   a) If the special view providers factory doesn't exist, it is created and pushed.
-      //   b) Else, the multi provider is added to the existing multi factory.
-      // 2) If the multi provider comes from the `providers` of the component or of another
-      // directive:
-      //   a) If the multi factory doesn't exist, it is created and provider pushed into it.
-      //      It is also linked to the multi factory for view providers, if it exists.
-      //   b) Else, the multi provider is added to the existing multi factory.
+      // 멀티 프로바이더를 처리하는 알고리즘은 다음과 같습니다:
+      // 1) 멀티 프로바이더가 컴포넌트의 'viewProviders'에서 온 경우:
+      //   a) 특별한 뷰 프로바이더 팩토리가 존재하지 않으면 생성되어 추가됩니다.
+      //   b) 그렇지 않으면 멀티 프로바이더가 기존의 멀티 팩토리에 추가됩니다.
+      // 2) 멀티 프로바이더가 컴포넌트 또는 다른 디렉티브의 'providers'에서 온 경우:
+      //   a) 멀티 팩토리가 존재하지 않으면 생성되고 프로바이더가 추가됩니다.
+      //      필요하다면 기존의 뷰 프로바이더 멀티 팩토리에 연결됩니다.
+      //   b) 그렇지 않으면 멀티 프로바이더가 기존의 멀티 팩토리에 추가됩니다.
 
       const existingProvidersFactoryIndex = indexOf(
         token,
@@ -189,7 +187,7 @@ function resolveProvider(
         (isViewProvider && !doesViewProvidersFactoryExist) ||
         (!isViewProvider && !doesProvidersFactoryExist)
       ) {
-        // Cases 1.a and 2.a
+        // 경우 1.a 및 2.a
         diPublicInInjector(
           getOrCreateNodeInjectorForNode(
             tNode as TElementNode | TContainerNode | TElementContainerNode,
@@ -218,7 +216,7 @@ function resolveProvider(
         lInjectablesBlueprint.push(factory);
         lView.push(factory);
       } else {
-        // Cases 1.b and 2.b
+        // 경우 1.b 및 2.b
         const indexInFactory = multiFactoryAdd(
           lInjectablesBlueprint![
             isViewProvider ? existingViewProvidersFactoryIndex : existingProvidersFactoryIndex
@@ -243,12 +241,11 @@ function resolveProvider(
 }
 
 /**
- * Registers the `ngOnDestroy` hook of a provider, if the provider supports destroy hooks.
- * @param tView `TView` in which to register the hook.
- * @param provider Provider whose hook should be registered.
- * @param contextIndex Index under which to find the context for the hook when it's being invoked.
- * @param indexInFactory Only required for `multi` providers. Index of the provider in the multi
- * provider factory.
+ * 프로바이더의 'ngOnDestroy' 훅을 등록합니다. 프로바이더가 destroy 훅을 지원하는 경우에만 해당합니다.
+ * @param tView 훅을 등록할 'TView'.
+ * @param provider 훅을 등록할 프로바이더.
+ * @param contextIndex 훅이 호출될 때 훅의 컨텍스트를 찾는 인덱스.
+ * @param indexInFactory 멀티 프로바이더에만 필요한 인덱스. 멀티 프로바이더 팩토리에서 프로바이더의 인덱스.
  */
 function registerDestroyHooksIfSupported(
   tView: TView,
@@ -260,7 +257,7 @@ function registerDestroyHooksIfSupported(
   const providerIsClassProvider = isClassProvider(provider);
 
   if (providerIsTypeProvider || providerIsClassProvider) {
-    // Resolve forward references as `useClass` can hold a forward reference.
+    // 'useClass'가 포워드 레퍼런스를 가질 수 있으므로 포워드 레퍼런스를 해결합니다.
     const classToken = providerIsClassProvider ? resolveForwardRef(provider.useClass) : provider;
     const prototype = classToken.prototype;
     const ngOnDestroy = prototype.ngOnDestroy;
@@ -270,10 +267,7 @@ function registerDestroyHooksIfSupported(
 
       if (!providerIsTypeProvider && (provider as ClassProvider).multi) {
         ngDevMode &&
-          assertDefined(
-            indexInFactory,
-            'indexInFactory when registering multi factory destroy hook',
-          );
+          assertDefined(indexInFactory, 'multi factory destroy hook을 등록할 때 indexInFactory');
         const existingCallbacksIndex = hooks.indexOf(contextIndex);
 
         if (existingCallbacksIndex === -1) {
@@ -289,8 +283,8 @@ function registerDestroyHooksIfSupported(
 }
 
 /**
- * Add a factory in a multi factory.
- * @returns Index at which the factory was inserted.
+ * 멀티 팩토리에 팩토리를 추가합니다.
+ * @returns 팩토리가 삽입된 인덱스.
  */
 function multiFactoryAdd(
   multiFactory: NodeInjectorFactory,
@@ -304,7 +298,7 @@ function multiFactoryAdd(
 }
 
 /**
- * Returns the index of item in the array, but only in the begin to end range.
+ * 배열에서 항목의 인덱스를 반환하지만, 시작 지점에서 끝 지점까지의 범위 내에서만 반환합니다.
  */
 function indexOf(item: any, arr: any[], begin: number, end: number) {
   for (let i = begin; i < end; i++) {
@@ -314,7 +308,7 @@ function indexOf(item: any, arr: any[], begin: number, end: number) {
 }
 
 /**
- * Use this with `multi` `providers`.
+ * 'multi' 'providers'와 함께 사용합니다.
  */
 function multiProvidersFactoryResolver(
   this: NodeInjectorFactory,
@@ -327,9 +321,9 @@ function multiProvidersFactoryResolver(
 }
 
 /**
- * Use this with `multi` `viewProviders`.
+ * 'multi' 'viewProviders'와 함께 사용합니다.
  *
- * This factory knows how to concatenate itself with the existing `multi` `providers`.
+ * 이 팩토리는 기존 'multi' 'providers'와 자신을 연결하는 방법을 알고 있습니다.
  */
 function multiViewProvidersFactoryResolver(
   this: NodeInjectorFactory,
@@ -348,24 +342,24 @@ function multiViewProvidersFactoryResolver(
       this.providerFactory!.index!,
       tNode,
     );
-    // Copy the section of the array which contains `multi` `providers` from the component
+    // 컴포넌트에서 'multi' 'providers'를 포함하는 배열의 섹션을 복사합니다.
     result = multiProviders.slice(0, componentCount);
-    // Insert the `viewProvider` instances.
+    // 'viewProvider' 인스턴스를 삽입합니다.
     multiResolve(factories, result);
-    // Copy the section of the array which contains `multi` `providers` from other directives
+    // 다른 디렉티브에서 'multi' 'providers'를 포함하는 배열의 섹션을 복사합니다.
     for (let i = componentCount; i < multiProviders.length; i++) {
       result.push(multiProviders[i]);
     }
   } else {
     result = [];
-    // Insert the `viewProvider` instances.
+    // 'viewProvider' 인스턴스를 삽입합니다.
     multiResolve(factories, result);
   }
   return result;
 }
 
 /**
- * Maps an array of factories into an array of values.
+ * 팩토리 배열을 값 배열로 변환합니다.
  */
 function multiResolve(factories: Array<() => any>, result: any[]): any[] {
   for (let i = 0; i < factories.length; i++) {
@@ -376,7 +370,7 @@ function multiResolve(factories: Array<() => any>, result: any[]): any[] {
 }
 
 /**
- * Creates a multi factory.
+ * 멀티 팩토리를 생성합니다.
  */
 function multiFactory(
   factoryFn: (

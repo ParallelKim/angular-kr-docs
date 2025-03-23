@@ -13,57 +13,51 @@ import {RuntimeError, RuntimeErrorCode} from '../../errors';
 import {DefaultIterableDifferFactory} from '../differs/default_iterable_differ';
 
 /**
- * A type describing supported iterable types.
+ * 지원되는 iterable 유형을 설명하는 타입입니다.
  *
  * @publicApi
  */
 export type NgIterable<T> = Array<T> | Iterable<T>;
 
 /**
- * A strategy for tracking changes over time to an iterable. Used by {@link /api/common/NgForOf NgForOf} to
- * respond to changes in an iterable by effecting equivalent changes in the DOM.
+ * iterable의 시간 경과에 따른 변경 사항을 추적하는 전략입니다. {@link /api/common/NgForOf NgForOf}에서 사용되어
+ * iterable의 변경에 반응하여 DOM에서 동등한 변경을 수행합니다.
  *
  * @publicApi
  */
 export interface IterableDiffer<V> {
   /**
-   * Compute a difference between the previous state and the new `object` state.
+   * 이전 상태와 새로운 `object` 상태 간의 차이를 계산합니다.
    *
-   * @param object containing the new value.
-   * @returns an object describing the difference. The return value is only valid until the next
-   * `diff()` invocation.
+   * @param object 새로운 값을 포함하는 개체입니다.
+   * @returns 차이를 설명하는 개체입니다. 반환 값은 다음
+   * `diff()` 호출까지 유효합니다.
    */
   diff(object: NgIterable<V> | undefined | null): IterableChanges<V> | null;
 }
 
 /**
- * An object describing the changes in the `Iterable` collection since last time
- * `IterableDiffer#diff()` was invoked.
+ * 마지막으로 `IterableDiffer#diff()`가 호출된 이후의 `Iterable` 컬렉션에서 변경 사항을 설명하는 개체입니다.
  *
  * @publicApi
  */
 export interface IterableChanges<V> {
   /**
-   * Iterate over all changes. `IterableChangeRecord` will contain information about changes
-   * to each item.
+   * 모든 변경 사항을 반복합니다. `IterableChangeRecord`는 각 항목의 변경 사항에 대한 정보를 포함합니다.
    */
   forEachItem(fn: (record: IterableChangeRecord<V>) => void): void;
 
   /**
-   * Iterate over a set of operations which when applied to the original `Iterable` will produce the
-   * new `Iterable`.
+   * 원래 `Iterable`에 적용될 때 새 `Iterable`을 생성하는 일련의 작업을 반복합니다.
    *
-   * NOTE: These are not necessarily the actual operations which were applied to the original
-   * `Iterable`, rather these are a set of computed operations which may not be the same as the
-   * ones applied.
+   * NOTE: 이것들은 원래
+   * `Iterable`에 적용된 실제 작업이 반드시 아니라, 적용된 것과는 다를 수 있는 계산된 작업 세트입니다.
    *
-   * @param record A change which needs to be applied
-   * @param previousIndex The `IterableChangeRecord#previousIndex` of the `record` refers to the
-   *        original `Iterable` location, where as `previousIndex` refers to the transient location
-   *        of the item, after applying the operations up to this point.
-   * @param currentIndex The `IterableChangeRecord#currentIndex` of the `record` refers to the
-   *        original `Iterable` location, where as `currentIndex` refers to the transient location
-   *        of the item, after applying the operations up to this point.
+   * @param record 적용해야 하는 변경 사항
+   * @param previousIndex `record`의 `IterableChangeRecord#previousIndex`는 원래 `Iterable` 위치를 나타내고,
+   *        `previousIndex`는 이 시점까지의 작업을 적용한 후 항목의 일시적인 위치를 나타냅니다.
+   * @param currentIndex `record`의 `IterableChangeRecord#currentIndex`는 원래 `Iterable` 위치를 나타내고,
+   *        `currentIndex`는 이 시점까지의 작업을 적용한 후 항목의 일시적인 위치를 나타냅니다.
    */
   forEachOperation(
     fn: (
@@ -74,65 +68,60 @@ export interface IterableChanges<V> {
   ): void;
 
   /**
-   * Iterate over changes in the order of original `Iterable` showing where the original items
-   * have moved.
+   * 원래 `Iterable`의 순서로 변경 사항을 반복하여 원래 항목이 이동한 위치를 보여줍니다.
    */
   forEachPreviousItem(fn: (record: IterableChangeRecord<V>) => void): void;
 
-  /** Iterate over all added items. */
+  /** 추가된 모든 항목을 반복합니다. */
   forEachAddedItem(fn: (record: IterableChangeRecord<V>) => void): void;
 
-  /** Iterate over all moved items. */
+  /** 이동된 모든 항목을 반복합니다. */
   forEachMovedItem(fn: (record: IterableChangeRecord<V>) => void): void;
 
-  /** Iterate over all removed items. */
+  /** 제거된 모든 항목을 반복합니다. */
   forEachRemovedItem(fn: (record: IterableChangeRecord<V>) => void): void;
 
   /**
-   * Iterate over all items which had their identity (as computed by the `TrackByFunction`)
-   * changed.
+   * 신원( `TrackByFunction`에 의해 계산됨)이 변경된 모든 항목을 반복합니다.
    */
   forEachIdentityChange(fn: (record: IterableChangeRecord<V>) => void): void;
 }
 
 /**
- * Record representing the item change information.
+ * 항목 변경 정보를 나타내는 레코드입니다.
  *
  * @publicApi
  */
 export interface IterableChangeRecord<V> {
-  /** Current index of the item in `Iterable` or null if removed. */
+  /** `Iterable` 내에서 항목의 현재 인덱스 또는 제거된 경우 null입니다. */
   readonly currentIndex: number | null;
 
-  /** Previous index of the item in `Iterable` or null if added. */
+  /** `Iterable` 내에서 항목의 이전 인덱스 또는 추가된 경우 null입니다. */
   readonly previousIndex: number | null;
 
-  /** The item. */
+  /** 항목입니다. */
   readonly item: V;
 
-  /** Track by identity as computed by the `TrackByFunction`. */
+  /** `TrackByFunction`에 의해 계산된 신원으로 추적합니다. */
   readonly trackById: any;
 }
 
 /**
- * A function optionally passed into the `NgForOf` directive to customize how `NgForOf` uniquely
- * identifies items in an iterable.
+ * `NgForOf` 지시문에 선택적으로 전달되어 `NgForOf`가 iterable 내에서 항목을 고유하게 식별하는 방식을 사용자 정의하는 함수입니다.
  *
- * `NgForOf` needs to uniquely identify items in the iterable to correctly perform DOM updates
- * when items in the iterable are reordered, new items are added, or existing items are removed.
+ * `NgForOf`는 iterable 내의 항목이 재정렬되거나 새로운 항목이 추가되거나 기존 항목이 제거될 때
+ * DOM 업데이트를 올바르게 수행하기 위해 iterable 내의 항목을 고유하게 식별해야 합니다.
  *
  *
- * In all of these scenarios it is usually desirable to only update the DOM elements associated
- * with the items affected by the change. This behavior is important to:
+ * 모든 이러한 시나리오에서 일반적으로 변경의 영향을 받는 항목과 연결된 DOM 요소만 업데이트하는 것이 바람직합니다.
+ * 이 동작은 다음과 같은 중요성이 있습니다:
  *
- * - preserve any DOM-specific UI state (like cursor position, focus, text selection) when the
- *   iterable is modified
- * - enable animation of item addition, removal, and iterable reordering
- * - preserve the value of the `<select>` element when nested `<option>` elements are dynamically
- *   populated using `NgForOf` and the bound iterable is updated
+ * - iterable이 수정될 때 DOM-specific UI 상태(예: 커서 위치, 포커스, 텍스트 선택)를 유지합니다.
+ * - 항목 추가, 제거 및 iterable 재정렬의 애니메이션을 가능하게 합니다.
+ * - 중첩된 `<option>` 요소가 동적으로
+ *   `NgForOf`를 사용하여 채워지고 바인딩된 iterable이 업데이트될 때 `<select>` 요소의 값을 유지합니다.
  *
- * A common use for custom `trackBy` functions is when the model that `NgForOf` iterates over
- * contains a property with a unique identifier. For example, given a model:
+ * 사용자 정의 `trackBy` 함수의 일반적인 용도는 `NgForOf`가 반복하는 모델에 유일한 식별자가 있는 속성이 포함된 경우입니다. 예를 들어, 주어진 모델:
  *
  * ```ts
  * class User {
@@ -141,39 +130,37 @@ export interface IterableChangeRecord<V> {
  *   ...
  * }
  * ```
- * a custom `trackBy` function could look like the following:
+ * 사용자 정의 `trackBy` 함수는 다음과 같이 보일 수 있습니다:
  * ```ts
  * function userTrackBy(index, user) {
  *   return user.id;
  * }
  * ```
  *
- * A custom `trackBy` function must have several properties:
+ * 사용자 정의 `trackBy` 함수는 여러 속성을 가져야 합니다:
  *
- * - be [idempotent](https://en.wikipedia.org/wiki/Idempotence) (be without side effects, and always
- * return the same value for a given input)
- * - return unique value for all unique inputs
- * - be fast
+ * - [idempotent](https://en.wikipedia.org/wiki/Idempotence)이어야 하며(부작용이 없고 주어진 입력에 대해 항상 동일한 값을 반환해야 함)
+ * - 모든 고유 입력에 대해 고유한 값을 반환해야 함
+ * - 빠르게 작동해야 함
  *
  * @see [`NgForOf#ngForTrackBy`](api/common/NgForOf#ngForTrackBy)
  * @publicApi
  */
 export interface TrackByFunction<T> {
-  // Note: the type parameter `U` enables more accurate template type checking in case a trackBy
-  // function is declared using a base type of the iterated type. The `U` type gives TypeScript
-  // additional freedom to infer a narrower type for the `item` parameter type, instead of imposing
-  // the trackBy's declared item type as the inferred type for `T`.
-  // See https://github.com/angular/angular/issues/40125
+  // 참고: 타입 매개변수 `U`는 반복 유형의 기본 유형을 사용하여 trackBy 함수를 선언할 경우 더 정확한 템플릿 타입 검사를 가능하게 합니다.
+  // `U` 유형은 TypeScript가 `item` 매개변수 유형에 대해 좁은 유형을 추론하도록 추가 자유를 제공합니다.
+  // trackBy가 선언한 항목 유형을 T에 대한 추론된 유형으로 강제 적용하지 않습니다.
+  // https://github.com/angular/angular/issues/40125 참고
 
   /**
-   * @param index The index of the item within the iterable.
-   * @param item The item in the iterable.
+   * @param index iterable 내에서 항목의 인덱스입니다.
+   * @param item iterable 내의 항목입니다.
    */
   <U extends T>(index: number, item: T & U): any;
 }
 
 /**
- * Provides a factory for {@link IterableDiffer}.
+ * {@link IterableDiffer}를 위한 팩토리를 제공합니다.
  *
  * @publicApi
  */
@@ -187,7 +174,7 @@ export function defaultIterableDiffersFactory() {
 }
 
 /**
- * A repository of different iterable diffing strategies used by NgFor, NgClass, and others.
+ * NgFor, NgClass 및 기타에서 사용되는 다양한 iterable 차별 전략의 저장소입니다.
  *
  * @publicApi
  */
@@ -211,16 +198,15 @@ export class IterableDiffers {
   }
 
   /**
-   * Takes an array of {@link IterableDifferFactory} and returns a provider used to extend the
-   * inherited {@link IterableDiffers} instance with the provided factories and return a new
-   * {@link IterableDiffers} instance.
+   * {@link IterableDifferFactory}의 배열을 가져와 제공된 팩토리로 상속된 {@link IterableDiffers} 인스턴스를 확장하고
+   * 새 {@link IterableDiffers} 인스턴스를 반환합니다.
    *
    * @usageNotes
-   * ### Example
+   * ### 예제
    *
-   * The following example shows how to extend an existing list of factories,
-   * which will only be applied to the injector for this component and its children.
-   * This step is all that's required to make a new {@link IterableDiffer} available.
+   * 다음 예제는 기존 팩토리 목록을 확장하는 방법을 보여줍니다.
+   * 이는 이 구성 요소와 자식 구성 요소의 주입기에서만 적용됩니다.
+   * 이 단계는 새 {@link IterableDiffer}를 사용 가능하게 만드는 데 필요한 모든 것입니다.
    *
    * ```ts
    * @Component({
@@ -234,12 +220,12 @@ export class IterableDiffers {
     return {
       provide: IterableDiffers,
       useFactory: (parent: IterableDiffers | null) => {
-        // if parent is null, it means that we are in the root injector and we have just overridden
-        // the default injection mechanism for IterableDiffers, in such a case just assume
-        // `defaultIterableDiffersFactory`.
+        // 부모가 null인 경우 루트 주입기에서 우리가 기본
+        // IterableDiffers에 대한 주입 메커니즘을 오버라이드했음을 의미합니다. 이 경우
+        // `defaultIterableDiffersFactory`를 가정합니다.
         return IterableDiffers.create(factories, parent || defaultIterableDiffersFactory());
       },
-      // Dependency technically isn't optional, but we can provide a better error message this way.
+      // 종속성이 기술적으로 옵션이 아니지만 이렇게 하면 더 나은 오류 메시지를 제공할 수 있습니다.
       deps: [[IterableDiffers, new SkipSelf(), new Optional()]],
     };
   }
@@ -252,9 +238,9 @@ export class IterableDiffers {
       throw new RuntimeError(
         RuntimeErrorCode.NO_SUPPORTING_DIFFER_FACTORY,
         ngDevMode &&
-          `Cannot find a differ supporting object '${iterable}' of type '${getTypeNameForDebugging(
+          `형식 '${getTypeNameForDebugging(
             iterable,
-          )}'`,
+          )}'의 객체 '${iterable}'를 지원하는 차별자를 찾을 수 없습니다.`,
       );
     }
   }

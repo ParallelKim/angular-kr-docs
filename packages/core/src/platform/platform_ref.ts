@@ -25,11 +25,11 @@ import {bootstrap} from './bootstrap';
 import {PLATFORM_DESTROY_LISTENERS} from './platform_destroy_listeners';
 
 /**
- * The Angular platform is the entry point for Angular on a web page.
- * Each page has exactly one platform. Services (such as reflection) which are common
- * to every Angular application running on the page are bound in its scope.
- * A page's platform is initialized implicitly when a platform is created using a platform
- * factory such as `PlatformBrowser`, or explicitly by calling the `createPlatform()` function.
+ * Angular 플랫폼은 웹 페이지에서 Angular의 진입점입니다.
+ * 각 페이지에는 정확히 하나의 플랫폼이 있습니다. 반사와 같은 서비스는
+ * 페이지에서 실행되는 모든 Angular 애플리케이션에 공통적으로 바인딩됩니다.
+ * 페이지의 플랫폼은 `PlatformBrowser`와 같은 플랫폼 팩토리를 사용하여 플랫폼을 생성할 때 암묵적으로 초기화되거나,
+ * `createPlatform()` 함수를 호출하여 명시적으로 초기화됩니다.
  *
  * @publicApi
  */
@@ -43,10 +43,10 @@ export class PlatformRef {
   constructor(private _injector: Injector) {}
 
   /**
-   * Creates an instance of an `@NgModule` for the given platform.
+   * 주어진 플랫폼에 대한 `@NgModule` 인스턴스를 생성합니다.
    *
-   * @deprecated Passing NgModule factories as the `PlatformRef.bootstrapModuleFactory` function
-   *     argument is deprecated. Use the `PlatformRef.bootstrapModule` API instead.
+   * @deprecated `PlatformRef.bootstrapModuleFactory` 함수 인수로 NgModule 팩토리를 전달하는 것은 더 이상 권장되지 않습니다.
+   * 대신 `PlatformRef.bootstrapModule` API를 사용하십시오.
    */
   bootstrapModuleFactory<M>(
     moduleFactory: NgModuleFactory<M>,
@@ -83,10 +83,10 @@ export class PlatformRef {
   }
 
   /**
-   * Creates an instance of an `@NgModule` for a given platform.
+   * 주어진 플랫폼에 대한 `@NgModule` 인스턴스를 생성합니다.
    *
    * @usageNotes
-   * ### Simple Example
+   * ### 간단한 예
    *
    * ```ts
    * @NgModule({
@@ -111,29 +111,29 @@ export class PlatformRef {
   }
 
   /**
-   * Registers a listener to be called when the platform is destroyed.
+   * 플랫폼이 파괴될 때 호출되는 리스너를 등록합니다.
    */
   onDestroy(callback: () => void): void {
     this._destroyListeners.push(callback);
   }
 
   /**
-   * Retrieves the platform {@link Injector}, which is the parent injector for
-   * every Angular application on the page and provides singleton providers.
+   * 플랫폼 {@link Injector}를 가져옵니다. 이는 페이지의 모든 Angular 애플리케이션에 대한 부모 주입기로
+   * 단일 프로바이더를 제공합니다.
    */
   get injector(): Injector {
     return this._injector;
   }
 
   /**
-   * Destroys the current Angular platform and all Angular applications on the page.
-   * Destroys all modules and listeners registered with the platform.
+   * 현재 Angular 플랫폼과 페이지의 모든 Angular 애플리케이션을 파괴합니다.
+   * 플랫폼에 등록된 모든 모듈과 리스너를 파괴합니다.
    */
   destroy() {
     if (this._destroyed) {
       throw new RuntimeError(
         RuntimeErrorCode.PLATFORM_ALREADY_DESTROYED,
-        ngDevMode && 'The platform has already been destroyed!',
+        ngDevMode && '플랫폼은 이미 파괴되었습니다!',
       );
     }
     this._modules.slice().forEach((module) => module.destroy());
@@ -149,7 +149,7 @@ export class PlatformRef {
   }
 
   /**
-   * Indicates whether this instance was destroyed.
+   * 이 인스턴스가 파괴되었는지 여부를 나타냅니다.
    */
   get destroyed() {
     return this._destroyed;

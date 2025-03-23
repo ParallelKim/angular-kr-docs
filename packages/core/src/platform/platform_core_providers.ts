@@ -12,7 +12,7 @@ import {createPlatformFactory} from './platform';
 import {PlatformRef} from './platform_ref';
 
 /**
- * This platform has to be included in any other platform
+ * 이 플랫폼은 다른 모든 플랫폼에 포함되어야 합니다.
  *
  * @publicApi
  */

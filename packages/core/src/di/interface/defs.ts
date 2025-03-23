@@ -20,64 +20,62 @@ import {
 } from './provider';
 
 /**
- * Information about how a type or `InjectionToken` interfaces with the DI system.
+ * DI 시스템과의 관계에서 타입 또는 `InjectionToken`에 대한 정보입니다.
  *
- * At a minimum, this includes a `factory` which defines how to create the given type `T`, possibly
- * requesting injection of other types if necessary.
+ * 최소한, 이는 주어진 타입 `T`를 생성하는 방법을 정의하는 `factory`를 포함하며,
+ * 필요한 경우 다른 타입의 주입을 요청할 수 있습니다.
  *
- * Optionally, a `providedIn` parameter specifies that the given type belongs to a particular
- * `Injector`, `NgModule`, or a special scope (e.g. `'root'`). A value of `null` indicates
- * that the injectable does not belong to any scope.
+ * 선택적으로, `providedIn` 매개변수는 주어진 타입이 특정 `Injector`, `NgModule`,
+ * 또는 특별한 범위(예: `'root'`)에 속함을 지정합니다. `null` 값은
+ * 주입이 어떤 범위에도 속하지 않음을 나타냅니다.
  *
  * @codeGenApi
- * @publicApi The ViewEngine compiler emits code with this type for injectables. This code is
- *   deployed to npm, and should be treated as public api.
-
+ * @publicApi ViewEngine 컴파일러는 주입 가능한 객체에 대해 이 타입으로 코드를 생성합니다. 이 코드는
+ *   npm에 배포되며, 공개 API로 취급되어야 합니다.
  */
 export interface ɵɵInjectableDeclaration<T> {
   /**
-   * Specifies that the given type belongs to a particular injector:
-   * - `InjectorType` such as `NgModule`,
-   * - `'root'` the root injector
-   * - `'any'` all injectors.
-   * - `null`, does not belong to any injector. Must be explicitly listed in the injector
-   *   `providers`.
+   * 주어진 타입이 특정 주입기에 속함을 명시합니다:
+   * - `InjectorType`, 예를 들어 `NgModule`,
+   * - `'root'` 루트 주입기
+   * - `'any'` 모든 주입기.
+   * - `null`, 어떤 주입기에도 속하지 않습니다. 주입기에서
+   *   `providers`에 명시적으로 나열해야 합니다.
    */
   providedIn: InjectorType<any> | 'root' | 'platform' | 'any' | 'environment' | null;
 
   /**
-   * The token to which this definition belongs.
+   * 이 정의가 속하는 토큰입니다.
    *
-   * Note that this may not be the same as the type that the `factory` will create.
+   * 이는 `factory`가 생성할 타입과 동일하지 않을 수 있습니다.
    */
   token: unknown;
 
   /**
-   * Factory method to execute to create an instance of the injectable.
+   * 주입 가능한 인스턴스를 생성하기 위해 실행할 팩토리 메소드입니다.
    */
   factory: (t?: Type<any>) => T;
 
   /**
-   * In a case of no explicit injector, a location where the instance of the injectable is stored.
+   * 명시적인 주입기가 없는 경우, 주입 가능한 인스턴스가 저장된 위치입니다.
    */
   value: T | undefined;
 }
 
 /**
- * Information about the providers to be included in an `Injector` as well as how the given type
- * which carries the information should be created by the DI system.
+ * `Injector`에 포함될 공급자에 대한 정보와 주어진 타입을
+ * DI 시스템이 어떻게 생성해야 하는지를 나타냅니다.
  *
- * An `InjectorDef` can import other types which have `InjectorDefs`, forming a deep nested
- * structure of providers with a defined priority (identically to how `NgModule`s also have
- * an import/dependency structure).
+ * `InjectorDef`는 `InjectorDefs`를 가진 다른 타입을 가져올 수 있으며,
+ * 정의된 우선순위를 가진 공급자의 깊고 중첩된 구조를 형성합니다
+ * (`NgModule`도 가져오기/의존성 구조를 가집니다).
  *
- * NOTE: This is a private type and should not be exported
+ * NOTE: 이는 비공식 타입이며 내보내지 않아야 합니다.
  *
  * @codeGenApi
  */
 export interface ɵɵInjectorDef<T> {
-  // TODO(alxhub): Narrow down the type here once decorators properly change the return type of the
-  // class they are decorating (to add the ɵprov property for example).
+  // TODO(alxhub): 장식자가 장식하는 클래스의 반환 타입을 제대로 변경할 때 이곳에서 타입을 좁히기.
   providers: (
     | Type<any>
     | ValueProvider
@@ -94,27 +92,26 @@ export interface ɵɵInjectorDef<T> {
 }
 
 /**
- * A `Type` which has a `ɵprov: ɵɵInjectableDeclaration` static field.
+ * `ɵprov: ɵɵInjectableDeclaration` 정적 필드를 가진 `Type`입니다.
  *
- * `InjectableType`s contain their own Dependency Injection metadata and are usable in an
- * `InjectorDef`-based `StaticInjector`.
+ * `InjectableType`은 자체 의존성 주입 메타데이터를 포함하며,
+ * `InjectorDef` 기반의 `StaticInjector`에서 사용 가능합니다.
  *
  * @publicApi
  */
 export interface InjectableType<T> extends Type<T> {
   /**
-   * Opaque type whose structure is highly version dependent. Do not rely on any properties.
+   * 구조가 버전에 매우 의존적인 불투명한 타입입니다. 어떤 속성에도 의존해서는 안 됩니다.
    */
   ɵprov: unknown;
 }
 
 /**
- * A type which has an `InjectorDef` static field.
+ * `InjectorDef` 정적 필드를 가진 타입입니다.
  *
- * `InjectorTypes` can be used to configure a `StaticInjector`.
+ * `InjectorTypes`는 `StaticInjector`를 구성하는 데 사용될 수 있습니다.
  *
- * This is an opaque type whose structure is highly version dependent. Do not rely on any
- * properties.
+ * 이는 구조가 버전에 매우 의존적인 불투명한 타입입니다. 어떤 속성에도 의존해서는 안 됩니다.
  *
  * @publicApi
  */
@@ -124,12 +121,11 @@ export interface InjectorType<T> extends Type<T> {
 }
 
 /**
- * Describes the `InjectorDef` equivalent of a `ModuleWithProviders`, an `InjectorType` with an
- * associated array of providers.
+ * 공급자 배열과 연결된 `InjectorType`의 `ModuleWithProviders`에 해당하는 `InjectorDef`를 설명합니다.
  *
- * Objects of this type can be listed in the imports section of an `InjectorDef`.
+ * 이 타입의 객체는 `InjectorDef`의 가져오기 섹션에 나열될 수 있습니다.
  *
- * NOTE: This is a private type and should not be exported
+ * NOTE: 이는 비공식 타입이며 내보내지 않아야 합니다.
  */
 export interface InjectorTypeWithProviders<T> {
   ngModule: InjectorType<T>;
@@ -147,22 +143,22 @@ export interface InjectorTypeWithProviders<T> {
 }
 
 /**
- * Construct an injectable definition which defines how a token will be constructed by the DI
- * system, and in which injectors (if any) it will be available.
+ * DI 시스템에 의해 토큰이 어떻게 구성될지를 정의하고,
+ * 어떤 주입기에서(있는 경우) 사용 가능한지를 정의하는 주입 가능한 정의를 구성합니다.
  *
- * This should be assigned to a static `ɵprov` field on a type, which will then be an
- * `InjectableType`.
+ * 이는 타입의 정적 `ɵprov` 필드에 할당되어야 하며,
+ * 그러면 `InjectableType`이 됩니다.
  *
- * Options:
- * * `providedIn` determines which injectors will include the injectable, by either associating it
- *   with an `@NgModule` or other `InjectorType`, or by specifying that this injectable should be
- *   provided in the `'root'` injector, which will be the application-level injector in most apps.
- * * `factory` gives the zero argument function which will create an instance of the injectable.
- *   The factory can call [`inject`](api/core/inject) to access the `Injector` and request injection
- * of dependencies.
+ * 옵션:
+ * * `providedIn`은 주입 가능한 객체를 포함할 주입기를 결정합니다.
+ *   이는 `@NgModule` 또는 다른 `InjectorType`에 연결되거나,
+ *   이 주입 가능한 객체가 대부분의 앱에서 애플리케이션 수준의 주입기인
+ *   `'root'` 주입기에서 제공되어야 함을 지정합니다.
+ * * `factory`는 주입 가능한 객체의 인스턴스를 생성할 제로 인수 함수를 제공합니다.
+ *   팩토리는 [`inject`](api/core/inject)를 호출하여 `Injector`에 접근하고 의존성의 주입을 요청할 수 있습니다.
  *
  * @codeGenApi
- * @publicApi This instruction has been emitted by ViewEngine for some time and is deployed to npm.
+ * @publicApi 이 지침은 ViewEngine에 의해 오랫동안 발행되었으며, npm에 배포됩니다.
  */
 export function ɵɵdefineInjectable<T>(opts: {
   token: unknown;
@@ -178,26 +174,25 @@ export function ɵɵdefineInjectable<T>(opts: {
 }
 
 /**
- * @deprecated in v8, delete after v10. This API should be used only by generated code, and that
- * code should now use ɵɵdefineInjectable instead.
+ * @deprecated v8에서 사용 중단, v10 이후 삭제. 이 API는 생성된 코드만 사용해야 하며,
+ * 현재 해당 코드는 대신 ɵɵdefineInjectable를 사용해야 합니다.
  * @publicApi
  */
 export const defineInjectable = ɵɵdefineInjectable;
 
 /**
- * Construct an `InjectorDef` which configures an injector.
+ * 주입기를 구성하는 `InjectorDef`를 구성합니다.
  *
- * This should be assigned to a static injector def (`ɵinj`) field on a type, which will then be an
- * `InjectorType`.
+ * 이는 타입의 정적 주입기 정의(`ɵinj`) 필드에 할당되어야 하며,
+ * 그러면 `InjectorType`이 됩니다.
  *
- * Options:
+ * 옵션:
  *
- * * `providers`: an optional array of providers to add to the injector. Each provider must
- *   either have a factory or point to a type which has a `ɵprov` static property (the
- *   type must be an `InjectableType`).
- * * `imports`: an optional array of imports of other `InjectorType`s or `InjectorTypeWithModule`s
- *   whose providers will also be added to the injector. Locally provided types will override
- *   providers from imports.
+ * * `providers`: 주입기에 추가할 선택적 공급자 배열입니다. 각 공급자는
+ *   팩토리를 가지고 있거나 `ɵprov` 정적 속성을 가진 타입을 가리켜야 합니다
+ *   (타입은 `InjectableType`이어야 합니다).
+ * * `imports`: 공급자가 추가될 다른 `InjectorType` 또는 `InjectorTypeWithModule`의 선택적 가져오기 배열입니다.
+ *   로컬에서 제공되는 타입은 가져온 공급자를 재정의합니다.
  *
  * @codeGenApi
  */
@@ -206,10 +201,10 @@ export function ɵɵdefineInjector(options: {providers?: any[]; imports?: any[]}
 }
 
 /**
- * Read the injectable def (`ɵprov`) for `type` in a way which is immune to accidentally reading
- * inherited value.
+ * 주입 가능한 정의(`ɵprov`)를 읽어 `type`에 대한 상속된 값을 우연히 읽지 않도록
+ * 하는 방법입니다.
  *
- * @param type A type which may have its own (non-inherited) `ɵprov`.
+ * @param type 자체의 (비상속) `ɵprov`를 가질 수 있는 타입입니다.
  */
 export function getInjectableDef<T>(type: any): ɵɵInjectableDeclaration<T> | null {
   return getOwnDefinition(type, NG_PROV_DEF) || getOwnDefinition(type, NG_INJECTABLE_DEF);
@@ -220,20 +215,20 @@ export function isInjectable(type: any): boolean {
 }
 
 /**
- * Return definition only if it is defined directly on `type` and is not inherited from a base
- * class of `type`.
+ * 정의가 `type`의 상위 클래스에서 상속되지 않고,
+ * 직접 정의된 경우에만 반환합니다.
  */
 function getOwnDefinition<T>(type: any, field: string): ɵɵInjectableDeclaration<T> | null {
   return type.hasOwnProperty(field) ? type[field] : null;
 }
 
 /**
- * Read the injectable def (`ɵprov`) for `type` or read the `ɵprov` from one of its ancestors.
+ * 주입 가능한 정의(`ɵprov`)를 읽거나 상위 클래스 중 하나에서 `ɵprov`를 읽습니다.
  *
- * @param type A type which may have `ɵprov`, via inheritance.
+ * @param type 상속을 통해 `ɵprov`을 가질 수 있는 타입입니다.
  *
- * @deprecated Will be removed in a future version of Angular, where an error will occur in the
- *     scenario if we find the `ɵprov` on an ancestor only.
+ * @deprecated 나중에 Angular의 미래 버전에서 제거되며,
+ *     상위 클래스에서만 `ɵprov`를 찾는 경우 오류가 발생합니다.
  */
 export function getInheritedInjectableDef<T>(type: any): ɵɵInjectableDeclaration<T> | null {
   const def = type && (type[NG_PROV_DEF] || type[NG_INJECTABLE_DEF]);
@@ -241,8 +236,8 @@ export function getInheritedInjectableDef<T>(type: any): ɵɵInjectableDeclarati
   if (def) {
     ngDevMode &&
       console.warn(
-        `DEPRECATED: DI is instantiating a token "${type.name}" that inherits its @Injectable decorator but does not provide one itself.\n` +
-          `This will become an error in a future version of Angular. Please add @Injectable() to the "${type.name}" class.`,
+        `DEPRECATED: DI가 "@Injectable" 데코레이터를 상속하지만 자체적으로 제공하지 않는 토큰 "${type.name}"을 인스턴스화 하고 있습니다.\n` +
+          `이것은 Angular의 미래 버전에서 오류가 될 것입니다. "${type.name}" 클래스에 @Injectable()을 추가하십시오.`,
       );
     return def;
   } else {
@@ -251,9 +246,10 @@ export function getInheritedInjectableDef<T>(type: any): ɵɵInjectableDeclarati
 }
 
 /**
- * Read the injector def type in a way which is immune to accidentally reading inherited value.
+ * 주입기 정의 타입을 읽는 방법으로 우연히 상속된 값을 읽지 않도록
+ * 합니다.
  *
- * @param type type which may have an injector def (`ɵinj`)
+ * @param type 주입기 정의(`ɵinj`)를 가질 수 있는 타입입니다.
  */
 export function getInjectorDef<T>(type: any): ɵɵInjectorDef<T> | null {
   return type && (type.hasOwnProperty(NG_INJ_DEF) || type.hasOwnProperty(NG_INJECTOR_DEF))
@@ -264,6 +260,6 @@ export function getInjectorDef<T>(type: any): ɵɵInjectorDef<T> | null {
 export const NG_PROV_DEF = getClosureSafeProperty({ɵprov: getClosureSafeProperty});
 export const NG_INJ_DEF = getClosureSafeProperty({ɵinj: getClosureSafeProperty});
 
-// We need to keep these around so we can read off old defs if new defs are unavailable
+// 새 정의가 없는 경우 구형 정의를 읽기 위해 유지해야 합니다.
 export const NG_INJECTABLE_DEF = getClosureSafeProperty({ngInjectableDef: getClosureSafeProperty});
 export const NG_INJECTOR_DEF = getClosureSafeProperty({ngInjectorDef: getClosureSafeProperty});

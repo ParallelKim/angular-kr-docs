@@ -25,7 +25,7 @@ export function collectNativeNodes(
   isProjection: boolean = false,
 ): any[] {
   while (tNode !== null) {
-    // Let declarations don't have corresponding DOM nodes so we skip over them.
+    // let 선언은 해당 DOM 노드가 없으므로 건너뜁니다.
     if (tNode.type === TNodeType.LetDeclaration) {
       tNode = isProjection ? tNode.projectionNext : tNode.next;
       continue;
@@ -42,9 +42,8 @@ export function collectNativeNodes(
       result.push(unwrapRNode(lNode));
     }
 
-    // A given lNode can represent either a native node or a LContainer (when it is a host of a
-    // ViewContainerRef). When we find a LContainer we need to descend into it to collect root nodes
-    // from the views in this container.
+    // 주어진 lNode는 원래 노드 또는 LContainer를 나타낼 수 있습니다 (ViewContainerRef의 호스트일 경우). LContainer를 찾으면 내부로 내려가서
+    // 이 컨테이너의 뷰에서 루트 노드를 수집해야 합니다.
     if (isLContainer(lNode)) {
       collectNativeNodesInLContainer(lNode, result);
     }
@@ -75,7 +74,7 @@ export function collectNativeNodes(
 }
 
 /**
- * Collects all root nodes in all views in a given LContainer.
+ * 주어진 LContainer의 모든 뷰에서 모든 루트 노드를 수집합니다.
  */
 export function collectNativeNodesInLContainer(lContainer: LContainer, result: any[]) {
   for (let i = CONTAINER_HEADER_OFFSET; i < lContainer.length; i++) {
@@ -86,19 +85,17 @@ export function collectNativeNodesInLContainer(lContainer: LContainer, result: a
     }
   }
 
-  // When an LContainer is created, the anchor (comment) node is:
-  // - (1) either reused in case of an ElementContainer (<ng-container>)
-  // - (2) or a new comment node is created
-  // In the first case, the anchor comment node would be added to the final
-  // list by the code in the `collectNativeNodes` function
-  // (see the `result.push(unwrapRNode(lNode))` line), but the second
-  // case requires extra handling: the anchor node needs to be added to the
-  // final list manually. See additional information in the `createAnchorNode`
-  // function in the `view_container_ref.ts`.
+  // LContainer가 생성될 때, 앵커(주석) 노드는:
+  // - (1) ElementContainer(<ng-container>)의 경우 재사용됩니다.
+  // - (2) 또는 새로운 주석 노드가 생성됩니다.
+  // 첫 번째 경우, 앵커 주석 노드는 최종 리스트에 추가됩니다.
+  // (collectNativeNodes 함수의 코드에서 확인할 수 있습니다
+  // (result.push(unwrapRNode(lNode)) 라인 참조), 그러나 두 번째 경우는 추가 처리를 요구합니다:
+  // 앵커 노드를 최종 리스트에 수동으로 추가해야 합니다. `view_container_ref.ts`의
+  // createAnchorNode 함수에서 추가 정보를 참조하십시오.
   //
-  // In the first case, the same reference would be stored in the `NATIVE`
-  // and `HOST` slots in an LContainer. Otherwise, this is the second case and
-  // we should add an element to the final list.
+  // 첫 번째 경우, 같은 참조가 LContainer의 NATIVE 및 HOST 슬롯에 저장됩니다. 그렇지 않으면,
+  // 이는 두 번째 경우이며 최종 리스트에 요소를 추가해야 합니다.
   if (lContainer[NATIVE] !== lContainer[HOST]) {
     result.push(lContainer[NATIVE]);
   }

@@ -20,21 +20,21 @@ import {checkNoChangesInternal} from '../../render3/instructions/change_detectio
 import {ZONELESS_ENABLED} from './zoneless_scheduling';
 
 /**
- * Used to periodically verify no expressions have changed after they were checked.
+ * 주기적으로 표현식이 변경되지 않았는지 확인하는 데 사용됩니다.
  *
- * @param options Used to configure when the check will execute.
- *   - `interval` will periodically run exhaustive `checkNoChanges` on application views
- *   - `useNgZoneOnStable` will use ZoneJS to determine when change detection might have run
- *      in an application using ZoneJS to drive change detection. When the `NgZone.onStable` would
- *      have emitted, all views attached to the `ApplicationRef` are checked for changes.
- *   - 'exhaustive' means that all views attached to `ApplicationRef` and all the descendants of those views will be
- *     checked for changes (excluding those subtrees which are detached via `ChangeDetectorRef.detach()`).
- *     This is useful because the check that runs after regular change detection does not work for components using `ChangeDetectionStrategy.OnPush`.
- *     This check is will surface any existing errors hidden by `OnPush` components. By default, this check is exhaustive
- *     and will always check all views, regardless of their "dirty" state and `ChangeDetectionStrategy`.
+ * @param options 확인이 실행될 때를 설정하는 데 사용됩니다.
+ *   - `interval`은 애플리케이션 뷰에서 포괄적으로 `checkNoChanges`를 주기적으로 실행합니다.
+ *   - `useNgZoneOnStable`은 ZoneJS를 사용하여 변경 감지가 실행되었을 수 있는 시점을 결정합니다.
+ *      ZoneJS를 사용하여 변경 감지를 수행하는 애플리케이션에서 `NgZone.onStable`이 호출될 때,
+ *      `ApplicationRef`에 연결된 모든 뷰가 변경 여부를 확인합니다.
+ *   - 'exhaustive'는 `ApplicationRef`에 연결된 모든 뷰와 그 뷰의 모든 자손을 확인합니다.
+ *     ( `ChangeDetectorRef.detach()`를 통해 분리된 서브트리는 제외됨)
+ *     이는 일반 변경 감지 후 실행되는 확인이 `ChangeDetectionStrategy.OnPush`를 사용하는 구성 요소에는 작동하지 않기 때문에 유용합니다.
+ *     이 검사는 `OnPush` 구성 요소에 의해 숨겨진 기존 오류를 드러냅니다. 기본적으로 이 검사는 포괄적이며 모든 뷰를
+ *     "더러운" 상태와 `ChangeDetectionStrategy`에 관계없이 항상 확인합니다.
  *
- * When the `useNgZoneOnStable` option is `true`, this function will provide its own `NgZone` implementation and needs
- * to come after any other `NgZone` provider, including `provideZoneChangeDetection()` and `provideExperimentalZonelessChangeDetection()`.
+ * `useNgZoneOnStable` 옵션이 `true`일 경우, 이 함수는 자신의 `NgZone` 구현을 제공하며
+ * 다른 모든 `NgZone` 제공자 뒤에 와야 합니다. 이는 `provideZoneChangeDetection()`와 `provideExperimentalZonelessChangeDetection()`을 포함합니다.
  *
  * @experimental
  * @publicApi

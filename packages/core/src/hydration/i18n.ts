@@ -47,13 +47,12 @@ export function isI18nHydrationSupportEnabled() {
 }
 
 /**
- * Prepares an i18n block and its children, located at the given
- * view and instruction index, for hydration.
+ * 주어진 뷰 및 명령 인덱스에 위치한 i18n 블록과 그 자식을 수분에 맞게 준비합니다.
  *
- * @param lView lView with the i18n block
- * @param index index of the i18n block in the lView
- * @param parentTNode TNode of the parent of the i18n block
- * @param subTemplateIndex sub-template index, or -1 for the main template
+ * @param lView i18n 블록이 있는 lView
+ * @param index lView에서 i18n 블록의 인덱스
+ * @param parentTNode i18n 블록의 부모 TNode
+ * @param subTemplateIndex 서브 템플릿 인덱스, 또는 메인 템플릿의 경우 -1
  */
 export function prepareI18nBlockForHydration(
   lView: LView,
@@ -74,11 +73,9 @@ export function isI18nHydrationEnabled(injector?: Injector) {
 }
 
 /**
- * Collects, if not already cached, all of the indices in the
- * given TView which are children of an i18n block.
+ * 주어진 TView에서 i18n 블록의 자식인 모든 인덱스를 수집합니다.
  *
- * Since i18n blocks don't introduce a parent TNode, this is necessary
- * in order to determine which indices in a LView are translated.
+ * i18n 블록은 부모 TNode를 도입하지 않기 때문에, LView에서 어떤 인덱스가 번역되었는지를 결정하기 위해 필요합니다.
  */
 export function getOrComputeI18nChildren(
   tView: TView,
@@ -118,8 +115,7 @@ function collectI18nChildren(tView: TView): Set<number> | null {
     }
   }
 
-  // Traverse through the AST of each i18n block in the LView,
-  // and collect every instruction index.
+  // LView의 각 i18n 블록의 AST를 탐색하고 모든 명령 인덱스를 수집합니다.
   for (let i = HEADER_OFFSET; i < tView.bindingStartIndex; i++) {
     const tI18n = tView.data[i] as TI18n | undefined;
     if (!tI18n || !tI18n.ast) {
@@ -135,45 +131,37 @@ function collectI18nChildren(tView: TView): Set<number> | null {
 }
 
 /**
- * Resulting data from serializing an i18n block.
+ * i18n 블록 직렬화 결과 데이터.
  */
 export interface SerializedI18nBlock {
   /**
-   * A queue of active ICU cases from a depth-first traversal
-   * of the i18n AST. This is serialized to the client in order
-   * to correctly associate DOM nodes with i18n nodes during
-   * hydration.
+   * i18n AST의 깊이 우선 탐색에서 활성 ICU 사례의 큐입니다.
+   * 이를 클라이언트에 직렬화하여 수분 시 DOM 노드를 i18n 노드와 올바르게 연결합니다.
    */
   caseQueue: Array<number>;
 
   /**
-   * A set of indices in the lView of the block for nodes
-   * that are disconnected from the DOM. In i18n, this can
-   * happen when using content projection but some nodes are
-   * not selected by an <ng-content />.
+   * DOM에서 분리된 노드의 lView 블록 내의 인덱스 집합입니다.
+   * i18n에서는 콘텐츠 프로젝션을 사용할 때 이럴 수 있습니다.
    */
   disconnectedNodes: Set<number>;
 
   /**
-   * A set of indices in the lView of the block for nodes
-   * considered "disjoint", indicating that we need to serialize
-   * a path to the node in order to hydrate it.
+   * lView의 블록에서 "분리된" 노드로 간주되는 인덱스 집합입니다.
+   * 수분을 하려면 노드에 대한 경로를 직렬화해야 합니다.
    *
-   * A node is considered disjoint when its RNode does not
-   * directly follow the RNode of the previous i18n node, for
-   * example, because of content projection.
+   * 노드는 RNode가 이전 i18n 노드의 RNode 바로 뒤에 존재하지 않을 때 분리된 것으로 간주됩니다.
    */
   disjointNodes: Set<number>;
 }
 
 /**
- * Attempts to serialize i18n data for an i18n block, located at
- * the given view and instruction index.
+ * 주어진 뷰 및 명령 인덱스에 위치한 i18n 블록의 i18n 데이터를 직렬화하려고 시도합니다.
  *
- * @param lView lView with the i18n block
- * @param index index of the i18n block in the lView
- * @param context the hydration context
- * @returns the i18n data, or null if there is no relevant data
+ * @param lView i18n 블록이 있는 lView
+ * @param index lView에서 i18n 블록의 인덱스
+ * @param context 수분 컨텍스트
+ * @returns i18n 데이터 또는 관련 데이터가 없으면 null
  */
 export function trySerializeI18nBlock(
   lView: LView,
@@ -229,24 +217,20 @@ function serializeI18nBlock(
 }
 
 /**
- * Helper to determine whether the given nodes are "disjoint".
+ * 주어진 노드들이 "분리된" 노드인지 결정하는 헬퍼.
  *
- * The i18n hydration process walks through the DOM and i18n nodes
- * at the same time. It expects the sibling DOM node of the previous
- * i18n node to be the first node of the next i18n node.
+ * i18n 수분 과정은 동시에 DOM과 i18n 노드를 탐색합니다.
+ * 이전 i18n 노드의 형제 DOM 노드가 다음 i18n 노드의 첫 번째 노드로 예상됩니다.
  *
- * In cases of content projection, this won't always be the case. So
- * when we detect that, we mark the node as "disjoint", ensuring that
- * we will serialize the path to the node. This way, when we hydrate the
- * i18n node, we will be able to find the correct place to start.
+ * 콘텐츠 프로젝션의 경우, 항상 그런 것은 아닙니다. 이럴 경우 노드를 "분리된" 노드로 표시하여 경로를 직렬화하도록 합니다.
  */
 function isDisjointNode(prevNode: Node | null, nextNode: Node) {
   return prevNode && prevNode.nextSibling !== nextNode;
 }
 
 /**
- * Process the given i18n node for serialization.
- * Returns the first RNode for the i18n node to begin hydration.
+ * 주어진 i18n 노드를 직렬화를 위해 처리합니다.
+ * 수분을 시작하기 위해 i18n 노드의 첫 번째 RNode를 반환합니다.
  */
 function serializeI18nNode(
   lView: LView,
@@ -276,8 +260,8 @@ function serializeI18nNode(
     case I18nNodeKind.ICU: {
       const currentCase = lView[node.currentCaseLViewIndex] as number | null;
       if (currentCase != null) {
-        // i18n uses a negative value to signal a change to a new case, so we
-        // need to invert it to get the proper value.
+        // i18n은 새로운 케이스로의 변경을 신호하기 위해 음수 값을 사용하므로
+        // 올바른 값을 얻기 위해 반전해야 합니다.
         const caseIdx = currentCase < 0 ? ~currentCase : currentCase;
         serializedI18nBlock.caseQueue.push(caseIdx);
         serializeI18nBlock(lView, serializedI18nBlock, context, node.cases[caseIdx]);
@@ -290,33 +274,32 @@ function serializeI18nNode(
 }
 
 /**
- * Helper function to get the first native node to begin hydrating
- * the given i18n node.
+ * 주어진 i18n 노드를 수분하기 위해 시작하는 첫 번째 네이티브 노드를 가져오는 헬퍼 함수.
  */
 function getFirstNativeNodeForI18nNode(lView: LView, node: I18nNode) {
   const tView = lView[TVIEW];
   const maybeTNode = tView.data[node.index];
 
   if (isTNodeShape(maybeTNode)) {
-    // If the node is backed by an actual TNode, we can simply delegate.
+    // 노드가 실제 TNode에 의해 지원되는 경우 간단히 위임합니다.
     return getFirstNativeNode(lView, maybeTNode);
   } else if (node.kind === I18nNodeKind.ICU) {
-    // A nested ICU container won't have an actual TNode. In that case, we can use
-    // an iterator to find the first child.
+    // 중첩된 ICU 컨테이너는 실제 TNode가 없으므로 이 경우 반복자를 사용하여
+    // 첫 번째 자식을 찾을 수 있습니다.
     const icuIterator = createIcuIterator(maybeTNode as TIcu, lView);
     let rNode: RNode | null = icuIterator();
 
-    // If the ICU container has no nodes, then we use the ICU anchor as the node.
+    // ICU 컨테이너에 노드가 없으면 ICU 앵커를 노드로 사용합니다.
     return rNode ?? unwrapRNode(lView[node.index]);
   } else {
-    // Otherwise, the node is a text or trivial element in an ICU container,
-    // and we can just use the RNode directly.
+    // 그렇지 않으면 노드는 ICU 컨테이너의 텍스트 또는 무시할 수 있는 요소이며
+    // RNode를 직접 사용할 수 있습니다.
     return unwrapRNode(lView[node.index]) ?? null;
   }
 }
 
 /**
- * Describes shared data available during the hydration process.
+ * 수분 과정에서 사용할 수 있는 공유 데이터를 설명합니다.
  */
 interface I18nHydrationContext {
   hydrationInfo: DehydratedView;
@@ -328,20 +311,17 @@ interface I18nHydrationContext {
 }
 
 /**
- * Describes current hydration state.
+ * 현재 수분 상태를 설명합니다.
  */
 interface I18nHydrationState {
-  // The current node
+  // 현재 노드
   currentNode: Node | null;
 
   /**
-   * Whether the tree should be connected.
+   * 트리가 연결되어야 하는지 여부.
    *
-   * During hydration, it can happen that we expect to have a
-   * current RNode, but we don't. In such cases, we still need
-   * to propagate the expectation to the corresponding LViews,
-   * so that the proper downstream error handling can provide
-   * the correct context for the error.
+   * 수분 중에 현재 RNode가 있다고 예상되지만 그렇지 않은 경우가 발생할 수 있습니다.
+   * 이러한 경우에도 적절한 다운스트림 오류 처리를 위해 LViews에 기대값을 전파해야 합니다.
    */
   isConnected: boolean;
 }
@@ -351,8 +331,7 @@ function setCurrentNode(state: I18nHydrationState, node: Node | null) {
 }
 
 /**
- * Marks the current RNode as the hydration root for the given
- * AST node.
+ * 주어진 AST 노드에 대한 수분 루트로 현재 RNode를 표시합니다.
  */
 function appendI18nNodeToCollection(
   context: I18nHydrationContext,
@@ -366,10 +345,7 @@ function appendI18nNodeToCollection(
   if (state.isConnected) {
     context.i18nNodes.set(noOffsetIndex, currentNode);
 
-    // We expect the node to be connected, so ensure that it
-    // is not in the set, regardless of whether we found it,
-    // so that the downstream error handling can provide the
-    // proper context.
+    // 노드가 연결되어야 하므로 찾은 여부에 관계없이 세트에 있지 않도록 합니다.
     disconnectedNodes.delete(noOffsetIndex);
   } else {
     disconnectedNodes.add(noOffsetIndex);
@@ -379,11 +355,10 @@ function appendI18nNodeToCollection(
 }
 
 /**
- * Skip over some sibling nodes during hydration.
+ * 수분 중 일부 형제 노드를 건너뜁니다.
  *
- * Note: we use this instead of `siblingAfter` as it's expected that
- * sometimes we might encounter null nodes. In those cases, we want to
- * defer to downstream error handling to provide proper context.
+ * 참고: `siblingAfter` 대신 이 방법을 사용합니다. 때때로 null 노드가 있을 수 있기 때문입니다.
+ * 그런 경우에는 다운스트림 오류 처리가 적절한 컨텍스트를 제공해야 합니다.
  */
 function skipSiblingNodes(state: I18nHydrationState, skip: number) {
   let currentNode = state.currentNode;
@@ -397,7 +372,7 @@ function skipSiblingNodes(state: I18nHydrationState, skip: number) {
 }
 
 /**
- * Fork the given state into a new state for hydrating children.
+ * 주어진 상태를 자녀 수분을 위한 새 상태로 나눕니다.
  */
 function forkHydrationState(state: I18nHydrationState, nextNode: Node | null) {
   return {currentNode: nextNode, isConnected: state.isConnected};
@@ -425,31 +400,27 @@ function prepareI18nBlockForHydrationImpl(
 
   const tView = lView[TVIEW];
   const tI18n = tView.data[index] as TI18n;
-  ngDevMode &&
-    assertDefined(tI18n, 'Expected i18n data to be present in a given TView slot during hydration');
+  ngDevMode && assertDefined(tI18n, '수분 중에 주어진 TView 슬롯에 i18n 데이터가 있어야 함');
 
   function findHydrationRoot() {
     if (isRootTemplateMessage(subTemplateIndex)) {
-      // This is the root of an i18n block. In this case, our hydration root will
-      // depend on where our parent TNode (i.e. the block with i18n applied) is
-      // in the DOM.
-      ngDevMode && assertDefined(parentTNode, 'Expected parent TNode while hydrating i18n root');
+      // 이곳은 i18n 블록의 루트입니다. 이 경우, 우리의 수분 루트는 부모 TNode가
+      // DOM에서 어디에 위치하는가에 따라 달라집니다.
+      ngDevMode && assertDefined(parentTNode, 'i18n 루트를 수분할 때 부모 TNode가 예상됨');
       const rootNode = locateNextRNode(hydrationInfo!, tView, lView, parentTNode!) as Node;
 
-      // If this i18n block is attached to an <ng-container>, then we want to begin
-      // hydrating directly with the RNode. Otherwise, for a TNode with a physical DOM
-      // element, we want to recurse into the first child and begin there.
+      // 이 i18n 블록이 <ng-container>에 연결되어 있다면 RNode로 직접 수분을 시작합니다.
+      // 반면에, 물리적 DOM 요소를 가진 TNode의 경우 첫 번째 자식으로 재귀적으로 들어갑니다.
       return parentTNode!.type & TNodeType.ElementContainer ? rootNode : rootNode.firstChild;
     }
 
-    // This is a nested template in an i18n block. In this case, the entire view
-    // is translated, and part of a dehydrated view in a container. This means that
-    // we can simply begin hydration with the first dehydrated child.
+    // 이곳은 i18n 블록 내의 중첩 템플릿입니다. 이 경우, 전체 뷰가 번역되며,
+    // 컨테이너 내의 탈수된 뷰의 일부입니다. 따라서 우리는 첫 번째 탈수된 자식으로 수분을 시작하면 됩니다.
     return hydrationInfo?.firstChild as Node;
   }
 
   const currentNode = findHydrationRoot();
-  ngDevMode && assertDefined(currentNode, 'Expected root i18n node during hydration');
+  ngDevMode && assertDefined(currentNode, '수분 중에 루트 i18n 노드가 예상됨');
 
   const disconnectedNodes = initDisconnectedNodes(hydrationInfo) ?? new Set();
   const i18nNodes = (hydrationInfo.i18nNodes ??= new Map<number, RNode | null>());
@@ -465,9 +436,9 @@ function prepareI18nBlockForHydrationImpl(
     tI18n.ast,
   );
 
-  // Nodes from inactive ICU cases should be considered disconnected. We track them above
-  // because they aren't (and shouldn't be) serialized. Since we may mutate or create a
-  // new set, we need to be sure to write the expected value back to the DehydratedView.
+  // 비활성 ICU 사례의 노드는 분리된 것으로 간주해야 합니다. 위에서 이를 추적합니다.
+  // 이들은 (그리고 그렇게 되어서는 안 됩니다) 직렬화되며, 따라서 예상하는 값을
+  // 탈수된 뷰에 다시 써야 합니다.
   hydrationInfo.disconnectedNodes = disconnectedNodes.size === 0 ? null : disconnectedNodes;
 }
 
@@ -479,9 +450,7 @@ function collectI18nNodesFromDom(
   if (Array.isArray(nodeOrNodes)) {
     let nextState = state;
     for (const node of nodeOrNodes) {
-      // Whenever a node doesn't directly follow the previous RNode, it
-      // is given a path. We need to resume collecting nodes from that location
-      // until and unless we find another disjoint node.
+      // 노드가 이전 RNode와 직접 연결되지 않는 경우 경로를 설정합니다.
       const targetNode = tryLocateRNodeByPath(
         context.hydrationInfo,
         context.lView,
@@ -494,28 +463,28 @@ function collectI18nNodesFromDom(
     }
   } else {
     if (context.disconnectedNodes.has(nodeOrNodes.index - HEADER_OFFSET)) {
-      // i18n nodes can be considered disconnected if e.g. they were projected.
-      // In that case, we have to make sure to skip over them.
+      // i18n 노드는 콘텐츠 프로젝션 등으로 인해 분리된 것으로 간주될 수 있습니다.
+      // 그런 경우 이를 건너뛰어야 합니다.
       return;
     }
 
     switch (nodeOrNodes.kind) {
       case I18nNodeKind.TEXT: {
-        // Claim a text node for hydration
+        // 수분을 위해 텍스트 노드를 확보합니다.
         const currentNode = appendI18nNodeToCollection(context, state, nodeOrNodes);
         setCurrentNode(state, currentNode?.nextSibling ?? null);
         break;
       }
 
       case I18nNodeKind.ELEMENT: {
-        // Recurse into the current element's children...
+        // 현재 요소의 자식으로 재귀적으로 들어갑니다...
         collectI18nNodesFromDom(
           context,
           forkHydrationState(state, state.currentNode?.firstChild ?? null),
           nodeOrNodes.children,
         );
 
-        // And claim the parent element itself.
+        // 그리고 부모 요소 자체를 확보합니다.
         const currentNode = appendI18nNodeToCollection(context, state, nodeOrNodes);
         setCurrentNode(state, currentNode?.nextSibling ?? null);
         break;
@@ -528,23 +497,21 @@ function collectI18nNodesFromDom(
 
         switch (nodeOrNodes.type) {
           case I18nPlaceholderType.ELEMENT: {
-            // Hydration expects to find the head of the element.
+            // 수분은 요소의 머리를 찾아야 합니다.
             const currentNode = appendI18nNodeToCollection(context, state, nodeOrNodes);
 
-            // A TNode for the node may not yet if we're hydrating during the first pass,
-            // so use the serialized data to determine if this is an <ng-container>.
+            // 첫 번째 패스를 수행하는 동안 TNode가 없을 수 있으므로,
+            // 직렬화된 데이터를 사용하여 이것이 <ng-container>인지 결정합니다.
             if (isSerializedElementContainer(hydrationInfo, noOffsetIndex)) {
-              // An <ng-container> doesn't have a physical DOM node, so we need to
-              // continue hydrating from siblings.
+              // <ng-container>는 물리적 DOM 노드가 없으므로 형제에서 계속 수분해야 합니다.
               collectI18nNodesFromDom(context, state, nodeOrNodes.children);
 
-              // Skip over the anchor element. It will be claimed by the
-              // downstream container hydration.
+              // 앵커 요소를 건너뜁니다. 이는 하류 컨테이너 수분에 의해 확보됩니다.
               const nextNode = skipSiblingNodes(state, 1);
               setCurrentNode(state, nextNode);
             } else {
-              // Non-container elements represent an actual node in the DOM, so we
-              // need to continue hydration with the children, and claim the node.
+              // 비컨테이너 요소는 DOM의 실제 노드를 나타내므로,
+              // 자식으로 수분을 계속하고 노드를 확보해야 합니다.
               collectI18nNodesFromDom(
                 context,
                 forkHydrationState(state, state.currentNode?.firstChild ?? null),
@@ -552,10 +519,10 @@ function collectI18nNodesFromDom(
               );
               setCurrentNode(state, currentNode?.nextSibling ?? null);
 
-              // Elements can also be the anchor of a view container, so there may
-              // be elements after this node that we need to skip.
+              // 요소는 뷰 컨테이너의 앵커가 될 수 있으므로,
+              // 이 노드 이후에 건너뛰어야 할 요소가 있을 수 있습니다.
               if (containerSize !== null) {
-                // `+1` stands for an anchor node after all of the views in the container.
+                // `+1`은 컨테이너의 모든 뷰 뒤에 있는 앵커 노드를 나타냅니다.
                 const nextNode = skipSiblingNodes(state, containerSize + 1);
                 setCurrentNode(state, nextNode);
               }
@@ -565,17 +532,12 @@ function collectI18nNodesFromDom(
 
           case I18nPlaceholderType.SUBTEMPLATE: {
             ngDevMode &&
-              assertNotEqual(
-                containerSize,
-                null,
-                'Expected a container size while hydrating i18n subtemplate',
-              );
+              assertNotEqual(containerSize, null, 'i18n 서브 템플릿 수분 중 컨테이너 크기 예상됨');
 
-            // Hydration expects to find the head of the template.
+            // 수분은 템플릿의 머리를 찾아야 합니다.
             appendI18nNodeToCollection(context, state, nodeOrNodes);
 
-            // Skip over all of the template children, as well as the anchor
-            // node, since the template itself will handle them instead.
+            // 템플릿 자식과 앵커 노드를 모두 건너뜁니다.
             const nextNode = skipSiblingNodes(state, containerSize! + 1);
             setCurrentNode(state, nextNode);
             break;
@@ -585,13 +547,12 @@ function collectI18nNodesFromDom(
       }
 
       case I18nNodeKind.ICU: {
-        // If the current node is connected, we need to pop the next case from the
-        // queue, so that the active case is also considered connected.
+        // 현재 노드가 연결되어 있다면, 큐에서 다음 사례를 팝해야 합니다.
         const selectedCase = state.isConnected ? context.caseQueue.shift()! : null;
         const childState = {currentNode: null, isConnected: false};
 
-        // We traverse through each case, even if it's not active,
-        // so that we correctly populate disconnected nodes.
+        // 우리는 각 사례를 탐색합니다. 비활성일지라도,
+        // 분리된 노드를 올바르게 채우기 위함입니다.
         for (let i = 0; i < nodeOrNodes.cases.length; i++) {
           collectI18nNodesFromDom(
             context,
@@ -601,13 +562,12 @@ function collectI18nNodesFromDom(
         }
 
         if (selectedCase !== null) {
-          // ICUs represent a branching state, and the selected case could be different
-          // than what it was on the server. In that case, we need to be able to clean
-          // up the nodes from the original case. To do that, we store the selected case.
+          // ICU는 분기 상태를 나타내며, 선택된 사례가 서버의 상태와 다를 수 있습니다.
+          // 이 경우 원래 사례의 노드를 정리할 수 있어야 합니다.
           context.dehydratedIcuData.set(nodeOrNodes.index, {case: selectedCase, node: nodeOrNodes});
         }
 
-        // Hydration expects to find the ICU anchor element.
+        // 수분은 ICU 앵커 요소를 찾아야 합니다.
         const currentNode = appendI18nNodeToCollection(context, state, nodeOrNodes);
         setCurrentNode(state, currentNode?.nextSibling ?? null);
         break;
@@ -621,8 +581,8 @@ let _claimDehydratedIcuCaseImpl: typeof claimDehydratedIcuCaseImpl = () => {
 };
 
 /**
- * Mark the case for the ICU node at the given index in the view as claimed,
- * allowing its nodes to be hydrated and not cleaned up.
+ * 주어진 뷰의 인덱스에서 ICU 노드는 주장되며,
+ * 해당 노드를 수분 가능하게 하고 삭제되지 않도록 합니다.
  */
 export function claimDehydratedIcuCase(lView: LView, icuIndex: number, caseIndex: number) {
   _claimDehydratedIcuCaseImpl(lView, icuIndex, caseIndex);
@@ -637,15 +597,15 @@ function claimDehydratedIcuCaseImpl(lView: LView, icuIndex: number, caseIndex: n
   if (dehydratedIcuDataMap) {
     const dehydratedIcuData = dehydratedIcuDataMap.get(icuIndex);
     if (dehydratedIcuData?.case === caseIndex) {
-      // If the case we're attempting to claim matches the dehydrated one,
-      // we remove it from the map to mark it as "claimed."
+      // 우리가 주장하려는 사례가 탈수된 사례와 일치하면,
+      // 이를 지워 "주장된" 것으로 표시합니다.
       dehydratedIcuDataMap.delete(icuIndex);
     }
   }
 }
 
 /**
- * Clean up all i18n hydration data associated with the given view.
+ * 주어진 뷰와 관련된 모든 i18n 수분 데이터를 정리합니다.
  */
 export function cleanupI18nHydrationData(lView: LView) {
   const hydrationInfo = lView[HYDRATION];

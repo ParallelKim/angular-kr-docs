@@ -53,7 +53,7 @@ export type DirectiveMatcherStrategy = (
 ) => DirectiveDef<unknown>[] | null;
 
 /**
- * Resolve the matched directives on a node.
+ * 노드에서 일치하는 디렉티브를 해결합니다.
  */
 export function resolveDirectives(
   tView: TView,
@@ -62,7 +62,7 @@ export function resolveDirectives(
   localRefs: string[] | null,
   directiveMatcher: DirectiveMatcherStrategy,
 ): void {
-  // Please make sure to have explicit type for `exportsMap`. Inferred type triggers bug in tsickle.
+  // `exportsMap`에 대해 명시적인 타입을 가져야 함을 확인하십시오. 유추된 타입은 tsickle에서 버그를 유발합니다.
   ngDevMode && assertFirstCreatePass(tView);
 
   const exportsMap: Record<string, number> | null = localRefs === null ? null : {'': -1};
@@ -98,7 +98,7 @@ export function resolveDirectives(
   }
 }
 
-/** Caches local names and their matching directive indices for query and template lookups. */
+/** 로컬 이름과 해당 디렉티브 인덱스를 쿼리 및 템플릿 조회를 위해 캐시합니다. */
 function cacheMatchingLocalNames(
   tNode: TNode,
   localRefs: string[],
@@ -106,33 +106,32 @@ function cacheMatchingLocalNames(
 ): void {
   const localNames: (string | number)[] = (tNode.localNames = []);
 
-  // Local names must be stored in tNode in the same order that localRefs are defined
-  // in the template to ensure the data is loaded in the same slots as their refs
-  // in the template (for template queries).
+  // 로컬 이름은 로컬 참조가 정의된 것과 동일한 순서로 tNode에 저장되어야 하며,
+  // 이는 데이터가 템플릿의 참조와 동일한 슬롯에 로드되도록 보장합니다.
   for (let i = 0; i < localRefs.length; i += 2) {
     const index = exportsMap[localRefs[i + 1]];
     if (index == null)
       throw new RuntimeError(
         RuntimeErrorCode.EXPORT_NOT_FOUND,
-        ngDevMode && `Export of name '${localRefs[i + 1]}' not found!`,
+        ngDevMode && `이름 '${localRefs[i + 1]}'의 내보내기가 발견되지 않았습니다!`,
       );
     localNames.push(localRefs[i], index);
   }
 }
 
 /**
- * Marks a given TNode as a component's host. This consists of:
- * - setting the component offset on the TNode.
- * - storing index of component's host element so it will be queued for view refresh during CD.
+ * 주어진 TNode를 컴포넌트의 호스트로 표시합니다. 다음과 같은 작업을 수행합니다:
+ * - TNode의 컴포넌트 오프셋 설정.
+ * - 뷰 갱신을 위해 큐에 넣기 위해 컴포넌트의 호스트 요소 인덱스를 저장합니다.
  */
 function markAsComponentHost(tView: TView, hostTNode: TNode, componentOffset: number): void {
   ngDevMode && assertFirstCreatePass(tView);
-  ngDevMode && assertGreaterThan(componentOffset, -1, 'componentOffset must be great than -1');
+  ngDevMode && assertGreaterThan(componentOffset, -1, 'componentOffset는 -1보다 커야 합니다');
   hostTNode.componentOffset = componentOffset;
   (tView.components ??= []).push(hostTNode.index);
 }
 
-/** Initializes the data structures necessary for a list of directives to be instantiated. */
+/** 디렉티브 목록을 인스턴스화하는 데 필요한 데이터 구조를 초기화합니다. */
 function initializeDirectives(
   tView: TView,
   lView: LView<unknown>,
@@ -147,8 +146,7 @@ function initializeDirectives(
   const directivesLength = directives.length;
   let hasSeenComponent = false;
 
-  // Publishes the directive types to DI so they can be injected. Needs to
-  // happen in a separate pass before the TNode flags have been initialized.
+  // DI에 디렉티브 타입을 발행하여 주입 가능하게 합니다. TNode 플래그가 초기화되기 전에 별도의 패스로 수행되어야 합니다.
   for (let i = 0; i < directivesLength; i++) {
     const def = directives[i];
     if (!hasSeenComponent && isComponentDef(def)) {
@@ -160,12 +158,10 @@ function initializeDirectives(
 
   initTNodeFlags(tNode, tView.data.length, directivesLength);
 
-  // When the same token is provided by several directives on the same node, some rules apply in
-  // the viewEngine:
-  // - viewProviders have priority over providers
-  // - the last directive in NgModule.declarations has priority over the previous one
-  // So to match these rules, the order in which providers are added in the arrays is very
-  // important.
+  // 동일한 토큰이 동일한 노드의 여러 디렉티브에 의해 제공될 때 몇 가지 규칙이 적용됩니다.
+  // - viewProviders는 providers보다 우선합니다.
+  // - NgModule.declarations의 마지막 디렉티브가 이전 디렉티브보다 우선합니다.
+  // 따라서 이러한 규칙에 맞추기 위해 제공자를 배열에 추가하는 순서가 매우 중요합니다.
   for (let i = 0; i < directivesLength; i++) {
     const def = directives[i];
     if (def.providersResolver) def.providersResolver(def);
@@ -177,26 +173,23 @@ function initializeDirectives(
     assertSame(
       directiveIdx,
       tNode.directiveStart,
-      'TNode.directiveStart should point to just allocated space',
+      'TNode.directiveStart는 방금 할당된 공간을 가리켜야 합니다',
     );
 
-  // If there's at least one directive, we'll have to track it so initialize the map.
+  // 디렉티브가 최소 하나 이상 있다면, 이를 추적하기 위해 맵을 초기화합니다.
   if (directivesLength > 0) {
     tNode.directiveToIndex = new Map();
   }
 
   for (let i = 0; i < directivesLength; i++) {
     const def = directives[i];
-    // Merge the attrs in the order of matches. This assumes that the first directive is the
-    // component itself, so that the component has the least priority.
+    // 일치하는 순서로 attrs를 병합합니다. 여기서는 첫 번째 디렉티브가 컴포넌트 자체라는 것을 가정합니다.
     tNode.mergedAttrs = mergeHostAttrs(tNode.mergedAttrs, def.hostAttrs);
 
     configureViewWithDirective(tView, tNode, lView, directiveIdx, def);
     saveNameToExportMap(directiveIdx, def, exportsMap);
 
-    // If a directive has host directives, we need to track both its index and the range within
-    // the host directives are declared. Host directives are not tracked, but should be resolved
-    // by looking up the host and getting its indexes from there.
+    // 디렉티브가 호스트 디렉티브를 가지면, 해당 인덱스와 선언된 범위를 모두 추적해야 합니다.
     if (hostDirectiveRanges !== null && hostDirectiveRanges.has(def)) {
       const [start, end] = hostDirectiveRanges.get(def)!;
       tNode.directiveToIndex!.set(def.type, [
@@ -213,15 +206,13 @@ function initializeDirectives(
       tNode.flags |= TNodeFlags.hasHostBindings;
 
     const lifeCycleHooks: Partial<OnChanges & OnInit & DoCheck> = def.type.prototype;
-    // Only push a node index into the preOrderHooks array if this is the first
-    // pre-order hook found on this node.
+    // 이 노드에서 첫 번째 사전 순서 훅을 찾은 경우에만 preOrderHooks 배열에 노드 인덱스를 추가합니다.
     if (
       !preOrderHooksFound &&
       (lifeCycleHooks.ngOnChanges || lifeCycleHooks.ngOnInit || lifeCycleHooks.ngDoCheck)
     ) {
-      // We will push the actual hook function into this array later during dir instantiation.
-      // We cannot do it now because we must ensure hooks are registered in the same
-      // order that directives are created (i.e. injection order).
+      // 디렉티브 인스턴스화 중에 실제 훅 함수를 이 배열에 추가할 것입니다.
+      // 지금은 할 수 없습니다. 훅이 디렉티브가 생성된 것과 동일한 순서로 등록되도록 보장해야 합니다 (즉, 주입 순서).
       (tView.preOrderHooks ??= []).push(tNode.index);
       preOrderHooksFound = true;
     }
@@ -238,8 +229,8 @@ function initializeDirectives(
 }
 
 /**
- * Initializes data structures required to work with directive inputs and outputs.
- * Initialization is done for all directives matched on a given TNode.
+ * 디렉티브 입력 및 출력을 처리하기 위한 데이터 구조를 초기화합니다.
+ * 특정 TNode에서 일치하는 모든 디렉티브에 대해 초기화가 수행됩니다.
  */
 function initializeInputAndOutputAliases(
   tView: TView,
@@ -264,20 +255,20 @@ function initializeInputAndOutputAliases(
   }
 }
 
-/** Types of bindings that can be exposed by a directive. */
+/** 디렉티브에 의해 노출될 수 있는 바인딩 유형. */
 const enum BindingType {
   Inputs,
   Outputs,
 }
 
 /**
- * Sets up the input/output bindings for a directive that was matched in the template through its
- * selector. This method is called repeatedly to build up all of the available inputs on a node.
+ * 템플릿에서 선택자를 통해 일치한 디렉티브의 입력/출력 바인딩을 설정합니다.
+ * 이 메서드는 노드의 모든 사용 가능한 입력을 구성하기 위해 반복적으로 호출됩니다.
  *
- * @param mode Whether inputs or outputs are being contructed.
- * @param tNode Node on which the bindings are being set up.
- * @param def Directive definition for which the bindings are being set up.
- * @param directiveIndex Index at which the directive instance will be stored in the LView.
+ * @param mode 입력 또는 출력이 구성되고 있는지 여부.
+ * @param tNode 바인딩이 설정될 노드.
+ * @param def 바인딩이 설정될 디렉티브 정의.
+ * @param directiveIndex LView에 디렉티브 인스턴스가 저장될 인덱스.
  */
 function setupSelectorMatchedInputsOrOutputs<T>(
   mode: BindingType,
@@ -303,11 +294,11 @@ function setupSelectorMatchedInputsOrOutputs<T>(
 }
 
 /**
- * Sets up input/output bindings that were defined through host directives on a specific node.
- * @param mode Whether inputs or outputs are being contructed.
- * @param tNode Node on which the bindings are being set up.
- * @param config Host directive definition that is being set up.
- * @param directiveIndex Index at which the directive instance will be stored in the LView.
+ * 특정 노드에서 호스트 디렉티브를 통해 정의된 입력/출력 바인딩을 설정합니다.
+ * @param mode 입력 또는 출력이 구성되고 있는지 여부.
+ * @param tNode 바인딩이 설정될 노드.
+ * @param config 설정할 호스트 디렉티브 정의.
+ * @param directiveIndex LView에 디렉티브 인스턴스가 저장될 인덱스.
  */
 function setupHostDirectiveInputsOrOutputs(
   mode: BindingType,
@@ -342,18 +333,18 @@ function setShadowStylingInputFlags(tNode: TNode, publicName: string): void {
 }
 
 /**
- * Sets up the initialInputData for a node and stores it in the template's static storage
- * so subsequent template invocations don't have to recalculate it.
+ * 노드에 대한 initialInputData를 설정하고 이를 템플릿의 정적 저장소에 저장합니다.
+ * 이후의 템플릿 호출이 다시 계산할 필요가 없도록 합니다.
  *
- * initialInputData is an array containing values that need to be set as input properties
- * for directives on this node, but only once on creation. We need this array to support
- * the case where you set an @Input property of a directive using attribute-like syntax.
- * e.g. if you have a `name` @Input, you can set it once like this:
+ * initialInputData는 이 노드의 디렉티브에 대한 입력 properties로 설정해야 하는 값들을 포함하는 배열입니다.
+ * 그러나 생성 시 한 번만 설정합니다. 이러한 배열이 필요한 이유는 @Input 속성을
+ * attribute-like 구문을 사용하여 설정하는 경우를 지원하기 위해서입니다.
+ * 예를 들어, `name` @Input이 있는 경우 다음과 같이 한 번 설정할 수 있습니다.
  *
  * <my-component name="Bess"></my-component>
  *
- * @param tNode TNode on which to set up the initial inputs.
- * @param directiveIndex Index of the directive that is currently being processed.
+ * @param tNode 초기 속성을 설정할 TNode.
+ * @param directiveIndex 현재 처리 중인 디렉티브의 인덱스.
  */
 function setupInitialInputs(tNode: TNode, directiveIndex: number, isHostDirective: boolean): void {
   const {attrs, inputs, hostDirectiveInputs} = tNode;
@@ -362,8 +353,7 @@ function setupInitialInputs(tNode: TNode, directiveIndex: number, isHostDirectiv
     attrs === null ||
     (!isHostDirective && inputs === null) ||
     (isHostDirective && hostDirectiveInputs === null) ||
-    // Do not use unbound attributes as inputs to structural directives, since structural
-    // directive inputs can only be set using microsyntax (e.g. `<div *dir="exp">`).
+    // 구조적 디렉티브에 대해 바인딩되지 않은 속성을 입력으로 사용하지 않도록 합니다.
     isInlineTemplate(tNode)
   ) {
     tNode.initialInputs ??= [];
@@ -376,29 +366,28 @@ function setupInitialInputs(tNode: TNode, directiveIndex: number, isHostDirectiv
   while (i < attrs.length) {
     const attrName = attrs[i];
     if (attrName === AttributeMarker.NamespaceURI) {
-      // We do not allow inputs on namespaced attributes.
+      // 우리는 네임스페이스가 있는 속성에서 입력을 허용하지 않습니다.
       i += 4;
       continue;
     } else if (attrName === AttributeMarker.ProjectAs) {
-      // Skip over the `ngProjectAs` value.
+      // `ngProjectAs` 값을 건너뜁니다.
       i += 2;
       continue;
     } else if (typeof attrName === 'number') {
-      // If we hit any other attribute markers, we're done anyway. None of those are valid inputs.
+      // 다른 속성 마커에 도달하면 이미 완료된 것입니다. 그 중 어느 것도 유효한 입력이 아닙니다.
       break;
     }
 
     if (!isHostDirective && inputs!.hasOwnProperty(attrName as string)) {
-      // Find the input's public name from the input store. Note that we can be found easier
-      // through the directive def, but we want to do it using the inputs store so that it can
-      // account for host directive aliases.
+      // 입력 저장소에서 입력의 공개 이름을 찾습니다. 우리는 디렉티브 정의를 통해 쉽게 찾을 수 있지만,
+      // 호스트 디렉티브 별칭을 고려하기 위해 입력 저장소를 사용하고자 합니다.
       const inputConfig = inputs![attrName as string];
 
       for (const index of inputConfig) {
         if (index === directiveIndex) {
           inputsToStore ??= [];
           inputsToStore.push(attrName as string, attrs[i + 1] as string);
-          // A directive can't have multiple inputs with the same name so we can break here.
+          // 디렉티브는 동일한 이름으로 여러 개의 입력을 가질 수 없으므로 여기에서 중단할 수 있습니다.
           break;
         }
       }
@@ -421,15 +410,15 @@ function setupInitialInputs(tNode: TNode, directiveIndex: number, isHostDirectiv
 }
 
 /**
- * Setup directive for instantiation.
+ * 디렉티브를 인스턴스화하기 위해 설정합니다.
  *
- * We need to create a `NodeInjectorFactory` which is then inserted in both the `Blueprint` as well
- * as `LView`. `TView` gets the `DirectiveDef`.
+ * 우리는 `NodeInjectorFactory`를 생성해야 하며, 이는 `Blueprint`와 `LView` 모두에 삽입됩니다.
+ * `TView`는 `DirectiveDef`를 받습니다.
  *
  * @param tView `TView`
  * @param tNode `TNode`
  * @param lView `LView`
- * @param directiveIndex Index where the directive will be stored in the Expando.
+ * @param directiveIndex 디렉티브가 Expando에 저장될 인덱스.
  * @param def `DirectiveDef`
  */
 function configureViewWithDirective<T>(
@@ -440,13 +429,12 @@ function configureViewWithDirective<T>(
   def: DirectiveDef<T>,
 ): void {
   ngDevMode &&
-    assertGreaterThanOrEqual(directiveIndex, HEADER_OFFSET, 'Must be in Expando section');
+    assertGreaterThanOrEqual(directiveIndex, HEADER_OFFSET, 'Expando 섹션에 있어야 합니다');
   tView.data[directiveIndex] = def;
   const directiveFactory =
     def.factory || ((def as Writable<DirectiveDef<T>>).factory = getFactoryDef(def.type, true));
-  // Even though `directiveFactory` will already be using `ɵɵdirectiveInject` in its generated code,
-  // we also want to support `inject()` directly from the directive constructor context so we set
-  // `ɵɵdirectiveInject` as the inject implementation here too.
+  // `directiveFactory`가 이미 생성된 코드에서 `ɵɵdirectiveInject`를 사용하게 되지만,
+  // 디렉티브 생성자 컨텍스트에서 `inject()`를 직접 지원하고자 하므로 여기에서도 `ɵɵdirectiveInject`를 설정합니다.
   const nodeInjectorFactory = new NodeInjectorFactory(
     directiveFactory,
     isComponentDef(def),
@@ -465,13 +453,13 @@ function configureViewWithDirective<T>(
 }
 
 /**
- * Add `hostBindings` to the `TView.hostBindingOpCodes`.
+ * `TView.hostBindingOpCodes`에 `hostBindings`를 추가합니다.
  *
- * @param tView `TView` to which the `hostBindings` should be added.
- * @param tNode `TNode` the element which contains the directive
- * @param directiveIdx Directive index in view.
- * @param directiveVarsIdx Where will the directive's vars be stored
- * @param def `ComponentDef`/`DirectiveDef`, which contains the `hostVars`/`hostBindings` to add.
+ * @param tView `TView`에 `hostBindings`를 추가해야 합니다.
+ * @param tNode 디렉티브가 포함된 요소의 `TNode`
+ * @param directiveIdx 뷰에서의 디렉티브 인덱스.
+ * @param directiveVarsIdx 디렉티브의 변수가 저장될 위치
+ * @param def `hostVars`/`hostBindings`를 포함하는 `ComponentDef`/`DirectiveDef`.
  */
 export function registerHostBindingOpCodes(
   tView: TView,
@@ -490,9 +478,9 @@ export function registerHostBindingOpCodes(
     }
     const elementIndx = ~tNode.index;
     if (lastSelectedElementIdx(hostBindingOpCodes) != elementIndx) {
-      // Conditionally add select element so that we are more efficient in execution.
-      // NOTE: this is strictly not necessary and it trades code size for runtime perf.
-      // (We could just always add it.)
+      // 기준을 추가하여 실행에서 더 효율적으로 할 수 있도록 합니다.
+      // NOTE: 이것은 엄밀히 필요하지 않으며 코드 크기를 실행 성능과 교환합니다.
+      // (항상 추가할 수 있습니다.)
       hostBindingOpCodes.push(elementIndx);
     }
     hostBindingOpCodes.push(directiveIdx, directiveVarsIdx, hostBindings);
@@ -500,12 +488,12 @@ export function registerHostBindingOpCodes(
 }
 
 /**
- * Returns the last selected element index in the `HostBindingOpCodes`
+ * `HostBindingOpCodes`에서 마지막 선택된 요소 인덱스를 반환합니다.
  *
- * For perf reasons we don't need to update the selected element index in `HostBindingOpCodes` only
- * if it changes. This method returns the last index (or '0' if not found.)
+ * 성능 상 이유로 선택된 요소 인덱스가 변경된 경우에만 `HostBindingOpCodes`에서 업데이트할 필요가 없습니다.
+ * 이 메서드는 마지막 인덱스(또는 없으면 '0')를 반환합니다.
  *
- * Selected element index are only the ones which are negative.
+ * 선택된 요소 인덱스는 부호가 있는 값만 포함됩니다.
  */
 function lastSelectedElementIdx(hostBindingOpCodes: HostBindingOpCodes): number {
   let i = hostBindingOpCodes.length;
@@ -519,8 +507,8 @@ function lastSelectedElementIdx(hostBindingOpCodes: HostBindingOpCodes): number 
 }
 
 /**
- * Builds up an export map as directives are created, so local refs can be quickly mapped
- * to their directive instances.
+ * 디렉티브가 생성될 때 내보내기 맵을 구축하여 로컬 참조를 해당
+ * 디렉티브 인스턴스에 빠르게 매핑할 수 있도록 합니다.
  */
 function saveNameToExportMap(
   directiveIdx: number,
@@ -538,26 +526,26 @@ function saveNameToExportMap(
 }
 
 /**
- * Initializes the flags on the current node, setting all indices to the initial index,
- * the directive count to 0, and adding the isComponent flag.
- * @param index the initial index
+ * 현재 노드의 플래그를 초기화하고 모든 인덱스를 초기 인덱스로 설정
+ * 디렉티브 수를 0으로 설정하고 isComponent 플래그를 추가합니다.
+ * @param index 초기 인덱스
  */
 function initTNodeFlags(tNode: TNode, index: number, numberOfDirectives: number) {
   ngDevMode &&
     assertNotEqual(
       numberOfDirectives,
       tNode.directiveEnd - tNode.directiveStart,
-      'Reached the max number of directives',
+      '최대 디렉티브 수에 도달했습니다',
     );
   tNode.flags |= TNodeFlags.isDirectiveHost;
-  // When the first directive is created on a node, save the index
+  // 노드에 첫 번째 디렉티브가 생성되면 인덱스를 저장합니다.
   tNode.directiveStart = index;
   tNode.directiveEnd = index + numberOfDirectives;
   tNode.providerIndexes = index;
 }
 
 function assertNoDuplicateDirectives(directives: DirectiveDef<unknown>[]): void {
-  // The array needs at least two elements in order to have duplicates.
+  // 배열에는 중복이 있을 수 있으려면 최소 두 개의 요소가 필요합니다.
   if (directives.length < 2) {
     return;
   }
@@ -568,8 +556,8 @@ function assertNoDuplicateDirectives(directives: DirectiveDef<unknown>[]): void 
     if (seenDirectives.has(current)) {
       throw new RuntimeError(
         RuntimeErrorCode.DUPLICATE_DIRECTIVE,
-        `Directive ${current.type.name} matches multiple times on the same element. ` +
-          `Directives can only match an element once.`,
+        `디렉티브 ${current.type.name}가 동일한 요소에서 여러 번 일치합니다. ` +
+          `디렉티브는 요소에서 한 번만 일치할 수 있습니다.`,
       );
     }
     seenDirectives.add(current);

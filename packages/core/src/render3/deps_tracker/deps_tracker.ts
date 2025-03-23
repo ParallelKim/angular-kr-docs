@@ -28,16 +28,16 @@ import {
 } from './api';
 
 /**
- * Indicates whether to use the runtime dependency tracker for scope calculation in JIT compilation.
- * The value "false" means the old code path based on patching scope info into the types will be
- * used.
+ * JIT 컴파일에서 스코프 계산을 위해 런타임 의존성 트래커를 사용할지 여부를 나타냅니다.
+ * 값 "false"는 유형에 스코프 정보를 패치하는 기반의 이전 코드 경로가
+ * 사용됨을 의미합니다.
  *
- * @deprecated For migration purposes only, to be removed soon.
+ * @deprecated 마이그레이션 목적을 위해서만, 곧 제거될 예정입니다.
  */
 export const USE_RUNTIME_DEPS_TRACKER_FOR_JIT = true;
 
 /**
- * An implementation of DepsTrackerApi which will be used for JIT and local compilation.
+ * JIT 및 로컬 컴파일에 사용될 DepsTrackerApi의 구현입니다.
  */
 class DepsTracker implements DepsTrackerApi {
   private ownerNgModule = new Map<ComponentType<any>, NgModuleType<any>>();
@@ -46,9 +46,10 @@ class DepsTracker implements DepsTrackerApi {
   private standaloneComponentsScopeCache = new Map<ComponentType<any>, StandaloneComponentScope>();
 
   /**
-   * Attempts to resolve ng module's forward ref declarations as much as possible and add them to
-   * the `ownerNgModule` map. This method normally should be called after the initial parsing when
-   * all the forward refs are resolved (e.g., when trying to render a component)
+   * 가능한 한 많이 ng 모듈의 포워드 참조 선언을 해결하고
+   * `ownerNgModule` 맵에 추가하려고 시도합니다. 이 메서드는 일반적으로
+   * 초기 구문 분석 후에 호출되어야 하며, 이때 모든 포워드 참조가 해결됩니다
+   * (예: 컴포넌트를 렌더링하려고 할 때).
    */
   private resolveNgModulesDecls(): void {
     if (this.ngModulesWithSomeUnresolvedDecls.size === 0) {
@@ -78,9 +79,7 @@ class DepsTracker implements DepsTrackerApi {
 
     const def = getComponentDef(type);
     if (def === null) {
-      throw new Error(
-        `Attempting to get component dependencies for a type that is not a component: ${type}`,
-      );
+      throw new Error(`컴포넌트가 아닌 유형의 컴포넌트 의존성을 가져오려고 시도했습니다: ${type}`);
     }
 
     if (def.standalone) {
@@ -99,8 +98,8 @@ class DepsTracker implements DepsTrackerApi {
       };
     } else {
       if (!this.ownerNgModule.has(type)) {
-        // This component is orphan! No need to handle the error since the component rendering
-        // pipeline (e.g., view_container_ref) will check for this error based on configs.
+        // 이 컴포넌트는 고아입니다! 이 오류를 처리할 필요는 없습니다.
+        // 구성에 따라 오류를 확인할 것입니다.
         return {dependencies: []};
       }
 
@@ -118,15 +117,16 @@ class DepsTracker implements DepsTrackerApi {
 
   /**
    * @override
-   * This implementation does not make use of param scopeInfo since it assumes the scope info is
-   * already added to the type itself through methods like {@link ɵɵsetNgModuleScope}
+   * 이 구현은 scopeInfo를 사용하지 않습니다.
+   * 이는 scope 정보가 {@link ɵɵsetNgModuleScope}와 같은 방법을 통해
+   * 유형 자체에 이미 추가되었다고 가정하기 때문입니다.
    */
   registerNgModule(type: Type<any>, scopeInfo: NgModuleScopeInfoFromDecorator): void {
     if (!isNgModule(type)) {
-      throw new Error(`Attempting to register a Type which is not NgModule as NgModule: ${type}`);
+      throw new Error(`NgModule이 아닌 유형을 NgModule로 등록하려고 시도했습니다: ${type}`);
     }
 
-    // Lazily process the NgModules later when needed.
+    // 필요할 때 NgModules를 지연 처리를 합니다.
     this.ngModulesWithSomeUnresolvedDecls.add(type);
   }
 
@@ -148,7 +148,7 @@ class DepsTracker implements DepsTrackerApi {
     return scope;
   }
 
-  /** Compute NgModule scope afresh. */
+  /** NgModule 스코프를 새롭게 계산합니다. */
   private computeNgModuleScope(type: NgModuleType<any>): NgModuleScope {
     const def = getNgModuleDef(type, true);
     const scope: NgModuleScope = {
@@ -156,13 +156,14 @@ class DepsTracker implements DepsTrackerApi {
       compilation: {directives: new Set(), pipes: new Set()},
     };
 
-    // Analyzing imports
+    // 가져오기 분석
     for (const imported of maybeUnwrapFn(def.imports)) {
       if (isNgModule(imported)) {
         const importedScope = this.getNgModuleScope(imported);
 
-        // When this module imports another, the imported module's exported directives and pipes
-        // are added to the compilation scope of this module.
+        // 이 모듈이 다른 모듈을 가져올 때,
+        // 가져온 모듈의 내보낸 지시자와 파이프가
+        // 이 모듈의 컴파일 스코프에 추가됩니다.
         addSet(importedScope.exported.directives, scope.compilation.directives);
         addSet(importedScope.exported.pipes, scope.compilation.pipes);
       } else if (isStandalone(imported)) {
@@ -171,24 +172,25 @@ class DepsTracker implements DepsTrackerApi {
         } else if (isPipe(imported)) {
           scope.compilation.pipes.add(imported);
         } else {
-          // The standalone thing is neither a component nor a directive nor a pipe ... (what?)
+          // 독립 실행형 유형이 아니라면 ... (뭐지?)
           throw new RuntimeError(
             RuntimeErrorCode.RUNTIME_DEPS_INVALID_IMPORTED_TYPE,
-            'The standalone imported type is neither a component nor a directive nor a pipe',
+            '독립 실행형으로 가져온 유형은 컴포넌트, 지시자, 파이프가 아닙니다',
           );
         }
       } else {
-        // The import is neither a module nor a module-with-providers nor a standalone thing. This
-        // is going to be an error. So we short circuit.
+        // 가져오는 것이 모듈이나 제공자가 있는 모듈 또는 독립 실행형이 아닙니다.
+        // 이는 오류가 생길 것입니다.
+        // 그래서 우리는 짧은 경로로 갑니다.
         scope.compilation.isPoisoned = true;
         break;
       }
     }
 
-    // Analyzing declarations
+    // 선언 분석
     if (!scope.compilation.isPoisoned) {
       for (const decl of maybeUnwrapFn(def.declarations)) {
-        // Cannot declare another NgModule or a standalone thing
+        // 다른 NgModule이나 독립형을 선언할 수 없습니다.
         if (isNgModule(decl) || isStandalone(decl)) {
           scope.compilation.isPoisoned = true;
           break;
@@ -197,29 +199,30 @@ class DepsTracker implements DepsTrackerApi {
         if (isPipe(decl)) {
           scope.compilation.pipes.add(decl);
         } else {
-          // decl is either a directive or a component. The component may not yet have the ɵcmp due
-          // to async compilation.
+          // decl은 지시자 또는 컴포넌트입니다. 이 컴포넌트는 비동기 컴파일로 인해
+          // ɵcmp을 아직 가지지 않을 수 있습니다.
           scope.compilation.directives.add(decl);
         }
       }
     }
 
-    // Analyzing exports
+    // 내보내기 분석
     for (const exported of maybeUnwrapFn(def.exports)) {
       if (isNgModule(exported)) {
-        // When this module exports another, the exported module's exported directives and pipes
-        // are added to both the compilation and exported scopes of this module.
+        // 이 모듈이 다른 모듈을 내보낼 때,
+        // 내보낸 모듈의 내보낸 지시자와 파이프가
+        // 이 모듈의 컴파일 및 내보내기 스코프에 추가됩니다.
         const exportedScope = this.getNgModuleScope(exported);
 
-        // Based on the current logic there is no way to have poisoned exported scope. So no need to
-        // check for it.
+        // 현재 로직에 따르면 내보낸 스코프가 오염된 경우가 없습니다.
+        // 그래서 확인할 필요가 없습니다.
         addSet(exportedScope.exported.directives, scope.exported.directives);
         addSet(exportedScope.exported.pipes, scope.exported.pipes);
 
-        // Some test toolings which run in JIT mode depend on this behavior that the exported scope
-        // should also be present in the compilation scope, even though AoT does not support this
-        // and it is also in odds with NgModule metadata definitions. Without this some tests in
-        // Google will fail.
+        // JIT 모드에서 실행되는 일부 테스트 도구는 이 행동을
+        // 의존합니다. 내보낸 스코프는 컴파일 스코프에도 나타나야 합니다.
+        // AoT는 이를 지원하지 않으며 NgModule 메타데이터 정의와도
+        // 맞지 않습니다. 이것이 없으면 Google의 일부 테스트는 실패할 것입니다.
         addSet(exportedScope.exported.directives, scope.compilation.directives);
         addSet(exportedScope.exported.pipes, scope.compilation.pipes);
       } else if (isPipe(exported)) {
@@ -253,7 +256,7 @@ class DepsTracker implements DepsTrackerApi {
   ): StandaloneComponentScope {
     const ans: StandaloneComponentScope = {
       compilation: {
-        // Standalone components are always able to self-reference.
+        // 독립 실행형 컴포넌트는 항상 자기 참조가 가능합니다.
         directives: new Set([type]),
         pipes: new Set(),
         ngModules: new Set(),
@@ -266,7 +269,7 @@ class DepsTracker implements DepsTrackerApi {
       try {
         verifyStandaloneImport(imported, type);
       } catch (e) {
-        // Short-circuit if an import is not valid
+        // 가져온 것이 유효하지 않으면 짧은 경로로 이동
         ans.compilation.isPoisoned = true;
         return ans;
       }
@@ -275,7 +278,7 @@ class DepsTracker implements DepsTrackerApi {
         ans.compilation.ngModules.add(imported);
         const importedScope = this.getNgModuleScope(imported);
 
-        // Short-circuit if an imported NgModule has corrupted exported scope.
+        // 가져온 NgModule가 내보낸 스코프를 손상시킨 경우 짧은 경로로 이동.
         if (importedScope.exported.isPoisoned) {
           ans.compilation.isPoisoned = true;
           return ans;
@@ -288,8 +291,7 @@ class DepsTracker implements DepsTrackerApi {
       } else if (isDirective(imported) || isComponent(imported)) {
         ans.compilation.directives.add(imported);
       } else {
-        // The imported thing is not module/pipe/directive/component, so we error and short-circuit
-        // here
+        // 가져온 것은 모듈/파이프/지시자/컴포넌트가 아니므로 오류가 발생하고 짧은 경로로 이동합니다.
         ans.compilation.isPoisoned = true;
         return ans;
       }
@@ -318,7 +320,7 @@ function addSet<T>(sourceSet: Set<T>, targetSet: Set<T>): void {
   }
 }
 
-/** The deps tracker to be used in the current Angular app in dev mode. */
+/** 현재 Angular 앱에서 개발 모드로 사용될 deps 트래커입니다. */
 export const depsTracker = new DepsTracker();
 
 export const TEST_ONLY = {DepsTracker};

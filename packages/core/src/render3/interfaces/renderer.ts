@@ -13,12 +13,12 @@ import {TrustedHTML, TrustedScript, TrustedScriptURL} from '../../util/security/
 import {RComment, RElement, RNode, RText} from './renderer_dom';
 
 /**
- * The goal here is to make sure that the browser DOM API is the Renderer.
- * We do this by defining a subset of DOM API to be the renderer and then
- * use that at runtime for rendering.
+ * 여기서의 목표는 브라우저 DOM API가 Renderer임을 보장하는 것입니다.
+ * 이를 위해 DOM API의 하위 집합을 렌더러로 정의하고
+ * 런타임에서 렌더링을 위해 그것을 사용합니다.
  *
- * At runtime we can then use the DOM api directly, in server or web-worker
- * it will be easy to implement such API.
+ * 런타임에서는 DOM api를 직접 사용할 수 있으며, 서버나 웹 워커에서도
+ * 이러한 API를 쉽게 구현할 수 있습니다.
  */
 
 export type GlobalTargetName = 'document' | 'window' | 'body';
@@ -26,10 +26,10 @@ export type GlobalTargetName = 'document' | 'window' | 'body';
 export type GlobalTargetResolver = (element: any) => EventTarget;
 
 /**
- * Procedural style of API needed to create elements and text nodes.
+ * 요소와 텍스트 노드를 생성하는 데 필요한 절차적 스타일의 API입니다.
  *
- * In non-native browser environments (e.g. platforms such as web-workers), this is the
- * facade that enables element manipulation. In practice, this is implemented by `Renderer2`.
+ * 기본이 아닌 브라우저 환경(예: 웹 워커와 같은 플랫폼)에서는 요소 조작을 가능하게 하는
+ * 외관입니다. 실제로 이것은 `Renderer2`에 의해 구현됩니다.
  */
 export interface Renderer {
   destroy(): void;
@@ -37,9 +37,9 @@ export interface Renderer {
   createElement(name: string, namespace?: string | null): RElement;
   createText(value: string): RText;
   /**
-   * This property is allowed to be null / undefined,
-   * in which case the view engine won't call it.
-   * This is used as a performance optimization for production mode.
+   * 이 속성은 null/undefined일 수 있으며,
+   * 이 경우 뷰 엔진이 이를 호출하지 않습니다.
+   * 이는 프로덕션 모드에서 성능 최적화를 위해 사용됩니다.
    */
   destroyNode?: ((node: RNode) => void) | null;
   appendChild(parent: RElement, newChild: RNode): void;
@@ -64,7 +64,7 @@ export interface Renderer {
   setProperty(el: RElement, name: string, value: any): void;
   setValue(node: RText | RComment, value: string): void;
 
-  // TODO(misko): Deprecate in favor of addEventListener/removeEventListener
+  // TODO(misko): addEventListener/removeEventListener로 대체 예정
   listen(
     target: GlobalTargetName | RNode,
     eventName: string,

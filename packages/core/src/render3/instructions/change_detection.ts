@@ -72,7 +72,7 @@ import {runEffectsInView} from '../reactivity/view_effect_runner';
 import {executeTemplate} from './shared';
 
 /**
- * The maximum number of times the change detection traversal will rerun before throwing an error.
+ * 변경 감지 순회가 오류를 던지기 전에 다시 실행될 최대 횟수입니다.
  */
 export const MAXIMUM_REFRESH_RERUNS = 100;
 
@@ -80,9 +80,9 @@ export function detectChangesInternal(lView: LView, mode = ChangeDetectionMode.G
   const environment = lView[ENVIRONMENT];
   const rendererFactory = environment.rendererFactory;
 
-  // Check no changes mode is a dev only mode used to verify that bindings have not changed
-  // since they were assigned. We do not want to invoke renderer factory functions in that mode
-  // to avoid any possible side-effects.
+  // 변화 없음 모드는 바인딩이 할당된 이후로 변화가 없음을 확인하기 위해
+  // 개발 모드에서만 사용됩니다. 해당 모드에서는 렌더러 팩토리 함수가 호출되는 것을
+  // 원하지 않습니다. 가능한 부작용을 피하기 위해서입니다.
   const checkNoChangesMode = !!ngDevMode && isInCheckNoChangesMode();
 
   if (!checkNoChangesMode) {
@@ -104,35 +104,32 @@ function detectChangesInViewWhileDirty(lView: LView, mode: ChangeDetectionMode) 
     setIsRefreshingViews(true);
     detectChangesInView(lView, mode);
 
-    // We don't need or want to do any looping when in exhaustive checkNoChanges because we
-    // already traverse all the views and nothing should change so we shouldn't have to do
-    // another pass to pick up new changes.
+    // 만약 전체 검사를 하고 있는 상태에서 변화가 없다면
+    // 모든 뷰를 이미 순회했으므로 변화가 없으므 다음 패스를 진행할 필요가 없습니다.
     if (ngDevMode && isExhaustiveCheckNoChanges()) {
       return;
     }
 
     let retries = 0;
-    // If after running change detection, this view still needs to be refreshed or there are
-    // descendants views that need to be refreshed due to re-dirtying during the change detection
-    // run, detect changes on the view again. We run change detection in `Targeted` mode to only
-    // refresh views with the `RefreshView` flag.
+    // 변경 감지 후 이 뷰가 여전히 새로 고침이 필요하거나 후손 뷰가
+    // 재더러터링으로 인해 새로 고침이 필요한 경우, 다시 변경 사항을 감지합니다.
+    // `Targeted` 모드에서 변경 감지를 실행하여 `RefreshView` 플래그가
+    // 있는 뷰만 새로 고칩니다.
     while (requiresRefreshOrTraversal(lView)) {
       if (retries === MAXIMUM_REFRESH_RERUNS) {
         throw new RuntimeError(
           RuntimeErrorCode.INFINITE_CHANGE_DETECTION,
           ngDevMode &&
-            'Infinite change detection while trying to refresh views. ' +
-              'There may be components which each cause the other to require a refresh, ' +
-              'causing an infinite loop.',
+            '뷰 새로 고침 중 무한 변경 감지. ' +
+              '서로 새로 고침을 요구하는 컴포넌트가 있을 수 있으며, ' +
+              '무한 루프를 발생시킵니다.',
         );
       }
       retries++;
-      // Even if this view is detached, we still detect changes in targeted mode because this was
-      // the root of the change detection run.
       detectChangesInView(lView, ChangeDetectionMode.Targeted);
     }
   } finally {
-    // restore state to what it was before entering this change detection loop
+    // 변경 감지 루프에 들어가기 전의 상태로 복원합니다.
     setIsRefreshingViews(lastIsRefreshingViewsValue);
   }
 }
@@ -147,31 +144,30 @@ export function checkNoChangesInternal(lView: LView, mode: CheckNoChangesMode) {
 }
 
 /**
- * Different modes of traversing the logical view tree during change detection.
+ * 변경 감지 중 논리적 뷰 트리를 순회하는 다양한 모드입니다.
  *
  *
- * The change detection traversal algorithm switches between these modes based on various
- * conditions.
+ * 변화 감지 순회 알고리즘은 다양한 조건에 따라 이러한 모드 사이를 전환합니다.
  */
 export const enum ChangeDetectionMode {
   /**
-   * In `Global` mode, `Dirty` and `CheckAlways` views are refreshed as well as views with the
-   * `RefreshView` flag.
+   * `Global` 모드에서 `Dirty` 및 `CheckAlways` 뷰뿐만 아니라
+   * `RefreshView` 플래그가 있는 뷰가 새로 고쳐집니다.
    */
   Global,
   /**
-   * In `Targeted` mode, only views with the `RefreshView` flag or updated signals are refreshed.
+   * `Targeted` 모드에서는 `RefreshView` 플래그가 있거나 업데이트된 신호가 있는 뷰만 새로 고쳐집니다.
    */
   Targeted,
 }
 
 /**
- * Processes a view in update mode. This includes a number of steps in a specific order:
- * - executing a template function in update mode;
- * - executing hooks;
- * - refreshing queries;
- * - setting host bindings;
- * - refreshing child (embedded and component) views.
+ * 업데이트 모드에서 뷰를 처리합니다. 여기에는 특정 순서의 여러 단계가 포함됩니다:
+ * - 업데이트 모드에서 템플릿 함수 실행;
+ * - 후크 실행;
+ * - 쿼리 새로 고침;
+ * - 호스트 바인딩 설정;
+ * - 자식(내장 및 컴포넌트) 뷰 새로 고침.
  */
 
 export function refreshView<T>(
@@ -180,20 +176,20 @@ export function refreshView<T>(
   templateFn: ComponentTemplate<{}> | null,
   context: T,
 ) {
-  ngDevMode && assertEqual(isCreationMode(lView), false, 'Should be run in update mode');
+  ngDevMode && assertEqual(isCreationMode(lView), false, '업데이트 모드에서 실행되어야 합니다.');
 
   if (isDestroyed(lView)) return;
 
   const flags = lView[FLAGS];
 
-  // Check no changes mode is a dev only mode used to verify that bindings have not changed
-  // since they were assigned. We do not want to execute lifecycle hooks in that mode.
+  // 변화 없음 모드는 바인딩이 할당된 이후로 변화가 없음을 확인하기 위해
+  // 개발 모드에서만 사용됩니다. 해당 모드에서는 생명주기 후크를 실행하고 싶지 않습니다.
   const isInCheckNoChangesPass = ngDevMode && isInCheckNoChangesMode();
   const isInExhaustiveCheckNoChangesPass = ngDevMode && isExhaustiveCheckNoChanges();
 
-  // Start component reactive context
-  // - We might already be in a reactive context if this is an embedded view of the host.
-  // - We might be descending into a view that needs a consumer.
+  // 컴포넌트 반응형 컨텍스트 시작
+  // - 이 호스트의 내장 뷰라면 이미 반응형 컨텍스트에 있을 수 있습니다.
+  // - 소비자가 필요한 뷰로 내려갈 수 있습니다.
   enterView(lView);
   let returnConsumerToPool = true;
   let prevConsumer: ReactiveNode | null = null;
@@ -203,12 +199,6 @@ export function refreshView<T>(
       currentConsumer = getOrBorrowReactiveLViewConsumer(lView);
       prevConsumer = consumerBeforeComputation(currentConsumer);
     } else if (getActiveConsumer() === null) {
-      // If the current view should not have a reactive consumer but we don't have an active consumer,
-      // we still need to create a temporary consumer to track any signal reads in this template.
-      // This is a rare case that can happen with `viewContainerRef.createEmbeddedView(...).detectChanges()`.
-      // This temporary consumer marks the first parent that _should_ have a consumer for refresh.
-      // Once that refresh happens, the signals will be tracked in the parent consumer and we can destroy
-      // the temporary one.
       returnConsumerToPool = false;
       currentConsumer = getOrCreateTemporaryConsumer(lView);
       prevConsumer = consumerBeforeComputation(currentConsumer);
@@ -229,8 +219,8 @@ export function refreshView<T>(
     const hooksInitPhaseCompleted =
       (flags & LViewFlags.InitPhaseStateMask) === InitPhaseState.InitPhaseCompleted;
 
-    // execute pre-order hooks (OnInit, OnChanges, DoCheck)
-    // PERF WARNING: do NOT extract this to a separate function without running benchmarks
+    // 사전 순회 후크 실행 (OnInit, OnChanges, DoCheck)
+    // 성능 경고: 이 함수는 분리하여 추출하지 마십시오. 벤치마크를 실행하지 않고.
     if (!isInCheckNoChangesPass) {
       if (hooksInitPhaseCompleted) {
         const preOrderCheckHooks = tView.preOrderCheckHooks;
@@ -246,24 +236,20 @@ export function refreshView<T>(
       }
     }
 
-    // We do not need to mark transplanted views for refresh when doing exhaustive checks
-    // because all views will be reached anyways during the traversal.
+    // 전체 검사를 수행할 때 이식된 뷰를 새로 고침할 필요가 없습니다.
     if (!isInExhaustiveCheckNoChangesPass) {
-      // First mark transplanted views that are declared in this lView as needing a refresh at their
-      // insertion points. This is needed to avoid the situation where the template is defined in this
-      // `LView` but its declaration appears after the insertion component.
       markTransplantedViewsForRefresh(lView);
     }
     runEffectsInView(lView);
     detectChangesInEmbeddedViews(lView, ChangeDetectionMode.Global);
 
-    // Content query results must be refreshed before content hooks are called.
+    // 콘텐츠 쿼리 결과는 콘텐츠 후크가 호출되기 전에 새로 고쳐야 합니다.
     if (tView.contentQueries !== null) {
       refreshContentQueries(tView, lView);
     }
 
-    // execute content hooks (AfterContentInit, AfterContentChecked)
-    // PERF WARNING: do NOT extract this to a separate function without running benchmarks
+    // 콘텐츠 후크 실행 (AfterContentInit, AfterContentChecked)
+    // 성능 경고: 이 함수를 분리하여 추출하지 마십시오. 벤치마크를 실행하지 않고.
     if (!isInCheckNoChangesPass) {
       if (hooksInitPhaseCompleted) {
         const contentCheckHooks = tView.contentCheckHooks;
@@ -285,22 +271,20 @@ export function refreshView<T>(
 
     processHostBindingOpCodes(tView, lView);
 
-    // Refresh child component views.
+    // 자식 컴포넌트 뷰 새로 고침.
     const components = tView.components;
     if (components !== null) {
       detectChangesInChildComponents(lView, components, ChangeDetectionMode.Global);
     }
 
-    // View queries must execute after refreshing child components because a template in this view
-    // could be inserted in a child component. If the view query executes before child component
-    // refresh, the template might not yet be inserted.
+    // 뷰 쿼리는 자식 컴포넌트를 새로 고친 후에 실행되어야 합니다.
     const viewQuery = tView.viewQuery;
     if (viewQuery !== null) {
       executeViewQueryFn<T>(RenderFlags.Update, viewQuery, context);
     }
 
-    // execute view hooks (AfterViewInit, AfterViewChecked)
-    // PERF WARNING: do NOT extract this to a separate function without running benchmarks
+    // 뷰 후크 실행 (AfterViewInit, AfterViewChecked)
+    // 성능 경고: 이 함수를 분리하여 추출하지 마십시오. 벤치마크를 실행하지 않고.
     if (!isInCheckNoChangesPass) {
       if (hooksInitPhaseCompleted) {
         const viewCheckHooks = tView.viewCheckHooks;
@@ -316,16 +300,10 @@ export function refreshView<T>(
       }
     }
     if (tView.firstUpdatePass === true) {
-      // We need to make sure that we only flip the flag on successful `refreshView` only
-      // Don't do this in `finally` block.
-      // If we did this in `finally` block then an exception could block the execution of styling
-      // instructions which in turn would be unable to insert themselves into the styling linked
-      // list. The result of this would be that if the exception would not be throw on subsequent CD
-      // the styling would be unable to process it data and reflect to the DOM.
       tView.firstUpdatePass = false;
     }
 
-    // Schedule any effects that are waiting on the update pass of this view.
+    // 이 뷰의 업데이트 패스에서 기다리는 효과를 예약합니다.
     if (lView[EFFECTS_TO_SCHEDULE]) {
       for (const notifyEffect of lView[EFFECTS_TO_SCHEDULE]) {
         notifyEffect();
@@ -367,8 +345,8 @@ export function refreshView<T>(
 }
 
 /**
- * Goes over embedded views (ones created through ViewContainerRef APIs) and refreshes
- * them by executing an associated template function.
+ * 내장 뷰 (ViewContainerRef API를 통해 생성된 뷰)를 순회하고
+ * 관련 템플릿 함수를 실행하여 새로 고칩니다.
  */
 function detectChangesInEmbeddedViews(lView: LView, mode: ChangeDetectionMode) {
   for (
@@ -384,9 +362,9 @@ function detectChangesInEmbeddedViews(lView: LView, mode: ChangeDetectionMode) {
 }
 
 /**
- * Mark transplanted views as needing to be refreshed at their attachment points.
+ * 이식된 뷰를 해당 부착 지점에서 새로 고쳐야 함으로 표시합니다.
  *
- * @param lView The `LView` that may have transplanted views.
+ * @param lView 이식된 뷰를 가질 수 있는 `LView`.
  */
 function markTransplantedViewsForRefresh(lView: LView) {
   for (
@@ -397,7 +375,7 @@ function markTransplantedViewsForRefresh(lView: LView) {
     if (!(lContainer[FLAGS] & LContainerFlags.HasTransplantedViews)) continue;
 
     const movedViews = lContainer[MOVED_VIEWS]!;
-    ngDevMode && assertDefined(movedViews, 'Transplanted View flags set but missing MOVED_VIEWS');
+    ngDevMode && assertDefined(movedViews, '이식된 뷰 플래그 설정되었지만 MOVED_VIEWS가 없음');
     for (let i = 0; i < movedViews.length; i++) {
       const movedLView = movedViews[i]!;
       markViewForRefresh(movedLView);
@@ -406,17 +384,18 @@ function markTransplantedViewsForRefresh(lView: LView) {
 }
 
 /**
- * Detects changes in a component by entering the component view and processing its bindings,
- * queries, etc. if it is CheckAlways, OnPush and Dirty, etc.
+ * 컴포넌트 뷰에 들어가 바인딩, 쿼리 등을 처리하면서
+ * CheckAlways, OnPush 및 Dirty 등일 경우 변경을 감지합니다.
  *
- * @param componentHostIdx  Element index in LView[] (adjusted for HEADER_OFFSET)
+ * @param componentHostIdx  LView[]의 요소 인덱스 (HEADER_OFFSET에 대해 조정됨)
  */
 function detectChangesInComponent(
   hostLView: LView,
   componentHostIdx: number,
   mode: ChangeDetectionMode,
 ): void {
-  ngDevMode && assertEqual(isCreationMode(hostLView), false, 'Should be run in update mode');
+  ngDevMode &&
+    assertEqual(isCreationMode(hostLView), false, '업데이트 모드에서 실행되어야 합니다.');
   profiler(ProfilerEvent.ComponentStart);
 
   const componentView = getComponentLViewByIndex(componentHostIdx, hostLView);
@@ -426,9 +405,9 @@ function detectChangesInComponent(
 }
 
 /**
- * Visits a view as part of change detection traversal.
+ * 변경 감지 순회의 일환으로 뷰를 방문합니다.
  *
- * If the view is detached, no additional traversal happens.
+ * 뷰가 분리된 경우 추가 순회가 발생하지 않습니다.
  */
 function detectChangesInViewIfAttached(lView: LView, mode: ChangeDetectionMode) {
   if (!viewAttachedToChangeDetector(lView)) {
@@ -438,14 +417,13 @@ function detectChangesInViewIfAttached(lView: LView, mode: ChangeDetectionMode) 
 }
 
 /**
- * Visits a view as part of change detection traversal.
+ * 변경 감지 순회의 일환으로 뷰를 방문합니다.
  *
- * The view is refreshed if:
- * - If the view is CheckAlways or Dirty and ChangeDetectionMode is `Global`
- * - If the view has the `RefreshView` flag
+ * 뷰가 새로 고쳐지는 조건:
+ * - 뷰가 CheckAlways 또는 Dirty이고 변화 감지 모드가 `Global`인 경우
+ * - 뷰에 `RefreshView` 플래그가 있는 경우
  *
- * The view is not refreshed, but descendants are traversed in `ChangeDetectionMode.Targeted` if the
- * view HasChildViewsToRefresh flag is set.
+ * 뷰가 새로 고쳐지지 않지만 후손은 `ChangeDetectionMode.Targeted`로 순회됩니다.
  */
 function detectChangesInView(lView: LView, mode: ChangeDetectionMode) {
   const isInCheckNoChangesPass = ngDevMode && isInCheckNoChangesMode();
@@ -453,33 +431,27 @@ function detectChangesInView(lView: LView, mode: ChangeDetectionMode) {
   const flags = lView[FLAGS];
   const consumer = lView[REACTIVE_TEMPLATE_CONSUMER];
 
-  // Refresh CheckAlways views in Global mode.
+  // 글로벌 모드에서 CheckAlways 뷰 새로 고침.
   let shouldRefreshView: boolean = !!(
     mode === ChangeDetectionMode.Global && flags & LViewFlags.CheckAlways
   );
 
-  // Refresh Dirty views in Global mode, as long as we're not in checkNoChanges.
-  // CheckNoChanges never worked with `OnPush` components because the `Dirty` flag was
-  // cleared before checkNoChanges ran. Because there is now a loop for to check for
-  // backwards views, it gives an opportunity for `OnPush` components to be marked `Dirty`
-  // before the CheckNoChanges pass. We don't want existing errors that are hidden by the
-  // current CheckNoChanges bug to surface when making unrelated changes.
+  // 글로벌 모드에서 더러운 뷰를 새로 고침합니다. 다만 변화 없음 모두가 아닐 경우에만.
   shouldRefreshView ||= !!(
     flags & LViewFlags.Dirty &&
     mode === ChangeDetectionMode.Global &&
     !isInCheckNoChangesPass
   );
 
-  // Always refresh views marked for refresh, regardless of mode.
+  // 새로 고침이 표시된 뷰는 모드와 관계없이 항상 새로 고쳐집니다.
   shouldRefreshView ||= !!(flags & LViewFlags.RefreshView);
 
-  // Refresh views when they have a dirty reactive consumer, regardless of mode.
+  // 더러운 반응형 소비자가 있을 경우 모드에 상관없이 새로 고침합니다.
   shouldRefreshView ||= !!(consumer?.dirty && consumerPollProducersForChange(consumer));
 
   shouldRefreshView ||= !!(ngDevMode && isExhaustiveCheckNoChanges());
 
-  // Mark the Flags and `ReactiveNode` as not dirty before refreshing the component, so that they
-  // can be re-dirtied during the refresh process.
+  // 컴포넌트를 새로 고치기 전에 플래그와 `ReactiveNode`를 더럽혀지지 않도록 설정합니다.
   if (consumer) {
     consumer.dirty = false;
   }
@@ -502,7 +474,7 @@ function detectChangesInView(lView: LView, mode: ChangeDetectionMode) {
   }
 }
 
-/** Refreshes child components in the current view (update mode). */
+/** 현재 뷰 내의 자식 컴포넌트를 새로 고칩니다 (업데이트 모드). */
 function detectChangesInChildComponents(
   hostLView: LView,
   components: number[],
@@ -514,13 +486,13 @@ function detectChangesInChildComponents(
 }
 
 /**
- * Invoke `HostBindingsFunction`s for view.
+ * 뷰에 대한 `HostBindingsFunction` 호출합니다.
  *
- * This methods executes `TView.hostBindingOpCodes`. It is used to execute the
- * `HostBindingsFunction`s associated with the current `LView`.
+ * 이 메서드는 `TView.hostBindingOpCodes`를 실행합니다.
+ * 현재 `LView`와 관련된 `HostBindingsFunction`을 실행하는 데 사용됩니다.
  *
- * @param tView Current `TView`.
- * @param lView Current `LView`.
+ * @param tView 현재 `TView`.
+ * @param lView 현재 `LView`.
  */
 function processHostBindingOpCodes(tView: TView, lView: LView): void {
   const hostBindingOpCodes = tView.hostBindingOpCodes;
@@ -529,10 +501,10 @@ function processHostBindingOpCodes(tView: TView, lView: LView): void {
     for (let i = 0; i < hostBindingOpCodes.length; i++) {
       const opCode = hostBindingOpCodes[i] as number;
       if (opCode < 0) {
-        // Negative numbers are element indexes.
+        // 음수는 요소 인덱스입니다.
         setSelectedIndex(~opCode);
       } else {
-        // Positive numbers are NumberTuple which store bindingRootIndex and directiveIndex.
+        // 양수는 NumberTuple로 바인딩 루트 인덱스 및 지시자 인덱스를 저장합니다.
         const directiveIdx = opCode;
         const bindingRootIndx = hostBindingOpCodes[++i] as number;
         const hostBindingFn = hostBindingOpCodes[++i] as HostBindingsFunction<any>;

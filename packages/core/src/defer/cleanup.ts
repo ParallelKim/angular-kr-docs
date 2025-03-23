@@ -15,8 +15,7 @@ import {
 } from './interfaces';
 
 /**
- * Registers a cleanup function associated with a prefetching trigger
- * or a regular trigger of a defer block.
+ * prefetching 트리거 또는 defer 블록의 일반 트리거와 관련된 정리 함수 등록
  */
 export function storeTriggerCleanupFn(
   type: TriggerType,
@@ -31,7 +30,7 @@ export function storeTriggerCleanupFn(
 }
 
 /**
- * Invokes registered cleanup functions either for prefetch or for regular triggers.
+ * prefetch 또는 일반 트리거에 대해 등록된 정리 함수 호출
  */
 export function invokeTriggerCleanupFns(type: TriggerType, lDetails: LDeferBlockDetails) {
   const key = getCleanupFnKeyByType(type);
@@ -45,7 +44,7 @@ export function invokeTriggerCleanupFns(type: TriggerType, lDetails: LDeferBlock
 }
 
 /**
- * Invokes registered cleanup functions for prefetch, hydrate, and regular triggers.
+ * prefetch, hydrate 및 일반 트리거에 대해 등록된 정리 함수 호출
  */
 export function invokeAllTriggerCleanupFns(lDetails: LDeferBlockDetails) {
   invokeTriggerCleanupFns(TriggerType.Prefetch, lDetails);

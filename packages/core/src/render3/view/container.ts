@@ -44,13 +44,13 @@ import {
 import {updateAncestorTraversalFlagsOnAttach} from '../util/view_utils';
 
 /**
- * Creates a LContainer, either from a container instruction, or for a ViewContainerRef.
+ * 컨테이너 지시문 또는 ViewContainerRef에서 LContainer를 생성합니다.
  *
- * @param hostNative The host element for the LContainer
- * @param hostTNode The host TNode for the LContainer
- * @param currentView The parent view of the LContainer
- * @param native The native comment element
- * @param isForViewContainerRef Optional a flag indicating the ViewContainerRef case
+ * @param hostNative LContainer의 호스트 요소
+ * @param hostTNode LContainer의 호스트 TNode
+ * @param currentView LContainer의 부모 뷰
+ * @param native 네이티브 주석 요소
+ * @param isForViewContainerRef ViewContainerRef의 경우를 나타내는 선택적 플래그
  * @returns LContainer
  */
 export function createLContainer(
@@ -61,22 +61,22 @@ export function createLContainer(
 ): LContainer {
   ngDevMode && assertLView(currentView);
   const lContainer: LContainer = [
-    hostNative, // host native
-    true, // Boolean `true` in this position signifies that this is an `LContainer`
-    0, // flags
-    currentView, // parent
-    null, // next
+    hostNative, // 호스트 네이티브
+    true, // 이 위치에 있는 Boolean `true`는 이것이 `LContainer`임을 의미합니다
+    0, // 플래그
+    currentView, // 부모
+    null, // 다음
     tNode, // t_host
-    null, // dehydrated views
-    native, // native,
-    null, // view refs
-    null, // moved views
+    null, // 탈수된 뷰
+    native, // 네이티브,
+    null, // 뷰 참조
+    null, // 이동된 뷰
   ];
   ngDevMode &&
     assertEqual(
       lContainer.length,
       CONTAINER_HEADER_OFFSET,
-      'Should allocate correct number of slots for LContainer header.',
+      'LContainer 헤더에 대한 올바른 슬롯 수를 할당해야 합니다.',
     );
   return lContainer;
 }
@@ -86,7 +86,7 @@ export function getLViewFromLContainer<T>(
   index: number,
 ): LView<T> | undefined {
   const adjustedIndex = CONTAINER_HEADER_OFFSET + index;
-  // avoid reading past the array boundaries
+  // 배열 경계를 초과 읽지 않도록 합니다.
   if (adjustedIndex < lContainer.length) {
     const lView = lContainer[adjustedIndex];
     ngDevMode && assertLView(lView);
@@ -103,10 +103,10 @@ export function addLViewToLContainer(
 ): void {
   const tView = lView[TVIEW];
 
-  // Insert into the view tree so the new view can be change-detected
+  // 새로운 뷰가 변경 감지될 수 있도록 뷰 트리에 삽입합니다.
   insertView(tView, lView, lContainer, index);
 
-  // Insert elements that belong to this view into the DOM tree
+  // 이 뷰에 속한 요소를 DOM 트리에 삽입합니다.
   if (addToDOM) {
     const beforeNode = getBeforeNodeForView(index, lContainer);
     const renderer = lView[RENDERER];
@@ -116,9 +116,9 @@ export function addLViewToLContainer(
     }
   }
 
-  // When in hydration mode, reset the pointer to the first child in
-  // the dehydrated view. This indicates that the view was hydrated and
-  // further attaching/detaching should work with this view as normal.
+  // 수화 모드에서 첫 번째 자식에 대한 포인터를 재설정합니다.
+  // 이는 뷰가 수화되었음을 나타내며
+  // 추가/제거 작업은 이 뷰로 정상적으로 작동해야 합니다.
   const hydrationInfo = lView[HYDRATION];
   if (hydrationInfo !== null && hydrationInfo.firstChild !== null) {
     hydrationInfo.firstChild = null;
@@ -137,14 +137,14 @@ export function removeLViewFromLContainer(
 }
 
 /**
- * Detaches a view from a container.
+ * 컨테이너에서 뷰를 분리합니다.
  *
- * This method removes the view from the container's array of active views. It also
- * removes the view's elements from the DOM.
+ * 이 메서드는 활성 뷰의 컨테이너 배열에서 뷰를 제거합니다. 또한
+ * 뷰의 요소를 DOM에서 제거합니다.
  *
- * @param lContainer The container from which to detach a view
- * @param removeIndex The index of the view to detach
- * @returns Detached LView instance.
+ * @param lContainer 뷰를 분리할 컨테이너
+ * @param removeIndex 분리할 뷰의 인덱스
+ * @returns 분리된 LView 인스턴스.
  */
 export function detachView(lContainer: LContainer, removeIndex: number): LView | undefined {
   if (lContainer.length <= CONTAINER_HEADER_OFFSET) return;
@@ -164,7 +164,7 @@ export function detachView(lContainer: LContainer, removeIndex: number): LView |
     const removedLView = removeFromArray(lContainer, CONTAINER_HEADER_OFFSET + removeIndex);
     removeViewFromDOM(viewToDetach[TVIEW], viewToDetach);
 
-    // notify query that a view has been removed
+    // 뷰가 제거되었음을 쿼리에 알립니다.
     const lQueries = removedLView[QUERIES];
     if (lQueries !== null) {
       lQueries.detachView(removedLView[TVIEW]);
@@ -172,24 +172,23 @@ export function detachView(lContainer: LContainer, removeIndex: number): LView |
 
     viewToDetach[PARENT] = null;
     viewToDetach[NEXT] = null;
-    // Unsets the attached flag
+    // 연결 플래그를 해제합니다.
     viewToDetach[FLAGS] &= ~LViewFlags.Attached;
   }
   return viewToDetach;
 }
 
 /**
- * Inserts a view into a container.
+ * 뷰를 컨테이너에 삽입합니다.
  *
- * This adds the view to the container's array of active views in the correct
- * position. It also adds the view's elements to the DOM if the container isn't a
- * root node of another view (in that case, the view's elements will be added when
- * the container's parent view is added later).
+ * 이는 뷰를 활성 뷰의 컨테이너 배열에 올바른
+ * 위치에 추가합니다. 또한 컨테이너가 다른 뷰의 루트 노드가 아닌 경우에는
+ * 뷰의 요소를 DOM에 추가합니다(그 경우, 뷰의 요소는 컨테이너의 부모 뷰가 나중에 추가될 때 추가됩니다).
  *
- * @param tView The `TView' of the `LView` to insert
- * @param lView The view to insert
- * @param lContainer The container into which the view should be inserted
- * @param index Which index in the container to insert the child view into
+ * @param tView 삽입할 `LView`의 `TView`
+ * @param lView 삽입할 뷰
+ * @param lContainer 뷰가 삽입되어야 하는 컨테이너
+ * @param index 자식 뷰를 삽입할 컨테이너 내의 인덱스
  */
 function insertView(tView: TView, lView: LView, lContainer: LContainer, index: number) {
   ngDevMode && assertLView(lView);
@@ -198,7 +197,7 @@ function insertView(tView: TView, lView: LView, lContainer: LContainer, index: n
   const containerLength = lContainer.length;
 
   if (index > 0) {
-    // This is a new view, we need to add it to the children.
+    // 새로운 뷰입니다. 자식으로 추가해야 합니다.
     lContainer[indexInContainer - 1][NEXT] = lView;
   }
   if (index < containerLength - CONTAINER_HEADER_OFFSET) {
@@ -211,44 +210,44 @@ function insertView(tView: TView, lView: LView, lContainer: LContainer, index: n
 
   lView[PARENT] = lContainer;
 
-  // track views where declaration and insertion points are different
+  // 선언과 삽입 지점이 다른 뷰를 추적합니다.
   const declarationLContainer = lView[DECLARATION_LCONTAINER];
   if (declarationLContainer !== null && lContainer !== declarationLContainer) {
     trackMovedView(declarationLContainer, lView);
   }
 
-  // notify query that a new view has been added
+  // 새로운 뷰가 추가되었음을 쿼리에 알립니다.
   const lQueries = lView[QUERIES];
   if (lQueries !== null) {
     lQueries.insertView(tView);
   }
 
   updateAncestorTraversalFlagsOnAttach(lView);
-  // Sets the attached flag
+  // 연결 플래그를 설정합니다.
   lView[FLAGS] |= LViewFlags.Attached;
 }
 
 /**
- * Track views created from the declaration container (TemplateRef) and inserted into a
- * different LContainer or attached directly to ApplicationRef.
+ * 선언 컨테이너(TemplateRef)에서 생성된 뷰를 추적하고
+ * 다른 LContainer에 삽입하거나 ApplicationRef에 직접 연결합니다.
  */
 export function trackMovedView(declarationContainer: LContainer, lView: LView) {
-  ngDevMode && assertDefined(lView, 'LView required');
+  ngDevMode && assertDefined(lView, 'LView가 필요합니다.');
   ngDevMode && assertLContainer(declarationContainer);
   const movedViews = declarationContainer[MOVED_VIEWS];
   const parent = lView[PARENT]!;
-  ngDevMode && assertDefined(parent, 'missing parent');
+  ngDevMode && assertDefined(parent, '부모가 누락되었습니다.');
   if (isLView(parent)) {
     declarationContainer[FLAGS] |= LContainerFlags.HasTransplantedViews;
   } else {
     const insertedComponentLView = parent[PARENT]![DECLARATION_COMPONENT_VIEW];
-    ngDevMode && assertDefined(insertedComponentLView, 'Missing insertedComponentLView');
+    ngDevMode && assertDefined(insertedComponentLView, '삽입된 컴포넌트 LView가 누락되었습니다.');
     const declaredComponentLView = lView[DECLARATION_COMPONENT_VIEW];
-    ngDevMode && assertDefined(declaredComponentLView, 'Missing declaredComponentLView');
+    ngDevMode && assertDefined(declaredComponentLView, '선언된 컴포넌트 LView가 누락되었습니다.');
     if (declaredComponentLView !== insertedComponentLView) {
-      // At this point the declaration-component is not same as insertion-component; this means that
-      // this is a transplanted view. Mark the declared lView as having transplanted views so that
-      // those views can participate in CD.
+      // 이 시점에서 선언 컴포넌트는 삽입 컴포넌트와 다릅니다. 이는
+      // 이 뷰가 이식된 뷰라는 것을 의미합니다. 이식된 뷰를 가진 것으로 표시하여
+      // 해당 뷰들이 CD에서 참여할 수 있도록 합니다.
       declarationContainer[FLAGS] |= LContainerFlags.HasTransplantedViews;
     }
   }

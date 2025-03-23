@@ -34,16 +34,16 @@ export class DefaultIterableDifferFactory implements IterableDifferFactory {
 const trackByIdentity = (index: number, item: any) => item;
 
 /**
- * @deprecated v4.0.0 - Should not be part of public API.
+ * @deprecated v4.0.0 - 공용 API의 일부여서는 안 됩니다.
  * @publicApi
  */
 export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChanges<V> {
   public readonly length: number = 0;
-  // TODO: confirm the usage of `collection` as it's unused, readonly and on a non public API.
+  // TODO: 사용되지 않는 read-only인 `collection`의 사용 확인 필요.
   public readonly collection!: V[] | Iterable<V> | null;
-  // Keeps track of the used records at any point in time (during & across `_check()` calls)
+  // 언제든지 사용된 레코드를 추적합니다 ( `_check()` 호출 중 및 호출 간에)
   private _linkedRecords: _DuplicateMap<V> | null = null;
-  // Keeps track of the removed records at any point in time during `_check()` calls.
+  // `_check()` 호출 중 언제든지 제거된 레코드를 추적합니다.
   private _unlinkedRecords: _DuplicateMap<V> | null = null;
   private _previousItHead: IterableChangeRecord_<V> | null = null;
   private _itHead: IterableChangeRecord_<V> | null = null;
@@ -54,7 +54,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
   private _movesTail: IterableChangeRecord_<V> | null = null;
   private _removalsHead: IterableChangeRecord_<V> | null = null;
   private _removalsTail: IterableChangeRecord_<V> | null = null;
-  // Keeps track of records where custom track by is the same, but item identity has changed
+  // 사용자 지정 트랙이 동일하지만 항목 ID가 변경된 레코드 추적
   private _identityChangesHead: IterableChangeRecord_<V> | null = null;
   private _identityChangesTail: IterableChangeRecord_<V> | null = null;
   private _trackByFn: TrackByFunction<V>;
@@ -82,8 +82,8 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
     let addRemoveOffset = 0;
     let moveOffsets: number[] | null = null;
     while (nextIt || nextRemove) {
-      // Figure out which is the next record to process
-      // Order: remove, add, move
+      // 처리할 다음 레코드 구하기
+      // 순서: 제거, 추가, 이동
       const record: IterableChangeRecord<V> =
         !nextRemove ||
         (nextIt &&
@@ -93,7 +93,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
       const adjPreviousIndex = getPreviousIndex(record, addRemoveOffset, moveOffsets);
       const currentIndex = record.currentIndex;
 
-      // consume the item, and adjust the addRemoveOffset and update moveDistance if necessary
+      // 항목을 소비하고 addRemoveOffset을 조정하며 필요시 moveDistance 업데이트
       if (record === nextRemove) {
         addRemoveOffset--;
         nextRemove = nextRemove._nextRemoved;
@@ -102,7 +102,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
         if (record.previousIndex == null) {
           addRemoveOffset++;
         } else {
-          // INVARIANT:  currentIndex < previousIndex
+          // 불변성:  currentIndex < previousIndex
           if (!moveOffsets) moveOffsets = [];
           const localMovePreviousIndex = adjPreviousIndex - addRemoveOffset;
           const localCurrentIndex = currentIndex! - addRemoveOffset;
@@ -167,7 +167,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
       throw new RuntimeError(
         RuntimeErrorCode.INVALID_DIFFER_INPUT,
         ngDevMode &&
-          `Error trying to diff '${stringify(collection)}'. Only arrays and iterables are allowed`,
+          `Error trying to diff '${stringify(collection)}'. 배열과 반복 가능한 객체만 허용됩니다`,
       );
     }
 
@@ -199,7 +199,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
           mayBeDirty = true;
         } else {
           if (mayBeDirty) {
-            // TODO(misko): can we limit this to duplicates only?
+            // TODO(misko): 중복만으로 제한할 수 있나요?
             record = this._verifyReinsertion(record, item, itemTrackBy, index);
           }
           if (!Object.is(record.item, item)) this._addIdentityChange(record, item);
@@ -216,7 +216,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
           mayBeDirty = true;
         } else {
           if (mayBeDirty) {
-            // TODO(misko): can we limit this to duplicates only?
+            // TODO(misko): 중복만으로 제한할 수 있나요?
             record = this._verifyReinsertion(record, item, itemTrackBy, index);
           }
           if (!Object.is(record.item, item)) this._addIdentityChange(record, item);
@@ -232,8 +232,7 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
     return this.isDirty;
   }
 
-  /* CollectionChanges is considered dirty if it has any additions, moves, removals, or identity
-   * changes.
+  /* CollectionChanges는 추가, 이동, 제거 또는 ID 변경이 하나라도 있을 경우 더럽혀진 것으로 간주됩니다.
    */
   get isDirty(): boolean {
     return (
@@ -245,10 +244,9 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
   }
 
   /**
-   * Reset the state of the change objects to show no changes. This means set previousKey to
-   * currentKey, and clear all of the queues (additions, moves, removals).
-   * Set the previousIndexes of moved and added items to their currentIndexes
-   * Reset the list of additions, moves and removals
+   * 변경 객체의 상태를 초기화하여 변경 사항이 없음을 표시합니다. 즉, 이전 키를 현재 키로 설정하고,
+   * 모든 대기열(추가, 이동, 제거)을 지웁니다. 이동 및 추가 된 항목의 previousIndexes를 currentIndexes로 설정합니다.
+   * 추가, 이동 및 제거 목록을 초기화합니다.
    *
    * @internal
    */
@@ -272,18 +270,17 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
       this._removalsHead = this._removalsTail = null;
       this._identityChangesHead = this._identityChangesTail = null;
 
-      // TODO(vicb): when assert gets supported
+      // TODO(vicb): assert 지원되면
       // assert(!this.isDirty);
     }
   }
 
   /**
-   * This is the core function which handles differences between collections.
+   * 이것은 컬렉션 간의 차이를 처리하는 핵심 기능입니다.
    *
-   * - `record` is the record which we saw at this position last time. If null then it is a new
-   *   item.
-   * - `item` is the current item in the collection
-   * - `index` is the position of the item in the collection
+   * - `record`는 마지막으로 이 위치에서 본 레코드입니다. null이면 새 항목입니다.
+   * - `item`은 컬렉션의 현재 항목입니다.
+   * - `index`는 컬렉션에서 항목의 위치입니다.
    *
    * @internal
    */
@@ -293,37 +290,36 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
     itemTrackBy: any,
     index: number,
   ): IterableChangeRecord_<V> {
-    // The previous record after which we will append the current one.
+    // 현재 추가할 레코드 이후의 이전 레코드입니다.
     let previousRecord: IterableChangeRecord_<V> | null;
 
     if (record === null) {
       previousRecord = this._itTail;
     } else {
       previousRecord = record._prev;
-      // Remove the record from the collection since we know it does not match the item.
+      // 항목과 일치하지 않기 때문에 컬렉션에서 레코드를 제거합니다.
       this._remove(record);
     }
 
-    // See if we have evicted the item, which used to be at some anterior position of _itHead list.
+    // 이전 위치에 있었던 아이템을 확인할 수 있습니다.
     record = this._unlinkedRecords === null ? null : this._unlinkedRecords.get(itemTrackBy, null);
     if (record !== null) {
-      // It is an item which we have evicted earlier: reinsert it back into the list.
-      // But first we need to check if identity changed, so we can update in view if necessary.
+      // 이전에 제거했던 아이템입니다: 리스트에 다시 삽입합니다.
+      // 그러나 먼저 ID가 변경되었는지 확인해야 하므로 필요한 경우 뷰를 업데이트할 수 있습니다.
       if (!Object.is(record.item, item)) this._addIdentityChange(record, item);
 
       this._reinsertAfter(record, previousRecord, index);
     } else {
-      // Attempt to see if the item is at some posterior position of _itHead list.
+      // 아이템이 _itHead 리스트의 후위 위치에 있는지 확인합니다.
       record = this._linkedRecords === null ? null : this._linkedRecords.get(itemTrackBy, index);
       if (record !== null) {
-        // We have the item in _itHead at/after `index` position. We need to move it forward in the
-        // collection.
-        // But first we need to check if identity changed, so we can update in view if necessary.
+        // `index` 위치에서 _itHead에 해당 아이템이 있습니다. 컬렉션에서 앞으로 이동해야합니다.
+        // 그러나 먼저 ID가 변경되었는지 확인해야 하므로 필요한 경우 뷰를 업데이트할 수 있습니다.
         if (!Object.is(record.item, item)) this._addIdentityChange(record, item);
 
         this._moveAfter(record, previousRecord, index);
       } else {
-        // It is a new item: add it.
+        // 새로운 항목입니다: 추가합니다.
         record = this._addAfter(
           new IterableChangeRecord_<V>(item, itemTrackBy),
           previousRecord,
@@ -335,29 +331,27 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
   }
 
   /**
-   * This check is only needed if an array contains duplicates. (Short circuit of nothing dirty)
+   * 이 검사는 배열 내에 중복이 포함될 경우에만 필요합니다. (더러운 것이 없는 단축 회로)
    *
-   * Use case: `[a, a]` => `[b, a, a]`
+   * 사용 사례: `[a, a]` => `[b, a, a]`
    *
-   * If we did not have this check then the insertion of `b` would:
-   *   1) evict first `a`
-   *   2) insert `b` at `0` index.
-   *   3) leave `a` at index `1` as is. <-- this is wrong!
-   *   3) reinsert `a` at index 2. <-- this is wrong!
+   * 이 검사가 없으면 `b`의 삽입 결과는 다음과 같습니다:
+   *   1) 첫 번째 `a` 제거
+   *   2) `b`를 `0` 인덱스에 삽입.
+   *   3) `a`를 인덱스 `1`에 그대로 두기. <-- 이건 잘못된거에요!
+   *   3) `a`를 인덱스 `2`에 다시 삽입. <-- 이건 잘못된거에요!
    *
-   * The correct behavior is:
-   *   1) evict first `a`
-   *   2) insert `b` at `0` index.
-   *   3) reinsert `a` at index 1.
-   *   3) move `a` at from `1` to `2`.
+   * 올바른 동작은:
+   *   1) 첫 번째 `a` 제거
+   *   2) `b`를 `0` 인덱스에 삽입.
+   *   3) `a`를 인덱스 `1`에 다시 삽입.
+   *   3) `a`를 `1`에서 `2`로 이동.
    *
    *
-   * Double check that we have not evicted a duplicate item. We need to check if the item type may
-   * have already been removed:
-   * The insertion of b will evict the first 'a'. If we don't reinsert it now it will be reinserted
-   * at the end. Which will show up as the two 'a's switching position. This is incorrect, since a
-   * better way to think of it is as insert of 'b' rather then switch 'a' with 'b' and then add 'a'
-   * at the end.
+   * 중복 항목을 제거하지 않았는지 두 번 확인합니다. 항목 유형이 이미 제거되었을 가능성이 있습니다:
+   * `b`의 삽입은 첫 번째 'a'를 제거합니다. 이제 다시 삽입하지 않으면 마지막에 다시 삽입됩니다.
+   * 이렇게 하면 두 개의 'a'가 위치를 바꾸는 것으로 나타납니다. 이는 올바르지 않으며,
+   * 이를 삽입으로 보는 것이 더 나은 방법입니다.
    *
    * @internal
    */
@@ -379,14 +373,14 @@ export class DefaultIterableDiffer<V> implements IterableDiffer<V>, IterableChan
   }
 
   /**
-   * Get rid of any excess {@link IterableChangeRecord_}s from the previous collection
+   * 이전 컬렉션에서 초과 {@link IterableChangeRecord_}를 제거합니다.
    *
-   * - `record` The first excess {@link IterableChangeRecord_}.
+   * - `record` 첫 번째 초과 {@link IterableChangeRecord_}.
    *
    * @internal
    */
   _truncate(record: IterableChangeRecord_<V> | null) {
-    // Anything after that needs to be removed;
+    // 그 이후의 모든 항목은 제거되어야 합니다.
     while (record !== null) {
       const nextRecord: IterableChangeRecord_<V> | null = record._next;
       this._addToRemovals(this._unlink(record));
@@ -632,7 +626,7 @@ export class IterableChangeRecord_<V> implements IterableChangeRecord<V> {
   ) {}
 }
 
-// A linked list of IterableChangeRecords with the same IterableChangeRecord_.item
+// 같은 IterableChangeRecord_.item을 가진 IterableChangeRecord의 연결 리스트
 class _DuplicateItemRecordList<V> {
   /** @internal */
   _head: IterableChangeRecord_<V> | null = null;
@@ -640,9 +634,9 @@ class _DuplicateItemRecordList<V> {
   _tail: IterableChangeRecord_<V> | null = null;
 
   /**
-   * Append the record to the list of duplicates.
+   * 중복된 목록에 레코드를 추가합니다.
    *
-   * Note: by design all records in the list of duplicates hold the same value in record.item.
+   * 참고: 설계상 중복 목록의 모든 레코드는 record.item의 동일한 값을 유지합니다.
    */
   add(record: IterableChangeRecord_<V>): void {
     if (this._head === null) {
@@ -660,8 +654,7 @@ class _DuplicateItemRecordList<V> {
     }
   }
 
-  // Returns a IterableChangeRecord_ having IterableChangeRecord_.trackById == trackById and
-  // IterableChangeRecord_.currentIndex >= atOrAfterIndex
+  // IterableChangeRecord_.trackById == trackById 및 IterableChangeRecord_.currentIndex >= atOrAfterIndex를 가진 IterableChangeRecord_를 반환합니다.
   get(trackById: any, atOrAfterIndex: number | null): IterableChangeRecord_<V> | null {
     let record: IterableChangeRecord_<V> | null;
     for (record = this._head; record !== null; record = record._nextDup) {
@@ -676,14 +669,14 @@ class _DuplicateItemRecordList<V> {
   }
 
   /**
-   * Remove one {@link IterableChangeRecord_} from the list of duplicates.
+   * 중복 목록에서 하나의 {@link IterableChangeRecord_}를 제거합니다.
    *
-   * Returns whether the list of duplicates is empty.
+   * 중복 목록이 비어 있으면 제거됩니다.
    */
   remove(record: IterableChangeRecord_<V>): boolean {
     // TODO(vicb):
     // assert(() {
-    //  // verify that the record being removed is in the list.
+    //  // 제거되고 있는 레코드가 목록에 있는지 확인합니다.
     //  for (IterableChangeRecord_ cursor = _head; cursor != null; cursor = cursor._nextDup) {
     //    if (identical(cursor, record)) return true;
     //  }
@@ -721,11 +714,10 @@ class _DuplicateMap<V> {
   }
 
   /**
-   * Retrieve the `value` using key. Because the IterableChangeRecord_ value may be one which we
-   * have already iterated over, we use the `atOrAfterIndex` to pretend it is not there.
+   * 키를 사용하여 `value`를 검색합니다. IterableChangeRecord_ 값은 이미 반복된 것일 수 있으므로,
+   * 가상으로 `atOrAfterIndex`를 사용하여 존재하지 않는 것처럼 처리합니다.
    *
-   * Use case: `[a, b, c, a, a]` if we are at index `3` which is the second `a` then asking if we
-   * have any more `a`s needs to return the second `a`.
+   * 사용 사례: `[a, b, c, a, a]` 인덱스 `3`에 해당하는 두 번째 `a`에서는 모든 `a`가 있는지 확인해야합니다.
    */
   get(trackById: any, atOrAfterIndex: number | null): IterableChangeRecord_<V> | null {
     const key = trackById;
@@ -734,14 +726,14 @@ class _DuplicateMap<V> {
   }
 
   /**
-   * Removes a {@link IterableChangeRecord_} from the list of duplicates.
+   * 중복 목록에서 {@link IterableChangeRecord_}를 제거합니다.
    *
-   * The list of duplicates also is removed from the map if it gets empty.
+   * 목록이 비어 있으면 맵에서도 제거됩니다.
    */
   remove(record: IterableChangeRecord_<V>): IterableChangeRecord_<V> {
     const key = record.trackById;
     const recordList: _DuplicateItemRecordList<V> = this.map.get(key)!;
-    // Remove the list of duplicates when it gets empty
+    // 목록이 비어 있으면 제거
     if (recordList.remove(record)) {
       this.map.delete(key);
     }

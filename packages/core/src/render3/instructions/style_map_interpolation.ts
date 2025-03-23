@@ -22,23 +22,23 @@ import {ɵɵstyleMap} from './styling';
 
 /**
  *
- * Update an interpolated style on an element with single bound value surrounded by text.
+ * 텍스트로 둘러싸인 단일 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 1 interpolated value in it:
+ * 속성에 전달된 값이 1개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate1('key: ', v0, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate1(prefix: string, v0: any, suffix?: string): void {
@@ -49,25 +49,25 @@ export function ɵɵstyleMapInterpolate1(prefix: string, v0: any, suffix?: strin
 
 /**
  *
- * Update an interpolated style on an element with 2 bound values surrounded by text.
+ * 텍스트로 둘러싸인 2개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 2 interpolated values in it:
+ * 속성에 전달된 값이 2개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate2('key: ', v0, '; key1: ', v1, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate2(
@@ -84,28 +84,28 @@ export function ɵɵstyleMapInterpolate2(
 
 /**
  *
- * Update an interpolated style on an element with 3 bound values surrounded by text.
+ * 텍스트로 둘러싸인 3개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 3 interpolated values in it:
+ * 속성에 전달된 값이 3개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key2: {{v1}}; key2: {{v2}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate3(
  *     'key: ', v0, '; key1: ', v1, '; key2: ', v2, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate3(
@@ -124,30 +124,30 @@ export function ɵɵstyleMapInterpolate3(
 
 /**
  *
- * Update an interpolated style on an element with 4 bound values surrounded by text.
+ * 텍스트로 둘러싸인 4개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 4 interpolated values in it:
+ * 속성에 전달된 값이 4개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}; key2: {{v2}}; key3: {{v3}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate4(
  *     'key: ', v0, '; key1: ', v1, '; key2: ', v2, '; key3: ', v3, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param i2 연결에만 사용되는 정적 값입니다.
+ * @param v3 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate4(
@@ -168,32 +168,32 @@ export function ɵɵstyleMapInterpolate4(
 
 /**
  *
- * Update an interpolated style on an element with 5 bound values surrounded by text.
+ * 텍스트로 둘러싸인 5개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 5 interpolated values in it:
+ * 속성에 전달된 값이 5개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}; key2: {{v2}}; key3: {{v3}}; key4: {{v4}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate5(
  *     'key: ', v0, '; key1: ', v1, '; key2: ', v2, '; key3: ', v3, '; key4: ', v4, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param i2 연결에만 사용되는 정적 값입니다.
+ * @param v3 변경 여부를 체크하는 값입니다.
+ * @param i3 연결에만 사용되는 정적 값입니다.
+ * @param v4 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate5(
@@ -229,16 +229,16 @@ export function ɵɵstyleMapInterpolate5(
 
 /**
  *
- * Update an interpolated style on an element with 6 bound values surrounded by text.
+ * 텍스트로 둘러싸인 6개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 6 interpolated values in it:
+ * 속성에 전달된 값이 6개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}; key2: {{v2}}; key3: {{v3}}; key4: {{v4}};
  *             key5: {{v5}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate6(
@@ -246,19 +246,19 @@ export function ɵɵstyleMapInterpolate5(
  *    'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param i2 연결에만 사용되는 정적 값입니다.
+ * @param v3 변경 여부를 체크하는 값입니다.
+ * @param i3 연결에만 사용되는 정적 값입니다.
+ * @param v4 변경 여부를 체크하는 값입니다.
+ * @param i4 연결에만 사용되는 정적 값입니다.
+ * @param v5 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate6(
@@ -298,16 +298,16 @@ export function ɵɵstyleMapInterpolate6(
 
 /**
  *
- * Update an interpolated style on an element with 7 bound values surrounded by text.
+ * 텍스트로 둘러싸인 7개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 7 interpolated values in it:
+ * 속성에 전달된 값이 7개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}; key2: {{v2}}; key3: {{v3}}; key4: {{v4}}; key5: {{v5}};
  *             key6: {{v6}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate7(
@@ -315,21 +315,21 @@ export function ɵɵstyleMapInterpolate6(
  *    '; key6: ', v6, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param i2 연결에만 사용되는 정적 값입니다.
+ * @param v3 변경 여부를 체크하는 값입니다.
+ * @param i3 연결에만 사용되는 정적 값입니다.
+ * @param v4 변경 여부를 체크하는 값입니다.
+ * @param i4 연결에만 사용되는 정적 값입니다.
+ * @param v5 변경 여부를 체크하는 값입니다.
+ * @param i5 연결에만 사용되는 정적 값입니다.
+ * @param v6 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate7(
@@ -373,16 +373,16 @@ export function ɵɵstyleMapInterpolate7(
 
 /**
  *
- * Update an interpolated style on an element with 8 bound values surrounded by text.
+ * 텍스트로 둘러싸인 8개의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the value passed to a property has 8 interpolated values in it:
+ * 속성에 전달된 값이 8개의 보간된 값을 가질 때 사용됩니다:
  *
  * ```html
  * <div style="key: {{v0}}; key1: {{v1}}; key2: {{v2}}; key3: {{v3}}; key4: {{v4}}; key5: {{v5}};
  *             key6: {{v6}}; key7: {{v7}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolate8(
@@ -390,23 +390,23 @@ export function ɵɵstyleMapInterpolate7(
  *    '; key6: ', v6, '; key7: ', v7, 'suffix');
  * ```
  *
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param i6 Static value used for concatenation only.
- * @param v7 Value checked for change.
- * @param suffix Static value used for concatenation only.
+ * @param prefix 연결에만 사용되는 정적 값입니다.
+ * @param v0 변경 여부를 체크하는 값입니다.
+ * @param i0 연결에만 사용되는 정적 값입니다.
+ * @param v1 변경 여부를 체크하는 값입니다.
+ * @param i1 연결에만 사용되는 정적 값입니다.
+ * @param v2 변경 여부를 체크하는 값입니다.
+ * @param i2 연결에만 사용되는 정적 값입니다.
+ * @param v3 변경 여부를 체크하는 값입니다.
+ * @param i3 연결에만 사용되는 정적 값입니다.
+ * @param v4 변경 여부를 체크하는 값입니다.
+ * @param i4 연결에만 사용되는 정적 값입니다.
+ * @param v5 변경 여부를 체크하는 값입니다.
+ * @param i5 연결에만 사용되는 정적 값입니다.
+ * @param v6 변경 여부를 체크하는 값입니다.
+ * @param i6 연결에만 사용되는 정적 값입니다.
+ * @param v7 변경 여부를 체크하는 값입니다.
+ * @param suffix 연결에만 사용되는 정적 값입니다.
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolate8(
@@ -453,9 +453,9 @@ export function ɵɵstyleMapInterpolate8(
 }
 
 /**
- * Update an interpolated style on an element with 9 or more bound values surrounded by text.
+ * 텍스트로 둘러싸인 9개 이상의 바인딩 값을 가진 요소에서 보간된 스타일을 업데이트합니다.
  *
- * Used when the number of interpolated values exceeds 8.
+ * 보간된 값의 수가 8을 초과할 때 사용됩니다.
  *
  * ```html
  * <div
@@ -463,7 +463,7 @@ export function ɵɵstyleMapInterpolate8(
  *         key6: {{v6}}; key7: {{v7}}; key8: {{v8}}; key9: {{v9}}suffix"></div>
  * ```
  *
- * Its compiled representation is:
+ * 컴파일된 표현은 다음과 같습니다:
  *
  * ```ts
  * ɵɵstyleMapInterpolateV(
@@ -471,9 +471,8 @@ export function ɵɵstyleMapInterpolate8(
  *     '; key6: ', v6, '; key7: ', v7, '; key8: ', v8, '; key9: ', v9, 'suffix']);
  * ```
  *.
- * @param values The collection of values and the strings in-between those values, beginning with
- * a string prefix and ending with a string suffix.
- * (e.g. `['prefix', value0, '; key2: ', value1, '; key2: ', value2, ..., value99, 'suffix']`)
+ * @param values 값과 값 사이의 문자열을 포함하는 컬렉션으로, 문자열 프리픽스로 시작하고 문자열 서픽스로 끝납니다.
+ * (예: `['prefix', value0, '; key2: ', value1, '; key2: ', value2, ..., value99, 'suffix']`)
  * @codeGenApi
  */
 export function ɵɵstyleMapInterpolateV(values: any[]): void {

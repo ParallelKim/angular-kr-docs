@@ -17,24 +17,23 @@ import {NullInjector} from './null_injector';
 import {ProviderToken} from './provider_token';
 
 /**
- * Concrete injectors implement this interface. Injectors are configured
- * with [providers](guide/di/dependency-injection-providers) that associate
- * dependencies of various types with [injection tokens](guide/di/dependency-injection-providers).
+ * 구체적인 인젝터는 이 인터페이스를 구현합니다. 인젝터는 다양한 유형의 의존성과
+ * [주입 토큰](guide/di/dependency-injection-providers)과 연결된 [프로바이더](guide/di/dependency-injection-providers)로 구성됩니다.
  *
  * @see [DI Providers](guide/di/dependency-injection-providers).
  * @see {@link StaticProvider}
  *
  * @usageNotes
  *
- *  The following example creates a service injector instance.
+ * 다음 예제는 서비스 인젝터 인스턴스를 생성합니다.
  *
  * {@example core/di/ts/provider_spec.ts region='ConstructorProvider'}
  *
- * ### Usage example
+ * ### 사용 예
  *
  * {@example core/di/ts/injector_spec.ts region='Injector'}
  *
- * `Injector` returns itself when given `Injector` as a token:
+ * `Injector`는 `Injector`를 토큰으로 제공할 때 자신을 반환합니다:
  *
  * {@example core/di/ts/injector_spec.ts region='injectInjector'}
  *
@@ -45,9 +44,9 @@ export abstract class Injector {
   static NULL: Injector = /* @__PURE__ */ new NullInjector();
 
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기준으로 인젝터에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 인젝터에서 인스턴스, 그렇지 않으면 `notFoundValue`.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(
     token: ProviderToken<T>,
@@ -57,9 +56,9 @@ export abstract class Injector {
     },
   ): T;
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기준으로 인젝터에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 인젝터에서 인스턴스, 그렇지 않으면 `notFoundValue`.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(
     token: ProviderToken<T>,
@@ -67,32 +66,32 @@ export abstract class Injector {
     options: InjectOptions,
   ): T | null;
   /**
-   * Retrieves an instance from the injector based on the provided token.
-   * @returns The instance from the injector if defined, otherwise the `notFoundValue`.
-   * @throws When the `notFoundValue` is `undefined` or `Injector.THROW_IF_NOT_FOUND`.
+   * 제공된 토큰을 기준으로 인젝터에서 인스턴스를 검색합니다.
+   * @returns 정의된 경우 인젝터에서 인스턴스, 그렇지 않으면 `notFoundValue`.
+   * @throws `notFoundValue`가 `undefined`이거나 `Injector.THROW_IF_NOT_FOUND`일 때.
    */
   abstract get<T>(token: ProviderToken<T>, notFoundValue?: T, options?: InjectOptions): T;
   /**
-   * @deprecated from v4.0.0 use ProviderToken<T>
+   * @deprecated v4.0.0부터 ProviderToken<T> 사용
    * @suppress {duplicate}
    */
   abstract get<T>(token: string | ProviderToken<T>, notFoundValue?: any): any;
 
   /**
-   * @deprecated from v5 use the new signature Injector.create(options)
+   * @deprecated v5부터 새로운 서명 Injector.create(options) 사용
    */
   static create(providers: StaticProvider[], parent?: Injector): Injector;
 
   /**
-   * Creates a new injector instance that provides one or more dependencies,
-   * according to a given type or types of `StaticProvider`.
+   * 주어진 유형 또는 유형의 `StaticProvider`에 따라 하나 이상의 의존성을 제공하는
+   * 새로운 인젝터 인스턴스를 생성합니다.
    *
-   * @param options An object with the following properties:
-   * * `providers`: An array of providers of the [StaticProvider type](api/core/StaticProvider).
-   * * `parent`: (optional) A parent injector.
-   * * `name`: (optional) A developer-defined identifying name for the new injector.
+   * @param options 다음 속성이 포함된 객체:
+   * * `providers`: [StaticProvider 유형](api/core/StaticProvider)의 프로바이더 배열.
+   * * `parent`: (선택 사항) 부모 인젝터.
+   * * `name`: (선택 사항) 새로운 인젝터에 대한 개발자 정의 식별 이름.
    *
-   * @returns The new injector instance.
+   * @returns 새로운 인젝터 인스턴스.
    *
    */
   static create(options: {
@@ -130,7 +129,7 @@ export abstract class Injector {
 }
 
 /**
- * An Injector that the owner can destroy and trigger the DestroyRef.destroy hooks.
+ * 소유자가 파괴할 수 있으며 DestroyRef.destroy 훅을 트리거할 수 있는 인젝터.
  *
  * @publicApi
  */

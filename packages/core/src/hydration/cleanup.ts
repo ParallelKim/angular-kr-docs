@@ -26,9 +26,9 @@ import {DEFER_BLOCK_ID, DehydratedContainerView, NUM_ROOT_NODES} from './interfa
 import {getLNodeForHydration} from './utils';
 
 /**
- * Removes all dehydrated views from a given LContainer:
- * both in internal data structure, as well as removing
- * corresponding DOM nodes that belong to that dehydrated view.
+ * 주어진 LContainer에서 모든 탈수된 뷰를 제거합니다:
+ * 내부 데이터 구조에서도 해당하며 해당 탈수된 뷰에 속하는
+ * 대응하는 DOM 노드를 제거합니다.
  */
 export function removeDehydratedViews(lContainer: LContainer) {
   const views = lContainer[DEHYDRATED_VIEWS] ?? [];
@@ -36,9 +36,8 @@ export function removeDehydratedViews(lContainer: LContainer) {
   const renderer = parentLView[RENDERER];
   const retainedViews = [];
   for (const view of views) {
-    // Do not clean up contents of `@defer` blocks.
-    // The cleanup for this content would happen once a given block
-    // is triggered and hydrated.
+    // `@defer` 블록의 내용은 정리하지 마십시오.
+    // 이 내용의 정리는 주어진 블록이 트리거되고 탈수되었을 때 발생합니다.
     if (view.data[DEFER_BLOCK_ID] !== undefined) {
       retainedViews.push(view);
     } else {
@@ -46,10 +45,9 @@ export function removeDehydratedViews(lContainer: LContainer) {
       ngDevMode && ngDevMode.dehydratedViewsRemoved++;
     }
   }
-  // Reset the value to an array to indicate that no
-  // further processing of dehydrated views is needed for
-  // this view container (i.e. do not trigger the lookup process
-  // once again in case a `ViewContainerRef` is created later).
+  // 더 이상의 처리가 필요 없음을 나타내기 위해 값을 배열로 재설정합니다.
+  // 이 뷰 컨테이너에 대해 탈수된 뷰의 처리가 더 이상 필요하지 않습니다
+  // `ViewContainerRef`가 나중에 생성되는 경우 다시 조회 프로세스를 트리거하지 않습니다.
   lContainer[DEHYDRATED_VIEWS] = retainedViews;
 }
 
@@ -66,7 +64,7 @@ export function removeDehydratedViewList(deferBlock: DehydratedDeferBlock) {
 }
 
 /**
- * Helper function to remove all nodes from a dehydrated view.
+ * 탈수된 뷰에서 모든 노드를 제거하는 도우미 함수.
  */
 function removeDehydratedView(dehydratedView: DehydratedContainerView, renderer: Renderer) {
   let nodesRemoved = 0;
@@ -84,15 +82,15 @@ function removeDehydratedView(dehydratedView: DehydratedContainerView, renderer:
 }
 
 /**
- * Walks over all views within this LContainer invokes dehydrated views
- * cleanup function for each one.
+ * 이 LContainer 내의 모든 뷰를 순회하며 각 뷰에 대해
+ * 탈수된 뷰 정리 함수를 호출합니다.
  */
 export function cleanupLContainer(lContainer: LContainer) {
   removeDehydratedViews(lContainer);
 
-  // The host could be an LView if this container is on a component node.
-  // In this case, descend into host LView for further cleanup. See also
-  // LContainer[HOST] docs for additional information.
+  // 호스트가 이 컨테이너가 구성 요소 노드에 있는 경우 LView일 수 있습니다.
+  // 이 경우 further 정리를 위해 호스트 LView로 내려갑니다. 추가 정보는
+  // LContainer[HOST] 문서도 참조하세요.
   const hostLView = lContainer[HOST];
   if (isLView(hostLView)) {
     cleanupLView(hostLView);
@@ -104,8 +102,8 @@ export function cleanupLContainer(lContainer: LContainer) {
 }
 
 /**
- * Walks over `LContainer`s and components registered within
- * this LView and invokes dehydrated views cleanup function for each one.
+ * 이 LView에 등록된 `LContainer`와 구성 요소를 순회하며
+ * 각각에 대해 탈수된 뷰 정리 함수를 호출합니다.
  */
 function cleanupLView(lView: LView) {
   cleanupI18nHydrationData(lView);
@@ -116,27 +114,27 @@ function cleanupLView(lView: LView) {
       const lContainer = lView[i];
       cleanupLContainer(lContainer);
     } else if (isLView(lView[i])) {
-      // This is a component, enter the `cleanupLView` recursively.
+      // 이것은 구성 요소로, 재귀적으로 `cleanupLView`에 들어갑니다.
       cleanupLView(lView[i]);
     }
   }
 }
 
 /**
- * Walks over all views registered within the ApplicationRef and removes
- * all dehydrated views from all `LContainer`s along the way.
+ * ApplicationRef에 등록된 모든 뷰를 순회하여
+ * 모든 `LContainer`에서 모든 탈수된 뷰를 제거합니다.
  */
 export function cleanupDehydratedViews(appRef: ApplicationRef) {
   const viewRefs = appRef._views;
   for (const viewRef of viewRefs) {
     const lNode = getLNodeForHydration(viewRef);
-    // An `lView` might be `null` if a `ViewRef` represents
-    // an embedded view (not a component view).
+    // `lView`는 `ViewRef`가
+    // 내장된 뷰(구성 요소 뷰가 아님)를 나타낼 경우 `null`일 수 있습니다.
     if (lNode !== null && lNode[HOST] !== null) {
       if (isLView(lNode)) {
         cleanupLView(lNode);
       } else {
-        // Cleanup in all views within this view container
+        // 이 뷰 컨테이너 내의 모든 뷰를 정리합니다.
         cleanupLContainer(lNode);
       }
       ngDevMode && ngDevMode.dehydratedViewsCleanupRuns++;
@@ -145,9 +143,9 @@ export function cleanupDehydratedViews(appRef: ApplicationRef) {
 }
 
 /**
- * post hydration cleanup handling for defer blocks that were incrementally
- * hydrated. This removes all the jsaction attributes, timers, observers,
- * dehydrated views and containers
+ * 점진적으로 탈수된 블록에 대한 탈수 후 정리 처리를 수행합니다.
+ * 이로 인해 모든 jsaction 속성, 타이머, 옵저버,
+ * 탈수된 뷰 및 컨테이너가 제거됩니다.
  */
 export function cleanupHydratedDeferBlocks(
   deferBlock: DehydratedDeferBlock | null,

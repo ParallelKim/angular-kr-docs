@@ -20,12 +20,12 @@ import {ComponentFactory} from './component_factory';
 import {NgModuleFactory} from './ng_module_factory';
 
 /**
- * Combination of NgModuleFactory and ComponentFactories.
+ * NgModuleFactory와 ComponentFactories의 조합입니다.
  *
  * @publicApi
  *
  * @deprecated
- * Ivy JIT mode doesn't require accessing this symbol.
+ * Ivy JIT 모드는 이 기호에 접근할 필요가 없습니다.
  */
 export class ModuleWithComponentFactories<T> {
   constructor(
@@ -35,38 +35,38 @@ export class ModuleWithComponentFactories<T> {
 }
 
 /**
- * Low-level service for running the angular compiler during runtime
- * to create {@link ComponentFactory}s, which
- * can later be used to create and render a Component instance.
+ * 런타임 동안 Angular 컴파일러를 실행하기 위한 저수준 서비스
+ * {@link ComponentFactory}를 생성하여
+ * 나중에 Component 인스턴스를 생성하고 렌더링하는 데 사용할 수 있습니다.
  *
- * Each `@NgModule` provides an own `Compiler` to its injector,
- * that will use the directives/pipes of the ng module for compilation
- * of components.
+ * 각 `@NgModule`은 컴파일을 위해 ng 모듈의 지시문/파이프를 사용할
+ * 자신의 `Compiler`를 인젝터에 제공합니다.
  *
  * @publicApi
  *
  * @deprecated
- * Ivy JIT mode doesn't require accessing this symbol.
+ * Ivy JIT 모드는 이 기호에 접근할 필요가 없습니다.
  */
 @Injectable({providedIn: 'root'})
 export class Compiler {
   /**
-   * Compiles the given NgModule and all of its components. All templates of the components
-   * have to be inlined.
+   * 주어진 NgModule과 모든 컴포넌트를 컴파일합니다. 모든 컴포넌트의 템플릿은
+   * 인라인되어야 합니다.
    */
   compileModuleSync<T>(moduleType: Type<T>): NgModuleFactory<T> {
     return new NgModuleFactoryR3(moduleType);
   }
 
   /**
-   * Compiles the given NgModule and all of its components
+   * 주어진 NgModule과 모든 컴포넌트를 컴파일합니다.
    */
   compileModuleAsync<T>(moduleType: Type<T>): Promise<NgModuleFactory<T>> {
     return Promise.resolve(this.compileModuleSync(moduleType));
   }
 
   /**
-   * Same as {@link Compiler#compileModuleSync compileModuleSync} but also creates ComponentFactories for all components.
+   * {@link Compiler#compileModuleSync compileModuleSync}와 동일하나
+   * 모든 컴포넌트에 대한 ComponentFactories도 생성합니다.
    */
   compileModuleAndAllComponentsSync<T>(moduleType: Type<T>): ModuleWithComponentFactories<T> {
     const ngModuleFactory = this.compileModuleSync(moduleType);
@@ -83,7 +83,8 @@ export class Compiler {
   }
 
   /**
-   * Same as {@link Compiler#compileModuleAsync compileModuleAsync} but also creates ComponentFactories for all components.
+   * {@link Compiler#compileModuleAsync compileModuleAsync}와 동일하나
+   * 모든 컴포넌트에 대한 ComponentFactories도 생성합니다.
    */
   compileModuleAndAllComponentsAsync<T>(
     moduleType: Type<T>,
@@ -92,17 +93,17 @@ export class Compiler {
   }
 
   /**
-   * Clears all caches.
+   * 모든 캐시를 삭제합니다.
    */
   clearCache(): void {}
 
   /**
-   * Clears the cache for the given component/ngModule.
+   * 주어진 컴포넌트/ngModule에 대한 캐시를 삭제합니다.
    */
   clearCacheFor(type: Type<any>) {}
 
   /**
-   * Returns the id for a given NgModule, if one is defined and known to the compiler.
+   * 주어진 NgModule에 대한 ID를 반환합니다. 정의되고 컴파일러에 알려진 경우에 한합니다.
    */
   getModuleId(moduleType: Type<any>): string | undefined {
     return undefined;
@@ -110,7 +111,7 @@ export class Compiler {
 }
 
 /**
- * Options for creating a compiler.
+ * 컴파일러를 생성하기 위한 옵션입니다.
  *
  * @publicApi
  */
@@ -121,7 +122,7 @@ export type CompilerOptions = {
 };
 
 /**
- * Token to provide CompilerOptions in the platform injector.
+ * 플랫폼 인젝터에서 CompilerOptions를 제공하기 위한 토큰입니다.
  *
  * @publicApi
  */
@@ -130,12 +131,12 @@ export const COMPILER_OPTIONS = new InjectionToken<CompilerOptions[]>(
 );
 
 /**
- * A factory for creating a Compiler
+ * 컴파일러를 생성하는 팩토리입니다.
  *
  * @publicApi
  *
  * @deprecated
- * Ivy JIT mode doesn't require accessing this symbol.
+ * Ivy JIT 모드는 이 기호에 접근할 필요가 없습니다.
  */
 export abstract class CompilerFactory {
   abstract createCompiler(options?: CompilerOptions[]): Compiler;

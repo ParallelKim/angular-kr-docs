@@ -46,31 +46,31 @@ import {performanceMarkFeature} from '../util/performance';
 import {triggerHydrationFromBlockName} from '../defer/triggering';
 import {isIncrementalHydrationEnabled} from './utils';
 
-/** Apps in which we've enabled event replay.
- *  This is to prevent initializing event replay more than once per app.
+/** 이벤트 재생 기능을 활성화한 앱.
+ *  이는 각 앱에서 이벤트 재생을 한 번 이상 초기화하는 것을 방지하기 위한 것입니다.
  */
 const appsWithEventReplay = new WeakSet<ApplicationRef>();
 
 /**
- * The key that represents all replayable elements that are not in defer blocks.
+ * 지연 블록에 없는 모든 재생 가능한 요소를 나타내는 키입니다.
  */
 const EAGER_CONTENT_LISTENERS_KEY = '';
 
 /**
- * A list of block events that need to be replayed
+ * 재생해야 할 블록 이벤트의 목록입니다.
  */
 let blockEventQueue: {event: Event; currentTarget: Element}[] = [];
 
 /**
- * Determines whether Event Replay feature should be activated on the client.
+ * 클라이언트에서 이벤트 재생 기능을 활성화해야 하는지 여부를 결정합니다.
  */
 function shouldEnableEventReplay(injector: Injector) {
   return injector.get(IS_EVENT_REPLAY_ENABLED, EVENT_REPLAY_ENABLED_DEFAULT);
 }
 
 /**
- * Returns a set of providers required to setup support for event replay.
- * Requires hydration to be enabled separately.
+ * 이벤트 재생 지원을 설정하는 데 필요한 프로바이더 세트를 반환합니다.
+ * 하이드레이션을 별도로 활성화해야 합니다.
  */
 export function withEventReplay(): Provider[] {
   const providers: Provider[] = [
@@ -79,9 +79,9 @@ export function withEventReplay(): Provider[] {
       useFactory: () => {
         let isEnabled = true;
         if (typeof ngServerMode === 'undefined' || !ngServerMode) {
-          // Note: globalThis[CONTRACT_PROPERTY] may be undefined in case Event Replay feature
-          // is enabled, but there are no events configured in this application, in which case
-          // we don't activate this feature, since there are no events to replay.
+          // 참고: globalThis[CONTRACT_PROPERTY]는 이벤트 재생 기능이 활성화되어 있지만,
+          // 이 애플리케이션에 구성된 이벤트가 없을 경우 undefined일 수 있습니다.
+          // 이런 경우에는 재생할 이벤트가 없으므로 이 기능을 활성화하지 않습니다.
           const appId = inject(APP_ID);
           isEnabled = !!window._ejsas?.[appId];
         }
@@ -100,16 +100,14 @@ export function withEventReplay(): Provider[] {
         useValue: () => {
           const appRef = inject(ApplicationRef);
           const {injector} = appRef;
-          // We have to check for the appRef here due to the possibility of multiple apps
-          // being present on the same page. We only want to enable event replay for the
-          // apps that actually want it.
+          // 동일 페이지에 여러 앱이 존재할 수 있으므로 여기에서 appRef를 확인해야 합니다.
+          // 실제로 이벤트 재생을 원하는 앱에 대해서만 활성화하길 원합니다.
           if (!appsWithEventReplay.has(appRef)) {
             const jsActionMap = inject(JSACTION_BLOCK_ELEMENT_MAP);
             if (shouldEnableEventReplay(injector)) {
               setStashFn((rEl: RNode, eventName: string, listenerFn: VoidFunction) => {
-                // If a user binds to a ng-container and uses a directive that binds using a host listener,
-                // this element could be a comment node. So we need to ensure we have an actual element
-                // node before stashing anything.
+                // 사용자가 ng-container에 바인딩하고 호스트 리스너를 사용하여 바인딩하는 지시문을 사용하면
+                // 이 요소는 주석 노드일 수 있습니다. 따라서 실제 요소 노드가 있어야 합니다.
                 if ((rEl as Node).nodeType !== Node.ELEMENT_NODE) return;
                 sharedStashFunction(rEl as RElement, eventName, listenerFn);
                 sharedMapFunction(rEl as RElement, jsActionMap);
@@ -127,9 +125,8 @@ export function withEventReplay(): Provider[] {
           const {injector} = appRef;
 
           return () => {
-            // We have to check for the appRef here due to the possibility of multiple apps
-            // being present on the same page. We only want to enable event replay for the
-            // apps that actually want it.
+            // 동일 페이지에 여러 앱이 존재할 수 있으므로 여기에서 appRef를 확인해야 합니다.
+            // 실제로 이벤트 재생을 원하는 앱에 대해서만 활성화하길 원합니다.
             if (!shouldEnableEventReplay(injector) || appsWithEventReplay.has(appRef)) {
               return;
             }
@@ -138,29 +135,26 @@ export function withEventReplay(): Provider[] {
 
             appRef.onDestroy(() => {
               appsWithEventReplay.delete(appRef);
-              // Ensure that we're always safe calling this in the browser.
+              // 항상 브라우저에서 안전하게 호출할 수 있도록 합니다.
               if (typeof ngServerMode !== 'undefined' && !ngServerMode) {
-                // `_ejsa` should be deleted when the app is destroyed, ensuring that
-                // no elements are still captured in the global list and are not prevented
-                // from being garbage collected.
+                // 앱이 파괴될 때 `_ejsa`가 삭제되어야 하며,
+                // 이를 통해 글로벌 목록의 요소가 여전히 캡처되지 않고
+                // 가비지 수집되지 않도록 합니다.
                 clearAppScopedEarlyEventContract(appId);
-                // Clean up the reference to the function set by the environment initializer,
-                // as the function closure may capture injected elements and prevent them
-                // from being properly garbage collected.
+                // 환경 초기화기에서 설정한 함수에 대한 참조를 정리합니다.
+                // 함수 클로저가 주입된 요소를 캡처할 수 있으며 이를 통해
+                // 제대로 가비지 수집되지 않을 수 있습니다.
                 setStashFn(() => {});
               }
             });
 
-            // Kick off event replay logic once hydration for the initial part
-            // of the application is completed. This timing is similar to the unclaimed
-            // dehydrated views cleanup timing.
+            // 애플리케이션의 초기 부분에 대한 하이드레이션이 완료되면 이벤트 재생 로직을 시작합니다.
+            // 이 타이밍은 청구되지 않은 탈수된 뷰의 정리 타이밍과 유사합니다.
             appRef.whenStable().then(() => {
-              // Note: we have to check whether the application is destroyed before
-              // performing other operations with the `injector`.
-              // The application may be destroyed **before** it becomes stable, so when
-              // the `whenStable` resolves, the injector might already be in
-              // a destroyed state. Thus, calling `injector.get` would throw an error
-              // indicating that the injector has already been destroyed.
+              // 참고: `injector`에 대한 다른 작업을 수행하기 전에 애플리케이션이 파괴되었는지 확인해야 합니다.
+              // 애플리케이션은 안정성이 확보되기 **전**에 파괴될 수 있으므로,
+              // `whenStable`이 해결될 때 `injector`가 이미 파괴된 상태일 수 있습니다.
+              // 따라서 `injector.get`을 호출하면 인젝터가 이미 파괴되었다는 오류가 발생합니다.
               if (appRef.destroyed) {
                 return;
               }
@@ -172,14 +166,11 @@ export function withEventReplay(): Provider[] {
               jsActionMap.delete(EAGER_CONTENT_LISTENERS_KEY);
 
               const eventContract = eventContractDetails.instance!;
-              // This removes event listeners registered through the container manager,
-              // as listeners registered on `document.body` might never be removed if we
-              // don't clean up the contract.
+              // 이는 컨테이너 관리자 사용을 통해 등록된 이벤트 리스너를 제거합니다.
+              // `document.body`에 등록된 리스너는 계약을 정리하지 않으면 제거되지 않을 수 있습니다.
               if (isIncrementalHydrationEnabled(injector)) {
-                // When incremental hydration is enabled, we cannot clean up the event
-                // contract immediately because we're unaware if there are any deferred
-                // blocks to hydrate. We can only schedule a contract cleanup when the
-                // app is destroyed.
+                // 점진적 하이드레이션이 활성화된 경우, 동시 하이드레이션이 있는지 확인할 수 없으므로
+                // 이벤트 계약을 즉시 정리할 수 없습니다. 앱이 파괴될 때 계약 정리를 예약할 수 있습니다.
                 appRef.onDestroy(() => eventContract.cleanUp());
               } else {
                 eventContract.cleanUp();
@@ -197,7 +188,7 @@ export function withEventReplay(): Provider[] {
 
 const initEventReplay = (eventDelegation: EventContractDetails, injector: Injector) => {
   const appId = injector.get(APP_ID);
-  // This is set in packages/platform-server/src/utils.ts
+  // 이는 packages/platform-server/src/utils.ts에서 설정됩니다.
   const earlyJsactionData = window._ejsas![appId]!;
   const eventContract = (eventDelegation.instance = new EventContract(
     new EventContractContainer(earlyJsactionData.c),
@@ -218,8 +209,8 @@ const initEventReplay = (eventDelegation: EventContractDetails, injector: Inject
 };
 
 /**
- * Extracts information about all DOM events (added in a template) registered on elements in a give
- * LView. Maps collected events to a corresponding DOM element (an element is used as a key).
+ * 주어진 LView의 요소에 등록된 모든 DOM 이벤트에 대한 정보를 추출합니다(템플릿에 추가됨).
+ * 수집된 이벤트를 해당 DOM 요소에 매핑합니다(요소가 키로 사용됨).
  */
 export function collectDomEventsInfo(
   tView: TView,
@@ -248,11 +239,11 @@ export function collectDomEventsInfo(
       eventTypesToReplay.regular.add(eventType);
     }
     const listenerElement = unwrapRNode(lView[secondParam]) as any as Element;
-    i++; // move the cursor to the next position (location of the listener idx)
+    i++; // 다음 위치(리스너 인덱스의 위치)로 커서를 이동합니다.
     const useCaptureOrIndx = tCleanup[i++];
-    // if useCaptureOrIndx is boolean then report it as is.
-    // if useCaptureOrIndx is positive number then it in unsubscribe method
-    // if useCaptureOrIndx is negative number then it is a Subscription
+    // useCaptureOrIndx가 부울이면 그대로 보고합니다.
+    // useCaptureOrIndx가 양수이면 unsubscribe 메서드에 있습니다.
+    // useCaptureOrIndx가 음수이면 Subscription입니다.
     const isDomEvent = typeof useCaptureOrIndx === 'boolean' || useCaptureOrIndx >= 0;
     if (!isDomEvent) {
       continue;
@@ -291,17 +282,17 @@ function hydrateAndInvokeBlockListeners(
 }
 
 function replayQueuedBlockEvents(hydratedBlocks: string[]) {
-  // clone the queue
+  // 큐를 복제합니다.
   const queue = [...blockEventQueue];
   const hydrated = new Set<string>(hydratedBlocks);
-  // empty it
+  // 큐를 비웁니다.
   blockEventQueue = [];
   for (let {event, currentTarget} of queue) {
     const blockName = currentTarget.getAttribute(DEFER_BLOCK_SSR_ID_ATTRIBUTE)!;
     if (hydrated.has(blockName)) {
       invokeListeners(event, currentTarget);
     } else {
-      // requeue events that weren't yet hydrated
+      // 아직 하이드레이션되지 않은 이벤트를 다시 큐에 추가합니다.
       blockEventQueue.push({event, currentTarget});
     }
   }

@@ -12,9 +12,8 @@ import {formatRuntimeError, RuntimeErrorCode} from '../errors';
 import {stringifyForError} from './util/stringify_utils';
 
 /**
- * A type representing the live collection to be reconciled with any new (incoming) collection. This
- * is an adapter class that makes it possible to work with different internal data structures,
- * regardless of the actual values of the incoming collection.
+ * 새로운(들어오는) 컬렉션과 일치시킬 라이브 컬렉션을 나타내는 타입입니다. 이
+ * 어댑터 클래스는 들어오는 컬렉션의 실제 값과 관계없이 다양한 내부 데이터 구조로 작업할 수 있게 합니다.
  */
 export abstract class LiveCollection<T, V> {
   abstract get length(): number;
@@ -23,15 +22,14 @@ export abstract class LiveCollection<T, V> {
   abstract detach(index: number): T;
   abstract create(index: number, value: V): T;
   destroy(item: T): void {
-    // noop by default
+    // 기본적으로는 아무 작업도 하지 않음
   }
   updateValue(index: number, value: V): void {
-    // noop by default
+    // 기본적으로는 아무 작업도 하지 않음
   }
 
-  // operations below could be implemented on top of the operations defined so far, but having
-  // them explicitly allow clear expression of intent and potentially more performant
-  // implementations
+  // 아래 작업은 지금까지 정의된 작업을 기반으로 구현될 수 있지만,
+  // 명시적으로 작업을 명확하게 표현하고 더 성능을 향상시킬 수 있습니다.
   swap(index1: number, index2: number): void {
     const startIdx = Math.min(index1, index2);
     const endIdx = Math.max(index1, index2);
@@ -57,10 +55,10 @@ function valuesMatching<V>(
   trackBy: TrackByFunction<V>,
 ): number {
   if (liveIdx === newIdx && Object.is(liveValue, newValue)) {
-    // matching and no value identity to update
+    // 일치하고 업데이트할 값의 정체성이 없음
     return 1;
   } else if (Object.is(trackBy(liveIdx, liveValue), trackBy(newIdx, newValue))) {
-    // matching but requires value identity update
+    // 일치하지만 값의 정체성 업데이트가 필요함
     return -1;
   }
 
@@ -78,27 +76,22 @@ function recordDuplicateKeys(keyToIdx: Map<unknown, Set<number>>, key: unknown, 
 }
 
 /**
- * The live collection reconciliation algorithm that perform various in-place operations, so it
- * reflects the content of the new (incoming) collection.
+ * 새로운(들어오는) 컬렉션의 내용을 반영하기 위해 다양한 제자리 작업을 수행하는
+ * 라이브 컬렉션 조정 알고리즘입니다.
  *
- * The reconciliation algorithm has 2 code paths:
- * - "fast" path that don't require any memory allocation;
- * - "slow" path that requires additional memory allocation for intermediate data structures used to
- * collect additional information about the live collection.
- * It might happen that the algorithm switches between the two modes in question in a single
- * reconciliation path - generally it tries to stay on the "fast" path as much as possible.
+ * 조정 알고리즘은 2개의 코드 경로를 가지고 있습니다:
+ * - 메모리 할당이 필요 없는 "빠른" 경로;
+ * - 라이브 컬렉션에 대한 추가 정보를 수집하는 데 사용되는 중간 데이터 구조를 위한 추가 메모리 할당이 필요한 "느린" 경로.
+ * 알고리즘은 단일 조정 경로에서 두 모드 간에 전환될 수 있습니다 - 일반적으로 가능한 한 "빠른" 경로를 유지하려고 합니다.
  *
- * The overall complexity of the algorithm is O(n + m) for speed and O(n) for memory (where n is the
- * length of the live collection and m is the length of the incoming collection). Given the problem
- * at hand the complexity / performance constraints makes it impossible to perform the absolute
- * minimum of operation to reconcile the 2 collections. The algorithm makes different tradeoffs to
- * stay within reasonable performance bounds and may apply sub-optimal number of operations in
- * certain situations.
+ * 알고리즘의 전체 복잡도는 O(n + m) 속도와 O(n) 메모리입니다(여기서 n은
+ * 라이브 컬렉션의 길이이고 m은 들어오는 컬렉션의 길이입니다). 문제의 특성상 복잡도/성능 제약이 있기 때문에
+ * 두 컬렉션을 조정하는 데 필요한 최소 작업을 수행하는 것이 불가능합니다. 알고리즘은 합리적인 성능 한계 내에서 머무르기 위해
+ * 다양한 거래를 하며 특정 상황에서 부분 최적의 작업 수를 적용할 수 있습니다.
  *
- * @param liveCollection the current, live collection;
- * @param newCollection the new, incoming collection;
- * @param trackByFn key generation function that determines equality between items in the life and
- *     incoming collection;
+ * @param liveCollection 현재의 라이브 컬렉션;
+ * @param newCollection 새로운 들어오는 컬렉션;
+ * @param trackByFn 라이브 및 들어오는 컬렉션의 항목 간 동등성을 결정하는 키 생성 함수;
  */
 export function reconcile<T, V>(
   liveCollection: LiveCollection<T, V>,
@@ -117,7 +110,7 @@ export function reconcile<T, V>(
     let newEndIdx = newCollection.length - 1;
 
     while (liveStartIdx <= liveEndIdx && liveStartIdx <= newEndIdx) {
-      // compare from the beginning
+      // 시작 부분에서 비교
       const liveStartValue = liveCollection.at(liveStartIdx);
       const newStartValue = newCollection[liveStartIdx];
 
@@ -140,8 +133,8 @@ export function reconcile<T, V>(
         continue;
       }
 
-      // compare from the end
-      // TODO(perf): do _all_ the matching from the end
+      // 끝 부분에서 비교
+      // TODO(perf): 끝에서의 모든 일치를 수행
       const liveEndValue = liveCollection.at(liveEndIdx);
       const newEndValue = newCollection[newEndIdx];
 
@@ -165,21 +158,20 @@ export function reconcile<T, V>(
         continue;
       }
 
-      // Detect swap and moves:
+      // 교환 및 이동 감지:
       const liveStartKey = trackByFn(liveStartIdx, liveStartValue);
       const liveEndKey = trackByFn(liveEndIdx, liveEndValue);
       const newStartKey = trackByFn(liveStartIdx, newStartValue);
       if (Object.is(newStartKey, liveEndKey)) {
         const newEndKey = trackByFn(newEndIdx, newEndValue);
-        // detect swap on both ends;
+        // 양쪽 끝에서의 교환 감지;
         if (Object.is(newEndKey, liveStartKey)) {
           liveCollection.swap(liveStartIdx, liveEndIdx);
           liveCollection.updateValue(liveEndIdx, newEndValue);
           newEndIdx--;
           liveEndIdx--;
         } else {
-          // the new item is the same as the live item with the end pointer - this is a move forward
-          // to an earlier index;
+          // 새로운 항목이 끝 포인터에 있는 라이브 항목과 동일함 - 이는 이전 인덱스로의 이동임
           liveCollection.move(liveEndIdx, liveStartIdx);
         }
         liveCollection.updateValue(liveStartIdx, newStartValue);
@@ -187,8 +179,7 @@ export function reconcile<T, V>(
         continue;
       }
 
-      // Fallback to the slow path: we need to learn more about the content of the live and new
-      // collections.
+      // 느린 경로로 대체: 라이브 및 새로운 컬렉션의 내용에 대해 더 많은 정보를 알아내야 합니다.
       detachedItems ??= new UniqueValueMultiKeyMap();
       liveKeysInTheFuture ??= initLiveItemsInTheFuture(
         liveCollection,
@@ -197,28 +188,28 @@ export function reconcile<T, V>(
         trackByFn,
       );
 
-      // Check if I'm inserting a previously detached item: if so, attach it here
+      // 이전에 분리된 항목을 삽입하는 경우: 여기에서 연결합니다
       if (attachPreviouslyDetached(liveCollection, detachedItems, liveStartIdx, newStartKey)) {
         liveCollection.updateValue(liveStartIdx, newStartValue);
         liveStartIdx++;
         liveEndIdx++;
       } else if (!liveKeysInTheFuture.has(newStartKey)) {
-        // Check if we seen a new item that doesn't exist in the old collection and must be INSERTED
+        // 오래된 컬렉션에 존재하지 않는 새 항목을 보았고 삽입해야 함
         const newItem = liveCollection.create(liveStartIdx, newCollection[liveStartIdx]);
         liveCollection.attach(liveStartIdx, newItem);
         liveStartIdx++;
         liveEndIdx++;
       } else {
-        // We know that the new item exists later on in old collection but we don't know its index
-        // and as the consequence can't move it (don't know where to find it). Detach the old item,
-        // hoping that it unlocks the fast path again.
+        // 우리는 새로운 항목이 오래된 컬렉션에서 나중에 존재한다는 것을 알고 있지만,
+        // 그 인덱스를 알 수 없으므로 이동할 수 없습니다 (찾는 방법을 모릅니다). 오래된 항목을 분리하여,
+        // 다시 빠른 경로를 열기 희망합니다.
         detachedItems.set(liveStartKey, liveCollection.detach(liveStartIdx));
         liveEndIdx--;
       }
     }
 
-    // Final cleanup steps:
-    // - more items in the new collection => insert
+    // 최종 정리 단계:
+    // - 새로운 컬렉션에서 더 많은 아이템 => 삽입
     while (liveStartIdx <= newEndIdx) {
       createOrAttach(
         liveCollection,
@@ -230,7 +221,7 @@ export function reconcile<T, V>(
       liveStartIdx++;
     }
   } else if (newCollection != null) {
-    // iterable - immediately fallback to the slow path
+    // iterable - 즉시 느린 경로로 대체
     const newCollectionIterator = newCollection[Symbol.iterator]();
     let newIterationResult = newCollectionIterator.next();
     while (!newIterationResult.done && liveStartIdx <= liveEndIdx) {
@@ -249,7 +240,7 @@ export function reconcile<T, V>(
         trackByFn,
       );
       if (isStartMatching !== 0) {
-        // found a match - move on, but update value
+        // 일치하는 항목을 찾음 - 넘어가지만 값을 업데이트 함
         if (isStartMatching < 0) {
           liveCollection.updateValue(liveStartIdx, newValue);
         }
@@ -264,7 +255,7 @@ export function reconcile<T, V>(
           trackByFn,
         );
 
-        // Check if I'm inserting a previously detached item: if so, attach it here
+        // 이전에 분리된 항목을 삽입하는 경우: 여기에서 연결합니다
         const newKey = trackByFn(liveStartIdx, newValue);
         if (attachPreviouslyDetached(liveCollection, detachedItems, liveStartIdx, newKey)) {
           liveCollection.updateValue(liveStartIdx, newValue);
@@ -277,7 +268,7 @@ export function reconcile<T, V>(
           liveEndIdx++;
           newIterationResult = newCollectionIterator.next();
         } else {
-          // it is a move forward - detach the current item without advancing in collections
+          // 앞으로 이동입니다 - 컬렉션에서 진행 없이 현재 항목을 분리합니다
           const liveKey = trackByFn(liveStartIdx, liveValue);
           detachedItems.set(liveKey, liveCollection.detach(liveStartIdx));
           liveEndIdx--;
@@ -285,8 +276,7 @@ export function reconcile<T, V>(
       }
     }
 
-    // this is a new item as we run out of the items in the old collection - create or attach a
-    // previously detached one
+    // 구 항목이 없으므로 이것은 새로운 항목입니다 - 이전에 분리된 항목을 생성하거나 연결합니다
     while (!newIterationResult.done) {
       createOrAttach(
         liveCollection,
@@ -299,18 +289,18 @@ export function reconcile<T, V>(
     }
   }
 
-  // Cleanups common to the array and iterable:
-  // - more items in the live collection => delete starting from the end;
+  // 배열 및 iterable 모두에 공통된 정리:
+  // - 라이브 컬렉션에서 더 많은 항목 => 끝에서 시작하여 삭제;
   while (liveStartIdx <= liveEndIdx) {
     liveCollection.destroy(liveCollection.detach(liveEndIdx--));
   }
 
-  // - destroy items that were detached but never attached again.
+  // - 다시 연결되지 않은 항목을 파괴합니다.
   detachedItems?.forEach((item) => {
     liveCollection.destroy(item);
   });
 
-  // report duplicate keys (dev mode only)
+  // 중복된 키 보고 (디벨롭 모드만 해당)
   if (ngDevMode) {
     let duplicatedKeysMsg = [];
     for (const [key, idxSet] of duplicateKeys!) {
@@ -327,9 +317,9 @@ export function reconcile<T, V>(
     if (duplicatedKeysMsg.length > 0) {
       const message = formatRuntimeError(
         RuntimeErrorCode.LOOP_TRACK_DUPLICATE_KEYS,
-        'The provided track expression resulted in duplicated keys for a given collection. ' +
-          'Adjust the tracking expression such that it uniquely identifies all the items in the collection. ' +
-          'Duplicated keys were: \n' +
+        '제공된 트랙 표현식이 주어진 컬렉션에 대해 중복 키를 발생시켰습니다. ' +
+          '트래킹 표현식을 조정하여 컬렉션 내 모든 항목을 고유하게 식별하게 하십시오. ' +
+          '중복 키는: \n' +
           duplicatedKeysMsg.join(', \n') +
           '.',
       );
@@ -382,23 +372,17 @@ function initLiveItemsInTheFuture<T>(
 }
 
 /**
- * A specific, partial implementation of the Map interface with the following characteristics:
- * - allows multiple values for a given key;
- * - maintain FIFO order for multiple values corresponding to a given key;
- * - assumes that all values are unique.
+ * 다음과 같은 특성을 가진 맵 인터페이스의 특정 부분 구현입니다:
+ * - 주어진 키에 대해 여러 값을 허용;
+ * - 주어진 키에 해당하는 여러 값에 대해 FIFO 순서를 유지;
+ * - 모든 값이 고유하다고 가정합니다.
  *
- * The implementation aims at having the minimal overhead for cases where keys are _not_ duplicated
- * (the most common case in the list reconciliation algorithm). To achieve this, the first value for
- * a given key is stored in a regular map. Then, when more values are set for a given key, we
- * maintain a form of linked list in a separate map. To maintain this linked list we assume that all
- * values (in the entire collection) are unique.
+ * 이 구현은 키가 중복되지 않은 경우(리스트 조정 알고리즘의 가장 일반적인 경우) 최소한의 오버헤드를 가지는 것을 목표로 합니다. 이를 위해, 주어진 키에 대한 첫 번째 값은 일반 맵에 저장됩니다. 그런 다음 주어진 키에 대해 더 많은 값이 설정되면, 별도의 맵에서 일종의 연결리스트를 유지합니다. 이 연결리스트를 유지하기 위해 전체 컬렉션의 모든 값이 고유하다고 가정합니다.
  */
 export class UniqueValueMultiKeyMap<K, V> {
-  // A map from a key to the first value corresponding to this key.
+  // 키에서 해당 키에 대한 첫 번째 값으로의 맵입니다.
   private kvMap = new Map<K, V>();
-  // A map that acts as a linked list of values - each value maps to the next value in this "linked
-  // list" (this only works if values are unique). Allocated lazily to avoid memory consumption when
-  // there are no duplicated values.
+  // 값의 연결 리스트로 작용하는 맵 - 각 값은 이 "연결 리스트"의 다음 값에 매핑됩니다(이는 값이 고유할 때만 작동합니다). 중복 값이 없을 때 메모리 소비를 피하기 위해 게으르게 할당됩니다.
   private _vMap: Map<V, V> | undefined = undefined;
 
   has(key: K): boolean {
@@ -427,10 +411,10 @@ export class UniqueValueMultiKeyMap<K, V> {
     if (this.kvMap.has(key)) {
       let prevValue = this.kvMap.get(key)!;
 
-      // Note: we don't use `assertNotSame`, because the value needs to be stringified even if
-      // there is no error which can freeze the browser for large values (see #58509).
+      // 노트: 값이 중복되는 경우를 감지하기 위해 'assertNotSame'을 사용하지 않습니다.
+      // 오류가 없는 경우에도 값이 문자열화되어야 하므로, 큰 값을 사용할 경우 브라우저가 얼 수 있습니다(참고: #58509).
       if (ngDevMode && prevValue === value) {
-        throw new Error(`Detected a duplicated value ${value} for the key ${key}`);
+        throw new Error(`키 ${key}에 대한 중복 값 ${value}가 감지되었습니다.`);
       }
 
       if (this._vMap === undefined) {

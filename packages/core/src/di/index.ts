@@ -9,7 +9,7 @@
 /**
  * @module
  * @description
- * The `di` module provides dependency injection container services.
+ * `di` 모듈은 의존성 주입 컨테이너 서비스를 제공합니다.
  */
 
 export * from './metadata';

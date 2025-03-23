@@ -39,150 +39,150 @@ import {getTNode, walkUpViews} from './util/view_utils';
  */
 interface LFrame {
   /**
-   * Parent LFrame.
+   * 상위 LFrame.
    *
-   * This is needed when `leaveView` is called to restore the previous state.
+   * `leaveView`가 호출될 때 이전 상태를 복원하는 데 필요합니다.
    */
   parent: LFrame;
 
   /**
-   * Child LFrame.
+   * 하위 LFrame.
    *
-   * This is used to cache existing LFrames to relieve the memory pressure.
+   * 메모리 압박을 해소하기 위해 기존 LFrames를 캐시하는 데 사용됩니다.
    */
   child: LFrame | null;
 
   /**
-   * State of the current view being processed.
+   * 현재 처리 중인 뷰의 상태.
    *
-   * An array of nodes (text, element, container, etc), pipes, their bindings, and
-   * any local variables that need to be stored between invocations.
+   * 노드(텍스트, 요소, 컨테이너 등), 파이프, 바인딩 및 호출 간에 저장되어야 하는
+   * 로컬 변수를 포함한 배열입니다.
    */
   lView: LView;
 
   /**
-   * Current `TView` associated with the `LFrame.lView`.
+   * `LFrame.lView`와 관련된 현재 `TView`.
    *
-   * One can get `TView` from `lFrame[TVIEW]` however because it is so common it makes sense to
-   * store it in `LFrame` for perf reasons.
+   * `lFrame[TVIEW]`에서 `TView`를 가져올 수 있지만, 너무 일반적이기 때문에
+   * 성능 이유로 `LFrame`에 저장하는 것이 좋습니다.
    */
   tView: TView;
 
   /**
-   * Used to set the parent property when nodes are created and track query results.
+   * 노드가 생성될 때 부모 속성을 설정하고 쿼리 결과를 추적하는 데 사용됩니다.
    *
-   * This is used in conjunction with `isParent`.
+   * `isParent`와 함께 사용됩니다.
    */
   currentTNode: TNode | null;
 
   /**
-   * If `isParent` is:
-   *  - `true`: then `currentTNode` points to a parent node.
-   *  - `false`: then `currentTNode` points to previous node (sibling).
+   * `isParent`가 다음과 같은 경우:
+   *  - `true`: `currentTNode`는 부모 노드를 가리킵니다.
+   *  - `false`: `currentTNode`는 이전 노드(형제)를 가리킵니다.
    */
   isParent: boolean;
 
   /**
-   * Index of currently selected element in LView.
+   * LView에서 현재 선택된 요소의 인덱스.
    *
-   * Used by binding instructions. Updated as part of advance instruction.
+   * 바인딩 지침이 사용합니다. 고급 지침의 일부로 업데이트됩니다.
    */
   selectedIndex: number;
 
   /**
-   * Current pointer to the binding index.
+   * 바인딩 인덱스에 대한 현재 포인터.
    */
   bindingIndex: number;
 
   /**
-   * The last viewData retrieved by nextContext().
-   * Allows building nextContext() and reference() calls.
+   * nextContext()에 의해 검색된 마지막 viewData.
+   * nextContext() 및 reference() 호출을 구축할 수 있게 합니다.
    *
-   * e.g. const inner = x().$implicit; const outer = x().$implicit;
+   * 예: const inner = x().$implicit; const outer = x().$implicit;
    */
   contextLView: LView | null;
 
   /**
-   * Store the element depth count. This is used to identify the root elements of the template
-   * so that we can then attach patch data `LView` to only those elements. We know that those
-   * are the only places where the patch data could change, this way we will save on number
-   * of places where tha patching occurs.
+   * 요소 깊이 수를 저장합니다. 이는 템플릿의 루트 요소를 식별하는 데 사용되어
+   * 이후에 패치 데이터를 특정 요소에만 연결할 수 있도록 합니다. 우리는
+   * 패치 데이터가 변경될 수 있는 유일한 장소가 그곳이라는 것을 알고 있기 때문에,
+   * 패치가 발생하는 장소의 수를 줄일 수 있습니다.
    */
   elementDepthCount: number;
 
   /**
-   * Current namespace to be used when creating elements
+   * 요소를 생성할 때 사용할 현재 네임스페이스
    */
   currentNamespace: string | null;
 
   /**
-   * The root index from which pure function instructions should calculate their binding
-   * indices. In component views, this is TView.bindingStartIndex. In a host binding
-   * context, this is the TView.expandoStartIndex + any dirs/hostVars before the given dir.
+   * 순수 함수 지침이 바인딩 인덱스를 계산해야 하는 루트 인덱스입니다.
+   * 컴포넌트 뷰에서는 TView.bindingStartIndex입니다. 호스트 바인딩
+   * 컨텍스트에서는 TView.expandoStartIndex + 주어진 dir 이전의 모든 dirs/hostVars입니다.
    */
   bindingRootIndex: number;
 
   /**
-   * Current index of a View or Content Query which needs to be processed next.
-   * We iterate over the list of Queries and increment current query index at every step.
+   * 다음에 처리해야 할 쿼리 또는 콘텐츠 쿼리의 현재 인덱스입니다.
+   * 우리는 쿼리 목록을 반복하고 매 단계마다 현재 쿼리 인덱스를 증가시킵니다.
    */
   currentQueryIndex: number;
 
   /**
-   * When host binding is executing this points to the directive index.
-   * `TView.data[currentDirectiveIndex]` is `DirectiveDef`
-   * `LView[currentDirectiveIndex]` is directive instance.
+   * 호스트 바인딩이 실행될 때 이 값은 지시어 인덱스를 가리킵니다.
+   * `TView.data[currentDirectiveIndex]`는 `DirectiveDef`
+   * `LView[currentDirectiveIndex]`는 지시어 인스턴스입니다.
    */
   currentDirectiveIndex: number;
 
   /**
-   * Are we currently in i18n block as denoted by `ɵɵelementStart` and `ɵɵelementEnd`.
+   * `ɵɵelementStart`와 `ɵɵelementEnd`로 표시된 i18n 블록의 중간에 있는지 여부입니다.
    *
-   * This information is needed because while we are in i18n block all elements must be pre-declared
-   * in the translation. (i.e. `Hello �#2�World�/#2�!` pre-declares element at `�#2�` location.)
-   * This allocates `TNodeType.Placeholder` element at location `2`. If translator removes `�#2�`
-   * from translation than the runtime must also ensure tha element at `2` does not get inserted
-   * into the DOM. The translation does not carry information about deleted elements. Therefor the
-   * only way to know that an element is deleted is that it was not pre-declared in the translation.
+   * 이 정보는 i18n 블록 내에서 모든 요소가 번역에서 미리 선언되어야 하기 때문에 필요합니다.
+   * (예: `Hello �#2�World�/#2�!`는 `�#2�` 위치에 요소를 미리 선언합니다.)
+   * 이는 위치 `2`에 `TNodeType.Placeholder` 요소를 할당합니다. 번역자가
+   * 번역에서 `�#2�`를 제거하면 런타임은 위치 `2`에 요소가 삽입되지 않는지 확인해야 합니다.
+   * 번역에는 삭제된 요소에 대한 정보가 포함되지 않습니다. 따라서 요소가 삭제되었다는 것을
+   * 아는 유일한 방법은 번역에서 미리 선언되지 않았다는 것입니다.
    *
-   * This flag works by ensuring that elements which are created without pre-declaration
-   * (`TNodeType.Placeholder`) are not inserted into the DOM render tree. (It does mean that the
-   * element still gets instantiated along with all of its behavior [directives])
+   * 이 플래그는 미리 선언 없이 생성된 요소
+   * (`TNodeType.Placeholder`)가 DOM 렌더 트리에 삽입되지 않도록 보장하여 작동합니다.
+   * (즉, 요소가 여전히 모든 동작 [지시어]와 함께 인스턴스화된다는 것을 의미합니다.)
    */
   inI18n: boolean;
 }
 
 /**
- * All implicit instruction state is stored here.
+ * 모든 암시적 지침 상태는 여기 저장됩니다.
  *
- * It is useful to have a single object where all of the state is stored as a mental model
- * (rather it being spread across many different variables.)
+ * 모든 상태가 저장되는 단일 객체를 갖는 것이 정신 모델로서 유용합니다
+ * (여러 다른 변수에 분산되어 있는 것보다).
  *
- * PERF NOTE: Turns out that writing to a true global variable is slower than
- * having an intermediate object with properties.
+ * 성능 주의: 실제 전역 변수에 쓰는 것은
+ * 속성이 있는 중간 객체를 사용하는 것보다 느립니다.
  */
 interface InstructionState {
   /**
-   * Current `LFrame`
+   * 현재 `LFrame`
    *
-   * `null` if we have not called `enterView`
+   * `enterView`를 호출하지 않았다면 `null`
    */
   lFrame: LFrame;
 
   /**
-   * Stores whether directives should be matched to elements.
+   * 지시어가 요소와 일치해야 하는지 여부를 저장합니다.
    *
-   * When template contains `ngNonBindable` then we need to prevent the runtime from matching
-   * directives on children of that element.
+   * 템플릿이 `ngNonBindable`을 포함하면 해당 요소의 자식에
+   * 지시어가 일치하지 않도록 런타임을 방지해야 합니다.
    *
-   * Example:
+   * 예시:
    * ```html
    * <my-comp my-directive>
-   *   Should match component / directive.
+   *   컴포넌트 / 지시어와 일치해야 합니다.
    * </my-comp>
    * <div ngNonBindable>
    *   <my-comp my-directive>
-   *     Should not match component / directive because we are in ngNonBindable.
+   *     ngNonBindable에 있기 때문에 컴포넌트 / 지시어와 일치해서는 안 됩니다.
    *   </my-comp>
    * </div>
    * ```
@@ -190,12 +190,12 @@ interface InstructionState {
   bindingsEnabled: boolean;
 
   /**
-   * Stores the root TNode that has the 'ngSkipHydration' attribute on it for later reference.
+   * 나중에 참조할 'ngSkipHydration' 속성이 있는 루트 TNode를 저장합니다.
    *
-   * Example:
+   * 예시:
    * ```html
    * <my-comp ngSkipHydration>
-   *   Should reference this root node
+   *   이 루트 노드를 참조해야 합니다.
    * </my-comp>
    * ```
    */
@@ -215,26 +215,26 @@ export enum CheckNoChangesMode {
 }
 
 /**
- * In this mode, any changes in bindings will throw an ExpressionChangedAfterChecked error.
+ * 이 모드에서는 바인딩의 변경이 있을 경우 ExpressionChangedAfterChecked 오류가 발생합니다.
  *
- * Necessary to support ChangeDetectorRef.checkNoChanges().
+ * ChangeDetectorRef.checkNoChanges()를 지원하기 위해 필요합니다.
  *
- * The `checkNoChanges` function is invoked only in ngDevMode=true and verifies that no unintended
- * changes exist in the change detector or its children.
+ * `checkNoChanges` 함수는 ngDevMode=true 시에만 호출되며
+ * 변경 감지기나 그 자식에 의도하지 않은 변경이 없는지 확인합니다.
  */
 let _checkNoChangesMode: CheckNoChangesMode = 0; /* CheckNoChangesMode.Off */
 
 /**
- * Flag used to indicate that we are in the middle running change detection on a view
+ * 뷰에서 변경 감지를 실행하는 중임을 나타내는 플래그입니다.
  *
  * @see detectChangesInViewWhileDirty
  */
 let _isRefreshingViews = false;
 
 /**
- * Returns true if the instruction state stack is empty.
+ * 지침 상태 스택이 비어 있다면 true를 반환합니다.
  *
- * Intended to be called from tests only (tree shaken otherwise).
+ * 테스트에서만 호출되도록 의도되었습니다 (그렇지 않으면 트리에서 제외됩니다).
  */
 export function specOnlyIsInstructionStateEmpty(): boolean {
   return instructionState.lFrame.parent === null;
@@ -257,7 +257,7 @@ export function getBindingsEnabled(): boolean {
 }
 
 /**
- * Returns true if currently inside a skip hydration block.
+ * 현재 스킵 수화 블록 내에 있다면 true를 반환합니다.
  * @returns boolean
  */
 export function isInSkipHydrationBlock(): boolean {
@@ -265,8 +265,8 @@ export function isInSkipHydrationBlock(): boolean {
 }
 
 /**
- * Returns true if this is the root TNode of the skip hydration block.
- * @param tNode the current TNode
+ * 이것이 스킵 수화 블록의 루트 TNode인지 여부를 반환합니다.
+ * @param tNode 현재 TNode
  * @returns boolean
  */
 export function isSkipHydrationRootTNode(tNode: TNode): boolean {
@@ -274,17 +274,17 @@ export function isSkipHydrationRootTNode(tNode: TNode): boolean {
 }
 
 /**
- * Enables directive matching on elements.
+ * 요소에서 지시어 매칭을 활성화합니다.
  *
- *  * Example:
+ *  * 예시:
  * ```html
  * <my-comp my-directive>
- *   Should match component / directive.
+ *   컴포넌트 / 지시어와 일치해야 합니다.
  * </my-comp>
  * <div ngNonBindable>
  *   <!-- ɵɵdisableBindings() -->
  *   <my-comp my-directive>
- *     Should not match component / directive because we are in ngNonBindable.
+ *     ngNonBindable에 있기 때문에 컴포넌트 / 지시어와 일치해서는 안 됩니다.
  *   </my-comp>
  *   <!-- ɵɵenableBindings() -->
  * </div>
@@ -297,25 +297,25 @@ export function ɵɵenableBindings(): void {
 }
 
 /**
- * Sets a flag to specify that the TNode is in a skip hydration block.
- * @param tNode the current TNode
+ * TNode가 스킵 수화 블록에 있음을 나타내는 플래그를 설정합니다.
+ * @param tNode 현재 TNode
  */
 export function enterSkipHydrationBlock(tNode: TNode): void {
   instructionState.skipHydrationRootTNode = tNode;
 }
 
 /**
- * Disables directive matching on element.
+ * 요소에서 지시어 매칭을 비활성화합니다.
  *
- *  * Example:
+ *  * 예시:
  * ```html
  * <my-comp my-directive>
- *   Should match component / directive.
+ *   컴포넌트 / 지시어와 일치해야 합니다.
  * </my-comp>
  * <div ngNonBindable>
  *   <!-- ɵɵdisableBindings() -->
  *   <my-comp my-directive>
- *     Should not match component / directive because we are in ngNonBindable.
+ *     ngNonBindable에 있기 때문에 컴포넌트 / 지시어와 일치해서는 안 됩니다.
  *   </my-comp>
  *   <!-- ɵɵenableBindings() -->
  * </div>
@@ -328,35 +328,35 @@ export function ɵɵdisableBindings(): void {
 }
 
 /**
- * Clears the root skip hydration node when leaving a skip hydration block.
+ * 스킵 수화 블록을 떠날 때 루트 스킵 수화 노드를 지웁니다.
  */
 export function leaveSkipHydrationBlock(): void {
   instructionState.skipHydrationRootTNode = null;
 }
 
 /**
- * Return the current `LView`.
+ * 현재 `LView`를 반환합니다.
  */
 export function getLView<T>(): LView<T> {
   return instructionState.lFrame.lView as LView<T>;
 }
 
 /**
- * Return the current `TView`.
+ * 현재 `TView`를 반환합니다.
  */
 export function getTView(): TView {
   return instructionState.lFrame.tView;
 }
 
 /**
- * Restores `contextViewData` to the given OpaqueViewState instance.
+ * 주어진 OpaqueViewState 인스턴스에 `contextViewData`를 복원합니다.
  *
- * Used in conjunction with the getCurrentView() instruction to save a snapshot
- * of the current view and restore it when listeners are invoked. This allows
- * walking the declaration view tree in listeners to get vars from parent views.
+ * 현재 뷰의 스냅샷을 저장하고 리스너가 호출될 때 복원하기 위해
+ * getCurrentView() 지침과 함께 사용됩니다. 이로써
+ * 리스너에서 부모 뷰에서 변수를 가져오기 위해 선언 뷰 트리를 탐색할 수 있게 됩니다.
  *
- * @param viewToRestore The OpaqueViewState instance to restore.
- * @returns Context of the restored OpaqueViewState instance.
+ * @param viewToRestore 복원할 OpaqueViewState 인스턴스
+ * @returns 복원된 OpaqueViewState 인스턴스의 컨텍스트
  *
  * @codeGenApi
  */
@@ -366,8 +366,8 @@ export function ɵɵrestoreView<T = any>(viewToRestore: OpaqueViewState): T {
 }
 
 /**
- * Clears the view set in `ɵɵrestoreView` from memory. Returns the passed in
- * value so that it can be used as a return value of an instruction.
+ * `ɵɵrestoreView`에서 설정된 뷰를 메모리에서 지웁니다. 전달된 값을 반환하여
+ * 지침의 반환 값으로 사용할 수 있습니다.
  *
  * @codeGenApi
  */
@@ -440,7 +440,7 @@ export function setIsRefreshingViews(mode: boolean): boolean {
   return prev;
 }
 
-// top level variables should not be exported for performance reasons (PERF_NOTES.md)
+// 성능 이유로 최상위 변수는 내보내면 안 됩니다 (PERF_NOTES.md)
 export function getBindingRoot() {
   const lFrame = instructionState.lFrame;
   let index = lFrame.bindingRootIndex;
@@ -478,15 +478,13 @@ export function setInI18nBlock(isInI18nBlock: boolean): void {
 }
 
 /**
- * Set a new binding root index so that host template functions can execute.
+ * 호스트 템플릿 함수가 실행될 수 있도록 새 바인딩 루트 인덱스를 설정합니다.
  *
- * Bindings inside the host template are 0 index. But because we don't know ahead of time
- * how many host bindings we have we can't pre-compute them. For this reason they are all
- * 0 index and we just shift the root so that they match next available location in the LView.
+ * 호스트 템플릿 내의 바인딩은 인덱스 0입니다. 그러나 사전에 얼마나 많은 호스트 바인딩이 있는지 알 수 없기 때문에
+ * 미리 계산할 수 없습니다. 이러한 이유로 모든 것이 인덱스 0이 되어 다음 사용 가능한 위치와 일치하도록 루트를 이동합니다.
  *
- * @param bindingRootIndex Root index for `hostBindings`
- * @param currentDirectiveIndex `TData[currentDirectiveIndex]` will point to the current directive
- *        whose `hostBindings` are being processed.
+ * @param bindingRootIndex `hostBindings`의 루트 인덱스
+ * @param currentDirectiveIndex 지시어의 `hostBindings`가 처리되고 있는 현재 지시어의 지표
  */
 export function setBindingRootForHostBindings(
   bindingRootIndex: number,
@@ -498,28 +496,27 @@ export function setBindingRootForHostBindings(
 }
 
 /**
- * When host binding is executing this points to the directive index.
- * `TView.data[getCurrentDirectiveIndex()]` is `DirectiveDef`
- * `LView[getCurrentDirectiveIndex()]` is directive instance.
+ * 호스트 바인딩이 실행될 때 이 값은 지시어 인덱스를 가리킵니다.
+ * `TView.data[getCurrentDirectiveIndex()]`는 `DirectiveDef`
+ * `LView[getCurrentDirectiveIndex()]`는 지시어 인스턴스입니다.
  */
 export function getCurrentDirectiveIndex(): number {
   return instructionState.lFrame.currentDirectiveIndex;
 }
 
 /**
- * Sets an index of a directive whose `hostBindings` are being processed.
+ * 처리 중인 `hostBindings`의 지시어 인덱스를 설정합니다.
  *
- * @param currentDirectiveIndex `TData` index where current directive instance can be found.
+ * @param currentDirectiveIndex 현재 지시어 인스턴스를 찾을 수 있는 `TData` 인덱스.
  */
 export function setCurrentDirectiveIndex(currentDirectiveIndex: number): void {
   instructionState.lFrame.currentDirectiveIndex = currentDirectiveIndex;
 }
 
 /**
- * Retrieve the current `DirectiveDef` which is active when `hostBindings` instruction is being
- * executed.
+ * `hostBindings` 지침이 실행될 때 활성화된 현재 `DirectiveDef`를 조회합니다.
  *
- * @param tData Current `TData` where the `DirectiveDef` will be looked up at.
+ * @param tData `DirectiveDef`를 조회할 현재 `TData`.
  */
 export function getCurrentDirectiveDef(tData: TData): DirectiveDef<any> | null {
   const currentDirectiveIndex = instructionState.lFrame.currentDirectiveIndex;
@@ -535,42 +532,40 @@ export function setCurrentQueryIndex(value: number): void {
 }
 
 /**
- * Returns a `TNode` of the location where the current `LView` is declared at.
+ * 현재 `LView`가 선언된 위치의 `TNode`를 반환합니다.
  *
- * @param lView an `LView` that we want to find parent `TNode` for.
+ * @param lView 부모 `TNode`를 찾고자 하는 `LView`.
  */
 function getDeclarationTNode(lView: LView): TNode | null {
   const tView = lView[TVIEW];
 
-  // Return the declaration parent for embedded views
+  // 내장 뷰에 대한 선언 부모를 반환합니다.
   if (tView.type === TViewType.Embedded) {
     ngDevMode && assertDefined(tView.declTNode, 'Embedded TNodes should have declaration parents.');
     return tView.declTNode;
   }
 
-  // Components don't have `TView.declTNode` because each instance of component could be
-  // inserted in different location, hence `TView.declTNode` is meaningless.
-  // Falling back to `T_HOST` in case we cross component boundary.
+  // 컴포넌트는 각 컴포넌트 인스턴스가 서로 다른 위치에 삽입될 수 있기 때문에
+  // `TView.declTNode`를 가지고 있지 않습니다. 따라서 컴포넌트 경계를 넘기 위해 `T_HOST`로 돌아갑니다.
   if (tView.type === TViewType.Component) {
     return lView[T_HOST];
   }
 
-  // Remaining TNode type is `TViewType.Root` which doesn't have a parent TNode.
+  // 나머지 TNode 유형은 부모 TNode가 없는 `TViewType.Root`입니다.
   return null;
 }
 
 /**
- * This is a light weight version of the `enterView` which is needed by the DI system.
+ * DI 시스템에서 필요한 `enterView`의 경량 버전입니다.
  *
- * @param lView `LView` location of the DI context.
- * @param tNode `TNode` for DI context
- * @param flags DI context flags. if `SkipSelf` flag is set than we walk up the declaration
- *     tree from `tNode`  until we find parent declared `TElementNode`.
- * @returns `true` if we have successfully entered DI associated with `tNode` (or with declared
- *     `TNode` if `flags` has  `SkipSelf`). Failing to enter DI implies that no associated
- *     `NodeInjector` can be found and we should instead use `ModuleInjector`.
- *     - If `true` than this call must be fallowed by `leaveDI`
- *     - If `false` than this call failed and we should NOT call `leaveDI`
+ * @param lView DI 컨텍스트의 `LView` 위치입니다.
+ * @param tNode DI 컨텍스트의 `TNode`
+ * @param flags DI 컨텍스트 플래그. `SkipSelf` 플래그가 설정된 경우 `tNode`에서
+ *     부모의 선언된 `TElementNode`를 찾을 때까지 선언 트리를 올라갑니다.
+ * @returns `tNode`와 연관된 DI에 성공적으로 들어갔으면 `true`. DI에 들어가지 못하면
+ *     관련된 `NodeInjector`를 찾을 수 없으며, 대신 `ModuleInjector`를 사용해야 합니다.
+ *     - `true`인 경우 이 호출은 `leaveDI`에 의해 따라야 하며
+ *     - `false`인 경우 이 호출이 실패했음을 나타내며 `leaveDI`를 호출하면 안 됩니다.
  */
 export function enterDI(lView: LView, tNode: TNode, flags: InternalInjectFlags) {
   ngDevMode && assertLViewOrUndefined(lView);
@@ -588,14 +583,14 @@ export function enterDI(lView: LView, tNode: TNode, flags: InternalInjectFlags) 
         parentTNode = getDeclarationTNode(parentLView);
         if (parentTNode === null) break;
 
-        // In this case, a parent exists and is definitely an element. So it will definitely
-        // have an existing lView as the declaration view, which is why we can assume it's defined.
+        // 이 경우 부모가 존재하며 반드시 요소입니다. 따라서
+        // 선언 뷰로서 기존 lView가 반드시 정의된 것으로 가정할 수 있습니다.
         ngDevMode && assertDefined(parentLView, 'Parent LView should be defined');
         parentLView = parentLView[DECLARATION_VIEW]!;
 
-        // In Ivy there are Comment nodes that correspond to ngIf and NgFor embedded directives
-        // We want to skip those and look only at Elements and ElementContainers to ensure
-        // we're looking at true parent nodes, and not content or other types.
+        // Ivy에서는 ngIf 및 NgFor 내장 지시어에 해당하는 주석 노드가 있습니다.
+        // 우리는 그것들을 건너뛰고 요소와 요소 컨테이너만 찾아 진정한 부모 노드를
+        // 탐색하려고 합니다.
         if (parentTNode.type & (TNodeType.Element | TNodeType.ElementContainer)) {
           break;
         }
@@ -604,7 +599,7 @@ export function enterDI(lView: LView, tNode: TNode, flags: InternalInjectFlags) 
       }
     }
     if (parentTNode === null) {
-      // If we failed to find a parent TNode this means that we should use module injector.
+      // 부모 TNode를 찾지 못했다면 모듈 인젝터를 사용해야 함을 나타냅니다.
       return false;
     } else {
       tNode = parentTNode;
@@ -621,15 +616,14 @@ export function enterDI(lView: LView, tNode: TNode, flags: InternalInjectFlags) 
 }
 
 /**
- * Swap the current lView with a new lView.
+ * 현재 lView를 새 lView로 전환합니다.
  *
- * For performance reasons we store the lView in the top level of the module.
- * This way we minimize the number of properties to read. Whenever a new view
- * is entered we have to store the lView for later, and when the view is
- * exited the state has to be restored
+ * 성능 이유로 모듈의 최상위에 lView를 저장합니다.
+ * 이렇게 하면 읽어야 할 속성 수를 최소화할 수 있습니다. 새로운 뷰에 들어갈 때
+ * lView를 저장하고 뷰를 나갈 때 상태를 복원해야 합니다.
  *
- * @param newView New lView to become active
- * @returns the previously active lView;
+ * @param newView 활성화될 새 lView
+ * @returns 이전에 활성화된 lView;
  */
 export function enterView(newView: LView): void {
   ngDevMode && assertNotEqual(newView[0], newView[1] as any, '????');
@@ -658,7 +652,7 @@ export function enterView(newView: LView): void {
 }
 
 /**
- * Allocates next free LFrame. This function tries to reuse the `LFrame`s to lower memory pressure.
+ * 다음의 무료 LFrame을 할당합니다. 이 함수는 메모리 압박을 낮추기 위해 `LFrame`s를 재사용하려고 합니다.
  */
 function allocLFrame() {
   const currentLFrame = instructionState.lFrame;
@@ -685,18 +679,17 @@ function createLFrame(parent: LFrame | null): LFrame {
     child: null,
     inI18n: false,
   };
-  parent !== null && (parent.child = lFrame); // link the new LFrame for reuse.
+  parent !== null && (parent.child = lFrame); // 재사용을 위해 새로운 LFrame을 연결합니다.
   return lFrame;
 }
 
 /**
- * A lightweight version of leave which is used with DI.
+ * DI와 함께 사용되는 leave의 경량 버전입니다.
  *
- * This function only resets `currentTNode` and `LView` as those are the only properties
- * used with DI (`enterDI()`).
+ * 이 함수는 DI와 함께 사용되는 유일한 속성인 `currentTNode`와 `LView`만 재설정합니다.
  *
- * NOTE: This function is reexported as `leaveDI`. However `leaveDI` has return type of `void` where
- * as `leaveViewLight` has `LFrame`. This is so that `leaveViewLight` can be used in `leaveView`.
+ * 주의: 이 함수는 `leaveDI`로 재export됩니다. 그러나 `leaveDI`는 `void`의 반환 타입을 가지므로 `leaveViewLight`는 `LFrame`을 가집니다.
+ * `leaveViewLight`를 `leaveView`에서 사용할 수 있도록 하기 위함입니다.
  */
 function leaveViewLight(): LFrame {
   const oldLFrame = instructionState.lFrame;
@@ -707,20 +700,19 @@ function leaveViewLight(): LFrame {
 }
 
 /**
- * This is a lightweight version of the `leaveView` which is needed by the DI system.
+ * DI 시스템에서 필요한 `leaveView`의 경량 버전입니다.
  *
- * NOTE: this function is an alias so that we can change the type of the function to have `void`
- * return type.
+ * 주의: 이 함수는 별칭으로, 반환 타입을 `void`로 변경할 수 있도록 합니다.
  */
 export const leaveDI: () => void = leaveViewLight;
 
 /**
- * Leave the current `LView`
+ * 현재 `LView`를 떠납니다.
  *
- * This pops the `LFrame` with the associated `LView` from the stack.
+ * 이 작업은 연결된 `LView`와 함께 `LFrame`을 스택에서 팝합니다.
  *
- * IMPORTANT: We must zero out the `LFrame` values here otherwise they will be retained. This is
- * because for performance reasons we don't release `LFrame` but rather keep it for next use.
+ * 중요: 여기서 `LFrame` 값을 0으로 설정하지 않으면 값이 유지됩니다. 성능 이유로
+ * `LFrame`을 해제하지 않기 때문이며, 다음 사용을 위해 유지합니다.
  */
 export function leaveView() {
   const oldLFrame = leaveViewLight();
@@ -745,23 +737,21 @@ export function nextContextImpl<T = any>(level: number): T {
 }
 
 /**
- * Gets the currently selected element index.
+ * 현재 선택된 요소 인덱스를 가져옵니다.
  *
- * Used with {@link property} instruction (and more in the future) to identify the index in the
- * current `LView` to act on.
+ * 현재 `LView`에서 작동할 인덱스를 식별하기 위해 {@link property} 지침(및 향후 더 많은)에 사용됩니다.
  */
 export function getSelectedIndex() {
   return instructionState.lFrame.selectedIndex;
 }
 
 /**
- * Sets the most recent index passed to {@link select}
+ * {@link select}에 전달된 가장 최근 인덱스를 설정합니다.
  *
- * Used with {@link property} instruction (and more in the future) to identify the index in the
- * current `LView` to act on.
+ * 현재 `LView`에서 작동할 인덱스를 식별하기 위해 {@link property} 지침(및 향후 더 많은)에 사용됩니다.
  *
- * (Note that if an "exit function" was set earlier (via `setElementExitFn()`) then that will be
- * run if and when the provided `index` value is different from the current selected index value.)
+ * (이전에 "exit 함수"가 설정되었다면(`setElementExitFn()`을 통해) 제공된 `index` 값이
+ * 현재 선택된 인덱스 값과 다르면 그 함수가 실행됩니다.)
  */
 export function setSelectedIndex(index: number) {
   ngDevMode &&
@@ -777,7 +767,7 @@ export function setSelectedIndex(index: number) {
 }
 
 /**
- * Gets the `tNode` that represents currently selected element.
+ * 현재 선택된 요소를 나타내는 `tNode`를 가져옵니다.
  */
 export function getSelectedTNode() {
   const lFrame = instructionState.lFrame;
@@ -785,7 +775,7 @@ export function getSelectedTNode() {
 }
 
 /**
- * Sets the namespace used to create elements to `'http://www.w3.org/2000/svg'` in global state.
+ * 요소를 생성하는 데 사용되는 네임스페이스를 `'http://www.w3.org/2000/svg'`로 설정합니다.
  *
  * @codeGenApi
  */
@@ -794,7 +784,7 @@ export function ɵɵnamespaceSVG() {
 }
 
 /**
- * Sets the namespace used to create elements to `'http://www.w3.org/1998/MathML/'` in global state.
+ * 요소를 생성하는 데 사용되는 네임스페이스를 `'http://www.w3.org/1998/MathML/'`로 설정합니다.
  *
  * @codeGenApi
  */
@@ -803,8 +793,8 @@ export function ɵɵnamespaceMathML() {
 }
 
 /**
- * Sets the namespace used to create elements to `null`, which forces element creation to use
- * `createElement` rather than `createElementNS`.
+ * 요소를 생성하는 데 사용되는 네임스페이스를 `null`로 설정하여
+ * `createElementNS` 대신 `createElement`를 사용하도록 강제합니다.
  *
  * @codeGenApi
  */
@@ -813,8 +803,8 @@ export function ɵɵnamespaceHTML() {
 }
 
 /**
- * Sets the namespace used to create elements to `null`, which forces element creation to use
- * `createElement` rather than `createElementNS`.
+ * 요소를 생성하는 데 사용되는 네임스페이스를 `null`로 설정하여
+ * `createElementNS` 대신 `createElement`를 사용하도록 강제합니다.
  */
 export function namespaceHTMLInternal() {
   instructionState.lFrame.currentNamespace = null;
@@ -827,16 +817,14 @@ export function getNamespace(): string | null {
 let _wasLastNodeCreated = true;
 
 /**
- * Retrieves a global flag that indicates whether the most recent DOM node
- * was created or hydrated.
+ * 가장 최근의 DOM 노드가 생성되었거나 수화되었는지를 나타내는 전역 플래그를 검색합니다.
  */
 export function wasLastNodeCreated(): boolean {
   return _wasLastNodeCreated;
 }
 
 /**
- * Sets a global flag to indicate whether the most recent DOM node
- * was created or hydrated.
+ * 가장 최근의 DOM 노드가 생성되었거나 수화되었음을 나타내는 전역 플래그를 설정합니다.
  */
 export function lastNodeWasCreated(flag: boolean): void {
   _wasLastNodeCreated = flag;

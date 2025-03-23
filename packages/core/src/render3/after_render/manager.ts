@@ -50,23 +50,23 @@ export class AfterRenderImpl {
   private readonly scheduler = inject(ChangeDetectionScheduler);
   private readonly errorHandler = inject(ErrorHandler, {optional: true});
 
-  /** Current set of active sequences. */
+  /** 현재 활성화된 시퀀스 집합. */
   private readonly sequences = new Set<AfterRenderSequence>();
 
-  /** Tracks registrations made during the current set of executions. */
+  /** 현재 실행 집합 동안의 등록 추적. */
   private readonly deferredRegistrations = new Set<AfterRenderSequence>();
 
-  /** Whether the `AfterRenderManager` is currently executing hooks. */
+  /** 현재 `AfterRenderManager`가 후크를 실행 중인지 여부. */
   executing = false;
 
   constructor() {
-    // Inject the tracing service to make sure it's initialized.
+    // 추적 서비스를 주입하여 초기화되었는지 확인합니다.
     inject(TracingService, {optional: true});
   }
 
   /**
-   * Run the sequence of phases of hooks, once through. As a result of executing some hooks, more
-   * might be scheduled.
+   * 후크의 단계 시퀀스를 한 번 실행합니다. 후크의 실행 결과로 인해
+   * 추가적으로 스케줄링될 수 있습니다.
    */
   execute(): void {
     const hasSequencesToExecute = this.sequences.size > 0;
@@ -98,13 +98,12 @@ export class AfterRenderImpl {
     }
     this.executing = false;
 
-    // Cleanup step to reset sequence state and also collect one-shot sequences for removal.
+    // 상태를 리셋하고 즉시 제거할 원샷 시퀀스를 수집하는 클린업 단계.
     for (const sequence of this.sequences) {
       sequence.afterRun();
       if (sequence.once) {
         this.sequences.delete(sequence);
-        // Destroy the sequence so its on destroy callbacks can be cleaned up
-        // immediately, instead of waiting until the injector is destroyed.
+        // 파괴 콜백을 즉시 정리할 수 있도록 시퀀스를 파괴합니다.
         sequence.destroy();
       }
     }
@@ -125,10 +124,10 @@ export class AfterRenderImpl {
   register(sequence: AfterRenderSequence): void {
     const {view} = sequence;
     if (view !== undefined) {
-      // Delay adding it to the manager, add it to the view instead.
+      // 관리자로 추가하는 것을 지연시키고, 대신 뷰에 추가합니다.
       (view[AFTER_RENDER_SEQUENCES_TO_ADD] ??= []).push(sequence);
 
-      // Mark the view for traversal to ensure we eventually schedule the afterNextRender.
+      // 다음 렌더링을 보장하기 위해 조상을 탐색하도록 뷰를 표시합니다.
       markAncestorsForTraversal(view);
       view[FLAGS] |= LViewFlags.HasChildViewsToRefresh;
     } else if (!this.executing) {
@@ -140,28 +139,26 @@ export class AfterRenderImpl {
 
   addSequence(sequence: AfterRenderSequence): void {
     this.sequences.add(sequence);
-    // Trigger an `ApplicationRef.tick()` if one is not already pending/running, because we have a
-    // new render hook that needs to run.
+    // 새로운 렌더 후크가 실행되어야 하므로 `ApplicationRef.tick()`을 트리거합니다.
     this.scheduler.notify(NotificationSource.RenderHook);
   }
 
   unregister(sequence: AfterRenderSequence): void {
     if (this.executing && this.sequences.has(sequence)) {
-      // We can't remove an `AfterRenderSequence` in the middle of iteration.
-      // Instead, mark it as destroyed so it doesn't run any more, and mark it as one-shot so it'll
-      // be removed at the end of the current execution.
+      // 반복 중에 `AfterRenderSequence`를 제거할 수 없습니다.
+      // 대신, 더 이상 실행되지 않도록 파괴된 것으로 표시하고, 현재 실행의 끝에서 제거되도록 원샷으로 표시합니다.
       sequence.erroredOrDestroyed = true;
       sequence.pipelinedValue = undefined;
       sequence.once = true;
     } else {
-      // It's safe to directly remove this sequence.
+      // 이 시퀀스를 직접 제거하는 것이 안전합니다.
       this.sequences.delete(sequence);
       this.deferredRegistrations.delete(sequence);
     }
   }
 
   protected maybeTrace<T>(fn: () => T, snapshot: TracingSnapshot | null): T {
-    // Only trace the execution if the snapshot is defined.
+    // 스냅샷이 정의되어 있는 경우에만 실행을 추적합니다.
     return snapshot ? snapshot.run(TracingAction.AFTER_NEXT_RENDER, fn) : fn();
   }
 
@@ -183,14 +180,14 @@ export type AfterRenderHooks = [
 
 export class AfterRenderSequence implements AfterRenderRef {
   /**
-   * Whether this sequence errored or was destroyed during this execution, and hooks should no
-   * longer run for it.
+   * 이 시퀀스가 이 실행 중에 오류가 발생했거나 파괴되었는지 여부, 후크가 더 이상
+   * 실행되면 안 됩니다.
    */
   erroredOrDestroyed: boolean = false;
 
   /**
-   * The value returned by the last hook execution (if any), ready to be pipelined into the next
-   * one.
+   * 마지막 후크 실행에서 반환된 값(있는 경우), 다음
+   * 후크로 파이프라인되기를 기다리고 있습니다.
    */
   pipelinedValue: unknown = undefined;
 
@@ -211,10 +208,9 @@ export class AfterRenderSequence implements AfterRenderRef {
     this.erroredOrDestroyed = false;
     this.pipelinedValue = undefined;
 
-    // Clear the tracing snapshot after the initial run. This snapshot only
-    // associates the initial run of the hook with the context that created it.
-    // Follow-up runs are independent of that initial context and have different
-    // triggers.
+    // 초기 실행 후 스냅샷을 지웁니다. 이 스냅샷은 후크의 초기 실행과
+    // 그것을 생성한 컨텍스트를 연결합니다.
+    // 후속 실행은 해당 초기 컨텍스트와 독립적이며 다른 트리거를 가지고 있습니다.
     this.snapshot?.dispose();
     this.snapshot = null;
   }

@@ -28,16 +28,16 @@ import {PLATFORM_DESTROY_LISTENERS} from './platform_destroy_listeners';
 let _platformInjector: Injector | null = null;
 
 /**
- * Internal token to indicate whether having multiple bootstrapped platform should be allowed (only
- * one bootstrapped platform is allowed by default). This token helps to support SSR scenarios.
+ * 다수의 부트스트랩된 플랫폼을 허용할지 여부를 나타내는 내부 토큰입니다 (기본적으로
+ * 하나의 부트스트랩된 플랫폼만 허용됩니다). 이 토큰은 SSR 시나리오를 지원하는 데 도움이 됩니다.
  */
 export const ALLOW_MULTIPLE_PLATFORMS = new InjectionToken<boolean>(
   ngDevMode ? 'AllowMultipleToken' : '',
 );
 
 /**
- * Creates a platform.
- * Platforms must be created on launch using this function.
+ * 플랫폼을 생성합니다.
+ * 플랫폼은 이 함수를 사용하여 시작 시 생성되어야 합니다.
  *
  * @publicApi
  */
@@ -45,7 +45,8 @@ export function createPlatform(injector: Injector): PlatformRef {
   if (_platformInjector && !_platformInjector.get(ALLOW_MULTIPLE_PLATFORMS, false)) {
     throw new RuntimeError(
       RuntimeErrorCode.MULTIPLE_PLATFORMS,
-      ngDevMode && 'There can be only one platform. Destroy the previous one to create a new one.',
+      ngDevMode &&
+        '플랫폼은 하나만 존재할 수 있습니다. 새 플랫폼을 만들기 위해 이전 플랫폼을 파괴하세요.',
     );
   }
   publishDefaultGlobalUtils();
@@ -57,13 +58,12 @@ export function createPlatform(injector: Injector): PlatformRef {
 }
 
 /**
- * Creates a factory for a platform. Can be used to provide or override `Providers` specific to
- * your application's runtime needs, such as `PLATFORM_INITIALIZER` and `PLATFORM_ID`.
- * @param parentPlatformFactory Another platform factory to modify. Allows you to compose factories
- * to build up configurations that might be required by different libraries or parts of the
- * application.
- * @param name Identifies the new platform factory.
- * @param providers A set of dependency providers for platforms created with the new factory.
+ * 플랫폼을 위한 팩토리를 생성합니다. 이를 사용하여 애플리케이션의 실행 시간 요구에 따라 `Providers`를 제공하거나 재정의할 수 있습니다.
+ * 예: `PLATFORM_INITIALIZER` 및 `PLATFORM_ID`.
+ * @param parentPlatformFactory 수정할 다른 플랫폼 팩토리입니다. 서로 다른 라이브러리나
+ * 애플리케이션의 일부에 의해 요구될 수 있는 구성을 구성할 수 있습니다.
+ * @param name 새 플랫폼 팩토리를 식별합니다.
+ * @param providers 새 팩토리로 작성된 플랫폼을 위한 일련의 의존성 제공자입니다.
  *
  * @publicApi
  */
@@ -72,7 +72,7 @@ export function createPlatformFactory(
   name: string,
   providers: StaticProvider[] = [],
 ): (extraProviders?: StaticProvider[]) => PlatformRef {
-  const desc = `Platform: ${name}`;
+  const desc = `플랫폼: ${name}`;
   const marker = new InjectionToken(desc);
   return (extraProviders: StaticProvider[] = []) => {
     let platform = getPlatform();
@@ -93,8 +93,7 @@ export function createPlatformFactory(
 }
 
 /**
- * Helper function to create an instance of a platform injector (that maintains the 'platform'
- * scope).
+ * '플랫폼' 범위를 유지하는 플랫폼 인젝터의 인스턴스를 생성하는 도우미 함수입니다.
  */
 function createPlatformInjector(providers: StaticProvider[] = [], name?: string): Injector {
   return Injector.create({
@@ -108,7 +107,7 @@ function createPlatformInjector(providers: StaticProvider[] = [], name?: string)
 }
 
 /**
- * Checks that there is currently a platform that contains the given token as a provider.
+ * 주어진 토큰이 제공자로 포함된 플랫폼이 현재 존재하는지 확인합니다.
  *
  * @publicApi
  */
@@ -116,7 +115,10 @@ export function assertPlatform(requiredToken: any): PlatformRef {
   const platform = getPlatform();
 
   if (!platform) {
-    throw new RuntimeError(RuntimeErrorCode.PLATFORM_NOT_FOUND, ngDevMode && 'No platform exists!');
+    throw new RuntimeError(
+      RuntimeErrorCode.PLATFORM_NOT_FOUND,
+      ngDevMode && '플랫폼이 존재하지 않습니다!',
+    );
   }
 
   if (
@@ -125,7 +127,7 @@ export function assertPlatform(requiredToken: any): PlatformRef {
   ) {
     throw new RuntimeError(
       RuntimeErrorCode.MULTIPLE_PLATFORMS,
-      'A platform with a different configuration has been created. Please destroy it first.',
+      '다른 구성으로 플랫폼이 생성되었습니다. 먼저 이를 파괴하십시오.',
     );
   }
 
@@ -133,7 +135,7 @@ export function assertPlatform(requiredToken: any): PlatformRef {
 }
 
 /**
- * Returns the current platform.
+ * 현재 플랫폼을 반환합니다.
  *
  * @publicApi
  */
@@ -142,8 +144,8 @@ export function getPlatform(): PlatformRef | null {
 }
 
 /**
- * Destroys the current Angular platform and all Angular applications on the page.
- * Destroys all modules and listeners registered with the platform.
+ * 현재 Angular 플랫폼과 페이지의 모든 Angular 애플리케이션을 파괴합니다.
+ * 플랫폼에 등록된 모든 모듈과 리스너를 파괴합니다.
  *
  * @publicApi
  */
@@ -152,17 +154,17 @@ export function destroyPlatform(): void {
 }
 
 /**
- * The goal of this function is to bootstrap a platform injector,
- * but avoid referencing `PlatformRef` class.
- * This function is needed for bootstrapping a Standalone Component.
+ * 이 함수의 목표는 플랫폼 인젝터를 부트스트랩하는 것이지만,
+ * `PlatformRef` 클래스에 대한 참조는 피하는 것입니다.
+ * 이 함수는 독립형 구성 요소를 부트스트랩하는 데 필요합니다.
  */
 export function createOrReusePlatformInjector(providers: StaticProvider[] = []): Injector {
-  // If a platform injector already exists, it means that the platform
-  // is already bootstrapped and no additional actions are required.
+  // 플랫폼 인젝터가 이미 존재하면, 이는 플랫폼이 이미
+  // 부트스트랩되었다는 것을 의미하며 추가 작업이 필요하지 않습니다.
   if (_platformInjector) return _platformInjector;
 
   publishDefaultGlobalUtils();
-  // Otherwise, setup a new platform injector and run platform initializers.
+  // 그렇지 않으면, 새 플랫폼 인젝터를 설정하고 플랫폼 초기화기를 실행합니다.
   const injector = createPlatformInjector(providers);
   _platformInjector = injector;
   publishSignalConfiguration();
@@ -172,12 +174,11 @@ export function createOrReusePlatformInjector(providers: StaticProvider[] = []):
 
 /**
  * @description
- * This function is used to provide initialization functions that will be executed upon
- * initialization of the platform injector.
+ * 이 함수는 플랫폼 인젝터 초기화 시 실행될 초기화 함수를 제공합니다.
  *
- * Note that the provided initializer is run in the injection context.
+ * 제공된 초기화 함수는 주입 컨텍스트에서 실행됩니다.
  *
- * Previously, this was achieved using the `PLATFORM_INITIALIZER` token which is now deprecated.
+ * 이전에는 이를 `PLATFORM_INITIALIZER` 토큰을 사용하여 수행했으나 현재는 더 이상 사용되지 않습니다.
  *
  * @see {@link PLATFORM_INITIALIZER}
  *

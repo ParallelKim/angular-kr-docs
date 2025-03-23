@@ -12,27 +12,26 @@ import {isComponentDef} from '../interfaces/type_checks';
 import {getSuperType} from './inherit_definition_feature';
 
 /**
- * Fields which exist on either directive or component definitions, and need to be copied from
- * parent to child classes by the `ɵɵCopyDefinitionFeature`.
+ * 지시어 또는 구성 요소 정의에 존재하는 필드이며 `ɵɵCopyDefinitionFeature`에 의해 부모
+ * 클래스에서 자식 클래스으로 복사되어야 합니다.
  */
 const COPY_DIRECTIVE_FIELDS: (keyof DirectiveDef<unknown>)[] = [
-  // The child class should use the providers of its parent.
+  // 자식 클래스는 부모의 제공자를 사용해야 합니다.
   'providersResolver',
 
-  // Not listed here are any fields which are handled by the `ɵɵInheritDefinitionFeature`, such
-  // as inputs, outputs, and host binding functions.
+  // 여기에 나열되지 않은 필드는 `ɵɵInheritDefinitionFeature`에 의해 처리되는 필드이며,
+  // 입력, 출력 및 호스트 바인딩 함수와 같은 것들이 포함됩니다.
 ];
 
 /**
- * Fields which exist only on component definitions, and need to be copied from parent to child
- * classes by the `ɵɵCopyDefinitionFeature`.
+ * 구성 요소 정의에만 존재하는 필드이며 `ɵɵCopyDefinitionFeature`에 의해 부모 클래스에서 자식
+ * 클래스으로 복사되어야 합니다.
  *
- * The type here allows any field of `ComponentDef` which is not also a property of `DirectiveDef`,
- * since those should go in `COPY_DIRECTIVE_FIELDS` above.
+ * 여기서의 타입은 `DirectiveDef`의 속성이 아닌 `ComponentDef`의 모든 필드를 허용합니다.
+ * 이는 위의 `COPY_DIRECTIVE_FIELDS`에 포함되어야 합니다.
  */
 const COPY_COMPONENT_FIELDS: Exclude<keyof ComponentDef<unknown>, keyof DirectiveDef<unknown>>[] = [
-  // The child class should use the template function of its parent, including all template
-  // semantics.
+  // 자식 클래스는 부모의 템플릿 함수와 모든 템플릿 구문을 사용해야 합니다.
   'template',
   'decls',
   'consts',
@@ -40,27 +39,25 @@ const COPY_COMPONENT_FIELDS: Exclude<keyof ComponentDef<unknown>, keyof Directiv
   'onPush',
   'ngContentSelectors',
 
-  // The child class should use the CSS styles of its parent, including all styling semantics.
+  // 자식 클래스는 부모의 CSS 스타일과 모든 스타일링 구문을 사용해야 합니다.
   'styles',
   'encapsulation',
 
-  // The child class should be checked by the runtime in the same way as its parent.
+  // 자식 클래스는 부모와 동일한 방식으로 런타임에서 검사되어야 합니다.
   'schemas',
 ];
 
 /**
- * Copies the fields not handled by the `ɵɵInheritDefinitionFeature` from the supertype of a
- * definition.
+ * 정의의 상위 유형에서 `ɵɵInheritDefinitionFeature`에 의해 처리되지 않는 필드를 복사합니다.
  *
- * This exists primarily to support ngcc migration of an existing View Engine pattern, where an
- * entire decorator is inherited from a parent to a child class. When ngcc detects this case, it
- * generates a skeleton definition on the child class, and applies this feature.
+ * 이 기능은 주로 부모에서 자식 클래스로 전체 데코레이터가 상속되는 기존 View Engine 패턴의
+ * ngcc 마이그레이션을 지원하기 위해 존재합니다. ngcc가 이 경우를 감지하면 자식 클래스에서
+ * 스켈레톤 정의를 생성하고 이 기능을 적용합니다.
  *
- * The `ɵɵCopyDefinitionFeature` then copies any needed fields from the parent class' definition,
- * including things like the component template function.
+ * 이후 `ɵɵCopyDefinitionFeature`가 부모 클래스 정의에서 필요한 필드를 복사하며,
+ * 구성 요소 템플릿 함수와 같은 것들을 포함합니다.
  *
- * @param definition The definition of a child class which inherits from a parent class with its
- * own definition.
+ * @param definition 자신의 정의가 있는 부모 클래스에서 상속되는 자식 클래스의 정의입니다.
  *
  * @codeGenApi
  */
@@ -69,23 +66,23 @@ export function ɵɵCopyDefinitionFeature(definition: DirectiveDef<any> | Compon
 
   let superDef: DirectiveDef<any> | ComponentDef<any> | undefined = undefined;
   if (isComponentDef(definition)) {
-    // Don't use getComponentDef/getDirectiveDef. This logic relies on inheritance.
+    // getComponentDef/getDirectiveDef를 사용하지 마세요. 이 로직은 상속에 의존합니다.
     superDef = superType.ɵcmp!;
   } else {
-    // Don't use getComponentDef/getDirectiveDef. This logic relies on inheritance.
+    // getComponentDef/getDirectiveDef를 사용하지 마세요. 이 로직은 상속에 의존합니다.
     superDef = superType.ɵdir!;
   }
 
-  // Needed because `definition` fields are readonly.
+  // `definition` 필드는 읽기 전용이기 때문에 필요합니다.
   const defAny = definition as any;
 
-  // Copy over any fields that apply to either directives or components.
+  // 지시어 또는 구성 요소에 적용되는 모든 필드를 복사합니다.
   for (const field of COPY_DIRECTIVE_FIELDS) {
     defAny[field] = superDef[field];
   }
 
   if (isComponentDef(superDef)) {
-    // Copy over any component-specific fields.
+    // 구성 요소에 특정 필드를 복사합니다.
     for (const field of COPY_COMPONENT_FIELDS) {
       defAny[field] = superDef[field];
     }

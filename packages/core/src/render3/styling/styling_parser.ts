@@ -10,9 +10,9 @@ import {assertEqual, throwError} from '../../util/assert';
 import {CharCode} from '../../util/char_code';
 
 /**
- * Stores the locations of key/value indexes while parsing styling.
+ * 스타일을 파싱하는 동안 키/값 인덱스의 위치를 저장합니다.
  *
- * In case of `cssText` parsing the indexes are like so:
+ * `cssText` 파싱의 경우 인덱스는 다음과 같습니다:
  * ```
  *   "key1: value1; key2: value2; key3: value3"
  *                  ^   ^ ^     ^             ^
@@ -23,7 +23,7 @@ import {CharCode} from '../../util/char_code';
  *                  +---------------------------- key
  * ```
  *
- * In case of `className` parsing the indexes are like so:
+ * `className` 파싱의 경우 인덱스는 다음과 같습니다:
  * ```
  *   "key1 key2 key3"
  *         ^   ^    ^
@@ -31,7 +31,7 @@ import {CharCode} from '../../util/char_code';
  *         |   +------------------------ keyEnd
  *         +---------------------------- key
  * ```
- * NOTE: `value` and `valueEnd` are used only for styles, not classes.
+ * NOTE: `value`와 `valueEnd`는 클래스가 아닌 스타일에만 사용됩니다.
  */
 interface ParserState {
   textEnd: number;
@@ -40,7 +40,7 @@ interface ParserState {
   value: number;
   valueEnd: number;
 }
-// Global state of the parser. (This makes parser non-reentrant, but that is not an issue)
+// 파서의 전역 상태. (이것은 파서를 재진입 불가능하게 만듭니다, 하지만 문제는 없음)
 const parserState: ParserState = {
   textEnd: 0,
   key: 0,
@@ -50,33 +50,33 @@ const parserState: ParserState = {
 };
 
 /**
- * Retrieves the last parsed `key` of style.
- * @param text the text to substring the key from.
+ * 마지막으로 파싱된 스타일의 `key`를 가져옵니다.
+ * @param text 키에서 서브스트링을 가져올 텍스트.
  */
 export function getLastParsedKey(text: string): string {
   return text.substring(parserState.key, parserState.keyEnd);
 }
 
 /**
- * Retrieves the last parsed `value` of style.
- * @param text the text to substring the key from.
+ * 마지막으로 파싱된 스타일의 `value`를 가져옵니다.
+ * @param text 키에서 서브스트링을 가져올 텍스트.
  */
 export function getLastParsedValue(text: string): string {
   return text.substring(parserState.value, parserState.valueEnd);
 }
 
 /**
- * Initializes `className` string for parsing and parses the first token.
+ * 파싱을 위한 `className` 문자열을 초기화하고 첫 번째 토큰을 파싱합니다.
  *
- * This function is intended to be used in this format:
+ * 이 함수는 다음 형식으로 사용될 것을 의도합니다:
  * ```ts
  * for (let i = parseClassName(text); i >= 0; i = parseClassNameNext(text, i)) {
  *   const key = getLastParsedKey();
  *   ...
  * }
  * ```
- * @param text `className` to parse
- * @returns index where the next invocation of `parseClassNameNext` should resume.
+ * @param text 파싱할 `className`
+ * @returns 다음 `parseClassNameNext`의 호출이 재개될 인덱스.
  */
 export function parseClassName(text: string): number {
   resetParserState(text);
@@ -84,9 +84,9 @@ export function parseClassName(text: string): number {
 }
 
 /**
- * Parses next `className` token.
+ * 다음 `className` 토큰을 파싱합니다.
  *
- * This function is intended to be used in this format:
+ * 이 함수는 다음 형식으로 사용될 것을 의도합니다:
  * ```ts
  * for (let i = parseClassName(text); i >= 0; i = parseClassNameNext(text, i)) {
  *   const key = getLastParsedKey();
@@ -94,9 +94,9 @@ export function parseClassName(text: string): number {
  * }
  * ```
  *
- * @param text `className` to parse
- * @param index where the parsing should resume.
- * @returns index where the next invocation of `parseClassNameNext` should resume.
+ * @param text 파싱할 `className`
+ * @param index 파싱이 재개되어야 할 지점.
+ * @returns 다음 `parseClassNameNext`의 호출이 재개될 인덱스.
  */
 export function parseClassNameNext(text: string, index: number): number {
   const end = parserState.textEnd;
@@ -108,9 +108,9 @@ export function parseClassNameNext(text: string, index: number): number {
 }
 
 /**
- * Initializes `cssText` string for parsing and parses the first key/values.
+ * 파싱을 위한 `cssText` 문자열을 초기화하고 첫 번째 키/값을 파싱합니다.
  *
- * This function is intended to be used in this format:
+ * 이 함수는 다음 형식으로 사용될 것을 의도합니다:
  * ```ts
  * for (let i = parseStyle(text); i >= 0; i = parseStyleNext(text, i))) {
  *   const key = getLastParsedKey();
@@ -118,8 +118,8 @@ export function parseClassNameNext(text: string, index: number): number {
  *   ...
  * }
  * ```
- * @param text `cssText` to parse
- * @returns index where the next invocation of `parseStyleNext` should resume.
+ * @param text 파싱할 `cssText`
+ * @returns 다음 `parseStyleNext`의 호출이 재개될 인덱스.
  */
 export function parseStyle(text: string): number {
   resetParserState(text);
@@ -127,9 +127,9 @@ export function parseStyle(text: string): number {
 }
 
 /**
- * Parses the next `cssText` key/values.
+ * 다음 `cssText` 키/값을 파싱합니다.
  *
- * This function is intended to be used in this format:
+ * 이 함수는 다음 형식으로 사용될 것을 의도합니다:
  * ```ts
  * for (let i = parseStyle(text); i >= 0; i = parseStyleNext(text, i))) {
  *   const key = getLastParsedKey();
@@ -137,15 +137,15 @@ export function parseStyle(text: string): number {
  *   ...
  * }
  *
- * @param text `cssText` to parse
- * @param index where the parsing should resume.
- * @returns index where the next invocation of `parseStyleNext` should resume.
+ * @param text 파싱할 `cssText`
+ * @param index 파싱이 재개되어야 할 지점.
+ * @returns 다음 `parseStyleNext`의 호출이 재개될 인덱스.
  */
 export function parseStyleNext(text: string, startIndex: number): number {
   const end = parserState.textEnd;
   let index = (parserState.key = consumeWhitespace(text, startIndex, end));
   if (end === index) {
-    // we reached an end so just quit
+    // 끝에 도달했으므로 종료
     return -1;
   }
   index = parserState.keyEnd = consumeStyleKey(text, index, end);
@@ -156,8 +156,8 @@ export function parseStyleNext(text: string, startIndex: number): number {
 }
 
 /**
- * Reset the global state of the styling parser.
- * @param text The styling text to parse.
+ * 스타일 파서의 전역 상태를 리셋합니다.
+ * @param text 파싱할 스타일 텍스트.
  */
 export function resetParserState(text: string): void {
   parserState.key = 0;
@@ -168,13 +168,12 @@ export function resetParserState(text: string): void {
 }
 
 /**
- * Returns index of next non-whitespace character.
+ * 다음 비공백 문자 인덱스를 반환합니다.
  *
- * @param text Text to scan
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index of next non-whitespace character (May be the same as `start` if no whitespace at
- *          that location.)
+ * @param text 스캔할 텍스트
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 다음 비공백 문자의 인덱스 (해당 위치에서 공백이 없으면 `start`와 동일할 수 있음.)
  */
 export function consumeWhitespace(text: string, startIndex: number, endIndex: number): number {
   while (startIndex < endIndex && text.charCodeAt(startIndex) <= CharCode.SPACE) {
@@ -184,12 +183,12 @@ export function consumeWhitespace(text: string, startIndex: number, endIndex: nu
 }
 
 /**
- * Returns index of last char in class token.
+ * 클래스 토큰의 마지막 문자의 인덱스를 반환합니다.
  *
- * @param text Text to scan
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index after last char in class token.
+ * @param text 스캔할 텍스트
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 클래스 토큰의 마지막 문자 이후 인덱스.
  */
 export function consumeClassToken(text: string, startIndex: number, endIndex: number): number {
   while (startIndex < endIndex && text.charCodeAt(startIndex) > CharCode.SPACE) {
@@ -199,12 +198,12 @@ export function consumeClassToken(text: string, startIndex: number, endIndex: nu
 }
 
 /**
- * Consumes all of the characters belonging to style key and token.
+ * 스타일 키 및 토큰에 속하는 모든 문자를 소모합니다.
  *
- * @param text Text to scan
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index after last style key character.
+ * @param text 스캔할 텍스트
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 마지막 스타일 키 문자의 이후 인덱스.
  */
 export function consumeStyleKey(text: string, startIndex: number, endIndex: number): number {
   let ch: number;
@@ -221,12 +220,12 @@ export function consumeStyleKey(text: string, startIndex: number, endIndex: numb
 }
 
 /**
- * Consumes all whitespace and the separator `:` after the style key.
+ * 스타일 키 이후에 모든 공백 및 구분자 `:`를 소모합니다.
  *
- * @param text Text to scan
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index after separator and surrounding whitespace.
+ * @param text 스캔할 텍스트
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 구분자 및 주변 공백 이후의 인덱스.
  */
 export function consumeSeparator(
   text: string,
@@ -245,17 +244,17 @@ export function consumeSeparator(
 }
 
 /**
- * Consumes style value honoring `url()` and `""` text.
+ * `url()` 및 `""` 텍스트를 고려하여 스타일 값을 소모합니다.
  *
- * @param text Text to scan
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index after last style value character.
+ * @param text 스캔할 텍스트
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 마지막 스타일 값 문자 이후의 인덱스.
  */
 export function consumeStyleValue(text: string, startIndex: number, endIndex: number): number {
-  let ch1 = -1; // 1st previous character
-  let ch2 = -1; // 2nd previous character
-  let ch3 = -1; // 3rd previous character
+  let ch1 = -1; // 1번째 이전 문자
+  let ch2 = -1; // 2번째 이전 문자
+  let ch3 = -1; // 3번째 이전 문자
   let i = startIndex;
   let lastChIndex = i;
   while (i < endIndex) {
@@ -265,7 +264,7 @@ export function consumeStyleValue(text: string, startIndex: number, endIndex: nu
     } else if (ch === CharCode.DOUBLE_QUOTE || ch === CharCode.SINGLE_QUOTE) {
       lastChIndex = i = consumeQuotedText(text, ch, i, endIndex);
     } else if (
-      startIndex === i - 4 && // We have seen only 4 characters so far "URL(" (Ignore "foo_URL()")
+      startIndex === i - 4 && // 이제까지 4개의 문자만 보았음 "URL(" (Ignore "foo_URL()")
       ch3 === CharCode.U &&
       ch2 === CharCode.R &&
       ch1 === CharCode.L &&
@@ -273,7 +272,7 @@ export function consumeStyleValue(text: string, startIndex: number, endIndex: nu
     ) {
       lastChIndex = i = consumeQuotedText(text, CharCode.CLOSE_PAREN, i, endIndex);
     } else if (ch > CharCode.SPACE) {
-      // if we have a non-whitespace character then capture its location
+      // 비공백 문자가 있는 경우 위치를 캡처합니다.
       lastChIndex = i;
     }
     ch3 = ch2;
@@ -284,13 +283,13 @@ export function consumeStyleValue(text: string, startIndex: number, endIndex: nu
 }
 
 /**
- * Consumes all of the quoted characters.
+ * 모든 인용된 문자를 소모합니다.
  *
- * @param text Text to scan
- * @param quoteCharCode CharCode of either `"` or `'` quote or `)` for `url(...)`.
- * @param startIndex Starting index of character where the scan should start.
- * @param endIndex Ending index of character where the scan should end.
- * @returns Index after quoted characters.
+ * @param text 스캔할 텍스트
+ * @param quoteCharCode `"` 또는 `'` 인용어의 CharCode 또는 `url(...)`의 `)`입니다.
+ * @param startIndex 문자 스캔을 시작할 인덱스.
+ * @param endIndex 문자 스캔을 종료할 인덱스.
+ * @returns 인용된 문자 이후의 인덱스.
  */
 export function consumeQuotedText(
   text: string,
@@ -298,7 +297,7 @@ export function consumeQuotedText(
   startIndex: number,
   endIndex: number,
 ): number {
-  let ch1 = -1; // 1st previous character
+  let ch1 = -1; // 1번째 이전 문자
   let index = startIndex;
   while (index < endIndex) {
     const ch = text.charCodeAt(index++);
@@ -306,8 +305,8 @@ export function consumeQuotedText(
       return index;
     }
     if (ch == CharCode.BACK_SLASH && ch1 === CharCode.BACK_SLASH) {
-      // two back slashes cancel each other out. For example `"\\"` should properly end the
-      // quotation. (It should not assume that the last `"` is escaped.)
+      // 두 개의 백슬래시가 서로 취소됩니다. 예를 들어 `"\\"`로 인해
+      // 인용이 제대로 끝나야 합니다. (마지막 `"`이 이스케이프된 것으로 간주해서는 안 됩니다.)
       ch1 = 0;
     } else {
       ch1 = ch;
@@ -319,14 +318,14 @@ export function consumeQuotedText(
 }
 
 function malformedStyleError(text: string, expecting: string, index: number): never {
-  ngDevMode && assertEqual(typeof text === 'string', true, 'String expected here');
+  ngDevMode && assertEqual(typeof text === 'string', true, '여기서 문자열이 예상됩니다.');
   throw throwError(
-    `Malformed style at location ${index} in string '` +
+    `문자열의 위치 ${index}에서 잘못된 스타일이 있습니다: '` +
       text.substring(0, index) +
       '[>>' +
       text.substring(index, index + 1) +
       '<<]' +
       text.slice(index + 1) +
-      `'. Expecting '${expecting}'.`,
+      `'. '${expecting}'가 예상됩니다.`,
   );
 }

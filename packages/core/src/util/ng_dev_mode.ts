@@ -10,18 +10,17 @@ import {global} from './global';
 
 declare global {
   /**
-   * Values of ngDevMode
-   * Depending on the current state of the application, ngDevMode may have one of several values.
+   * ngDevMode의 값
+   * 애플리케이션의 현재 상태에 따라 ngDevMode는 여러 값 중 하나를 가질 수 있습니다.
    *
-   * For convenience, the “truthy” value which enables dev mode is also an object which contains
-   * Angular’s performance counters. This is not necessary, but cuts down on boilerplate for the
-   * perf counters.
+   * 편의성을 위해, 개발 모드를 활성화하는 “truthy” 값은 Angular의 성능 카운터를 포함하는 객체이기도 합니다.
+   * 이는 필요하지 않지만, 성능 카운터를 위한 보일러플레이트를 줄여줍니다.
    *
-   * ngDevMode may also be set to false. This can happen in one of a few ways:
-   * - The user explicitly sets `window.ngDevMode = false` somewhere in their app.
-   * - The user calls `enableProdMode()`.
-   * - The URL contains a `ngDevMode=false` text.
-   * Finally, ngDevMode may not have been defined at all.
+   * ngDevMode는 false로 설정될 수도 있습니다. 이는 몇 가지 방법으로 발생할 수 있습니다:
+   * - 사용자가 자신의 애플리케이션 어딘가에서 `window.ngDevMode = false`를 명시적으로 설정합니다.
+   * - 사용자가 `enableProdMode()`를 호출합니다.
+   * - URL에 `ngDevMode=false` 텍스트가 포함되어 있습니다.
+   * 마지막으로, ngDevMode가 전혀 정의되지 않았을 수도 있습니다.
    */
   const ngDevMode: null | NgDevModePerfCounters;
 
@@ -54,7 +53,7 @@ export function ngDevModeResetPerfCounters(): NgDevModePerfCounters {
     deferBlocksWithIncrementalHydration: 0,
   };
 
-  // Make sure to refer to ngDevMode as ['ngDevMode'] for closure.
+  // ngDevMode를 클로저에서 ['ngDevMode']로 참조해야 합니다.
   const allowNgDevModeTrue = locationString.indexOf('ngDevMode=false') === -1;
   if (!allowNgDevModeTrue) {
     global['ngDevMode'] = false;
@@ -68,31 +67,27 @@ export function ngDevModeResetPerfCounters(): NgDevModePerfCounters {
 }
 
 /**
- * This function checks to see if the `ngDevMode` has been set. If yes,
- * then we honor it, otherwise we default to dev mode with additional checks.
+ * 이 함수는 `ngDevMode`가 설정되었는지 확인합니다. 만약 그렇다면,
+ * 이를 존중하고, 그렇지 않으면 추가 검사를 통해 개발 모드로 기본 설정합니다.
  *
- * The idea is that unless we are doing production build where we explicitly
- * set `ngDevMode == false` we should be helping the developer by providing
- * as much early warning and errors as possible.
+ * 아이디어는 우리가 프로덕션 빌드를 진행하지 않는 한, 즉 `ngDevMode == false`를 명시적으로 설정하지 않는 한
+ * 가능한 한 개발자를 돕기 위해 가능한 많은 초기 경고 및 오류를 제공해야 한다는 것입니다.
  *
- * `ɵɵdefineComponent` is guaranteed to have been called before any component template functions
- * (and thus Ivy instructions), so a single initialization there is sufficient to ensure ngDevMode
- * is defined for the entire instruction set.
+ * `ɵɵdefineComponent`는 모든 컴포넌트 템플릿 함수(그리고 따라서 Ivy 지시어) 이전에 호출된다는 것이 보장되므로,
+ * 단일 초기화만 있어도 ngDevMode가 전체 지시 세트에 대해 정의되어 있음을 보장합니다.
  *
- * When checking `ngDevMode` on toplevel, always init it before referencing it
- * (e.g. `((typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode())`), otherwise you can
- *  get a `ReferenceError` like in https://github.com/angular/angular/issues/31595.
+ * 최상위에서 `ngDevMode`를 확인할 때, 항상 참조하기 전에 초기화해야 합니다
+ * (예: `((typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode())`),
+ * 그렇지 않으면 https://github.com/angular/angular/issues/31595와 같은 `ReferenceError`가 발생할 수 있습니다.
  *
- * Details on possible values for `ngDevMode` can be found on its docstring.
+ * `ngDevMode`에 대한 가능한 값에 대한 자세한 내용은 문서 문자열에서 확인할 수 있습니다.
  *
- * NOTE:
- * - changes to the `ngDevMode` name must be synced with `compiler-cli/src/tooling.ts`.
+ * 주의:
+ * - `ngDevMode` 이름의 변경 사항은 `compiler-cli/src/tooling.ts`와 동기화해야 합니다.
  */
 export function initNgDevMode(): boolean {
-  // The below checks are to ensure that calling `initNgDevMode` multiple times does not
-  // reset the counters.
-  // If the `ngDevMode` is not an object, then it means we have not created the perf counters
-  // yet.
+  // 아래의 체크는 `initNgDevMode`를 여러 번 호출해도 카운터가 리셋되지 않도록 보장합니다.
+  // `ngDevMode`가 객체가 아니면, 성능 카운터를 아직 생성하지 않았다는 것을 의미합니다.
   if (typeof ngDevMode === 'undefined' || ngDevMode) {
     if (typeof ngDevMode !== 'object' || Object.keys(ngDevMode).length === 0) {
       ngDevModeResetPerfCounters();

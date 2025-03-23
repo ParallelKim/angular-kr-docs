@@ -6,10 +6,10 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 
-// we reexport these symbols just so that they are retained during the dead code elimination
-// performed by rollup while it's creating fesm files.
+// 우리는 이러한 기호를 다시 내보내는데, 이는 롤업이 fesm 파일을 생성하는 동안
+// 죽은 코드 제거가 수행될 때 유지되도록 하기 위함입니다.
 //
-// no code actually imports these symbols from the @angular/core entry point
+// 실제로 어떤 코드도 @angular/core 진입점에서 이러한 기호를 가져오지 않습니다.
 export {isBoundToModule as ɵisBoundToModule} from './application/application_ref';
 export {compileNgModuleFactory as ɵcompileNgModuleFactory} from './application/application_ngmodule_factory_compiler';
 export {injectChangeDetectorRef as ɵinjectChangeDetectorRef} from './change_detection/change_detector_ref';

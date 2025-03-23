@@ -7,13 +7,13 @@
  */
 
 /**
- * A schema definition associated with an NgModule.
+ * NgModule과 관련된 스키마 정의입니다.
  *
  * @see {@link NgModule}
  * @see {@link CUSTOM_ELEMENTS_SCHEMA}
  * @see {@link NO_ERRORS_SCHEMA}
  *
- * @param name The name of a defined schema.
+ * @param name 정의된 스키마의 이름입니다.
  *
  * @publicApi
  */
@@ -22,10 +22,10 @@ export interface SchemaMetadata {
 }
 
 /**
- * Defines a schema that allows an NgModule to contain the following:
- * - Non-Angular elements named with dash case (`-`).
- * - Element properties named with dash case (`-`).
- * Dash case is the naming convention for custom elements.
+ * NgModule이 다음을 포함할 수 있도록 허용하는 스키마를 정의합니다:
+ * - 대시 표기법(`-`)으로 명명된 비-Angular 요소들.
+ * - 대시 표기법(`-`)으로 명명된 요소 속성들.
+ * 대시 표기법은 사용자 정의 요소를 위한 명명 규칙입니다.
  *
  * @publicApi
  */
@@ -34,11 +34,9 @@ export const CUSTOM_ELEMENTS_SCHEMA: SchemaMetadata = {
 };
 
 /**
- * Defines a schema that allows any property on any element.
+ * 모든 요소의 모든 속성을 허용하는 스키마를 정의합니다.
  *
- * This schema allows you to ignore the errors related to any unknown elements or properties in a
- * template. The usage of this schema is generally discouraged because it prevents useful validation
- * and may hide real errors in your template. Consider using the `CUSTOM_ELEMENTS_SCHEMA` instead.
+ * 이 스키마는 템플릿 내의 알 수 없는 요소나 속성과 관련된 오류를 무시할 수 있도록 허용합니다. 이 스키마의 사용은 일반적으로 권장되지 않으며, 유용한 검증을 방해하고 템플릿 내의 실제 오류를 숨길 수 있습니다. 대신 `CUSTOM_ELEMENTS_SCHEMA`를 사용하는 것을 고려하십시오.
  *
  * @publicApi
  */

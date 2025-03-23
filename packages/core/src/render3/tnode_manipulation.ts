@@ -33,15 +33,14 @@ import {
 } from './state';
 
 /**
- * Create and stores the TNode, and hooks it up to the tree.
+ * TNode를 생성하고 저장하고, 이를 트리에 연결합니다.
  *
- * @param tView The current `TView`.
- * @param index The index at which the TNode should be saved (null if view, since they are not
- * saved).
- * @param type The type of TNode to create
- * @param native The native element for this node, if applicable
- * @param name The tag name of the associated native element, if applicable
- * @param attrs Any attrs for the native element, if applicable
+ * @param tView 현재 `TView`.
+ * @param index TNode가 저장되어야 하는 인덱스 (view인 경우 null, 저장되지 않음).
+ * @param type 생성할 TNode의 유형
+ * @param native 해당 노드의 네이티브 요소, 해당되는 경우
+ * @param name 관련 네이티브 요소의 태그 이름, 해당되는 경우
+ * @param attrs 네이티브 요소의 모든 attrs, 해당되는 경우
  */
 export function getOrCreateTNode(
   tView: TView,
@@ -98,19 +97,19 @@ export function getOrCreateTNode(
   TIcuContainerNode &
   TLetDeclarationNode {
   ngDevMode &&
-    index !== 0 && // 0 are bogus nodes and they are OK. See `createContainerRef` in
-    // `view_engine_compatibility` for additional context.
-    assertGreaterThanOrEqual(index, HEADER_OFFSET, "TNodes can't be in the LView header.");
-  // Keep this function short, so that the VM will inline it.
+    index !== 0 && // 0은 허위 노드이며 괜찮습니다. 추가 컨텍스트는 `view_engine_compatibility`의
+    // `createContainerRef`를 참조하세요.
+    assertGreaterThanOrEqual(index, HEADER_OFFSET, 'TNodes는 LView 헤더에 있을 수 없습니다.');
+  // 이 함수를 짧게 유지하여 VM이 인라인될 수 있도록 합니다.
   ngDevMode && assertPureTNodeType(type);
   let tNode = tView.data[index] as TNode;
   if (tNode === null) {
     tNode = createTNodeAtIndex(tView, index, type, name, attrs);
     if (isInI18nBlock()) {
-      // If we are in i18n block then all elements should be pre declared through `Placeholder`
-      // See `TNodeType.Placeholder` and `LFrame.inI18n` for more context.
-      // If the `TNode` was not pre-declared than it means it was not mentioned which means it was
-      // removed, so we mark it as detached.
+      // i18n 블록 안에 있으면 모든 요소는 `Placeholder`를 통해 미리 선언되어야 합니다.
+      // 추가 컨텍스트는 `TNodeType.Placeholder` 및 `LFrame.inI18n`을 참조하세요.
+      // `TNode`가 미리 선언되지 않았다면 이는 언급되지 않았고 이는 제거되었음을 의미하므로
+      // 분리된 것으로 표시합니다.
       tNode.flags |= TNodeFlags.isDetached;
     }
   } else if (tNode.type & TNodeType.Placeholder) {
@@ -120,7 +119,7 @@ export function getOrCreateTNode(
     const parent = getCurrentParentTNode();
     tNode.injectorIndex = parent === null ? -1 : parent.injectorIndex;
     ngDevMode && assertTNodeForTView(tNode, tView);
-    ngDevMode && assertEqual(index, tNode.index, 'Expecting same index');
+    ngDevMode && assertEqual(index, tNode.index, '같은 인덱스를 기대합니다.');
   }
   setCurrentTNode(tNode, true);
   return tNode as TElementNode &
@@ -141,7 +140,7 @@ export function createTNodeAtIndex(
   const isParent = isCurrentTNodeParent();
   const parent = isParent ? currentTNode : currentTNode && currentTNode.parent;
 
-  // Parents cannot cross component boundaries because components will be used in multiple places.
+  // 부모는 구성 요소 경계를 넘을 수 없으므로 구성 요소가 여러 곳에서 사용될 수 있습니다.
   const tNode = (tView.data[index] = createTNode(
     tView,
     parent as TElementNode | TContainerNode,
@@ -151,9 +150,9 @@ export function createTNodeAtIndex(
     attrs,
   ));
 
-  // Assign a pointer to the first child node of a given view. The first node is not always the one
-  // at index 0, in case of i18n, index 0 can be the instruction `i18nStart` and the first node has
-  // the index 1 or more, so we can't just check node index.
+  // 주어진 뷰의 첫 번째 자식 노드에 대한 포인터를 할당합니다. 첫 번째 노드는 항상 인덱스 0일 필요는 없으며
+  // i18n의 경우 인덱스 0은 `i18nStart` 지침일 수 있으며 첫 번째 노드는 인덱스 1 이상이므로
+  // 단순히 노드 인덱스를 확인할 수 없습니다.
   linkTNodeInTView(tView, tNode, currentTNode, isParent);
 
   return tNode;
@@ -170,15 +169,15 @@ function linkTNodeInTView(
   }
   if (currentTNode !== null) {
     if (isParent) {
-      // FIXME(misko): This logic looks unnecessarily complicated. Could we simplify?
+      // FIXME(misko): 이 로직은 불필요하게 복잡해 보입니다. 간단히 할 수 있을까요?
       if (currentTNode.child == null && tNode.parent !== null) {
-        // We are in the same view, which means we are adding content node to the parent view.
+        // 우리는 같은 뷰 안에 있으며 이는 부모 뷰에 내용 노드를 추가하는 것을 의미합니다.
         currentTNode.child = tNode;
       }
     } else {
       if (currentTNode.next === null) {
-        // In the case of i18n the `currentTNode` may already be linked, in which case we don't want
-        // to break the links which i18n created.
+        // i18n의 경우 `currentTNode`가 이미 연결되어 있을 수 있으며, 이 경우
+        // i18n이 생성한 링크를 끊고 싶지 않습니다.
         currentTNode.next = tNode;
         tNode.prev = currentTNode;
       }
@@ -187,15 +186,15 @@ function linkTNodeInTView(
 }
 
 /**
- * Constructs a TNode object from the arguments.
+ * 인수로부터 TNode 객체를 생성합니다.
  *
- * @param tView `TView` to which this `TNode` belongs
- * @param tParent Parent `TNode`
- * @param type The type of the node
- * @param index The index of the TNode in TView.data, adjusted for HEADER_OFFSET
- * @param tagName The tag name of the node
- * @param attrs The attributes defined on this node
- * @returns the TNode object
+ * @param tView 이 `TNode`가 속한 `TView`
+ * @param tParent 부모 `TNode`
+ * @param type 노드의 유형
+ * @param index TView.data에서 TNode의 인덱스, HEADER_OFFSET에 조정됨
+ * @param tagName 노드의 태그 이름
+ * @param attrs 이 노드에 정의된 속성
+ * @returns TNode 객체
  */
 export function createTNode(
   tView: TView,
@@ -262,10 +261,10 @@ export function createTNode(
   attrs: TAttributes | null,
 ): TNode {
   ngDevMode &&
-    index !== 0 && // 0 are bogus nodes and they are OK. See `createContainerRef` in
-    // `view_engine_compatibility` for additional context.
-    assertGreaterThanOrEqual(index, HEADER_OFFSET, "TNodes can't be in the LView header.");
-  ngDevMode && assertNotSame(attrs, undefined, "'undefined' is not valid value for 'attrs'");
+    index !== 0 && // 0은 허위 노드이며 괜찮습니다. 추가 컨텍스트는 `view_engine_compatibility`의
+    // `createContainerRef`를 참조하세요.
+    assertGreaterThanOrEqual(index, HEADER_OFFSET, 'TNodes는 LView 헤더에 있을 수 없습니다.');
+  ngDevMode && assertNotSame(attrs, undefined, "'undefined'는 'attrs'의 유효한 값이 아닙니다.");
   ngDevMode && ngDevMode.tNode++;
   ngDevMode && tParent && assertTNodeForTView(tParent, tView);
   let injectorIndex = tParent ? tParent.injectorIndex : -1;
@@ -274,7 +273,7 @@ export function createTNode(
     flags |= TNodeFlags.inSkipHydrationBlock;
   }
 
-  // TODO: would it be helpful to use a prototypal inheritance here, similar to the way we do so with signals?
+  // TODO: 신호와 유사하게 프로토타입 상속을 사용하는 것이 도움이 될까요?
   const tNode = {
     type,
     index,
@@ -315,9 +314,9 @@ export function createTNode(
   };
 
   if (ngDevMode) {
-    // For performance reasons it is important that the tNode retains the same shape during runtime.
-    // (To make sure that all of the code is monomorphic.) For this reason we seal the object to
-    // prevent class transitions.
+    // 성능을 위해 tNode가 런타임 동안 같은 형태를 유지하는 것이 중요합니다.
+    // (모든 코드가 모노모픽인지 확인하기 위해). 이 이유로 객체를 봉인하여
+    // 클래스 전환을 방지합니다.
     Object.seal(tNode);
   }
 

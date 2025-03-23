@@ -15,44 +15,42 @@ import {isInCheckNoChangesMode} from './state';
 import {NO_CHANGE} from './tokens';
 
 // TODO(misko): consider inlining
-/** Updates binding and returns the value. */
+/** 바인딩을 업데이트하고 값을 반환합니다. */
 export function updateBinding(lView: LView, bindingIndex: number, value: any): any {
   return (lView[bindingIndex] = value);
 }
 
-/** Gets the current binding value. */
+/** 현재 바인딩 값을 가져옵니다. */
 export function getBinding(lView: LView, bindingIndex: number): any {
   ngDevMode && assertIndexInRange(lView, bindingIndex);
   ngDevMode &&
-    assertNotSame(lView[bindingIndex], NO_CHANGE, 'Stored value should never be NO_CHANGE.');
+    assertNotSame(lView[bindingIndex], NO_CHANGE, '저장된 값은 결코 NO_CHANGE여서는 안 됩니다.');
   return lView[bindingIndex];
 }
 
 /**
- * Updates binding if changed, then returns whether it was updated.
+ * 변경된 경우 바인딩을 업데이트하고 업데이트 여부를 반환합니다.
  *
- * This function also checks the `CheckNoChangesMode` and throws if changes are made.
- * Some changes (Objects/iterables) during `CheckNoChangesMode` are exempt to comply with VE
- * behavior.
+ * 이 함수는 `CheckNoChangesMode`를 확인하고 변경이 있을 경우 예외를 발생시킵니다.
+ * `CheckNoChangesMode` 동안의 일부 변경(Object/iterables)은 VE 동작을 준수하기 위해 면제됩니다.
  *
- * @param lView current `LView`
- * @param bindingIndex The binding in the `LView` to check
- * @param value New value to check against `lView[bindingIndex]`
- * @returns `true` if the bindings has changed. (Throws if binding has changed during
- *          `CheckNoChangesMode`)
+ * @param lView 현재 `LView`
+ * @param bindingIndex 확인할 `LView`의 바인딩
+ * @param value `lView[bindingIndex]`와 비교할 새로운 값
+ * @returns 바인딩이 변경된 경우 `true`를 반환합니다. (`CheckNoChangesMode` 동안 바인딩이 변경되면 예외 발생)
  */
 export function bindingUpdated(lView: LView, bindingIndex: number, value: any): boolean {
-  ngDevMode && assertNotSame(value, NO_CHANGE, 'Incoming value should never be NO_CHANGE.');
+  ngDevMode && assertNotSame(value, NO_CHANGE, '수신 값은 결코 NO_CHANGE여서는 안 됩니다.');
   ngDevMode &&
-    assertLessThan(bindingIndex, lView.length, `Slot should have been initialized to NO_CHANGE`);
+    assertLessThan(bindingIndex, lView.length, `슬롯은 NO_CHANGE로 초기화되어야 했습니다.`);
   const oldValue = lView[bindingIndex];
 
   if (Object.is(oldValue, value)) {
     return false;
   } else {
     if (ngDevMode && isInCheckNoChangesMode()) {
-      // View engine didn't report undefined values as changed on the first checkNoChanges pass
-      // (before the change detection was run).
+      // 뷰 엔진은 첫 번째 checkNoChanges 통과에서 정의되지 않은 값을 변경된 것으로 보고하지 않았습니다.
+      // (변경 감지가 실행되기 전입니다).
       const oldValueToCompare = oldValue !== NO_CHANGE ? oldValue : undefined;
       if (!devModeEqual(oldValueToCompare, value)) {
         const details = getExpressionChangedErrorDetails(
@@ -69,10 +67,10 @@ export function bindingUpdated(lView: LView, bindingIndex: number, value: any): 
           lView,
         );
       }
-      // There was a change, but the `devModeEqual` decided that the change is exempt from an error.
-      // For this reason we exit as if no change. The early exit is needed to prevent the changed
-      // value to be written into `LView` (If we would write the new value that we would not see it
-      // as change on next CD.)
+      // 변경이 있었지만 `devModeEqual`이 변경이 오류에서 면제되었다고 결정했습니다.
+      // 이러한 이유로 우리는 변경이 없는 것처럼 종료합니다. 조기 종료는 변경된
+      // 값을 `LView`에 쓸 수 없도록 하기 위해 필요합니다. (만약 새로운 값을 쓴다면 다음 CD에서
+      // 그것을 변경으로 보지 않을 것입니다.)
       return false;
     }
     lView[bindingIndex] = value;
@@ -80,13 +78,13 @@ export function bindingUpdated(lView: LView, bindingIndex: number, value: any): 
   }
 }
 
-/** Updates 2 bindings if changed, then returns whether either was updated. */
+/** 변경된 경우 2개의 바인딩을 업데이트하고 둘 중 하나가 업데이트되었는지 반환합니다. */
 export function bindingUpdated2(lView: LView, bindingIndex: number, exp1: any, exp2: any): boolean {
   const different = bindingUpdated(lView, bindingIndex, exp1);
   return bindingUpdated(lView, bindingIndex + 1, exp2) || different;
 }
 
-/** Updates 3 bindings if changed, then returns whether any was updated. */
+/** 변경된 경우 3개의 바인딩을 업데이트하고 하나라도 업데이트되었는지 반환합니다. */
 export function bindingUpdated3(
   lView: LView,
   bindingIndex: number,
@@ -98,7 +96,7 @@ export function bindingUpdated3(
   return bindingUpdated(lView, bindingIndex + 2, exp3) || different;
 }
 
-/** Updates 4 bindings if changed, then returns whether any was updated. */
+/** 변경된 경우 4개의 바인딩을 업데이트하고 하나라도 업데이트되었는지 반환합니다. */
 export function bindingUpdated4(
   lView: LView,
   bindingIndex: number,

@@ -21,30 +21,28 @@ import {RuntimeError, RuntimeErrorCode} from '../errors';
 import {isPromise, isSubscribable} from '../util/lang';
 
 /**
- * A DI token that you can use to provide
- * one or more initialization functions.
+ * 하나 이상의 초기화 함수를 제공하는 데 사용할 수 있는 DI 토큰입니다.
  *
- * The provided functions are injected at application startup and executed during
- * app initialization. If any of these functions returns a Promise or an Observable, initialization
- * does not complete until the Promise is resolved or the Observable is completed.
+ * 제공된 함수들은 애플리케이션 시작 시 주입되어
+ * 앱 초기화 과정에서 실행됩니다. 이러한 함수 중 하나라도 Promise나 Observable을 반환하면,
+ * 초기화는 Promise가 해결되거나 Observable이 완료될 때까지 완료되지 않습니다.
  *
- * You can, for example, create a factory function that loads language data
- * or an external configuration, and provide that function to the `APP_INITIALIZER` token.
- * The function is executed during the application bootstrap process,
- * and the needed data is available on startup.
+ * 예를 들어 언어 데이터 또는 외부 구성을 로드하는 팩토리 함수를 생성하고
+ * 해당 함수를 `APP_INITIALIZER` 토큰에 제공할 수 있습니다.
+ * 이 함수는 애플리케이션 부팅 과정에서 실행되며,
+ * 필요한 데이터가 시작 시 이용 가능하게 됩니다.
  *
- * Note that the provided initializer is run in the injection context.
+ * 제공된 초기화 함수는 주입 컨텍스트에서 실행된다는 점에 유의하세요.
  *
- * @deprecated from v19.0.0, use provideAppInitializer instead
+ * @deprecated v19.0.0부터 사용 중단, 대신 provideAppInitializer 사용
  *
  * @see {@link ApplicationInitStatus}
  * @see {@link provideAppInitializer}
  *
  * @usageNotes
  *
- * The following example illustrates how to configure a multi-provider using `APP_INITIALIZER` token
- * and a function returning a promise.
- * ### Example with NgModule-based application
+ * 다음 예시는 `APP_INITIALIZER` 토큰을 사용하여 Promise를 반환하는 함수로 다중 제공자를 구성하는 방법을 보여줍니다.
+ * ### NgModule 기반 애플리케이션 예시
  * ```ts
  *  function initializeApp(): Promise<any> {
  *    const http = inject(HttpClient);
@@ -68,7 +66,7 @@ import {isPromise, isSubscribable} from '../util/lang';
  *  export class AppModule {}
  * ```
  *
- * ### Example with standalone application
+ * ### 독립형 애플리케이션 예시
  * ```ts
  * function initializeApp() {
  *   const http = inject(HttpClient);
@@ -89,16 +87,13 @@ import {isPromise, isSubscribable} from '../util/lang';
  *     },
  *   ],
  * });
-
  * ```
  *
+ * `APP_INITIALIZER` 토큰과 Observable을 반환하는 함수를 사용하여 다중 제공자를 구성하는 것도 가능합니다.
+ * 아래 예시를 참조하세요. 이 예제에서 `HttpClient`는
+ * 다른 제공자와 함께 팩토리 함수가 어떻게 작동하는지를 보여주기 위한 데모 용도로 사용됩니다.
  *
- * It's also possible to configure a multi-provider using `APP_INITIALIZER` token and a function
- * returning an observable, see an example below. Note: the `HttpClient` in this example is used for
- * demo purposes to illustrate how the factory function can work with other providers available
- * through DI.
- *
- * ### Example with NgModule-based application
+ * ### NgModule 기반 애플리케이션 예시
  * ```ts
  * function initializeApp() {
  *   const http = inject(HttpClient);
@@ -122,7 +117,7 @@ import {isPromise, isSubscribable} from '../util/lang';
  * export class AppModule {}
  * ```
  *
- * ### Example with standalone application
+ * ### 독립형 애플리케이션 예시
  * ```ts
  * function initializeApp() {
  *   const http = inject(HttpClient);
@@ -149,28 +144,28 @@ import {isPromise, isSubscribable} from '../util/lang';
  */
 export const APP_INITIALIZER = new InjectionToken<
   ReadonlyArray<() => Observable<unknown> | Promise<unknown> | void>
->(ngDevMode ? 'Application Initializer' : '');
+>(ngDevMode ? '애플리케이션 초기화기' : '');
 
 /**
  * @description
- * The provided function is injected at application startup and executed during
- * app initialization. If the function returns a Promise or an Observable, initialization
- * does not complete until the Promise is resolved or the Observable is completed.
+ * 제공된 함수는 애플리케이션 시작 시 주입되어
+ * 앱 초기화 과정에서 실행됩니다. 만약 함수가 Promise나 Observable을 반환하면,
+ * 초기화는 Promise가 해결되거나 Observable이 완료될 때까지 완료되지 않습니다.
  *
- * You can, for example, create a function that loads language data
- * or an external configuration, and provide that function using `provideAppInitializer()`.
- * The function is executed during the application bootstrap process,
- * and the needed data is available on startup.
+ * 예를 들어 언어 데이터 또는 외부 구성을 로드하는 함수를 생성하고,
+ * `provideAppInitializer()`를 사용하여 해당 함수를 제공할 수 있습니다.
+ * 이 함수는 애플리케이션 부팅 과정에서 실행되며,
+ * 필요한 데이터가 시작 시 이용 가능하게 됩니다.
  *
- * Note that the provided initializer is run in the injection context.
+ * 제공된 초기화 함수는 주입 컨텍스트에서 실행된다는 점에 유의하세요.
  *
- * Previously, this was achieved using the `APP_INITIALIZER` token which is now deprecated.
+ * 이전에는 `APP_INITIALIZER` 토큰을 사용하여 이러한 작업을 수행했습니다.
+ * 지금은 이것이 더 이상 사용되지 않습니다.
  *
  * @see {@link APP_INITIALIZER}
  *
  * @usageNotes
- * The following example illustrates how to configure an initialization function using
- * `provideAppInitializer()`
+ * 다음 예시는 `provideAppInitializer()`를 사용하여 초기화 함수를 구성하는 방법을 보여줍니다.
  * ```ts
  * bootstrapApplication(App, {
  *   providers: [
@@ -202,14 +197,14 @@ export function provideAppInitializer(
 }
 
 /**
- * A class that reflects the state of running {@link APP_INITIALIZER} functions.
+ * {@link APP_INITIALIZER} 함수의 실행 상태를 반영하는 클래스입니다.
  *
  * @publicApi
  */
 @Injectable({providedIn: 'root'})
 export class ApplicationInitStatus {
-  // Using non null assertion, these fields are defined below
-  // within the `new Promise` callback (synchronously).
+  // non null assertion을 사용하여, 이러한 필드는 아래에 정의됩니다.
+  // `new Promise` 콜백 내에서(동기적으로).
   private resolve!: (...args: any[]) => void;
   private reject!: (...args: any[]) => void;
 
@@ -227,10 +222,9 @@ export class ApplicationInitStatus {
     if ((typeof ngDevMode === 'undefined' || ngDevMode) && !Array.isArray(this.appInits)) {
       throw new RuntimeError(
         RuntimeErrorCode.INVALID_MULTI_PROVIDER,
-        'Unexpected type of the `APP_INITIALIZER` token value ' +
-          `(expected an array, but got ${typeof this.appInits}). ` +
-          'Please check that the `APP_INITIALIZER` token is configured as a ' +
-          '`multi: true` provider.',
+        '`APP_INITIALIZER` 토큰 값의 예상치 못한 유형 ' +
+          `(배열이어야 하며, 그러나 ${typeof this.appInits}가 나왔습니다). ` +
+          '`APP_INITIALIZER` 토큰이 `multi: true` 제공자로 구성되었는지 확인하세요.',
       );
     }
   }
@@ -255,7 +249,7 @@ export class ApplicationInitStatus {
     }
 
     const complete = () => {
-      // @ts-expect-error overwriting a readonly
+      // @ts-expect-error readonly를 덮어쓰기
       this.done = true;
       this.resolve();
     };

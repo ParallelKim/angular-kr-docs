@@ -16,10 +16,10 @@ import {FLAGS, LViewFlags} from '../interfaces/view';
 import {getRootComponents} from './discovery_utils';
 
 /**
- * Marks a component for check (in case of OnPush components) and synchronously
- * performs change detection on the application this component belongs to.
+ * OnPush 컴포넌트의 경우 체크를 위해 컴포넌트를 표시하고 이 컴포넌트가 속하는 애플리케이션에서
+ * 동기 변경 감지를 수행합니다.
  *
- * @param component Component to {@link /api/core/ChangeDetectorRef#markForCheck mark for check}
+ * @param component {@link /api/core/ChangeDetectorRef#markForCheck 체크를 위해 표시할 컴포넌트}
  *
  * @publicApi
  */
@@ -30,11 +30,11 @@ export function applyChanges(component: {}): void {
 }
 
 /**
- * Synchronously perform change detection on a component (and possibly its sub-components).
+ * 컴포넌트(및 가능하면 하위 컴포넌트)에서 동기 변경 감지를 수행합니다.
  *
- * This function triggers change detection in a synchronous way on a component.
+ * 이 함수는 컴포넌트에서 동기식으로 변경 감지를 트리거합니다.
  *
- * @param component The component which the change detection should be performed on.
+ * @param component 변경 감지를 수행해야 하는 컴포넌트.
  */
 function detectChanges(component: {}): void {
   const view = getComponentViewByInstance(component);

@@ -17,37 +17,37 @@ import {INTERPOLATION_DELIMITER} from './util/misc_utils';
 import {stringifyForError} from './util/stringify_utils';
 
 /**
- * The max length of the string representation of a value in an error message
+ * 에러 메시지에서 값의 문자열 표현의 최대 길이
  */
 const VALUE_STRING_LENGTH_LIMIT = 200;
 
-/** Verifies that a given type is a Standalone Component. */
+/** 주어진 타입이 독립형 컴포넌트인지 확인합니다. */
 export function assertStandaloneComponentType(type: Type<unknown>) {
   assertComponentDef(type);
   const componentDef = getComponentDef(type)!;
   if (!componentDef.standalone) {
     throw new RuntimeError(
       RuntimeErrorCode.TYPE_IS_NOT_STANDALONE,
-      `The ${stringifyForError(type)} component is not marked as standalone, ` +
-        `but Angular expects to have a standalone component here. ` +
-        `Please make sure the ${stringifyForError(type)} component has ` +
-        `the \`standalone: true\` flag in the decorator.`,
+      `The ${stringifyForError(type)} 컴포넌트는 독립형으로 표시되지 않았습니다, ` +
+        `그러나 Angular는 여기에서 독립형 컴포넌트를 기대합니다. ` +
+        `확인하고 ${stringifyForError(type)} 컴포넌트에 ` +
+        `장식자에서 \`standalone: true\` 플래그가 있는지 확인해 주세요.`,
     );
   }
 }
 
-/** Verifies whether a given type is a component */
+/** 주어진 타입이 컴포넌트인지 확인합니다. */
 export function assertComponentDef(type: Type<unknown>) {
   if (!getComponentDef(type)) {
     throw new RuntimeError(
       RuntimeErrorCode.MISSING_GENERATED_DEF,
-      `The ${stringifyForError(type)} is not an Angular component, ` +
-        `make sure it has the \`@Component\` decorator.`,
+      `The ${stringifyForError(type)}는 Angular 컴포넌트가 아닙니다, ` +
+        `\`@Component\` 장식자가 있는지 확인하세요.`,
     );
   }
 }
 
-/** Called when there are multiple component selectors that match a given node */
+/** 주어진 노드와 일치하는 여러 컴포넌트 선택기가 있을 때 호출됩니다. */
 export function throwMultipleComponentError(
   tNode: TNode,
   first: Type<unknown>,
@@ -55,13 +55,13 @@ export function throwMultipleComponentError(
 ): never {
   throw new RuntimeError(
     RuntimeErrorCode.MULTIPLE_COMPONENTS_MATCH,
-    `Multiple components match node with tagname ${tNode.value}: ` +
-      `${stringifyForError(first)} and ` +
+    `여러 컴포넌트가 태그 이름 ${tNode.value}의 노드와 일치합니다: ` +
+      `${stringifyForError(first)} 및 ` +
       `${stringifyForError(second)}`,
   );
 }
 
-/** Throws an ExpressionChangedAfterChecked error if checkNoChanges mode is on. */
+/** checkNoChanges 모드가 켜져 있으면 ExpressionChangedAfterChecked 오류를 발생시킵니다. */
 export function throwErrorIfNoChangesMode(
   creationMode: boolean,
   oldValue: any,
@@ -71,16 +71,16 @@ export function throwErrorIfNoChangesMode(
 ): never {
   const hostComponentDef = getDeclarationComponentDef(lView);
   const componentClassName = hostComponentDef?.type?.name;
-  const field = propName ? ` for '${propName}'` : '';
-  let msg = `ExpressionChangedAfterItHasBeenCheckedError: Expression has changed after it was checked. Previous value${field}: '${formatValue(
+  const field = propName ? ` '${propName}'에 대해` : '';
+  let msg = `ExpressionChangedAfterItHasBeenCheckedError: 표현식이 체크된 후 변경되었습니다. 이전 값${field}: '${formatValue(
     oldValue,
-  )}'. Current value: '${formatValue(currValue)}'.${
-    componentClassName ? ` Expression location: ${componentClassName} component` : ''
+  )}'. 현재 값: '${formatValue(currValue)}'.${
+    componentClassName ? ` 표현식 위치: ${componentClassName} 컴포넌트` : ''
   }`;
   if (creationMode) {
     msg +=
-      ` It seems like the view has been created after its parent and its children have been dirty checked.` +
-      ` Has it been created in a change detection hook?`;
+      ` 뷰가 부모와 자식이 더티 체크된 후 생성된 것 같습니다.` +
+      ` 변경 감지 훅에서 생성되었습니까?`;
   }
   throw new RuntimeError(RuntimeErrorCode.EXPRESSION_CHANGED_AFTER_CHECKED, msg);
 }
@@ -88,7 +88,7 @@ export function throwErrorIfNoChangesMode(
 function formatValue(value: unknown): string {
   let strValue: string = String(value);
 
-  // JSON.stringify will throw on circular references
+  // JSON.stringify는 순환 참조에서 오류를 발생시킵니다.
   try {
     if (Array.isArray(value) || strValue === '[object Object]') {
       strValue = JSON.stringify(value);
@@ -118,12 +118,12 @@ function constructDetailsForInterpolation(
 }
 
 /**
- * Constructs an object that contains details for the ExpressionChangedAfterItHasBeenCheckedError:
- * - property name (for property bindings or interpolations)
- * - old and new values, enriched using information from metadata
+ * ExpressionChangedAfterItHasBeenCheckedError에 대한 세부 정보를 포함하는 객체를 구성합니다:
+ * - 속성 이름 (속성 바인딩 또는 보간을 위한)
+ * - 이전 및 새 값, 메타데이터의 정보를 사용하여 보강됨.
  *
- * More information on the metadata storage format can be found in `storePropertyBindingMetadata`
- * function description.
+ * 메타데이터 저장 형식에 대한 더 많은 정보는 `storePropertyBindingMetadata`
+ * 함수 설명에서 찾을 수 있습니다.
  */
 export function getExpressionChangedErrorDetails(
   lView: LView,
@@ -135,7 +135,7 @@ export function getExpressionChangedErrorDetails(
   const metadata = tData[bindingIndex];
 
   if (typeof metadata === 'string') {
-    // metadata for property interpolation
+    // 속성 보간을 위한 메타데이터
     if (metadata.indexOf(INTERPOLATION_DELIMITER) > -1) {
       return constructDetailsForInterpolation(
         lView,
@@ -145,13 +145,13 @@ export function getExpressionChangedErrorDetails(
         newValue,
       );
     }
-    // metadata for property binding
+    // 속성 바인딩을 위한 메타데이터
     return {propName: metadata, oldValue, newValue};
   }
 
-  // metadata is not available for this expression, check if this expression is a part of the
-  // property interpolation by going from the current binding index left and look for a string that
-  // contains INTERPOLATION_DELIMITER, the layout in tView.data for this case will look like this:
+  // 이 표현식에 대한 메타데이터가 사용 불가능하면, 현재 바인딩 색인을 왼쪽으로 이동하면서
+  // INTERPOLATION_DELIMITER를 포함하는 문자열이 있는지 확인합니다,
+  // 이 경우 tView.data에서 레이아웃은 다음과 같이 보일 것입니다:
   // [..., 'id�Prefix � and � suffix', null, null, null, ...]
   if (metadata === null) {
     let idx = bindingIndex - 1;
@@ -161,8 +161,8 @@ export function getExpressionChangedErrorDetails(
     const meta = tData[idx];
     if (typeof meta === 'string') {
       const matches = meta.match(new RegExp(INTERPOLATION_DELIMITER, 'g'));
-      // first interpolation delimiter separates property name from interpolation parts (in case of
-      // property interpolations), so we subtract one from total number of found delimiters
+      // 첫 번째 보간 구분자는 속성 이름과 보간 부분을 분리합니다 (속성 보간의 경우).
+      // 따라서 찾은 구분자의 총 수에서 하나를 뺍니다.
       if (matches && matches.length - 1 > bindingIndex - idx) {
         return constructDetailsForInterpolation(lView, idx, bindingIndex, meta, newValue);
       }

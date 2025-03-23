@@ -14,12 +14,11 @@ import {getLView, getTView} from '../state';
 import {getNativeByIndex, getTNode} from '../util/view_utils';
 
 /**
- * Sets the location within the source template at which
- * each element in the current view was defined.
+ * 현재 뷰의 각 요소가 정의된 소스 템플릿 내 위치를 설정합니다.
  *
- * @param index Index at which the DOM node was created.
- * @param templatePath Path to the template at which the node was defined.
- * @param locations Element locations to which to attach the source location.
+ * @param index DOM 노드가 생성된 위치의 인덱스입니다.
+ * @param templatePath 노드가 정의된 템플릿의 경로입니다.
+ * @param locations 소스 위치에 연결할 요소 위치입니다.
  *
  * @codeGenApi
  */
@@ -34,11 +33,11 @@ export function ɵɵattachSourceLocations(
 
   for (const [index, offset, line, column] of locations) {
     const tNode = getTNode(tView, index + HEADER_OFFSET);
-    // The compiler shouldn't generate the instruction for non-element nodes, but assert just in case.
+    // 컴파일러는 비요소 노드에 대한 명령어를 생성해서는 안 되지만, 만일을 대비해 확인합니다.
     ngDevMode && assertTNodeType(tNode, TNodeType.Element);
     const node = getNativeByIndex(index + HEADER_OFFSET, lView) as RElement;
 
-    // Set the attribute directly in the DOM so it doesn't participate in directive matching.
+    // DOM에서 직접 속성을 설정하여 지시어 일치에 참여하지 않도록 합니다.
     if (!node.hasAttribute(attributeName)) {
       const attributeValue = `${templatePath}@o:${offset},l:${line},c:${column}`;
       renderer.setAttribute(node, attributeName, attributeValue);

@@ -34,18 +34,18 @@ export interface DebugSignalGraphNode {
 
 export interface DebugSignalGraphEdge {
   /**
-   * Index of a signal node in the `nodes` array that is a consumer of the signal produced by the producer node.
+   * 신호를 제공하는 프로듀서 노드의 소비자 인덱스.
    */
   consumer: number;
 
   /**
-   * Index of a signal node in the `nodes` array that is a producer of the signal consumed by the consumer node.
+   * 소비자 노드에서 소비되는 신호를 제공하는 프로듀서 노드의 인덱스.
    */
   producer: number;
 }
 
 /**
- * A debug representation of the signal graph.
+ * 신호 그래프의 디버그 표현입니다.
  */
 export interface DebugSignalGraph {
   nodes: DebugSignalGraphNode[];
@@ -71,7 +71,7 @@ function isSignalNode(node: ReactiveNode): node is SignalNode<unknown> {
 /**
  *
  * @param injector
- * @returns Template consumer of given NodeInjector
+ * @returns 주어진 NodeInjector의 템플릿 소비자
  */
 function getTemplateConsumer(injector: NodeInjector): ReactiveLViewConsumer | null {
   const tNode = getNodeInjectorTNode(injector)!;
@@ -95,7 +95,7 @@ function getNodesAndEdgesFromSignalMap(signalMap: ReadonlyMap<ReactiveNode, Reac
   for (const [consumer, producers] of signalMap.entries()) {
     const consumerIndex = nodes.indexOf(consumer);
 
-    // collect node
+    // 노드 수집
     if (isComputedNode(consumer) || isSignalNode(consumer)) {
       debugSignalGraphNodes.push({
         label: consumer.debugName,
@@ -119,7 +119,7 @@ function getNodesAndEdgesFromSignalMap(signalMap: ReadonlyMap<ReactiveNode, Reac
       });
     }
 
-    // collect edges for node
+    // 노드를 위한 엣지 수집
     for (const producer of producers) {
       edges.push({consumer: consumerIndex, producer: nodes.indexOf(producer)});
     }
@@ -162,20 +162,20 @@ function extractSignalNodesAndEdgesFromRoots(
 }
 
 /**
- * Returns a debug representation of the signal graph for the given injector.
+ * 주어진 인젝터의 신호 그래프의 디버그 표현을 반환합니다.
  *
- * Currently only supports element injectors. Starts by discovering the consumer nodes
- * and then traverses their producer nodes to build the signal graph.
+ * 현재 요소 인젝터만 지원합니다. 소비자 노드를 발견하고
+ * 그 다음 프로듀서 노드를 탐색하여 신호 그래프를 작성합니다.
  *
- * @param injector The injector to get the signal graph for.
- * @returns A debug representation of the signal graph.
- * @throws If the injector is an environment injector.
+ * @param injector 신호 그래프를 가져올 인젝터.
+ * @returns 신호 그래프의 디버그 표현.
+ * @throws 인젝터가 환경 인젝터인 경우.
  */
 export function getSignalGraph(injector: Injector): DebugSignalGraph {
   let templateConsumer: ReactiveLViewConsumer | null = null;
 
   if (!(injector instanceof NodeInjector) && !(injector instanceof R3Injector)) {
-    return throwError('getSignalGraph must be called with a NodeInjector or R3Injector');
+    return throwError('getSignalGraph은 NodeInjector 또는 R3Injector로 호출되어야 합니다.');
   }
 
   if (injector instanceof NodeInjector) {

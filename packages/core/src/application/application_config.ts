@@ -9,22 +9,22 @@
 import {EnvironmentProviders, Provider} from '../di';
 
 /**
- * Set of config options available during the application bootstrap operation.
+ * 애플리케이션 부트스트랩 작업 중 사용 가능한 구성 옵션 세트입니다.
  *
  * @publicApi
  */
 export interface ApplicationConfig {
   /**
-   * List of providers that should be available to the root component and all its children.
+   * 루트 구성 요소와 그 모든 자식 구성 요소에서 사용할 수 있어야 하는 제공자의 목록입니다.
    */
   providers: Array<Provider | EnvironmentProviders>;
 }
 
 /**
- * Merge multiple application configurations from left to right.
+ * 여러 애플리케이션 구성을 왼쪽에서 오른쪽으로 병합합니다.
  *
- * @param configs Two or more configurations to be merged.
- * @returns A merged [ApplicationConfig](api/core/ApplicationConfig).
+ * @param configs 병합할 두 개 이상의 구성입니다.
+ * @returns 병합된 [ApplicationConfig](api/core/ApplicationConfig)입니다.
  *
  * @publicApi
  */

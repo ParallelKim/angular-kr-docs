@@ -44,42 +44,44 @@ import {
 import {isComponent, verifyStandaloneImport} from './util';
 
 /**
- * Keep track of the compilation depth to avoid reentrancy issues during JIT compilation. This
- * matters in the following scenario:
+ * JIT 컴파일 중 재진입 문제를 피하기 위해 컴파일 깊이를 추적합니다.
+ * 이는 다음 시나리오에서 중요합니다:
  *
- * Consider a component 'A' that extends component 'B', both declared in module 'M'. During
- * the compilation of 'A' the definition of 'B' is requested to capture the inheritance chain,
- * potentially triggering compilation of 'B'. If this nested compilation were to trigger
- * `flushModuleScopingQueueAsMuchAsPossible` it may happen that module 'M' is still pending in the
- * queue, resulting in 'A' and 'B' to be patched with the NgModule scope. As the compilation of
- * 'A' is still in progress, this would introduce a circular dependency on its compilation. To avoid
- * this issue, the module scope queue is only flushed for compilations at the depth 0, to ensure
- * all compilations have finished.
+ * 'M' 모듈에 선언된 'A' 컴포넌트가 'B' 컴포넌트를 확장하는 경우를 고려해 보세요.
+ * 'A'의 컴파일 중에 상속 체인을 캡처하기 위해 'B'의 정의를 요청하면,
+ * 'B'의 컴파일을 촉발할 수 있습니다. 이러한 중첩된 컴파일이
+ * `flushModuleScopingQueueAsMuchAsPossible`를 촉발할 경우
+ * 모듈 'M'이 여전히 큐에 남아 있는 상태에서
+ * 'A'와 'B'가 NgModule 범위로 패치될 수 있습니다.
+ * 'A'의 컴파일이 아직 진행 중이므로,
+ * 이는 컴파일에서 순환 의존성을 도입할 수 있습니다. 이를 피하기 위해
+ * 모듈 범위 큐는 깊이 0에서만 플러시됩니다.
  */
 let compilationDepth = 0;
 
 /**
- * Compile an Angular component according to its decorator metadata, and patch the resulting
- * component def (ɵcmp) onto the component type.
+ * Angular 컴포넌트를 데코레이터 메타데이터에 따라 컴파일하고
+ * 결과 컴포넌트 정의(ɵcmp)를 컴포넌트 유형에 패치합니다.
  *
- * Compilation may be asynchronous (due to the need to resolve URLs for the component template or
- * other resources, for example). In the event that compilation is not immediate, `compileComponent`
- * will enqueue resource resolution into a global queue and will fail to return the `ɵcmp`
- * until the global queue has been resolved with a call to `resolveComponentResources`.
+ * 컴파일은 비동기적일 수 있습니다 (예: 컴포넌트 템플릿
+ * 또는 기타 리소스를 위한 URL을 해결해야 할 필요성 때문입니다).
+ * 컴파일이 즉시 이루어지지 않는 경우, `compileComponent`는
+ * 리소스 해제를 글로벌 큐에 추가하고
+ * 글로벌 큐가 `resolveComponentResources` 호출로 해제될 때까지
+ * `ɵcmp`를 반환하지 않습니다.
  */
 export function compileComponent(type: Type<any>, metadata: Component): void {
-  // Initialize ngDevMode. This must be the first statement in compileComponent.
-  // See the `initNgDevMode` docstring for more information.
+  // ngDevMode 초기화. 이것은 compileComponent에서 첫 번째 문장이어야 합니다.
+  // 자세한 내용은 `initNgDevMode` 문서 문자열을 참조하세요.
   (typeof ngDevMode === 'undefined' || ngDevMode) && initNgDevMode();
 
   let ngComponentDef: ComponentDef<unknown> | null = null;
 
-  // Metadata may have resources which need to be resolved.
+  // 메타데이터는 해결해야 할 리소스를 가질 수 있습니다.
   maybeQueueResolutionOfComponentResources(type, metadata);
 
-  // Note that we're using the same function as `Directive`, because that's only subset of metadata
-  // that we need to create the ngFactoryDef. We're avoiding using the component metadata
-  // because we'd have to resolve the asynchronous templates.
+  // ngFactoryDef를 생성하는 데 필요한 메타데이터의 하위 집합인
+  // `Directive`와 동일한 함수를 사용하고 있다는 점에 유의하세요.
   addDirectiveFactoryDef(type, metadata);
 
   Object.defineProperty(type, NG_COMP_DEF, {
@@ -92,7 +94,7 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
         });
 
         if (componentNeedsResolution(metadata)) {
-          const error = [`Component '${type.name}' is not resolved:`];
+          const error = [`컴포넌트 '${type.name}'이(가) 해결되지 않았습니다:`];
           if (metadata.templateUrl) {
             error.push(` - templateUrl: ${metadata.templateUrl}`);
           }
@@ -102,14 +104,16 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
           if (metadata.styleUrl) {
             error.push(` - styleUrl: ${metadata.styleUrl}`);
           }
-          error.push(`Did you run and wait for 'resolveComponentResources()'?`);
+          error.push(`'resolveComponentResources()'를 실행하고 기다렸습니까?`);
           throw new Error(error.join('\n'));
         }
 
-        // This const was called `jitOptions` previously but had to be renamed to `options` because
-        // of a bug with Terser that caused optimized JIT builds to throw a `ReferenceError`.
-        // This bug was investigated in https://github.com/angular/angular-cli/issues/17264.
-        // We should not rename it back until https://github.com/terser/terser/issues/615 is fixed.
+        // 이 const는 이전에 `jitOptions`라고 불렸으나
+        // 최적화된 JIT 빌드에서 `ReferenceError`를 발생시키는 Terser 버그 때문에
+        // `options`로 이름이 변경되어야 했습니다.
+        // 이 버그는 https://github.com/angular/angular-cli/issues/17264에서 조사되었습니다.
+        // https://github.com/terser/terser/issues/615가 수정될 때까지
+        // 다시 이름을 바꾸지 말아야 합니다.
         const options = getJitOptions();
         let preserveWhitespaces = metadata.preserveWhitespaces;
         if (preserveWhitespaces === undefined) {
@@ -139,11 +143,11 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
               ? [metadata.styles]
               : metadata.styles || EMPTY_ARRAY,
           animations: metadata.animations,
-          // JIT components are always compiled against an empty set of `declarations`. Instead, the
-          // `directiveDefs` and `pipeDefs` are updated at a later point:
-          //  * for NgModule-based components, they're set when the NgModule which declares the
-          //    component resolves in the module scoping queue
-          //  * for standalone components, they're set just below, after `compileComponent`.
+          // JIT 컴포넌트는 항상 빈 세트의 `declarations`에 대해 컴파일됩니다. 대신,
+          // `directiveDefs`와 `pipeDefs`는 나중에 업데이트됩니다:
+          //  * NgModule 기반 컴포넌트의 경우, 해당
+          //    컴포넌트를 선언하는 NgModule이 모듈 범위 큐에서 해결될 때 설정됩니다.
+          //  * 독립형 컴포넌트의 경우, `compileComponent` 후에 설정됩니다.
           declarations: [],
           changeDetection: metadata.changeDetection,
           encapsulation,
@@ -163,9 +167,10 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
           ) as ComponentDef<unknown>;
 
           if (meta.isStandalone) {
-            // Patch the component definition for standalone components with `directiveDefs` and
-            // `pipeDefs` functions which lazily compute the directives/pipes available in the
-            // standalone component. Also set `dependencies` to the lazily resolved list of imports.
+            // 독립형 컴포넌트에 대한 컴포넌트 정의를 패치하고
+            // 지연 계산되는 `directiveDefs`와
+            // `pipeDefs` 함수를 설정합니다. 또한
+            // 지연 해결된 임포트 목록으로 `dependencies`를 설정합니다.
             const imports: Type<any>[] = flatten(metadata.imports || EMPTY_ARRAY);
             const {directiveDefs, pipeDefs} = getStandaloneDefFunctions(type, imports);
             ngComponentDef.directiveDefs = directiveDefs;
@@ -173,23 +178,22 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
             ngComponentDef.dependencies = () => imports.map(resolveForwardRef);
           }
         } finally {
-          // Ensure that the compilation depth is decremented even when the compilation failed.
+          // 컴파일이 실패하더라도 컴파일 깊이가 감소되도록 합니다.
           compilationDepth--;
         }
 
         if (compilationDepth === 0) {
-          // When NgModule decorator executed, we enqueued the module definition such that
-          // it would only dequeue and add itself as module scope to all of its declarations,
-          // but only if  if all of its declarations had resolved. This call runs the check
-          // to see if any modules that are in the queue can be dequeued and add scope to
-          // their declarations.
+          // NgModule 데코레이터가 실행될 때, 우리는 모듈 정의를
+          // 큐에 추가하여 모든 선언이 해결되었을 때만
+          // 자신을 모듈 범위로 추가할 수 있습니다.
           flushModuleScopingQueueAsMuchAsPossible();
         }
 
-        // If component compilation is async, then the @NgModule annotation which declares the
-        // component may execute and set an ngSelectorScope property on the component type. This
-        // allows the component to patch itself with directiveDefs from the module after it
-        // finishes compiling.
+        // 컴포넌트 컴파일이 비동기인 경우, 해당
+        // 컴포넌트를 선언하는 @NgModule 주석이 실행될 수 있으며
+        // 이는 컴포넌트 유형에서 ngSelectorScope 속성을 설정할 수 있습니다.
+        // 이를 통해 컴포넌트는 컴파일이 완료된 후
+        // 모듈로부터 directiveDefs로 자신을 패치할 수 있습니다.
         if (hasSelectorScope(type)) {
           const scopes = transitiveScopesFor(type.ngSelectorScope);
           patchComponentDefWithScope(ngComponentDef, scopes);
@@ -200,9 +204,9 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
             ngComponentDef.schemas = metadata.schemas;
           } else {
             throw new Error(
-              `The 'schemas' was specified for the ${stringifyForError(
+              `스키마는 ${stringifyForError(
                 type,
-              )} but is only valid on a component that is standalone.`,
+              )}에 대해 지정되었지만 독립형 컴포넌트에서만 유효합니다.`,
             );
           }
         } else if (meta.isStandalone) {
@@ -214,16 +218,17 @@ export function compileComponent(type: Type<any>, metadata: Component): void {
     set: (def: ComponentDef<unknown> | null) => {
       ngComponentDef = def;
     },
-    // Make the property configurable in dev mode to allow overriding in tests
+    // 테스트에서 오버라이드를 허용하기 위해 개발 모드에서 프로퍼티를 구성 가능하도록 만듭니다.
     configurable: !!ngDevMode,
   });
 }
 
 /**
- * Build memoized `directiveDefs` and `pipeDefs` functions for the component definition of a
- * standalone component, which process `imports` and filter out directives and pipes. The use of
- * memoized functions here allows for the delayed resolution of any `forwardRef`s present in the
- * component's `imports`.
+ * 독립형 컴포넌트의 컴포넌트 정의에 대한 메모이즈된
+ * `directiveDefs`와 `pipeDefs` 함수를 구축하여
+ * `imports`를 처리하고 디렉티브와 파이프를 필터링합니다.
+ * 여기서 메모이즈된 함수를 사용하면
+ * 컴포넌트의 `imports`에 있는 모든 `forwardRef`의 지연 해석이 가능합니다.
  */
 function getStandaloneDefFunctions(
   type: Type<any>,
@@ -237,8 +242,8 @@ function getStandaloneDefFunctions(
   const directiveDefs = () => {
     if (!USE_RUNTIME_DEPS_TRACKER_FOR_JIT) {
       if (cachedDirectiveDefs === null) {
-        // Standalone components are always able to self-reference, so include the component's own
-        // definition in its `directiveDefs`.
+        // 독립형 컴포넌트는 항상 자기 참조가 가능하므로
+        // 컴포넌트의 자체 정의를 `directiveDefs`에 포함합니다.
         cachedDirectiveDefs = [getComponentDef(type)!];
         const seen = new Set<Type<unknown>>([type]);
 
@@ -349,11 +354,12 @@ function hasSelectorScope<T>(
 }
 
 /**
- * Compile an Angular directive according to its decorator metadata, and patch the resulting
- * directive def onto the component type.
+ * Angular 지침을 그 데코레이터 메타데이터에 따라 컴파일하고
+ * 결과 지침 정의를 컴포넌트 유형에 패치합니다.
  *
- * In the event that compilation is not immediate, `compileDirective` will return a `Promise` which
- * will resolve when compilation completes and the directive becomes usable.
+ * 컴파일이 즉시 이루어지지 않는 경우, `compileDirective`는
+ * 컴파일이 완료되고 지침이 사용 가능해질 때까지
+ * 해결될 `Promise`를 반환합니다.
  */
 export function compileDirective(type: Type<any>, directive: Directive | null): void {
   let ngDirectiveDef: any = null;
@@ -363,9 +369,10 @@ export function compileDirective(type: Type<any>, directive: Directive | null): 
   Object.defineProperty(type, NG_DIR_DEF, {
     get: () => {
       if (ngDirectiveDef === null) {
-        // `directive` can be null in the case of abstract directives as a base class
-        // that use `@Directive()` with no selector. In that case, pass empty object to the
-        // `directiveMetadata` function instead of null.
+        // `directive`는 `@Directive()`를 사용하고
+        // 선택자가 없는 추상 지침의 경우 null이 될 수 있습니다.
+        // 이 경우, null 대신 빈 객체를 `directiveMetadata`
+        // 함수에 전달합니다.
         const meta = getDirectiveMetadata(type, directive || {});
         const compiler = getCompilerFacade({
           usage: JitCompilerUsage.Decorator,
@@ -380,7 +387,7 @@ export function compileDirective(type: Type<any>, directive: Directive | null): 
       }
       return ngDirectiveDef;
     },
-    // Make the property configurable in dev mode to allow overriding in tests
+    // 테스트에서 오버라이드를 허용하기 위해 개발 모드에서 프로퍼티를 구성 가능하도록 만듭니다.
     configurable: !!ngDevMode,
   });
 }
@@ -419,7 +426,7 @@ function addDirectiveFactoryDef(type: Type<any>, metadata: Directive | Component
       }
       return ngFactoryDef;
     },
-    // Make the property configurable in dev mode to allow overriding in tests
+    // 테스트에서 오버라이드를 허용하기 위해 개발 모드에서 프로퍼티를 구성 가능하도록 만듭니다.
     configurable: !!ngDevMode,
   });
 }
@@ -429,11 +436,10 @@ export function extendsDirectlyFromObject(type: Type<any>): boolean {
 }
 
 /**
- * Extract the `R3DirectiveMetadata` for a particular directive (either a `Directive` or a
- * `Component`).
+ * 특정 지침(지침 또는 컴포넌트)에 대한 `R3DirectiveMetadata`를 추출합니다.
  */
 export function directiveMetadata(type: Type<any>, metadata: Directive): R3DirectiveMetadataFacade {
-  // Reflect inputs and outputs.
+  // 입력 및 출력을 반영합니다.
   const reflect = getReflect();
   const propMetadata = reflect.ownPropMetadata(type);
 
@@ -462,16 +468,18 @@ export function directiveMetadata(type: Type<any>, metadata: Directive): R3Direc
 }
 
 /**
- * Adds a directive definition to all parent classes of a type that don't have an Angular decorator.
+ * Angular 데코레이터가 없는 상위 클래스의 모든 클래스에
+ * 지침 정의를 추가합니다.
  */
 function addDirectiveDefToUndecoratedParents(type: Type<any>) {
   const objPrototype = Object.prototype;
   let parent = Object.getPrototypeOf(type.prototype).constructor;
 
-  // Go up the prototype until we hit `Object`.
+  // 프로토타입을 'Object'에 도달할 때까지 올라갑니다.
   while (parent && parent !== objPrototype) {
-    // Since inheritance works if the class was annotated already, we only need to add
-    // the def if there are no annotations and the def hasn't been created already.
+    // 클래스가 이미 주석이 달려있다면 상속이 작동하므로
+    // 주석이 없고 정의가 이미 생성되지 않은 경우에만
+    // 정의를 추가해야 합니다.
     if (
       !getDirectiveDef(parent) &&
       !getComponentDef(parent) &&
@@ -512,12 +520,12 @@ function extractQueriesMetadata(
         if (isQueryAnn(ann)) {
           if (!ann.selector) {
             throw new Error(
-              `Can't construct a query for the property "${field}" of ` +
-                `"${stringifyForError(type)}" since the query selector wasn't defined.`,
+              `속성 "${field}"의 쿼리를 생성할 수 없습니다: ` +
+                `"${stringifyForError(type)}"에서 쿼리 선택자가 정의되지 않았습니다.`,
             );
           }
           if (annotations.some(isInputAnnotation)) {
-            throw new Error(`Cannot combine @Input decorators with query decorators`);
+            throw new Error(`@Input 데코레이터와 쿼리 데코레이터를 결합할 수 없습니다.`);
           }
           queriesMeta.push(convertToR3QueryMetadata(field, ann));
         }

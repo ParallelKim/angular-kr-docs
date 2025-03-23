@@ -11,8 +11,7 @@ import {Type} from '../interface/type';
 import {noSideEffects} from './closure';
 
 /**
- * An interface implemented by all Angular type decorators, which allows them to be used as
- * decorators as well as Angular syntax.
+ * 모든 Angular 타입 데코레이터가 구현하는 인터페이스로, 이를 데코레이터 및 Angular 문법으로 사용할 수 있게 합니다.
  *
  * ```ts
  * @ng.Component({...})
@@ -23,17 +22,16 @@ import {noSideEffects} from './closure';
  */
 export interface TypeDecorator {
   /**
-   * Invoke as decorator.
+   * 데코레이터로 호출합니다.
    */
   <T extends Type<any>>(type: T): T;
 
-  // Make TypeDecorator assignable to built-in ParameterDecorator type.
-  // ParameterDecorator is declared in lib.d.ts as a `declare type`
-  // so we cannot declare this interface as a subtype.
+  // TypeDecorator를 내장 ParameterDecorator 타입에 할당 가능하게 만듭니다.
+  // ParameterDecorator는 lib.d.ts에서 `declare type`로 선언되므로
+  // 이 인터페이스를 하위 타입으로 선언할 수 없습니다.
   // see https://github.com/angular/angular/issues/3379#issuecomment-126169417
   (target: Object, propertyKey?: string | symbol, parameterIndex?: number): void;
-  // Standard (non-experimental) Decorator signature that avoids direct usage of
-  // any TS 5.0+ specific types.
+  // 표준(비실험적) 데코레이터 서명이 TS 5.0+ 특정 타입의 직접 사용을 피합니다.
   (target: unknown, context: unknown): void;
 }
 
@@ -66,8 +64,8 @@ export function makeDecorator<T>(
       const annotationInstance = new (DecoratorFactory as any)(...args);
       return function TypeDecorator(cls: Type<T>) {
         if (typeFn) typeFn(cls, ...args);
-        // Use of Object.defineProperty is important since it creates non-enumerable property which
-        // prevents the property is copied during subclassing.
+        // Object.defineProperty의 사용은 중요합니다. 이는 열거할 수 없는 속성을 생성하여
+        // 서브 클래스에서 속성이 복사되는 것을 방지합니다.
         const annotations = cls.hasOwnProperty(ANNOTATIONS)
           ? (cls as any)[ANNOTATIONS]
           : (Object.defineProperty(cls, ANNOTATIONS, {value: []}) as any)[ANNOTATIONS];
@@ -127,8 +125,8 @@ export function makeParamDecorator(
           ? (cls as any)[PARAMETERS]
           : Object.defineProperty(cls, PARAMETERS, {value: []})[PARAMETERS];
 
-        // there might be gaps if some in between parameters do not have annotations.
-        // we pad with nulls.
+        // 일부 매개 변수가 주석이 없으면 간격이 생길 수 있습니다.
+        // 우리는 null로 채웁니다.
         while (parameters.length <= index) {
           parameters.push(null);
         }
@@ -167,15 +165,15 @@ export function makePropDecorator(
       const decoratorInstance = new (<any>PropDecoratorFactory)(...args);
 
       function PropDecorator(target: any, name: string) {
-        // target is undefined with standard decorators. This case is not supported and will throw
-        // if this decorator is used in JIT mode with standard decorators.
+        // target은 표준 데코레이터에서 정의되지 않았습니다. 이 경우는 지원되지 않으며
+        // 표준 데코레이터와 함께 JIT 모드에서 이 데코레이터가 사용될 경우 오류가 발생합니다.
         if (target === undefined) {
-          throw new Error('Standard Angular field decorators are not supported in JIT mode.');
+          throw new Error('표준 Angular 필드 데코레이터는 JIT 모드에서 지원되지 않습니다.');
         }
 
         const constructor = target.constructor;
-        // Use of Object.defineProperty is important because it creates a non-enumerable property
-        // which prevents the property from being copied during subclassing.
+        // Object.defineProperty의 사용은 중요합니다. 이는 열거할 수 없는 속성을 생성하여
+        // 서브 클래스에서 속성이 복사되는 것을 방지합니다.
         const meta = constructor.hasOwnProperty(PROP_METADATA)
           ? (constructor as any)[PROP_METADATA]
           : Object.defineProperty(constructor, PROP_METADATA, {value: {}})[PROP_METADATA];

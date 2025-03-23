@@ -19,17 +19,15 @@ import {assertNotDestroyed, R3Injector} from './r3_injector';
 import {Injector as PrimitivesInjector} from '@angular/core/primitives/di';
 
 /**
- * Runs the given function in the [context](guide/di/dependency-injection-context) of the given
- * `Injector`.
+ * 주어진 `Injector`의 [context](guide/di/dependency-injection-context)에서 주어진 함수를 실행합니다.
  *
- * Within the function's stack frame, [`inject`](api/core/inject) can be used to inject dependencies
- * from the given `Injector`. Note that `inject` is only usable synchronously, and cannot be used in
- * any asynchronous callbacks or after any `await` points.
+ * 함수의 스택 프레임 내에서 [`inject`](api/core/inject)를 사용하여 주어진 `Injector`에서
+ * 의존성을 주입할 수 있습니다. `inject`는 동기적으로만 사용할 수 있으며,
+ * 비동기 콜백이나 `await` 포인트 이후에 사용할 수 없습니다.
  *
- * @param injector the injector which will satisfy calls to [`inject`](api/core/inject) while `fn`
- *     is executing
- * @param fn the closure to be run in the context of `injector`
- * @returns the return value of the function, if any
+ * @param injector `fn`이 실행되는 동안 [`inject`](api/core/inject)를 만족할 injector
+ * @param fn `injector`의 context에서 실행될 클로저
+ * @returns 함수의 반환값, 있을 경우
  * @publicApi
  */
 export function runInInjectionContext<ReturnT>(injector: Injector, fn: () => ReturnT): ReturnT {
@@ -57,28 +55,29 @@ export function runInInjectionContext<ReturnT>(injector: Injector, fn: () => Ret
 }
 
 /**
- * Whether the current stack frame is inside an injection context.
+ * 현재 스택 프레임이 주입 컨텍스트 내부인지 여부를 확인합니다.
  */
 export function isInInjectionContext(): boolean {
   return getInjectImplementation() !== undefined || getCurrentInjector() != null;
 }
+
 /**
- * Asserts that the current stack frame is within an [injection
- * context](guide/di/dependency-injection-context) and has access to `inject`.
+ * 현재 스택 프레임이 [주입 컨텍스트](guide/di/dependency-injection-context) 내에 있으며
+ * `inject`에 접근할 수 있는지 확인합니다.
  *
- * @param debugFn a reference to the function making the assertion (used for the error message).
+ * @param debugFn assertion을 하는 함수에 대한 참조(오류 메시지에 사용).
  *
  * @publicApi
  */
 export function assertInInjectionContext(debugFn: Function): void {
-  // Taking a `Function` instead of a string name here prevents the unminified name of the function
-  // from being retained in the bundle regardless of minification.
+  // 여기서 `Function`을 문자열 이름 대신 사용하면 함수의 비축소된 이름이
+  // 축소와 관계없이 번들에 유지되는 것을 방지합니다.
   if (!isInInjectionContext()) {
     throw new RuntimeError(
       RuntimeErrorCode.MISSING_INJECTION_CONTEXT,
       ngDevMode &&
         debugFn.name +
-          '() can only be used within an injection context such as a constructor, a factory function, a field initializer, or a function used with `runInInjectionContext`',
+          '()는 생성자, 팩토리 함수, 필드 초기화기 또는 `runInInjectionContext`와 함께 사용되는 함수와 같은 주입 컨텍스트 내부에서만 사용할 수 있습니다.',
     );
   }
 }

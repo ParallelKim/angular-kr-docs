@@ -9,10 +9,9 @@
 import {InjectionToken} from '../di';
 
 /**
- * Internal token that allows to register extra callbacks that should be invoked during the
- * `PlatformRef.destroy` operation. This token is needed to avoid a direct reference to the
- * `PlatformRef` class (i.e. register the callback via `PlatformRef.onDestroy`), thus making the
- * entire class tree-shakeable.
+ * 내부 토큰으로, `PlatformRef.destroy` 작업 중에 호출되어야 하는 추가 콜백을 등록할 수 있게 해줍니다.
+ * 이 토큰은 `PlatformRef` 클래스에 대한 직접 참조를 피하기 위해 필요합니다
+ * (즉, `PlatformRef.onDestroy`를 통해 콜백을 등록함으로써), 따라서 전체 클래스가 트리 쉐이킹 가능하게 만듭니다.
  */
 export const PLATFORM_DESTROY_LISTENERS = new InjectionToken<Set<VoidFunction>>(
   ngDevMode ? 'PlatformDestroyListeners' : '',

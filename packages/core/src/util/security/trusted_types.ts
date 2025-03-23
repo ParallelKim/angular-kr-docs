@@ -8,12 +8,10 @@
 
 /**
  * @fileoverview
- * A module to facilitate use of a Trusted Types policy internally within
- * Angular. It lazily constructs the Trusted Types policy, providing helper
- * utilities for promoting strings to Trusted Types. When Trusted Types are not
- * available, strings are used as a fallback.
- * @security All use of this module is security-sensitive and should go through
- * security review.
+ * Angular 내부에서 Trusted Types 정책을 사용하기 쉽게 해주는 모듈입니다.
+ * Trusted Types 정책을 지연 생성하며, 문자열을 Trusted Types로 승격시키기 위한 도우미
+ * 유틸리티를 제공합니다. Trusted Types를 사용할 수 없는 경우 문자열이 폴백으로 사용됩니다.
+ * @security 이 모듈의 모든 사용은 보안에 민감하며 보안 검토를 거쳐야 합니다.
  */
 
 import {global} from '../global';
@@ -27,14 +25,14 @@ import {
 } from './trusted_type_defs';
 
 /**
- * The Trusted Types policy, or null if Trusted Types are not
- * enabled/supported, or undefined if the policy has not been created yet.
+ * Trusted Types 정책을 나타내며, Trusted Types가
+ * 활성화/지원되지 않는 경우 null, 정책이 아직 생성되지 않은 경우 undefined입니다.
  */
 let policy: TrustedTypePolicy | null | undefined;
 
 /**
- * Returns the Trusted Types policy, or null if Trusted Types are not
- * enabled/supported. The first call to this function will create the policy.
+ * Trusted Types 정책을 반환하며, Trusted Types가
+ * 활성화/지원되지 않는 경우 null을 반환합니다. 이 함수의 첫 번째 호출은 정책을 생성합니다.
  */
 function getPolicy(): TrustedTypePolicy | null {
   if (policy === undefined) {
@@ -47,10 +45,10 @@ function getPolicy(): TrustedTypePolicy | null {
           createScriptURL: (s: string) => s,
         });
       } catch {
-        // trustedTypes.createPolicy throws if called with a name that is
-        // already registered, even in report-only mode. Until the API changes,
-        // catch the error not to break the applications functionally. In such
-        // cases, the code will fall back to using strings.
+        // trustedTypes.createPolicy는 이미 등록된 이름으로 호출할 경우
+        // 예외를 발생합니다. API가 변경될 때까지, 애플리케이션이
+        // 기능적으로 중단되지 않도록 예외를 잡습니다. 이런 경우,
+        // 코드는 문자열을 사용하는 것으로 떨어집니다.
       }
     }
   }
@@ -58,64 +56,60 @@ function getPolicy(): TrustedTypePolicy | null {
 }
 
 /**
- * Unsafely promote a string to a TrustedHTML, falling back to strings when
- * Trusted Types are not available.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that the
- * provided string will never cause an XSS vulnerability if used in a context
- * that will be interpreted as HTML by a browser, e.g. when assigning to
- * element.innerHTML.
+ * 문자열을 TrustedHTML로 안전하지 않게 승격시키며,
+ * Trusted Types가 사용할 수 없는 경우 문자열로 폴백합니다.
+ * @security 이 함수는 보안에 민감한 함수입니다; 이 함수를 사용하는 모든
+ * 경우에는 보안 검토를 거쳐야 합니다. 특히, 제공된 문자열이
+ * 브라우저에 의해 HTML로 해석되는 컨텍스트에서 사용될 경우 XSS
+ * 취약점을 유발하지 않도록 보장해야 합니다. 예: element.innerHTML에 할당할 경우.
  */
 export function trustedHTMLFromString(html: string): TrustedHTML | string {
   return getPolicy()?.createHTML(html) || html;
 }
 
 /**
- * Unsafely promote a string to a TrustedScript, falling back to strings when
- * Trusted Types are not available.
- * @security In particular, it must be assured that the provided string will
- * never cause an XSS vulnerability if used in a context that will be
- * interpreted and executed as a script by a browser, e.g. when calling eval.
+ * 문자열을 TrustedScript로 안전하지 않게 승격시키며,
+ * Trusted Types가 사용 가능한 경우 문자열로 폴백합니다.
+ * @security 특히, 제공된 문자열이
+ * 브라우저에 의해 스크립트로 해석되고 실행되는 컨텍스트에서 사용될 경우
+ * XSS 취약점을 유발하지 않도록 보장해야 합니다. 예: eval 호출 시.
  */
 export function trustedScriptFromString(script: string): TrustedScript | string {
   return getPolicy()?.createScript(script) || script;
 }
 
 /**
- * Unsafely promote a string to a TrustedScriptURL, falling back to strings
- * when Trusted Types are not available.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that the
- * provided string will never cause an XSS vulnerability if used in a context
- * that will cause a browser to load and execute a resource, e.g. when
- * assigning to script.src.
+ * 문자열을 TrustedScriptURL로 안전하지 않게 승격시키며,
+ * Trusted Types가 사용 가능한 경우 문자열로 폴백합니다.
+ * @security 이 함수는 보안에 민감한 함수입니다; 이 함수를 사용하는 모든
+ * 경우에는 보안 검토를 거쳐야 합니다. 특히, 제공된 문자열이
+ * 브라우저가 리소스를 로드하고 실행하도록 유발하는 컨텍스트에서 사용될 경우
+ * XSS 취약점을 유발하지 않도록 보장해야 합니다. 예: script.src에 할당할 경우.
  */
 export function trustedScriptURLFromString(url: string): TrustedScriptURL | string {
   return getPolicy()?.createScriptURL(url) || url;
 }
 
 /**
- * Unsafely call the Function constructor with the given string arguments. It
- * is only available in development mode, and should be stripped out of
- * production code.
- * @security This is a security-sensitive function; any use of this function
- * must go through security review. In particular, it must be assured that it
- * is only called from development code, as use in production code can lead to
- * XSS vulnerabilities.
+ * 주어진 문자열 인수로 Function 생성자를 안전하지 않게 호출합니다.
+ * 개발 모드에서만 사용할 수 있으며,
+ * 프로덕션 코드에서는 제거되어야 합니다.
+ * @security 이 함수는 보안에 민감한 함수입니다; 이 함수를 사용하는 모든
+ * 경우에는 보안 검토를 거쳐야 합니다. 특히, 프로덕션 코드에서 사용할 경우
+ * XSS 취약점을 유발하지 않도록 개발 코드에서만 호출되도록 보장해야 합니다.
  */
 export function newTrustedFunctionForDev(...args: string[]): Function {
   if (typeof ngDevMode === 'undefined') {
-    throw new Error('newTrustedFunctionForDev should never be called in production');
+    throw new Error('newTrustedFunctionForDev는 프로덕션에서 호출해서는 안 됩니다.');
   }
   if (!global.trustedTypes) {
-    // In environments that don't support Trusted Types, fall back to the most
-    // straightforward implementation:
+    // Trusted Types를 지원하지 않는 환경에서 가장
+    // 간단한 구현으로 폴백합니다.
     return new Function(...args);
   }
 
-  // Chrome currently does not support passing TrustedScript to the Function
-  // constructor. The following implements the workaround proposed on the page
-  // below, where the Chromium bug is also referenced:
+  // Chrome은 현재 TrustedScript를 Function
+  // 생성자에 전달하는 것을 지원하지 않습니다. 아래 페이지에서 제안한 우회 방법을 구현합니다.
   // https://github.com/w3c/webappsec-trusted-types/wiki/Trusted-Types-for-function-constructor
   const fnArgs = args.slice(0, -1).join(',');
   const fnBody = args[args.length - 1];
@@ -123,26 +117,24 @@ export function newTrustedFunctionForDev(...args: string[]): Function {
 ) { ${fnBody}
 })`;
 
-  // Using eval directly confuses the compiler and prevents this module from
-  // being stripped out of JS binaries even if not used. The global['eval']
-  // indirection fixes that.
+  // eval을 직접 사용하는 것은 컴파일러를 혼란스럽게 하며, 이 모듈이
+  // 사용할 수 없을 경우에도 JS 바이너리에서 제거되는 것을 방지합니다.
   const fn = global['eval'](trustedScriptFromString(body)) as Function;
   if (fn.bind === undefined) {
-    // Workaround for a browser bug that only exists in Chrome 83, where passing
-    // a TrustedScript to eval just returns the TrustedScript back without
-    // evaluating it. In that case, fall back to the most straightforward
-    // implementation:
+    // TrustedScript를 eval로 전달할 경우 TrustedScript가
+    // 평가되지 않고 다시 돌아오는 Chrome 83에서만 존재하는 브라우저 버그에 대한 우회입니다.
+    // 이 경우 가장 간단한 구현으로 폴백합니다.
     return new Function(...args);
   }
 
-  // To completely mimic the behavior of calling "new Function", two more
-  // things need to happen:
-  // 1. Stringifying the resulting function should return its source code
+  // "new Function"을 호출하는 것과 같은 행동을 완전히 모방하기 위해
+  // 두 가지 일이 더 발생해야 합니다:
+  // 1. 결과 함수의 문자열화는 그 소스 코드를 반환해야 합니다.
   fn.toString = () => body;
-  // 2. When calling the resulting function, `this` should refer to `global`
+  // 2. 결과 함수를 호출할 때 `this`는 `global`을 가리켜야 합니다.
   return fn.bind(global);
 
-  // When Trusted Types support in Function constructors is widely available,
-  // the implementation of this function can be simplified to:
+  // Function 생성자에서 Trusted Types 지원이 널리 제공되면,
+  // 이 함수의 구현을 간단하게 할 수 있습니다:
   // return new Function(...args.map(a => trustedScriptFromString(a)));
 }

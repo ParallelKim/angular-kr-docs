@@ -14,9 +14,9 @@ import {ComponentDef} from './interfaces/definition';
 import {createEnvironmentInjector} from './ng_module_ref';
 
 /**
- * A service used by the framework to create instances of standalone injectors. Those injectors are
- * created on demand in case of dynamic component instantiation and contain ambient providers
- * collected from the imports graph rooted at a given standalone component.
+ * 프레임워크가 독립 실행형 주입기의 인스턴스를 생성하는 데 사용하는 서비스입니다. 이러한 주입기는
+ * 동적 구성 요소 인스턴스화의 경우 필요에 따라 생성되며, 특정 독립 실행형 구성 요소에 루트된
+ * 가져오기 그래프에서 수집된 환경 제공자를 포함합니다.
  */
 export class StandaloneService implements OnDestroy {
   cachedInjectors = new Map<ComponentDef<unknown>, EnvironmentInjector | null>();

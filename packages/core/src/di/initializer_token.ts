@@ -9,15 +9,14 @@
 import {InjectionToken} from './injection_token';
 
 /**
- * A multi-provider token for initialization functions that will run upon construction of an
- * environment injector.
+ * 환경 주입기가 생성될 때 실행될 초기화 함수에 대한 다중 공급자 토큰입니다.
  *
- * @deprecated from v19.0.0, use provideEnvironmentInitializer instead
+ * @deprecated v19.0.0부터, provideEnvironmentInitializer를 대신 사용하십시오.
  *
  * @see {@link provideEnvironmentInitializer}
  *
- * Note: As opposed to the `APP_INITIALIZER` token, the `ENVIRONMENT_INITIALIZER` functions are not awaited,
- * hence they should not be `async`.
+ * 참고: `APP_INITIALIZER` 토큰과는 달리, `ENVIRONMENT_INITIALIZER` 함수는 대기하지 않으므로
+ * `async`이어서는 안 됩니다.
  *
  * @publicApi
  */

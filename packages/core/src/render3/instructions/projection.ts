@@ -34,12 +34,11 @@ import {createAndRenderEmbeddedLView, shouldAddViewToDom} from '../view_manipula
 import {declareTemplate} from './template';
 
 /**
- * Checks a given node against matching projection slots and returns the
- * determined slot index. Returns "null" if no slot matched the given node.
+ * 주어진 노드를 일치하는 프로젝션 슬롯과 비교하고,
+ * 결정된 슬롯 인덱스를 반환합니다. 주어진 노드와 일치하는 슬롯이 없으면 "null"을 반환합니다.
  *
- * This function takes into account the parsed ngProjectAs selector from the
- * node's attributes. If present, it will check whether the ngProjectAs selector
- * matches any of the projection slot selectors.
+ * 이 함수는 노드의 속성에서 구문 분석된 ngProjectAs 선택기를 고려합니다.
+ * 존재할 경우, ngProjectAs 선택기가 프로젝션 슬롯 선택기와 일치하는지 확인합니다.
  */
 export function matchingProjectionSlotIndex(
   tNode: TNode,
@@ -49,47 +48,43 @@ export function matchingProjectionSlotIndex(
   const ngProjectAsAttrVal = getProjectAsAttrValue(tNode);
   for (let i = 0; i < projectionSlots.length; i++) {
     const slotValue = projectionSlots[i];
-    // The last wildcard projection slot should match all nodes which aren't matching
-    // any selector. This is necessary to be backwards compatible with view engine.
+    // 마지막 와일드카드 프로젝션 슬롯은 어떤 선택자와도 일치하지 않는 모든 노드와 일치해야 합니다.
+    // 이는 뷰 엔진과의 호환성을 유지하는데 필요합니다.
     if (slotValue === '*') {
       wildcardNgContentIndex = i;
       continue;
     }
-    // If we ran into an `ngProjectAs` attribute, we should match its parsed selector
-    // to the list of selectors, otherwise we fall back to matching against the node.
+    // `ngProjectAs` 속성과 마주쳤다면, 그 구문 분석된 선택기를 목록의 선택자와 비교해야 합니다.
+    // 그렇지 않으면 노드와 비교하는 기본으로 돌아갑니다.
     if (
       ngProjectAsAttrVal === null
         ? isNodeMatchingSelectorList(tNode, slotValue, /* isProjectionMode */ true)
         : isSelectorInSelectorList(ngProjectAsAttrVal, slotValue)
     ) {
-      return i; // first matching selector "captures" a given node
+      return i; // 첫 번째 일치하는 선택자가 주어진 노드를 "포획"합니다.
     }
   }
   return wildcardNgContentIndex;
 }
 
 /**
- * Instruction to distribute projectable nodes among <ng-content> occurrences in a given template.
- * It takes all the selectors from the entire component's template and decides where
- * each projected node belongs (it re-distributes nodes among "buckets" where each "bucket" is
- * backed by a selector).
+ * 주어진 템플릿의 <ng-content> 발생 사이에 프로젝터블 노드를 분배하는 지침입니다.
+ * 전체 컴포넌트의 템플릿에서 모든 선택자를 가져와 각 프로젝션 노드가
+ * 어디에 속하는지 결정합니다(각 "버킷"이 선택자에 의해 지원됩니다).
  *
- * This function requires CSS selectors to be provided in 2 forms: parsed (by a compiler) and text,
- * un-parsed form.
+ * 이 함수는 CSS 선택자가 두 가지 형식으로 제공되어야 합니다: 구문 분석된(컴파일러에 의해) 형식과
+ * 텍스트, 구문 분석되지 않은 형식.
  *
- * The parsed form is needed for efficient matching of a node against a given CSS selector.
- * The un-parsed, textual form is needed for support of the ngProjectAs attribute.
+ * 구문 분석된 형식은 주어진 CSS 선택자에 대한 노드의 효율적인 비교를 위해 필요합니다.
+ * 구문 분석되지 않은 텍스트 형식은 ngProjectAs 속성의 지원을 위해 필요합니다.
  *
- * Having a CSS selector in 2 different formats is not ideal, but alternatives have even more
- * drawbacks:
- * - having only a textual form would require runtime parsing of CSS selectors;
- * - we can't have only a parsed as we can't re-construct textual form from it (as entered by a
- * template author).
+ * 두 가지 다른 형식으로 CSS 선택자를 갖는 것은 이상적이지 않지만, 대안은 더 큰 단점을 가지고 있습니다:
+ * - 텍스트 형식만 있으면 CSS 선택자의 런타임 구문 분석이 필요합니다;
+ * - 구문 분석된 선택자만 있을 수 없습니다, 그로부터 구문 분석되지 않은 형식을 재구성할 수 없기 때문입니다(템플릿 작성자가 입력한 대로).
  *
- * @param projectionSlots? A collection of projection slots. A projection slot can be based
- *        on a parsed CSS selectors or set to the wildcard selector ("*") in order to match
- *        all nodes which do not match any selector. If not specified, a single wildcard
- *        selector projection slot will be defined.
+ * @param projectionSlots? 프로젝션 슬롯의 컬렉션. 프로젝션 슬롯은 구문 분석된 CSS 선택자를 기반으로 할 수 있으며,
+ *        모든 노드가 어떤 선택자와도 일치하지 않도록 와일드카드 선택자("*")로 설정할 수 있습니다.
+ *        지정하지 않으면, 단일 와일드카드 선택자 프로젝션 슬롯이 정의됩니다.
  *
  * @codeGenApi
  */
@@ -97,8 +92,7 @@ export function ɵɵprojectionDef(projectionSlots?: ProjectionSlots): void {
   const componentNode = getLView()[DECLARATION_COMPONENT_VIEW][T_HOST] as TElementNode;
 
   if (!componentNode.projection) {
-    // If no explicit projection slots are defined, fall back to a single
-    // projection slot with the wildcard selector.
+    // 명시적인 프로젝션 슬롯이 정의되지 않은 경우, 와일드카드 선택어로 단일 프로젝션 슬롯으로 돌아갑니다.
     const numProjectionSlots = projectionSlots ? projectionSlots.length : 1;
     const projectionHeads: (TNode | null)[] = (componentNode.projection = newArray(
       numProjectionSlots,
@@ -109,7 +103,7 @@ export function ɵɵprojectionDef(projectionSlots?: ProjectionSlots): void {
     let componentChild: TNode | null = componentNode.child;
 
     while (componentChild !== null) {
-      // Do not project let declarations so they don't occupy a slot.
+      // let 선언은 슬롯을 차지하지 않도록 투영하지 않습니다.
       if (componentChild.type !== TNodeType.LetDeclaration) {
         const slotIndex = projectionSlots
           ? matchingProjectionSlotIndex(componentChild, projectionSlots)
@@ -131,18 +125,18 @@ export function ɵɵprojectionDef(projectionSlots?: ProjectionSlots): void {
 }
 
 /**
- * Inserts previously re-distributed projected nodes. This instruction must be preceded by a call
- * to the projectionDef instruction.
+ * 이전에 재분배된 프로젝션 노드를 삽입합니다. 이 명령문은 projectionDef 명령문 호출이
+ * 선행되어야 합니다.
  *
- * @param nodeIndex Index of the projection node.
- * @param selectorIndex Index of the slot selector.
- *  - 0 when the selector is `*` (or unspecified as this is the default value),
- *  - 1 based index of the selector from the {@link projectionDef}
- * @param attrs Static attributes set on the `ng-content` node.
- * @param fallbackTemplateFn Template function with fallback content.
- *   Will be rendered if the slot is empty at runtime.
- * @param fallbackDecls Number of declarations in the fallback template.
- * @param fallbackVars Number of variables in the fallback template.
+ * @param nodeIndex 프로젝션 노드의 인덱스.
+ * @param selectorIndex 슬롯 선택자의 인덱스.
+ *  - 선택자가 `*`일 때 0(또는 지정되지 않음, 기본 값임),
+ *  - {@link projectionDef}에서의 선택자의 1 기반 인덱스
+ * @param attrs `ng-content` 노드에 설정된 정적 속성.
+ * @param fallbackTemplateFn 폴백 콘텐츠가 포함된 템플릿 함수.
+ *   런타임에 슬롯이 비어 있을 때 렌더링됩니다.
+ * @param fallbackDecls 폴백 템플릿에 있는 선언 수.
+ * @param fallbackVars 폴백 템플릿에 있는 변수 수.
  *
  * @codeGenApi
  */
@@ -158,9 +152,9 @@ export function ɵɵprojection(
   const tView = getTView();
   const fallbackIndex = fallbackTemplateFn ? nodeIndex + 1 : null;
 
-  // Fallback content needs to be declared no matter whether the slot is empty since different
-  // instances of the component may or may not insert it. Also it needs to be declare *before*
-  // the projection node in order to work correctly with hydration.
+  // 슬롯이 비어 있는지와 관계없이 폴백 콘텐츠는 선언되어야 합니다.
+  // 또한 다른 컴포넌트 인스턴스가 그것을 삽입할 수 있습니다. 런타임에서 작동하도록 하기 위해
+  // 프로젝션 노드 앞에서 선언해야 합니다.
   if (fallbackIndex !== null) {
     declareTemplate(
       lView,
@@ -182,13 +176,13 @@ export function ɵɵprojection(
     attrs || null,
   );
 
-  // We can't use viewData[HOST_NODE] because projection nodes can be nested in embedded views.
+  // 프로젝션 노드는 임베디드 뷰에 중첩될 수 있으므로 viewData[HOST_NODE]를 사용할 수 없습니다.
   if (tProjectionNode.projection === null) {
     tProjectionNode.projection = selectorIndex;
   }
 
-  // `<ng-content>` has no content. Even if there's fallback
-  // content, the fallback is shown next to it.
+  // `<ng-content>`에는 내용이 없습니다. 폴백이 있더라도,
+  // 폴백은 그 옆에 표시됩니다.
   setCurrentTNodeAsNotParent();
 
   const hydrationInfo = lView[HYDRATION];
@@ -199,12 +193,12 @@ export function ɵɵprojection(
   if (isEmpty && fallbackIndex !== null) {
     insertFallbackContent(lView, tView, fallbackIndex);
   } else if (isNodeCreationMode && !isDetachedByI18n(tProjectionNode)) {
-    // re-distribution of projectable nodes is stored on a component's view level
+    // 프로젝터블 노드의 재분배는 컴포넌트의 뷰 수준에 저장됩니다.
     applyProjection(tView, lView, tProjectionNode);
   }
 }
 
-/** Inserts the fallback content of a projection slot. Assumes there's no projected content. */
+/** 프로젝션 슬롯의 폴백 콘텐츠를 삽입합니다. 프로젝션 콘텐츠가 없다고 가정합니다. */
 function insertFallbackContent(lView: LView, tView: TView, fallbackIndex: number) {
   const adjustedIndex = HEADER_OFFSET + fallbackIndex;
   const fallbackTNode = tView.data[adjustedIndex] as TNode;

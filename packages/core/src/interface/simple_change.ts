@@ -7,9 +7,8 @@
  */
 
 /**
- * Represents a basic change from a previous to a new value for a single
- * property on a directive instance. Passed as a value in a
- * {@link SimpleChanges} object to the `ngOnChanges` hook.
+ * 지시문 인스턴스의 단일 속성에 대한 이전 값에서 새 값으로의 기본 변경을 나타냅니다.
+ * `ngOnChanges` 훅에 {@link SimpleChanges} 객체의 값으로 전달됩니다.
  *
  * @see {@link OnChanges}
  *
@@ -22,7 +21,7 @@ export class SimpleChange {
     public firstChange: boolean,
   ) {}
   /**
-   * Check whether the new value is the first value assigned.
+   * 새 값이 할당된 첫 번째 값인지 여부를 확인합니다.
    */
   isFirstChange(): boolean {
     return this.firstChange;
@@ -30,9 +29,8 @@ export class SimpleChange {
 }
 
 /**
- * A hashtable of changes represented by {@link SimpleChange} objects stored
- * at the declared property name they belong to on a Directive or Component. This is
- * the type passed to the `ngOnChanges` hook.
+ * 지시문 또는 구성 요소에 속하는 선언된 속성 이름에 저장된 {@link SimpleChange} 객체로 표현되는 변화의 해시테이블입니다.
+ * 이것은 `ngOnChanges` 훅에 전달되는 타입입니다.
  *
  * @see {@link OnChanges}
  *

@@ -13,23 +13,22 @@ import {TAttributes, TNode} from '../interfaces/node';
 import {getTView} from '../state';
 
 /**
- * Compute the static styling (class/style) from `TAttributes`.
+ * `TAttributes`에서 정적 스타일(class/style)을 계산합니다.
  *
- * This function should be called during `firstCreatePass` only.
+ * 이 함수는 `firstCreatePass` 동안에만 호출되어야 합니다.
  *
- * @param tNode The `TNode` into which the styling information should be loaded.
- * @param attrs `TAttributes` containing the styling information.
- * @param writeToHost Where should the resulting static styles be written?
- *   - `false` Write to `TNode.stylesWithoutHost` / `TNode.classesWithoutHost`
- *   - `true` Write to `TNode.styles` / `TNode.classes`
+ * @param tNode 스타일 정보가 로드되어야 하는 `TNode`.
+ * @param attrs 스타일 정보를 포함하는 `TAttributes`.
+ * @param writeToHost 결과 정적 스타일이 어디에 쓰여져야 합니까?
+ *   - `false` `TNode.stylesWithoutHost` / `TNode.classesWithoutHost`에 기록
+ *   - `true` `TNode.styles` / `TNode.classes`에 기록
  */
 export function computeStaticStyling(
   tNode: TNode,
   attrs: TAttributes | null,
   writeToHost: boolean,
 ): void {
-  ngDevMode &&
-    assertFirstCreatePass(getTView(), 'Expecting to be called in first template pass only');
+  ngDevMode && assertFirstCreatePass(getTView(), '첫 번째 템플릿 패스에서만 호출되어야 합니다.');
   let styles: string | null = writeToHost ? tNode.styles : null;
   let classes: string | null = writeToHost ? tNode.classes : null;
   let mode: AttributeMarker | 0 = 0;

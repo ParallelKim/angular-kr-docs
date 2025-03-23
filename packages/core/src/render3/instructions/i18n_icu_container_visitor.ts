@@ -45,7 +45,7 @@ function icuContainerIteratorNext(state: IcuIteratorState): RNode | null {
       return rNode;
     } else {
       state.stack.push(state.index, state.removes);
-      // ICUs are represented by negative indices
+      // ICUs는 음수 인덱스로 표시됩니다
       const tIcuIndex = ~removeOpCode;
       const tIcu = state.lView![TVIEW].data[tIcuIndex] as TIcu;
       ngDevMode && assertTIcu(tIcu);
@@ -70,10 +70,10 @@ export function loadIcuContainerVisitor() {
   };
 
   /**
-   * Retrieves a set of root nodes from `TIcu.remove`. Used by `TNodeType.ICUContainer`
-   * to determine which root belong to the ICU.
+   * `TIcu.remove`에서 루트 노드 집합을 검색합니다. `TNodeType.ICUContainer`에 의해 사용되어
+   * 어떤 루트가 ICU에 속하는지 결정합니다.
    *
-   * Example of usage.
+   * 사용 예:
    * ```ts
    * const nextRNode = icuContainerIteratorStart(tIcuContainerNode, lView);
    * let rNode: RNode|null;
@@ -82,8 +82,8 @@ export function loadIcuContainerVisitor() {
    * }
    * ```
    *
-   * @param tIcuContainerNode Current `TIcuContainerNode`
-   * @param lView `LView` where the `RNode`s should be looked up.
+   * @param tIcuContainerNode 현재 `TIcuContainerNode`
+   * @param lView `RNode`s가 검색되어야 하는 `LView`.
    */
   function icuContainerIteratorStart(
     tIcuContainerNode: TIcuContainerNode,

@@ -32,10 +32,10 @@ export function createAndRenderEmbeddedLView<T>(
   const prevConsumer = setActiveConsumer(null);
   try {
     const embeddedTView = templateTNode.tView!;
-    ngDevMode && assertDefined(embeddedTView, 'TView must be defined for a template node.');
+    ngDevMode && assertDefined(embeddedTView, 'TView는 템플릿 노드에 대해 정의되어야 합니다.');
     ngDevMode && assertTNodeForLView(templateTNode, declarationLView);
 
-    // Embedded views follow the change detection strategy of the view they're declared in.
+    // 포함된 뷰는 선언된 뷰의 변경 감지 전략을 따릅니다.
     const isSignalView = declarationLView[FLAGS] & LViewFlags.SignalView;
     const viewFlags = isSignalView ? LViewFlags.SignalView : LViewFlags.CheckAlways;
     const embeddedLView = createLView<T>(
@@ -61,7 +61,7 @@ export function createAndRenderEmbeddedLView<T>(
       embeddedLView[QUERIES] = declarationViewLQueries.createEmbeddedView(embeddedTView);
     }
 
-    // execute creation mode of a view
+    // 뷰의 생성 모드를 실행합니다.
     renderView(embeddedTView, embeddedLView, context);
 
     return embeddedLView;
@@ -71,11 +71,11 @@ export function createAndRenderEmbeddedLView<T>(
 }
 
 /**
- * Returns whether an elements that belong to a view should be
- * inserted into the DOM. For client-only cases, DOM elements are
- * always inserted. For hydration cases, we check whether serialized
- * info is available for a view and the view is not in a "skip hydration"
- * block (in which case view contents was re-created, thus needing insertion).
+ * 뷰에 속하는 요소가 DOM에 삽입되어야 하는지 여부를 반환합니다.
+ * 클라이언트 전용 경우, DOM 요소는 항상 삽입됩니다.
+ * 수화(hydration) 경우에는, 뷰에 대한 직렬화된 정보가 사용 가능한지와
+ * 뷰가 "skip hydration" 블록에 있지 않은지 확인합니다.
+ * (이 경우 뷰 내용이 재생성되었으므로 삽입이 필요합니다.)
  */
 export function shouldAddViewToDom(
   tNode: TNode,

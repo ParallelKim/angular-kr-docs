@@ -64,8 +64,8 @@ function elementContainerStartFirstCreatePass(
   const attrs = getConstant<TAttributes>(tViewConsts, attrsIndex);
   const tNode = getOrCreateTNode(tView, index, TNodeType.ElementContainer, 'ng-container', attrs);
 
-  // While ng-container doesn't necessarily support styling, we use the style context to identify
-  // and execute directives on the ng-container.
+  // ng-container가 스타일링을 지원하지는 않지만,
+  // 스타일 컨텍스트를 사용하여 ng-container에서 직접 지시문을 식별하고 실행합니다.
   if (attrs !== null) {
     computeStaticStyling(tNode, attrs, true);
   }
@@ -75,7 +75,7 @@ function elementContainerStartFirstCreatePass(
     resolveDirectives(tView, lView, tNode, localRefs, findDirectiveDefMatches);
   }
 
-  // Merge the template attrs last so that they have the highest priority.
+  // 템플릿 속성을 마지막에 병합하여 가장 높은 우선 순위를 갖도록 합니다.
   tNode.mergedAttrs = mergeHostAttrs(tNode.mergedAttrs, tNode.attrs);
 
   if (tView.queries !== null) {
@@ -86,17 +86,17 @@ function elementContainerStartFirstCreatePass(
 }
 
 /**
- * Creates a logical container for other nodes (<ng-container>) backed by a comment node in the DOM.
- * The instruction must later be followed by `elementContainerEnd()` call.
+ * DOM의 주석 노드에 의해 지원되는 다른 노드를 위한 논리적 컨테이너(<ng-container>)를 생성합니다.
+ * 이 명령은 나중에 `elementContainerEnd()` 호출이 뒤따라야 합니다.
  *
- * @param index Index of the element in the LView array
- * @param attrsIndex Index of the container attributes in the `consts` array.
- * @param localRefsIndex Index of the container's local references in the `consts` array.
- * @returns This function returns itself so that it may be chained.
+ * @param index LView 배열에서 요소의 인덱스
+ * @param attrsIndex `consts` 배열에서 컨테이너 속성의 인덱스.
+ * @param localRefsIndex `consts` 배열에서 컨테이너의 로컬 참조 인덱스.
+ * @returns 이 함수는 체이닝을 위해 자신을 반환합니다.
  *
- * Even if this instruction accepts a set of attributes no actual attribute values are propagated to
- * the DOM (as a comment node can't have attributes). Attributes are here only for directive
- * matching purposes and setting initial inputs of directives.
+ * 이 명령이 속성 집합을 수락하더라도 실제 속성 값은 DOM에 전파되지 않습니다
+ * (주석 노드는 속성을 가질 수 없기 때문입니다). 속성은 여기서 단지 지시문
+ * 일치 목적과 지시문의 초기 입력 설정을 위한 것입니다.
  *
  * @codeGenApi
  */
@@ -143,8 +143,8 @@ export function ɵɵelementContainerStart(
 }
 
 /**
- * Mark the end of the <ng-container>.
- * @returns This function returns itself so that it may be chained.
+ * <ng-container>의 끝을 표시합니다.
+ * @returns 이 함수는 체이닝을 위해 자신을 반환합니다.
  *
  * @codeGenApi
  */
@@ -171,13 +171,13 @@ export function ɵɵelementContainerEnd(): typeof ɵɵelementContainerEnd {
 }
 
 /**
- * Creates an empty logical container using {@link elementContainerStart}
- * and {@link elementContainerEnd}
+ * {@link elementContainerStart}와 {@link elementContainerEnd}를
+ * 사용하여 빈 논리 컨테이너를 생성합니다.
  *
- * @param index Index of the element in the LView array
- * @param attrsIndex Index of the container attributes in the `consts` array.
- * @param localRefsIndex Index of the container's local references in the `consts` array.
- * @returns This function returns itself so that it may be chained.
+ * @param index LView 배열에서 요소의 인덱스
+ * @param attrsIndex `consts` 배열에서 컨테이너 속성의 인덱스.
+ * @param localRefsIndex `consts` 배열에서 컨테이너의 로컬 참조 인덱스.
+ * @returns 이 함수는 체이닝을 위해 자신을 반환합니다.
  *
  * @codeGenApi
  */
@@ -202,9 +202,9 @@ let _locateOrCreateElementContainerNode: typeof locateOrCreateElementContainerNo
 };
 
 /**
- * Enables hydration code path (to lookup existing elements in DOM)
- * in addition to the regular creation mode of comment nodes that
- * represent <ng-container>'s anchor.
+ * DOM에서 기존 요소를 조회하기 위해 수화 코드 경로를 활성화합니다.
+ * 이는 <ng-container>의 앵커를 나타내는 주석 노드의 일반 생성 모드와
+ * 함께 있습니다.
  */
 function locateOrCreateElementContainerNode(
   tView: TView,
@@ -222,12 +222,12 @@ function locateOrCreateElementContainerNode(
 
   lastNodeWasCreated(isNodeCreationMode);
 
-  // Regular creation mode.
+  // 일반 생성 모드.
   if (isNodeCreationMode) {
     return createCommentNode(lView[RENDERER], ngDevMode ? 'ng-container' : '');
   }
 
-  // Hydration mode, looking up existing elements in DOM.
+  // 수화 모드, DOM에서 기존 요소를 조회합니다.
   const currentRNode = locateNextRNode(hydrationInfo, tView, lView, tNode)!;
   ngDevMode && validateNodeExists(currentRNode, lView, tNode);
 
@@ -235,7 +235,7 @@ function locateOrCreateElementContainerNode(
   ngDevMode &&
     assertNumber(
       ngContainerSize,
-      'Unexpected state: hydrating an <ng-container>, ' + 'but no hydration info is available.',
+      '예상치 못한 상태: <ng-container>을 수화하는 중, ' + '그러나 수화 정보가 없습니다.',
     );
 
   setSegmentHead(hydrationInfo, index, currentRNode);

@@ -25,31 +25,29 @@ import {elementPropertyInternal, storePropertyBindingMetadata} from './shared';
 
 /**
  *
- * Update an interpolated property on an element with a lone bound value
+ * 단일 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 1 interpolated value in it, an no additional text
- * surrounds that interpolated value:
+ * 속성에 전달된 값에 1개의 보간된 값이 포함되어 있고, 해당 보간된 값을 둘러싼 추가 텍스트가 없는 경우에 사용됩니다:
  *
  * ```html
  * <div title="{{v0}}"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate('title', v0);
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate(
@@ -63,30 +61,29 @@ export function ɵɵpropertyInterpolate(
 
 /**
  *
- * Update an interpolated property on an element with single bound value surrounded by text.
+ * 텍스트로 둘러싸인 단일 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 1 interpolated value in it:
+ * 속성에 전달된 값이 1개의 보간된 값을 포함할 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate1('title', 'prefix', v0, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate1(
@@ -126,32 +123,31 @@ export function ɵɵpropertyInterpolate1(
 
 /**
  *
- * Update an interpolated property on an element with 2 bound values surrounded by text.
+ * 텍스트로 둘러싸인 2개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 2 interpolated values in it:
+ * 속성에 전달된 값에 2개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate2('title', 'prefix', v0, '-', v1, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate2(
@@ -194,35 +190,34 @@ export function ɵɵpropertyInterpolate2(
 
 /**
  *
- * Update an interpolated property on an element with 3 bound values surrounded by text.
+ * 텍스트로 둘러싸인 3개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 3 interpolated values in it:
+ * 속성에 전달된 값에 3개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate3(
  * 'title', 'prefix', v0, '-', v1, '-', v2, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate3(
@@ -268,37 +263,36 @@ export function ɵɵpropertyInterpolate3(
 
 /**
  *
- * Update an interpolated property on an element with 4 bound values surrounded by text.
+ * 텍스트로 둘러싸인 4개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 4 interpolated values in it:
+ * 속성에 전달된 값에 4개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate4(
  * 'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate4(
@@ -347,39 +341,38 @@ export function ɵɵpropertyInterpolate4(
 
 /**
  *
- * Update an interpolated property on an element with 5 bound values surrounded by text.
+ * 텍스트로 둘러싸인 5개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 5 interpolated values in it:
+ * 속성에 전달된 값에 5개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate5(
  * 'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경 여부를 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate5(
@@ -444,41 +437,40 @@ export function ɵɵpropertyInterpolate5(
 
 /**
  *
- * Update an interpolated property on an element with 6 bound values surrounded by text.
+ * 텍스트로 둘러싸인 6개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 6 interpolated values in it:
+ * 속성에 전달된 값에 6개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate6(
  *    'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경 여부를 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경 여부를 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate6(
@@ -548,43 +540,42 @@ export function ɵɵpropertyInterpolate6(
 
 /**
  *
- * Update an interpolated property on an element with 7 bound values surrounded by text.
+ * 텍스트로 둘러싸인 7개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 7 interpolated values in it:
+ * 속성에 전달된 값에 7개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate7(
  *    'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경 여부를 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경 여부를 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경 여부를 확인하는 값.
+ * @param i5 연결에만 사용되는 정적 값.
+ * @param v6 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate7(
@@ -659,45 +650,44 @@ export function ɵɵpropertyInterpolate7(
 
 /**
  *
- * Update an interpolated property on an element with 8 bound values surrounded by text.
+ * 텍스트로 둘러싸인 8개의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the value passed to a property has 8 interpolated values in it:
+ * 속성에 전달된 값에 8개의 보간된 값이 포함되어 있을 때 사용됩니다:
  *
  * ```html
  * <div title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolate8(
  *  'title', 'prefix', v0, '-', v1, '-', v2, '-', v3, '-', v4, '-', v5, '-', v6, '-', v7, 'suffix');
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update
- * @param prefix Static value used for concatenation only.
- * @param v0 Value checked for change.
- * @param i0 Static value used for concatenation only.
- * @param v1 Value checked for change.
- * @param i1 Static value used for concatenation only.
- * @param v2 Value checked for change.
- * @param i2 Static value used for concatenation only.
- * @param v3 Value checked for change.
- * @param i3 Static value used for concatenation only.
- * @param v4 Value checked for change.
- * @param i4 Static value used for concatenation only.
- * @param v5 Value checked for change.
- * @param i5 Static value used for concatenation only.
- * @param v6 Value checked for change.
- * @param i6 Static value used for concatenation only.
- * @param v7 Value checked for change.
- * @param suffix Static value used for concatenation only.
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름
+ * @param prefix 연결에만 사용되는 정적 값.
+ * @param v0 변경 여부를 확인하는 값.
+ * @param i0 연결에만 사용되는 정적 값.
+ * @param v1 변경 여부를 확인하는 값.
+ * @param i1 연결에만 사용되는 정적 값.
+ * @param v2 변경 여부를 확인하는 값.
+ * @param i2 연결에만 사용되는 정적 값.
+ * @param v3 변경 여부를 확인하는 값.
+ * @param i3 연결에만 사용되는 정적 값.
+ * @param v4 변경 여부를 확인하는 값.
+ * @param i4 연결에만 사용되는 정적 값.
+ * @param v5 변경 여부를 확인하는 값.
+ * @param i5 연결에만 사용되는 정적 값.
+ * @param v6 변경 여부를 확인하는 값.
+ * @param i6 연결에만 사용되는 정적 값.
+ * @param v7 변경 여부를 확인하는 값.
+ * @param suffix 연결에만 사용되는 정적 값.
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolate8(
@@ -776,16 +766,16 @@ export function ɵɵpropertyInterpolate8(
 }
 
 /**
- * Update an interpolated property on an element with 9 or more bound values surrounded by text.
+ * 텍스트로 둘러싸인 9개 이상의 바인딩 값으로 요소에서 보간된 속성을 업데이트합니다.
  *
- * Used when the number of interpolated values exceeds 8.
+ * 보간된 값의 수가 8을 초과할 때 사용됩니다.
  *
  * ```html
  * <div
  *  title="prefix{{v0}}-{{v1}}-{{v2}}-{{v3}}-{{v4}}-{{v5}}-{{v6}}-{{v7}}-{{v8}}-{{v9}}suffix"></div>
  * ```
  *
- * Its compiled representation is::
+ * 컴파일된 표현은::
  *
  * ```ts
  * ɵɵpropertyInterpolateV(
@@ -793,16 +783,14 @@ export function ɵɵpropertyInterpolate8(
  *  'suffix']);
  * ```
  *
- * If the property name also exists as an input property on one of the element's directives,
- * the component property will be set instead of the element property. This check must
- * be conducted at runtime so child components that add new `@Inputs` don't have to be re-compiled.
+ * 속성 이름이 요소의 지시문 중 하나에서 입력 속성으로도 존재하는 경우,
+ * 컴포넌트 속성이 요소 속성 대신 설정됩니다. 이 검사는 런타임에 수행되어 자식 컴포넌트가 새로운 `@Inputs`를 추가할 때 다시 컴파일할 필요가 없습니다.
  *
- * @param propName The name of the property to update.
- * @param values The collection of values and the strings in between those values, beginning with a
- * string prefix and ending with a string suffix.
- * (e.g. `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
- * @param sanitizer An optional sanitizer function
- * @returns itself, so that it may be chained.
+ * @param propName 업데이트할 속성의 이름.
+ * @param values 값과 문자열 컬렉션, 접두사 문자열로 시작되고 접미사 문자열로 끝나야 합니다.
+ * (예: `['prefix', value0, '-', value1, '-', value2, ..., value99, 'suffix']`)
+ * @param sanitizer 선택적 세척기 함수
+ * @returns 체이닝 가능하도록 자기 자신을 반환합니다.
  * @codeGenApi
  */
 export function ɵɵpropertyInterpolateV(
@@ -826,7 +814,7 @@ export function ɵɵpropertyInterpolateV(
       false,
     );
     if (ngDevMode) {
-      const interpolationInBetween = [values[0]]; // prefix
+      const interpolationInBetween = [values[0]]; // 접두사
       for (let i = 2; i < values.length; i += 2) {
         interpolationInBetween.push(values[i]);
       }

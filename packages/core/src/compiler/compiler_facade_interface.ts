@@ -7,14 +7,14 @@
  */
 
 /**
- * A set of interfaces which are shared between `@angular/core` and `@angular/compiler` to allow
- * for late binding of `@angular/compiler` for JIT purposes.
+ * `@angular/core`와 `@angular/compiler` 간에 공유되는 인터페이스 집합으로,
+ * JIT 목적을 위해 `@angular/compiler`의 지연 바인딩을 허용합니다.
  *
- * This file has two copies. Please ensure that they are in sync:
- *  - packages/compiler/src/compiler_facade_interface.ts          (main)
- *  - packages/core/src/compiler/compiler_facade_interface.ts     (replica)
+ * 이 파일은 두 개의 복사본이 있습니다. 이들이 동기화되어 있는지 확인하십시오:
+ *  - packages/compiler/src/compiler_facade_interface.ts          (주요)
+ *  - packages/core/src/compiler/compiler_facade_interface.ts     (복제본)
  *
- * Please ensure that the two files are in sync using this command:
+ * 두 파일이 동기화되어 있는지 확인하려면 이 명령을 사용하십시오:
  * ```shell
  * cp packages/compiler/src/compiler_facade_interface.ts \
  *    packages/core/src/compiler/compiler_facade_interface.ts
@@ -100,8 +100,8 @@ export interface CompilerFacade {
   createParseSourceSpan(kind: string, typeName: string, sourceUrl: string): ParseSourceSpan;
 
   FactoryTarget: typeof FactoryTarget;
-  // Note that we do not use `{new(): ResourceLoader}` here because
-  // the resource loader class is abstract and not constructable.
+  // 여기서 `{new(): ResourceLoader}`를 사용하지 않는 이유는
+  // 리소스 로더 클래스가 추상적이고 생성할 수 없기 때문입니다.
   ResourceLoader: Function & {prototype: ResourceLoader};
 }
 
@@ -344,7 +344,7 @@ export interface R3DeclareInjectableFacade {
 
 export enum ViewEncapsulation {
   Emulated = 0,
-  // Historically the 1 value was for `Native` encapsulation which has been removed as of v11.
+  // 역사적으로 1 값은 `Native` 캡슐화에 해당하며 v11에서 제거되었습니다.
   None = 2,
   ShadowDom = 3,
 }

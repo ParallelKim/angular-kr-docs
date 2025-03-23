@@ -12,7 +12,7 @@ import {InjectionToken} from './injection_token';
 /**
  * @description
  *
- * Token that can be used to retrieve an instance from an injector or through a query.
+ * 인젝터에서 인스턴스를 검색하거나 쿼리를 통해 검색하는 데 사용할 수 있는 토큰입니다.
  *
  * @publicApi
  */

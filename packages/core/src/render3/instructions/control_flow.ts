@@ -44,13 +44,11 @@ import {
 } from '../view/container';
 
 /**
- * The conditional instruction represents the basic building block on the runtime side to support
- * built-in "if" and "switch". On the high level this instruction is responsible for adding and
- * removing views selected by a conditional expression.
+ * 조건부 명령문은 런타임 측에서 기본 빌딩 블록을 나타내며 내장된 "if"와 "switch"를 지원합니다.
+ * 높은 수준에서 이 명령문은 조건부 표현식에 의해 선택된 뷰를 추가 및 제거하는 역할을 합니다.
  *
- * @param matchingTemplateIndex Index of a template TNode representing a conditional view to be
- *     inserted; -1 represents a special case when there is no view to insert.
- * @param contextValue Value that should be exposed as the context of the conditional.
+ * @param matchingTemplateIndex 삽입될 조건부 뷰를 나타내는 템플릿 TNode의 인덱스; -1은 삽입할 뷰가 없을 때의 특수 케이스를 나타냅니다.
+ * @param contextValue 조건부의 컨텍스트로 노출해야 할 값입니다.
  * @codeGenApi
  */
 export function ɵɵconditional<T>(matchingTemplateIndex: number, contextValue?: T) {
@@ -60,6 +58,7 @@ export function ɵɵconditional<T>(matchingTemplateIndex: number, contextValue?:
   const bindingIndex = nextBindingIndex();
   const prevMatchingTemplateIndex: number =
     hostLView[bindingIndex] !== NO_CHANGE ? hostLView[bindingIndex] : -1;
+
   const prevContainer =
     prevMatchingTemplateIndex !== -1
       ? getLContainer(hostLView, HEADER_OFFSET + prevMatchingTemplateIndex)
@@ -69,14 +68,13 @@ export function ɵɵconditional<T>(matchingTemplateIndex: number, contextValue?:
   if (bindingUpdated(hostLView, bindingIndex, matchingTemplateIndex)) {
     const prevConsumer = setActiveConsumer(null);
     try {
-      // The index of the view to show changed - remove the previously displayed one
-      // (it is a noop if there are no active views in a container).
+      // 보여줄 뷰의 인덱스가 변경되었습니다 - 이전에 표시된 것을 제거합니다
+      // (컨테이너에 활성 뷰가 없으면 noop입니다).
       if (prevContainer !== undefined) {
         removeLViewFromLContainer(prevContainer, viewInContainerIdx);
       }
 
-      // Index -1 is a special case where none of the conditions evaluates to
-      // a truthy value and as the consequence we've got no view to show.
+      // 인덱스 -1은 조건이 모두 진리값으로 평가되지 않고, 결과적으로 보여줄 뷰가 없을 때의 특수 케이스입니다.
       if (matchingTemplateIndex !== -1) {
         const nextLContainerIndex = HEADER_OFFSET + matchingTemplateIndex;
         const nextContainer = getLContainer(hostLView, nextLContainerIndex);
@@ -101,8 +99,7 @@ export function ɵɵconditional<T>(matchingTemplateIndex: number, contextValue?:
       setActiveConsumer(prevConsumer);
     }
   } else if (prevContainer !== undefined) {
-    // We might keep displaying the same template but the actual value of the expression could have
-    // changed - re-bind in context.
+    // 동일한 템플릿을 계속 표시할 수 있지만 실제 표현식의 값이 변경되었을 수 있습니다 - 컨텍스트에서 재바인딩합니다.
     const lView = getLViewFromLContainer<T | undefined>(prevContainer, viewInContainerIdx);
     if (lView !== undefined) {
       lView[CONTEXT] = contextValue;
@@ -123,8 +120,8 @@ export class RepeaterContext<T> {
 }
 
 /**
- * A built-in trackBy function used for situations where users specified collection index as a
- * tracking expression. Having this function body in the runtime avoids unnecessary code generation.
+ * 사용자가 컬렉션 인덱스를 추적 표현식으로 지정한 상황에서 사용되는 내장 trackBy 함수입니다.
+ * 이 함수 본체를 런타임에 포함시키면 불필요한 코드 생성을 피할 수 있습니다.
  *
  * @param index
  * @returns
@@ -134,9 +131,8 @@ export function ɵɵrepeaterTrackByIndex(index: number) {
 }
 
 /**
- * A built-in trackBy function used for situations where users specified collection item reference
- * as a tracking expression. Having this function body in the runtime avoids unnecessary code
- * generation.
+ * 사용자들이 컬렉션 항목 참조를 추적 표현식으로 지정한 상황에서 사용되는 내장 trackBy 함수입니다.
+ * 이 함수 본체를 런타임에 포함시키면 불필요한 코드 생성을 피할 수 있습니다.
  *
  * @param index
  * @returns
@@ -154,28 +150,26 @@ class RepeaterMetadata {
 }
 
 /**
- * The repeaterCreate instruction runs in the creation part of the template pass and initializes
- * internal data structures required by the update pass of the built-in repeater logic. Repeater
- * metadata are allocated in the data part of LView with the following layout:
- * - LView[HEADER_OFFSET + index] - metadata
- * - LView[HEADER_OFFSET + index + 1] - reference to a template function rendering an item
- * - LView[HEADER_OFFSET + index + 2] - optional reference to a template function rendering an empty
- * block
+ * repeaterCreate 명령문은 템플릿 패스의 생성 부분에서 실행되며 내장 repeater 로직의 업데이트 패스를 위해 필요한 내부 데이터 구조를 초기화합니다.
+ * repeater 메타데이터는 LView의 데이터 부분에서 다음과 같은 레이아웃으로 할당됩니다:
+ * - LView[HEADER_OFFSET + index] - 메타데이터
+ * - LView[HEADER_OFFSET + index + 1] - 항목을 렌더링하는 템플릿 기능에 대한 참조
+ * - LView[HEADER_OFFSET + index + 2] - 비어있는 블록을 렌더링하는 템플릿 기능에 대한 선택적 참조
  *
- * @param index Index at which to store the metadata of the repeater.
- * @param templateFn Reference to the template of the main repeater block.
- * @param decls The number of nodes, local refs, and pipes for the main block.
- * @param vars The number of bindings for the main block.
- * @param tagName The name of the container element, if applicable
- * @param attrsIndex Index of template attributes in the `consts` array.
- * @param trackByFn Reference to the tracking function.
- * @param trackByUsesComponentInstance Whether the tracking function has any references to the
- *  component instance. If it doesn't, we can avoid rebinding it.
- * @param emptyTemplateFn Reference to the template function of the empty block.
- * @param emptyDecls The number of nodes, local refs, and pipes for the empty block.
- * @param emptyVars The number of bindings for the empty block.
- * @param emptyTagName The name of the empty block container element, if applicable
- * @param emptyAttrsIndex Index of the empty block template attributes in the `consts` array.
+ * @param index 리피터의 메타데이터를 저장할 인덱스입니다.
+ * @param templateFn 주요 리피터 블록의 템플릿에 대한 참조입니다.
+ * @param decls 주요 블록에 대한 노드, 로컬 참조 및 파이프의 수입니다.
+ * @param vars 주요 블록에 대한 바인딩의 수입니다.
+ * @param tagName 해당되는 경우 컨테이너 요소의 이름입니다.
+ * @param attrsIndex `consts` 배열에서 템플릿 속성의 인덱스입니다.
+ * @param trackByFn 추적 함수에 대한 참조입니다.
+ * @param trackByUsesComponentInstance 추적 함수가 구성 요소 인스턴스에 대한 참조를 갖고 있는지 여부입니다.
+ * 만약 없다면 재바인딩을 피할 수 있습니다.
+ * @param emptyTemplateFn 비어있는 블록의 템플릿 기능에 대한 참조입니다.
+ * @param emptyDecls 비어있는 블록에 대한 노드, 로컬 참조 및 파이프의 수입니다.
+ * @param emptyVars 비어있는 블록에 대한 바인딩의 수입니다.
+ * @param emptyTagName 해당되는 경우 비어있는 블록 컨테이너 요소의 이름입니다.
+ * @param emptyAttrsIndex `consts` 배열에서 비어있는 블록 템플릿 속성의 인덱스입니다.
  *
  * @codeGenApi
  */
@@ -199,7 +193,7 @@ export function ɵɵrepeaterCreate(
   ngDevMode &&
     assertFunction(
       trackByFn,
-      `A track expression must be a function, was ${typeof trackByFn} instead.`,
+      `트랙 표현식은 함수여야 하며, ${typeof trackByFn} 대신 사용되었습니다.`,
     );
 
   const lView = getLView();
@@ -207,8 +201,8 @@ export function ɵɵrepeaterCreate(
   const hasEmptyBlock = emptyTemplateFn !== undefined;
   const hostLView = getLView();
   const boundTrackBy = trackByUsesComponentInstance
-    ? // We only want to bind when necessary, because it produces a
-      // new function. For pure functions it's not necessary.
+    ? // 새로운 함수를 생성하므로 필요할 때만 바인딩하고 싶습니다.
+      // 순수 함수에 대해서는 필요하지 않습니다.
       trackByFn.bind(hostLView[DECLARATION_COMPONENT_VIEW][CONTEXT])
     : trackByFn;
   const metadata = new RepeaterMetadata(hasEmptyBlock, boundTrackBy);
@@ -226,10 +220,9 @@ export function ɵɵrepeaterCreate(
   );
 
   if (hasEmptyBlock) {
+    ngDevMode && assertDefined(emptyDecls, '비어있는 리피터 블록에 대한 선언 수가 누락되었습니다.');
     ngDevMode &&
-      assertDefined(emptyDecls, 'Missing number of declarations for the empty repeater block.');
-    ngDevMode &&
-      assertDefined(emptyVars, 'Missing number of bindings for the empty repeater block.');
+      assertDefined(emptyVars, '비어있는 리피터 블록에 대한 바인딩 수가 누락되었습니다.');
 
     declareTemplate(
       lView,
@@ -245,7 +238,7 @@ export function ɵɵrepeaterCreate(
 }
 
 function isViewExpensiveToRecreate(lView: LView): boolean {
-  // assumption: anything more than a text node with a binding is considered "expensive"
+  // 가정: 바인딩이 있는 텍스트 노드 이상이면 "비용이 많이 든다"고 간주됩니다.
   return lView.length - HEADER_OFFSET > 2;
 }
 
@@ -267,11 +260,10 @@ class OperationsCounter {
   }
 
   /**
-   * A method indicating if the entire collection was re-created as part of the reconciliation pass.
-   * Used to warn developers about the usage of a tracking function that might result in excessive
-   * amount of view creation / destroy operations.
+   * 수집이 다시 생성되었는지 여부를 나타내는 메서드입니다.
+   * 과도한 양의 뷰 생성/파괴 작업을 초래할 수 있는 추적 함수 사용에 대해 개발자에게 경고하는 데 사용됩니다.
    *
-   * @returns boolean value indicating if a live collection was re-created
+   * @returns 라이브 컬렉션이 재생성되었는지를 나타내는 부울 값
    */
   wasReCreated(collectionLen: number): boolean {
     return collectionLen > 0 && this.created === this.destroyed && this.created === collectionLen;
@@ -285,10 +277,10 @@ class LiveCollectionLContainerImpl extends LiveCollection<
   operationsCounter = ngDevMode ? new OperationsCounter() : undefined;
 
   /**
-   Property indicating if indexes in the repeater context need to be updated following the live
-   collection changes. Index updates are necessary if and only if views are inserted / removed in
-   the middle of LContainer. Adds and removals at the end don't require index updates.
- */
+   리피터 컨텍스트의 인덱스가 라이브 컬렉션 변경 후 업데이트되어야 하는지 여부를 나타내는 속성입니다. 
+   뷰가 LContainer의 중간에 삽입되거나 제거되면 인덱스 업데이트가 필요합니다. 
+   마지막에 추가되거나 제거되는 것은 인덱스 업데이트를 요구하지 않습니다.
+   */
   private needsIndexUpdate = false;
   constructor(
     private lContainer: LContainer,
@@ -360,10 +352,9 @@ class LiveCollectionLContainerImpl extends LiveCollection<
 }
 
 /**
- * The repeater instruction does update-time diffing of a provided collection (against the
- * collection seen previously) and maps changes in the collection to views structure (by adding,
- * removing or moving views as needed).
- * @param collection - the collection instance to be checked for changes
+ * 리피터 명령문은 제공된 컬렉션을 업데이트 타임에서 비교하고
+ * 변경 사항을 뷰 구조에 매핑합니다 (필요에 따라 뷰를 추가, 제거 또는 이동함).
+ * @param collection - 변경 여부를 확인할 컬렉션 인스턴스
  * @codeGenApi
  */
 export function ɵɵrepeater(collection: Iterable<unknown> | undefined | null): void {
@@ -390,10 +381,8 @@ export function ɵɵrepeater(collection: Iterable<unknown> | undefined | null): 
     const liveCollection = metadata.liveCollection;
     reconcile(liveCollection, collection, metadata.trackByFn);
 
-    // Warn developers about situations where the entire collection was re-created as part of the
-    // reconciliation pass. Note that this warning might be "overreacting" and report cases where
-    // the collection re-creation is the intended behavior. Still, the assumption is that most of
-    // the time it is undesired.
+    // 전체 컬렉션이 재생성되었습니다는 경고 메시지입니다.
+    // 이 경고는 "과잉 반응"일 수 있으며, 재생성이 의도된 행동일 수 있습니다.
     if (
       ngDevMode &&
       metadata.trackByFn === ɵɵrepeaterTrackByIdentity &&
@@ -402,17 +391,17 @@ export function ɵɵrepeater(collection: Iterable<unknown> | undefined | null): 
     ) {
       const message = formatRuntimeError(
         RuntimeErrorCode.LOOP_TRACK_RECREATE,
-        `The configured tracking expression (track by identity) caused re-creation of the entire collection of size ${liveCollection.length}. ` +
-          'This is an expensive operation requiring destruction and subsequent creation of DOM nodes, directives, components etc. ' +
-          'Please review the "track expression" and make sure that it uniquely identifies items in a collection.',
+        `구성된 추적 표현식(track by identity)이 ${liveCollection.length} 크기의 전체 컬렉션을 재생성했습니다. ` +
+          '이것은 DOM 노드, 지시문, 구성 요소 등의 파괴 및 이후 생성을 요구하는 비용이 많이 드는 작업입니다. ' +
+          ' "track expression"을 검토하고 컬렉션의 항목을 고유하게 식별하는지 확인하십시오.',
       );
       console.warn(message);
     }
 
-    // moves in the container might caused context's index to get out of order, re-adjust if needed
+    // 컨테이너에서의 이동으로 인해 컨텍스트의 인덱스가 순서에서 벗어날 수 있으므로, 필요에 따라 다시 조정합니다.
     liveCollection.updateIndexes();
 
-    // handle empty blocks
+    // 빈 블록을 처리합니다.
     if (metadata.hasEmptyBlock) {
       const bindingIndex = nextBindingIndex();
       const isCollectionEmpty = liveCollection.length === 0;

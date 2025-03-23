@@ -11,15 +11,15 @@ import {getLView, getSelectedTNode, getTView, nextBindingIndex} from '../state';
 import {elementAttributeInternal, storePropertyBindingMetadata} from './shared';
 
 /**
- * Updates the value of or removes a bound attribute on an Element.
+ * 요소에서 바인딩된 속성의 값을 업데이트하거나 제거합니다.
  *
- * Used in the case of `[attr.title]="value"`
+ * `[attr.title]="value"`의 경우에 사용됩니다.
  *
- * @param name name The name of the attribute.
- * @param value value The attribute is removed when value is `null` or `undefined`.
- *                  Otherwise the attribute value is set to the stringified value.
- * @param sanitizer An optional function used to sanitize the value.
- * @param namespace Optional namespace to use when setting the attribute.
+ * @param name name 속성의 이름입니다.
+ * @param value value 값이 `null` 또는 `undefined`일 때 속성이 제거됩니다.
+ *               그렇지 않으면 속성 값이 문자열로 변환된 값으로 설정됩니다.
+ * @param sanitizer 값을 정화하는 데 사용되는 선택적 함수입니다.
+ * @param namespace 속성을 설정할 때 사용할 선택적 네임스페이스입니다.
  *
  * @codeGenApi
  */

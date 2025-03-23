@@ -10,9 +10,9 @@ import {ɵɵinject, ɵɵinvalidFactoryDep} from '../injector_compatibility';
 import {ɵɵdefineInjectable, ɵɵdefineInjector} from '../interface/defs';
 
 /**
- * A mapping of the @angular/core API surface used in generated expressions to the actual symbols.
+ * 생성된 표현식에서 사용되는 @angular/core API 표면의 실제 기호에 대한 매핑입니다.
  *
- * This should be kept up to date with the public exports of @angular/core.
+ * 이는 @angular/core의 공개 내보내기와 함께 최신 상태로 유지되어야 합니다.
  */
 export const angularCoreDiEnv: {[name: string]: Function} = {
   'ɵɵdefineInjectable': ɵɵdefineInjectable,

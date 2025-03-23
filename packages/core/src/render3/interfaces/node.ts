@@ -16,79 +16,80 @@ import {RNode} from './renderer_dom';
 import type {LView, TView} from './view';
 
 /**
- * TNodeType corresponds to the {@link TNode} `type` property.
+ * TNodeType는 {@link TNode}의 `type` 속성과 일치합니다.
  *
- * NOTE: type IDs are such that we use each bit to denote a type. This is done so that we can easily
- * check if the `TNode` is of more than one type.
+ * NOTE: type ID는 각 비트를 사용하여 유형을 나타내기 위해 설계되었습니다. 이것은
+ * `TNode`가 여러 유형인지 쉽게 확인할 수 있도록 하려는 것입니다.
  *
  * `if (tNode.type === TNodeType.Text || tNode.type === TNode.Element)`
- * can be written as:
+ * 다음과 같이 작성할 수 있습니다:
  * `if (tNode.type & (TNodeType.Text | TNodeType.Element))`
  *
- * However any given `TNode` can only be of one type.
+ * 그러나 주어진 `TNode`는 하나의 유형만 가질 수 있습니다.
  */
 export const enum TNodeType {
   /**
-   * The TNode contains information about a DOM element aka {@link RText}.
+   * TNode는 DOM 요소에 대한 정보를 포함합니다. 즉, {@link RText}.
    */
   Text = 0b1,
 
   /**
-   * The TNode contains information about a DOM element aka {@link RElement}.
+   * TNode는 DOM 요소에 대한 정보를 포함합니다. 즉, {@link RElement}.
    */
   Element = 0b10,
 
   /**
-   * The TNode contains information about an {@link LContainer} for embedded views.
+   * TNode는 임베디드 뷰에 대한 {@link LContainer} 정보를 포함합니다.
    */
   Container = 0b100,
 
   /**
-   * The TNode contains information about an `<ng-container>` element {@link RNode}.
+   * TNode는 `<ng-container>` 요소 {@link RNode}에 대한 정보를 포함합니다.
    */
   ElementContainer = 0b1000,
 
   /**
-   * The TNode contains information about an `<ng-content>` projection
+   * TNode는 `<ng-content>` 프로젝션에 대한 정보를 포함합니다.
    */
   Projection = 0b10000,
 
   /**
-   * The TNode contains information about an ICU comment used in `i18n`.
+   * TNode는 `i18n`에서 사용되는 ICU 주석에 대한 정보를 포함합니다.
    */
   Icu = 0b100000,
 
   /**
-   * Special node type representing a placeholder for future `TNode` at this location.
+   * 향후 `TNode`를 위한 자리 표시자를 나타내는 특수 노드 유형입니다.
    *
-   * I18n translation blocks are created before the element nodes which they contain. (I18n blocks
-   * can span over many elements.) Because i18n `TNode`s (representing text) are created first they
-   * often may need to point to element `TNode`s which are not yet created. In such a case we create
-   * a `Placeholder` `TNode`. This allows the i18n to structurally link the `TNode`s together
-   * without knowing any information about the future nodes which will be at that location.
+   * I18n 번역 블록은 포함된 요소 노드보다 먼저 생성됩니다. (I18n 블록은 여러 요소를 가로지를 수 있습니다.)
+   * i18n `TNode` (텍스트를 나타내는)은 먼저 생성된 후 그렇지 않은 경우,
+   * 아직 생성되지 않은 요소 `TNode`를 가리켜야 할 수도 있습니다. 이러한 경우를 위해
+   * `Placeholder` `TNode`를 생성합니다. 이는 i18n이
+   * 해당 위치에 있는 미래 노드에 대한 정보를 모른 채로 `TNode`를 구조적으로 연결할 수 있게 해줍니다.
    *
-   * On `firstCreatePass` When element instruction executes it will try to create a `TNode` at that
-   * location. Seeing a `Placeholder` `TNode` already there tells the system that it should reuse
-   * existing `TNode` (rather than create a new one) and just update the missing information.
+   * `firstCreatePass`에서 요소 지침이 실행되면 해당 위치에 `TNode`를 생성하려고 시도합니다.
+   * 이미 `Placeholder` `TNode`가 존재한다면 시스템에 기존의 `TNode`를
+   * 재사용해야 한다고 알려줍니다 (새로 생성하는 것이 아니라).
+   * 그리고 누락된 정보만 업데이트합니다.
    */
   Placeholder = 0b1000000,
 
   /**
-   * The TNode contains information about a `@let` declaration.
+   * TNode는 `@let` 선언에 대한 정보를 포함합니다.
    */
   LetDeclaration = 0b10000000,
 
-  // Combined Types These should never be used for `TNode.type` only as a useful way to check
-  // if `TNode.type` is one of several choices.
+  // 조합 유형. 이것은 `TNode.type`에만 사용되어야 하며
+  // `TNode.type`이 여러 선택 중 하나인지 확인하는 유용한 방법입니다.
 
-  // See: https://github.com/microsoft/TypeScript/issues/35875 why we can't refer to existing enum.
+  // 참고: https://github.com/microsoft/TypeScript/issues/35875 현재 열거형을 참조할 수 없는 이유.
   AnyRNode = 0b11, // Text | Element
   AnyContainer = 0b1100, // Container | ElementContainer
 }
 
 /**
- * Converts `TNodeType` into human readable text.
- * Make sure this matches with `TNodeType`
+ * `TNodeType`을 사람이 읽을 수 있는 텍스트로 변환합니다.
+ * 항상 `TNodeType`와 일치하는지 확인하세요.
  */
 export function toTNodeTypeAsString(tNodeType: TNodeType): string {
   let text = '';
@@ -104,13 +105,12 @@ export function toTNodeTypeAsString(tNodeType: TNodeType): string {
 }
 
 /**
- * Helper function to detect if a given value matches a `TNode` shape.
+ * 주어진 값이 `TNode` 모양과 일치하는지 감지하는 도우미 함수입니다.
  *
- * The logic uses the `insertBeforeIndex` and its possible values as
- * a way to differentiate a TNode shape from other types of objects
- * within the `TView.data`. This is not a perfect check, but it can
- * be a reasonable differentiator, since we control the shapes of objects
- * within `TView.data`.
+ * 이 논리는 `insertBeforeIndex`와 그 가능한 값을 사용하여
+ * `TView.data` 내의 다른 유형의 객체와 `TNode` 모양을 구별합니다.
+ * 이는 완벽한 검사 방법은 아니지만, 나름의 구별 방법이 될 수 있습니다.
+ * 왜냐하면 우리는 `TView.data` 내의 객체 형태를 제어하기 때문입니다.
  */
 export function isTNodeShape(value: unknown): value is TNode {
   return (
@@ -127,144 +127,138 @@ export function isLetDeclaration(tNode: TNode): boolean {
 }
 
 /**
- * Corresponds to the TNode.flags property.
+ * TNode.flags 속성과 일치합니다.
  */
 export const enum TNodeFlags {
-  /** Bit #1 - This bit is set if the node is a host for any directive (including a component) */
+  /** 비트 #1 - 이 비트는 노드가 모든 디렉티브(컴포넌트 포함)의 호스트인 경우 설정됩니다. */
   isDirectiveHost = 0x1,
 
-  /** Bit #2 - This bit is set if the node has been projected */
+  /** 비트 #2 - 이 비트는 노드가 투영된 경우 설정됩니다. */
   isProjected = 0x2,
 
-  /** Bit #3 - This bit is set if any directive on this node has content queries */
+  /** 비트 #3 - 이 비트는 이 노드의 디렉티브가 내용 쿼리를 갖는 경우 설정됩니다. */
   hasContentQuery = 0x4,
 
-  /** Bit #4 - This bit is set if the node has any "class" inputs */
+  /** 비트 #4 - 이 비트는 노드가 "class" 입력을 갖는 경우 설정됩니다. */
   hasClassInput = 0x8,
 
-  /** Bit #5 - This bit is set if the node has any "style" inputs */
+  /** 비트 #5 - 이 비트는 노드가 "style" 입력을 갖는 경우 설정됩니다. */
   hasStyleInput = 0x10,
 
-  /** Bit #6 - This bit is set if the node has been detached by i18n */
+  /** 비트 #6 - 이 비트는 노드가 i18n에 의해 분리된 경우 설정됩니다. */
   isDetached = 0x20,
 
   /**
-   * Bit #7 - This bit is set if the node has directives with host bindings.
+   * 비트 #7 - 이 비트는 노드가 호스트 바인딩이 있는 디렉티브를 갖는 경우 설정됩니다.
    *
-   * This flags allows us to guard host-binding logic and invoke it only on nodes
-   * that actually have directives with host bindings.
+   * 이 플래그는 호스트 바인딩 로직을 보호하고 실제로 호스트 바인딩이 있는 노드에서만 호출할 수 있게 해줍니다.
    */
   hasHostBindings = 0x40,
 
   /**
-   * Bit #8 - This bit is set if the node is a located inside skip hydration block.
+   * 비트 #8 - 이 비트는 노드가 건너뛸 수 있는 수분화 블록에 존재하는 경우 설정됩니다.
    */
   inSkipHydrationBlock = 0x80,
 }
 
 /**
- * Corresponds to the TNode.providerIndexes property.
+ * TNode.providerIndexes 속성과 일치합니다.
  */
 export const enum TNodeProviderIndexes {
-  /** The index of the first provider on this node is encoded on the least significant bits. */
+  /** 이 노드의 첫 번째 제공자의 인덱스는 최하위 비트에 인코딩됩니다. */
   ProvidersStartIndexMask = 0b00000000000011111111111111111111,
 
   /**
-   * The count of view providers from the component on this node is
-   * encoded on the 20 most significant bits.
+   * 이 노드의 컴포넌트에서 내려오는 뷰 제공자의 수는
+   * 가장 상위 20비트에 인코딩됩니다.
    */
   CptViewProvidersCountShift = 20,
   CptViewProvidersCountShifter = 0b00000000000100000000000000000000,
 }
 
 /**
- * A combination of:
- * - Attribute names and values.
- * - Special markers acting as flags to alter attributes processing.
- * - Parsed ngProjectAs selectors.
+ * 조합:
+ * - 속성 이름과 값.
+ * - 속성 처리 방식을 변경하는 플래그 역할을 하는 특수 마커들.
+ * - ngProjectAs 선택자를 구문 분석한 것.
  */
 export type TAttributes = (string | AttributeMarker | CssSelector)[];
 
 /**
- * Constants that are associated with a view. Includes:
- * - Attribute arrays.
- * - Local definition arrays.
- * - Translated messages (i18n).
+ * 뷰와 관련된 상수입니다. 포함:
+ * - 속성 배열.
+ * - 로컬 정의 배열.
+ * - 번역된 메시지 (i18n).
  */
 export type TConstants = (TAttributes | string)[];
 
 /**
- * Factory function that returns an array of consts. Consts can be represented as a function in
- * case any additional statements are required to define consts in the list. An example is i18n
- * where additional i18n calls are generated, which should be executed when consts are requested
- * for the first time.
+ * consts 배열을 반환하는 팩토리 함수. consts는 목록에 consts를 정의하는 데 필요한 추가 문이 있을 경우 함수로 표현될 수 있습니다.
+ * 예를 들어 i18n의 경우 추가 i18n 호출이 생성되며, 이것은 consts가 처음 요청될 때 실행되어야 합니다.
  */
 export type TConstantsFactory = () => TConstants;
 
 /**
- * TConstants type that describes how the `consts` field is generated on ComponentDef: it can be
- * either an array or a factory function that returns that array.
+ * TConstants 유형은 `consts` 필드가 ComponentDef에서 생성되는 방식을 설명합니다.
+ * 배열이거나 그 배열을 반환하는 팩토리 함수일 수 있습니다.
  */
 export type TConstantsOrFactory = TConstants | TConstantsFactory;
 
 /**
- * Binding data (flyweight) for a particular node that is shared between all templates
- * of a specific type.
+ * 특정 노드에 대해 템플릿의 모든 인스턴스에서 공유되는 바인딩 데이터 (플라이웨이트).
  *
- * If a property is:
- *    - PropertyAliases: that property's data was generated and this is it
- *    - Null: that property's data was already generated and nothing was found.
- *    - Undefined: that property's data has not yet been generated
+ * 속성이란:
+ * - PropertyAliases: 해당 속성의 데이터가 생성되었고
+ * - Null: 해당 속성의 데이터가 이미 생성되었고 아무것도 발견되지 않았습니다.
+ * - Undefined: 해당 속성의 데이터가 아직 생성되지 않았습니다.
  *
- * see: https://en.wikipedia.org/wiki/Flyweight_pattern for more on the Flyweight pattern
+ * 자세한 내용은: https://en.wikipedia.org/wiki/Flyweight_pattern
  */
 export interface TNode {
-  /** The type of the TNode. See TNodeType. */
+  /** TNode의 유형입니다. TNodeType 참조. */
   type: TNodeType;
 
   /**
-   * Index of the TNode in TView.data and corresponding native element in LView.
+   * TView.data에서 TNode의 인덱스와 LView의 해당 네이티브 요소.
    *
-   * This is necessary to get from any TNode to its corresponding native element when
-   * traversing the node tree.
+   * 이는 TNode에서 해당 네이티브 요소를 얻을 때 필요합니다.
    *
-   * If index is -1, this is a dynamically created container node or embedded view node.
+   * 인덱스가 -1이면 이는 동적으로 생성된 컨테이너 노드 또는 임베디드 뷰 노드입니다.
    */
   index: number;
 
   /**
-   * Insert before existing DOM node index.
+   * 기존 DOM 노드 인덱스 앞에 삽입합니다.
    *
-   * When DOM nodes are being inserted, normally they are being appended as they are created.
-   * Under i18n case, the translated text nodes are created ahead of time as part of the
-   * `ɵɵi18nStart` instruction which means that this `TNode` can't just be appended and instead
-   * needs to be inserted using `insertBeforeIndex` semantics.
+   * DOM 노드가 삽입될 때 일반적으로 생성되는 대로 첨가됩니다.
+   * i18n의 경우, 변환된 텍스트 노드는 `ɵɵi18nStart` 명령의 일환으로 미리 생성됩니다.
+   * 따라서 이 `TNode`는 단순히 첨가될 수 없으며 대신 `insertBeforeIndex` 의미론을 사용하여 삽입해야 합니다.
    *
-   * Additionally sometimes it is necessary to insert new text nodes as a child of this `TNode`. In
-   * such a case the value stores an array of text nodes to insert.
+   * 추가적으로 이 `TNode`의 하위에 새 텍스트 노드를 삽입하는 것이 필요할 수도 있습니다.
+   * 그런 경우 값은 삽입할 텍스트 노드의 배열을 저장합니다.
    *
-   * Example:
+   * 예시:
    * ```html
    * <div i18n>
    *   Hello <span>World</span>!
    * </div>
    * ```
-   * In the above example the `ɵɵi18nStart` instruction can create `Hello `, `World` and `!` text
-   * nodes. It can also insert `Hello ` and `!` text node as a child of `<div>`, but it can't
-   * insert `World` because the `<span>` node has not yet been created. In such a case the
-   * `<span>` `TNode` will have an array which will direct the `<span>` to not only insert
-   * itself in front of `!` but also to insert the `World` (created by `ɵɵi18nStart`) into
-   * `<span>` itself.
+   * 위의 예에서 `ɵɵi18nStart` 명령은 `Hello `, `World` 및 `!` 텍스트 노드를 생성할 수 있습니다.
+   * 또한 `Hello ` 및 `!` 텍스트 노드를 `<div>`의 자식으로 삽입할 수 있지만,
+   * `<span>` 노드가 아직 생성되지 않았기 때문에 `World`를 삽입할 수는 없습니다.
+   * 그런 경우 `<span>` `TNode`는 배열을 가지고 있으며 이를 사용하여
+   * `<span>` 자신의 앞에 자신을 삽입하고 `World`(생성된 `ɵɵi18nStart`)를
+   * `<span>`에 삽입하도록 지시합니다.
    *
-   * Pseudo code:
+   * 의사 코드:
    * ```ts
    *   if (insertBeforeIndex === null) {
-   *     // append as normal
+   *     // 정상적으로 첨가
    *   } else if (Array.isArray(insertBeforeIndex)) {
-   *     // First insert current `TNode` at correct location
+   *     // 먼저 현재 `TNode`를 올바른 위치에 삽입
    *     const currentNode = lView[this.index];
    *     parentNode.insertBefore(currentNode, lView[this.insertBeforeIndex[0]]);
-   *     // Now append all of the children
+   *     // 이제 모든 자식 추가
    *     for(let i=1; i<this.insertBeforeIndex; i++) {
    *       currentNode.appendChild(lView[this.insertBeforeIndex[i]]);
    *     }
@@ -272,143 +266,147 @@ export interface TNode {
    *     parentNode.insertBefore(lView[this.index], lView[this.insertBeforeIndex])
    *   }
    * ```
-   * - null: Append as normal using `parentNode.appendChild`
-   * - `number`: Append using
-   *      `parentNode.insertBefore(lView[this.index], lView[this.insertBeforeIndex])`
+   * - null: 정상적으로 `parentNode.appendChild`를 사용하여 추가
+   * - `number`: `parentNode.insertBefore(lView[this.index], lView[this.insertBeforeIndex])`를 사용하여 추가
    *
-   * *Initialization*
+   * *초기화*
    *
-   * Because `ɵɵi18nStart` executes before nodes are created, on `TView.firstCreatePass` it is not
-   * possible for `ɵɵi18nStart` to set the `insertBeforeIndex` value as the corresponding `TNode`
-   * has not yet been created. For this reason the `ɵɵi18nStart` creates a `TNodeType.Placeholder`
-   * `TNode` at that location. See `TNodeType.Placeholder` for more information.
+   * `ɵɵi18nStart`는 노드가 생성되기 전에 실행되기 때문에
+   * `TView.firstCreatePass`에 대해 `ɵɵi18nStart`가 해당하는 `TNode`의
+   * `insertBeforeIndex` 값을 설정하는 것은 불가능하다.
+   * 이런 이유로 `ɵɵi18nStart`는 해당 위치에 `TNodeType.Placeholder`
+   * `TNode`를 생성합니다. `TNodeType.Placeholder`를 참조하여
+   * 자세한 사항을 알아보세요.
    */
   insertBeforeIndex: InsertBeforeIndex;
 
   /**
-   * The index of the closest injector in this node's LView.
+   * 이 노드의 LView에서 가장 가까운 주입기의 인덱스입니다.
    *
-   * If the index === -1, there is no injector on this node or any ancestor node in this view.
+   * 인덱스가 -1이면 이 노드 또는 이 뷰의 조상 노드에 주입기가 없습니다.
    *
-   * If the index !== -1, it is the index of this node's injector OR the index of a parent
-   * injector in the same view. We pass the parent injector index down the node tree of a view so
-   * it's possible to find the parent injector without walking a potentially deep node tree.
-   * Injector indices are not set across view boundaries because there could be multiple component
-   * hosts.
+   * 인덱스가 -1이 아닌 경우, 이는 이 노드의 주입기 인덱스이거나
+   * 동일한 뷰에서 부모 주입기의 인덱스입니다. 부모 주입기 인덱스를
+   * 노드 트리 아래로 전달하여
+   * 깊은 노드 트리를 탐색하지 않고도 부모 주입기를 찾을 수 있습니다.
+   * 주입기 인덱스는 뷰 경계를 넘지 않도록 설정되지 않으므로
+   * 여러 컴포넌트 호스트가 있을 수 있습니다.
    *
-   * If tNode.injectorIndex === tNode.parent.injectorIndex, then the index belongs to a parent
-   * injector.
+   * tNode.injectorIndex === tNode.parent.injectorIndex이면,
+   * 그러면 인덱스는 부모 주입기에 속합니다.
    */
   injectorIndex: number;
 
-  /** Stores starting index of the directives. */
+  /** 지시문의 시작 인덱스를 저장합니다. */
   directiveStart: number;
 
   /**
-   * Stores final exclusive index of the directives.
+   * 지시문의 최종 배타적 인덱스를 저장합니다.
    *
-   * The area right behind the `directiveStart-directiveEnd` range is used to allocate the
-   * `HostBindingFunction` `vars` (or null if no bindings.) Therefore `directiveEnd` is used to set
-   * `LFrame.bindingRootIndex` before `HostBindingFunction` is executed.
+   * `directiveStart-directiveEnd` 범위 바로 뒤의 영역은
+   * `HostBindingFunction` `vars`를 할당하는 데 사용됩니다
+   * (또는 바인딩이 없는 경우 null).
+   * 그렇기 때문에 `directiveEnd`는 `HostBindingFunction`이 실행되기 전에
+   * `LFrame.bindingRootIndex`를 설정하는 데 사용됩니다.
    */
   directiveEnd: number;
 
   /**
-   * Offset from the `directiveStart` at which the component (one at most) of the node is stored.
-   * Set to -1 if no components have been applied to the node. Component index can be found using
-   * `directiveStart + componentOffset`.
+   * 노드의 구성 요소(하나)가 저장되는 `directiveStart` 오프셋입니다.
+   * 노드에 구성 요소가 적용되지 않은 경우 -1로 설정합니다. 구성 요소 인덱스는
+   * `directiveStart + componentOffset`를 사용하여 찾을 수 있습니다.
    */
   componentOffset: number;
 
   /**
-   * Stores the last directive which had a styling instruction.
+   * 마지막으로 스타일링 지침이 있었던 지시문을 저장합니다.
    *
-   * Initial value of this is `-1` which means that no `hostBindings` styling instruction has
-   * executed. As `hostBindings` instructions execute they set the value to the index of the
-   * `DirectiveDef` which contained the last `hostBindings` styling instruction.
+   * 초기 값은 `-1`이며 이는 `hostBindings` 스타일링 지침이 실행되지 않았음을 의미합니다.
+   * `hostBindings` 지침이 실행되면 해당 값은 마지막 `hostBindings` 스타일링 지침을 포함한
+   * `DirectiveDef`의 인덱스로 설정됩니다.
    *
-   * Valid values are:
-   * - `-1` No `hostBindings` instruction has executed.
-   * - `directiveStart <= directiveStylingLast < directiveEnd`: Points to the `DirectiveDef` of
-   * the last styling instruction which executed in the `hostBindings`.
+   * 유효한 값:
+   * - `-1`: `hostBindings` 지침이 실행되지 않았습니다.
+   * - `directiveStart <= directiveStylingLast < directiveEnd`:
+   *   `hostBindings`에서 실행된 마지막 스타일링 지침의
+   *   `DirectiveDef`를 가리킵니다.
    *
-   * This data is needed so that styling instructions know which static styling data needs to be
-   * collected from the `DirectiveDef.hostAttrs`. A styling instruction needs to collect all data
-   * since last styling instruction.
+   * 이 데이터는 스타일링 지침이 `DirectiveDef.hostAttrs`에서 어떤 정적 스타일링 데이터를 수집해야 하는지를 알기 위해 필요합니다.
+   * 스타일링 지침은 마지막 스타일링 지침 이후에 모든 데이터를 수집해야 합니다.
    */
   directiveStylingLast: number;
 
   /**
-   * Stores indexes of property bindings. This field is only set in the ngDevMode and holds
-   * indexes of property bindings so TestBed can get bound property metadata for a given node.
+   * 속성 바인딩의 인덱스를 저장합니다.
+   * 이 필드는 ngDevMode에서만 설정되며,
+   * 주어진 노드에 대해 바인딩된 속성 메타데이터를 검색할 수 있도록
+   * 속성 바인딩의 인덱스를 보유합니다.
    */
   propertyBindings: number[] | null;
 
   /**
-   * Stores if Node isComponent, isProjected, hasContentQuery, hasClassInput and hasStyleInput
-   * etc.
+   * 노드가 Component인지, Projected인지, ContentQuery가 있는지,
+   * ClassInput 및 StyleInput이 있는지 등의 정보를 저장합니다.
    */
   flags: TNodeFlags;
 
   /**
-   * This number stores two values using its bits:
+   * 이 숫자는 두 값을 비트로 저장합니다:
    *
-   * - the index of the first provider on that node (first 16 bits)
-   * - the count of view providers from the component on this node (last 16 bits)
+   * - 해당 노드의 첫 번째 제공자의 인덱스 (첫 16비트)
+   * - 이 노드에서 컴포넌트에서 뷰 제공자의 수 (마지막 16비트)
    */
-  // TODO(misko): break this into actual vars.
+  // TODO(misko): 실제 변수로 분해합니다.
   providerIndexes: TNodeProviderIndexes;
 
   /**
-   * The value name associated with this node.
-   * if type:
-   *   `TNodeType.Text`: text value
-   *   `TNodeType.Element`: tag name
+   * 이 노드와 관련된 값 이름입니다.
+   * 유형이 다음 경우:
+   *   `TNodeType.Text`: 텍스트 값
+   *   `TNodeType.Element`: 태그 이름
    *   `TNodeType.ICUContainer`: `TIcu`
    */
   value: any;
 
   /**
-   * Attributes associated with an element. We need to store attributes to support various
-   * use-cases (attribute injection, content projection with selectors, directives matching).
-   * Attributes are stored statically because reading them from the DOM would be way too slow for
-   * content projection and queries.
+   * 요소와 관련된 속성입니다. 다양한 사용 사례(속성 주입, 선택자가 있는 콘텐츠 프로젝션, 지시문 일치)를 지원하기 위해 속성을 저장해야 합니다.
+   * 속성은 정적으로 저장됩니다. 왜냐하면 DOM에서 읽는 것은 콘텐츠 프로젝션과 쿼리에 대해 너무 느리기 때문입니다.
    *
-   * Since attrs will always be calculated first, they will never need to be marked undefined by
-   * other instructions.
+   * attrs가 항상 먼저 계산되므로 다른 지침에 의해 정의되지 않아야 합니다.
    *
-   * For regular attributes a name of an attribute and its value alternate in the array.
-   * e.g. ['role', 'checkbox']
-   * This array can contain flags that will indicate "special attributes" (attributes with
-   * namespaces, attributes extracted from bindings and outputs).
+   * 일반적인 속성에 대해 속성의 이름과 값이 배열에서 번갈아 저장됩니다.
+   * 예: ['role', 'checkbox']
+   * 이 배열은 "특수 속성"을 나타내는 플래그를 포함할 수 있습니다
+   * (네임스페이스가 있는 속성, 바인딩 및 출력에서 추출된 속성).
    */
   attrs: TAttributes | null;
 
   /**
-   * Same as `TNode.attrs` but contains merged data across all directive host bindings.
+   * `TNode.attrs`와 동일하지만,
+   * 모든 지시문 호스트 바인딩의 병합된 데이터를 포함합니다.
    *
-   * We need to keep `attrs` as unmerged so that it can be used for attribute selectors.
-   * We merge attrs here so that it can be used in a performant way for initial rendering.
+   * `attrs`는 선택자 속성을 위해 사용할 수 있도록 병합하지 않은 상태로 유지해야 합니다.
+   * 여기에서 attrs를 병합하여 초기 렌더링을 위한 성능을 높일 수 있습니다.
    *
-   * The `attrs` are merged in first pass in following order:
-   * - Component's `hostAttrs`
-   * - Directives' `hostAttrs`
-   * - Template `TNode.attrs` associated with the current `TNode`.
+   * `attrs`는 다음 순서로 첫 번째 패스로 병합됩니다:
+   * - 구성 요소의 `hostAttrs`
+   * - 지시문의 `hostAttrs`
+   * - 현재 `TNode`와 관련된 템플릿 `TNode.attrs`.
    */
   mergedAttrs: TAttributes | null;
 
   /**
-   * A set of local names under which a given element is exported in a template and
-   * visible to queries. An entry in this array can be created for different reasons:
-   * - an element itself is referenced, ex.: `<div #foo>`
-   * - a component is referenced, ex.: `<my-cmpt #foo>`
-   * - a directive is referenced, ex.: `<my-cmpt #foo="directiveExportAs">`.
+   * 주어진 요소가 템플릿에서 내보내지며 쿼리에 노출되는 지역 이름의 집합입니다.
+   * 이 배열의 항목은 여러 가지 이유로 생성될 수 있습니다:
+   * - 요소 자체가 참조되는 경우, 예: `<div #foo>`
+   * - 구성 요소가 참조되는 경우, 예: `<my-cmpt #foo>`
+   * - 지시문이 참조되는 경우, 예: `<my-cmpt #foo="directiveExportAs">`.
    *
-   * A given element might have different local names and those names can be associated
-   * with a directive. We store local names at even indexes while odd indexes are reserved
-   * for directive index in a view (or `-1` if there is no associated directive).
+   * 주어진 요소는 서로 다른 로컬 이름을 가질 수 있으며, 이러한 이름은 지시문과 연관될 수 있습니다.
+   * 우리는 짝수 인덱스에서 지역 이름을 저장하고 홀수 인덱스는 뷰에서의 지시문 인덱스를 위해 예약됩니다
+   * (-1이면 연관된 지시문이 없습니다).
    *
-   * Some examples:
+   * 몇 가지 예:
    * - `<div #foo>` => `["foo", -1]`
    * - `<my-cmpt #foo>` => `["foo", myCmptIdx]`
    * - `<my-cmpt #foo #bar="directiveExportAs">` => `["foo", myCmptIdx, "bar", directiveIdx]`
@@ -416,163 +414,164 @@ export interface TNode {
    */
   localNames: (string | number)[] | null;
 
-  /** Information about input properties that need to be set once from attribute data. */
+  /** 속성 데이터에서 한 번 설정해야 할 입력 속성에 대한 정보입니다. */
   initialInputs: InitialInputData | null;
 
   /**
-   * Input data for all directives on this node. `null` means that there are no directives with
-   * inputs on this node.
+   * 이 노드의 모든 지시문에 대한 입력 데이터입니다. `null`은 이 노드에 입력이 있는 지시문이 없음을 의미합니다.
    */
   inputs: NodeInputBindings | null;
 
   /**
-   * Input data for host directives applied to the node.
+   * 이 노드에 적용된 호스트 지시문에 대한 입력 데이터입니다.
    */
   hostDirectiveInputs: HostDirectiveInputs | null;
 
   /**
-   * Output data for all directives on this node. `null` means that there are no directives with
-   * outputs on this node.
+   * 이 노드의 모든 지시문에 대한 출력 데이터입니다. `null`은 이 노드에 출력이 있는 지시문이 없음을 의미합니다.
    */
   outputs: NodeOutputBindings | null;
 
   /**
-   * Input data for host directives applied to the node.
+   * 이 노드에 적용된 호스트 지시문에 대한 출력 데이터입니다.
    */
   hostDirectiveOutputs: HostDirectiveOutputs | null;
 
   /**
-   * Mapping between directive classes applied to the node and their indexes.
+   * 노드에 적용된 지시문 클래스와 그 인덱스 간의 매핑입니다.
    */
   directiveToIndex: DirectiveIndexMap | null;
 
   /**
-   * The TView attached to this node.
+   * 이 노드에 연결된 TView입니다.
    *
-   * If this TNode corresponds to an LContainer with a template (e.g. structural
-   * directive), the template's TView will be stored here.
+   * 이 TNode가 템플릿이 있는 LContainer와 대응하는 경우(예: 구조적 지시문), 템플릿의 TView가 여기 저장됩니다.
    *
-   * If this TNode corresponds to an element, tView will be `null`.
+   * 이 TNode가 요소와 대응하는 경우, tView는 `null`이 됩니다.
    */
   tView: TView | null;
 
   /**
-   * The next sibling node. Necessary so we can propagate through the root nodes of a view
-   * to insert them or remove them from the DOM.
+   * 다음 형제 노드입니다. 이를 통해 뷰의 루트 노드를 통과하여
+   * DOM에 삽입하거나 제거할 수 있도록 합니다.
    */
   next: TNode | null;
 
   /**
-   * The previous sibling node.
-   * This simplifies operations when we need a pointer to the previous node.
+   * 이전 형제 노드입니다.
+   * 이를 통해 이전 노드에 대한 포인터를 가져오는 작업이 간소화됩니다.
    */
   prev: TNode | null;
 
   /**
-   * The next projected sibling. Since in Angular content projection works on the node-by-node
-   * basis the act of projecting nodes might change nodes relationship at the insertion point
-   * (target view). At the same time we need to keep initial relationship between nodes as
-   * expressed in content view.
+   * 다음 프로젝션된 형제입니다. 앵귤러에서 콘텐츠 프로젝션은 노드 단위로 작동하므로
+   * 노드의 프로젝션 행위는 삽입 지점(대상 뷰)에서 노드 관계를 변경할 수 있습니다.
+   * 동시에 콘텐츠 뷰에서 표현된 노드 간의 초기 관계를 유지해야 합니다.
    */
   projectionNext: TNode | null;
 
   /**
-   * First child of the current node.
+   * 현재 노드의 첫 번째 자식입니다.
    *
-   * For component nodes, the child will always be a ContentChild (in same view).
-   * For embedded view nodes, the child will be in their child view.
+   * 컴포넌트 노드의 경우, 자식은 항상 ContentChild(같은 뷰)입니다.
+   * 임베디드 뷰 노드의 경우, 자식은 그들의 자식 뷰에 있습니다.
    */
   child: TNode | null;
 
   /**
-   * Parent node (in the same view only).
+   * 부모 노드 (동일한 뷰 내에서만).
    *
-   * We need a reference to a node's parent so we can append the node to its parent's native
-   * element at the appropriate time.
+   * 노드를 올바른 시점에 부모의 네이티브 요소에 추가할 수 있도록
+   * 노드의 부모에 대한 참조가 필요합니다.
    *
-   * If the parent would be in a different view (e.g. component host), this property will be null.
-   * It's important that we don't try to cross component boundaries when retrieving the parent
-   * because the parent will change (e.g. index, attrs) depending on where the component was
-   * used (and thus shouldn't be stored on TNode). In these cases, we retrieve the parent through
-   * LView.node instead (which will be instance-specific).
+   * 부모가 다른 뷰에 있다면 (예: 컴포넌트 호스트), 이 속성은 null이 됩니다.
+   * 부모를 가져오는 동안 컴포넌트 경계를 넘어가는 것을 피하는 것이 중요합니다.
+   * 왜냐하면 부모는 컴포넌트를 사용하는 위치에 따라 변경될 수 있기 때문입니다.
+   * 이러한 경우, 우리는 대신 LView.node를 통해 부모를 검색합니다
+   * (이것은 인스턴스별임).
    *
-   * If this is an inline view node (V), the parent will be its container.
+   * 이것이 인라인 뷰 노드(V)인 경우, 부모는 그들의 컨테이너가 됩니다.
    */
   parent: TElementNode | TContainerNode | null;
 
   /**
-   * List of projected TNodes for a given component host element OR index into the said nodes.
+   * 주어진 컴포넌트 호스트 요소에 대한 프로젝션된 TNode 목록 또는
+   * 해당 노드에 대한 인덱스입니다.
    *
-   * For easier discussion assume this example:
-   * `<parent>`'s view definition:
+   * 더 쉽게 논의하기 위해 이 예시를 가정합니다:
+   * `<parent>`의 뷰 정의:
    * ```html
    * <child id="c1">content1</child>
    * <child id="c2"><span>content2</span></child>
    * ```
-   * `<child>`'s view definition:
+   * `<child>`의 뷰 정의:
    * ```html
    * <ng-content id="cont1"></ng-content>
    * ```
    *
-   * If `Array.isArray(projection)` then `TNode` is a host element:
-   * - `projection` stores the content nodes which are to be projected.
-   *    - The nodes represent categories defined by the selector: For example:
-   *      `<ng-content/><ng-content select="abc"/>` would represent the heads for `<ng-content/>`
-   *      and `<ng-content select="abc"/>` respectively.
-   *    - The nodes we store in `projection` are heads only, we used `.next` to get their
-   *      siblings.
-   *    - The nodes `.next` is sorted/rewritten as part of the projection setup.
-   *    - `projection` size is equal to the number of projections `<ng-content>`. The size of
-   *      `c1` will be `1` because `<child>` has only one `<ng-content>`.
-   * - we store `projection` with the host (`c1`, `c2`) rather than the `<ng-content>` (`cont1`)
-   *   because the same component (`<child>`) can be used in multiple locations (`c1`, `c2`) and
-   * as a result have different set of nodes to project.
-   * - without `projection` it would be difficult to efficiently traverse nodes to be projected.
+   * `Array.isArray(projection)`이면 `TNode`는 호스트 요소입니다:
+   * - `projection`에는 투영될 콘텐츠 노드가 저장됩니다.
+   *    - 노드는 선택자로 정의된 카테고리를 나타냅니다. 예를 들어:
+   *      `<ng-content/><ng-content select="abc"/>`는 `<ng-content/>`
+   *      및 `<ng-content select="abc"/>`에 대한 헤드를 나타냅니다.
+   *    - `projection`에 저장되는 노드는 헤드만 포함됩니다.
+   *    - 노드의 `.next`는 프로젝션 설정의 일환으로 정렬/재작성됩니다.
+   *    - `projection` 크기는 `<ng-content>`의 수와 같습니다.
+   *      `c1`의 크기는 `1`이 될 것입니다. 왜냐하면 `<child>`에는
+   *      단 하나의 `<ng-content>`가 존재하기 때문입니다.
+   * - 우리는 `<ng-content>`(`cont1`)가 아니라 호스트(`c1`, `c2`)와 함께
+   *   `projection`을 저장합니다. 왜냐하면 동일한 컴포넌트(`<child>`)가
+   *   여러 위치(`c1`, `c2`)에서 사용될 수 있고
+   *   그 결과 서로 다른 프로젝션 노드 세트를 가질 수 있기 때문입니다.
+   * - `projection`이 없으면 효율적으로 프로젝트할 노드를 탐색하기 어렵습니다.
    *
-   * If `typeof projection == 'number'` then `TNode` is a `<ng-content>` element:
-   * - `projection` is an index of the host's `projection`Nodes.
-   *   - This would return the first head node to project:
+   * `typeof projection == 'number'`인 경우 `TNode`는 `<ng-content>` 요소입니다:
+   * - `projection`은 호스트의 `projection` 노드의 인덱스입니다.
+   *   - 이는 프로젝션할 첫 헤드 노드를 반환합니다:
    *     `getHost(currentTNode).projection[currentTNode.projection]`.
-   * - When projecting nodes the parent node retrieved may be a `<ng-content>` node, in which case
-   *   the process is recursive in nature.
+   * - 노드를 프로젝션할 때 검색된 부모 노드는
+   *   `<ng-content>` 노드일 수 있으며, 이런 경우에는
+   *   프로세스가 재귀적입니다.
    *
-   * If `projection` is of type `RNode[][]` than we have a collection of native nodes passed as
-   * projectable nodes during dynamic component creation.
+   * `projection`이 `RNode[][]` 유형인 경우
+   * 동적으로 구성 요소 생성하는 동안 전달된 네이티브 노드의 집합입니다.
    */
   projection: (TNode | RNode[])[] | number | null;
 
   /**
-   * A collection of all `style` static values for an element (including from host).
+   * 요소에 대한 모든 `style` 정적 값의 컬렉션입니다.
+   * (호스트에서 포함됨).
    *
-   * This field will be populated if and when:
+   * 이 필드는 다음과 같이 채워질 수 있습니다:
    *
-   * - There are one or more initial `style`s on an element (e.g. `<div style="width:200px;">`)
-   * - There are one or more initial `style`s on a directive/component host
-   *   (e.g. `@Directive({host: {style: "width:200px;" } }`)
+   * - 요소에 하나 이상의 초기 `style`이 있는 경우
+   *   (예: `<div style="width:200px;">`)
+   * - 지시문/컴포넌트 호스트에 대한 초기 `style`이 하나 이상 있는 경우
+   *   (예: `@Directive({host: {style: "width:200px;" } }`)
    */
   styles: string | null;
 
   /**
-   * A collection of all `style` static values for an element excluding host sources.
+   * 요소에 대한 모든 `style` 정적 값의 컬렉션입니다.
+   * 호스트 소스를 제외합니다.
    *
-   * Populated when there are one or more initial `style`s on an element
-   * (e.g. `<div style="width:200px;">`)
-   * Must be stored separately from `tNode.styles` to facilitate setting directive
-   * inputs that shadow the `style` property. If we used `tNode.styles` as is for shadowed inputs,
-   * we would feed host styles back into directives as "inputs". If we used `tNode.attrs`, we
-   * would have to concatenate the attributes on every template pass. Instead, we process once on
-   * first create pass and store here.
+   * 요소에 하나 이상의 초기 `style`이 있는 경우
+   * (예: `<div style="width:200px;">`) 채워집니다.
+   * 지시문 입력을 설정하기 위해 호스트에서 `style` 속성을 가려야 하므로
+   * `tNode.styles`와 개별적으로 저장해야 합니다.
+   * 만약 그렇지 않으면, 매번 템플릿 패스에서 `tNode.attrs`를 사용해야 했을 것입니다.
+   * 대신, 우리는 첫 번째 생성 패스에서 한 번 처리하고 여기에 저장합니다.
    */
   stylesWithoutHost: string | null;
 
   /**
-   * A `KeyValueArray` version of residual `styles`.
+   * 잔여 `styles`의 `KeyValueArray` 버전입니다.
    *
-   * When there are styling instructions than each instruction stores the static styling
-   * which is of lower priority than itself. This means that there may be a higher priority
-   * styling than the instruction.
+   * 스타일링 지침이 있을 경우 각 명령문은
+   * 그것보다 낮은 우선순위의 정적 스타일링을 저장합니다.
+   * 이는 지침보다 높은 우선 순위의 스타일링이 있을 수 있음을 의미합니다.
    *
-   * Imagine:
+   * 상상해 보세요:
    * ```angular-ts
    * <div style="color: highest;" my-dir>
    *
@@ -584,144 +583,152 @@ export interface TNode {
    * })
    * ```
    *
-   * In the above case:
-   * - `color: lowest` is stored with `ɵɵstyleProp('color', ctx.exp);` instruction
-   * -  `color: highest` is the residual and is stored here.
+   * 위의 경우:
+   * - `color: lowest`는 `ɵɵstyleProp('color', ctx.exp);` 지침과 함께 저장됩니다.
+   * -  `color: highest`는 잔여용으로 여기 저장됩니다.
    *
-   * - `undefined': not initialized.
-   * - `null`: initialized but `styles` is `null`
-   * - `KeyValueArray`: parsed version of `styles`.
+   * - `undefined': 초기화되지 않음.
+   * - `null`: 초기화되었으나 `styles`는 `null`입니다.
+   * - `KeyValueArray`: 구문 분석된 `styles`의 버전입니다.
    */
   residualStyles: KeyValueArray<any> | undefined | null;
 
   /**
-   * A collection of all class static values for an element (including from host).
+   * 요소에 대한 모든 클래스 정적 값의 컬렉션입니다.
+   * (호스트에서 포함됨).
    *
-   * This field will be populated if and when:
+   * 이 필드는 다음과 같이 채워질 수 있습니다:
    *
-   * - There are one or more initial classes on an element (e.g. `<div class="one two three">`)
-   * - There are one or more initial classes on an directive/component host
-   *   (e.g. `@Directive({host: {class: "SOME_CLASS" } }`)
+   * - 요소에 하나 이상의 초기 클래스가 있는 경우
+   *   (예: `<div class="one two three">`)
+   * - 지시문/컴포넌트 호스트에 대한 초기 클래스가 하나 이상 있는 경우
+   *   (예: `@Directive({host: {class: "SOME_CLASS" } }`)
    */
   classes: string | null;
 
   /**
-   * A collection of all class static values for an element excluding host sources.
+   * 요소에 대한 모든 클래스 정적 값의 컬렉션입니다.
+   * 호스트 소스를 제외합니다.
    *
-   * Populated when there are one or more initial classes on an element
-   * (e.g. `<div class="SOME_CLASS">`)
-   * Must be stored separately from `tNode.classes` to facilitate setting directive
-   * inputs that shadow the `class` property. If we used `tNode.classes` as is for shadowed
-   * inputs, we would feed host classes back into directives as "inputs". If we used
-   * `tNode.attrs`, we would have to concatenate the attributes on every template pass. Instead,
-   * we process once on first create pass and store here.
+   * 요소에 하나 이상의 초기 클래스가 있는 경우
+   * (예: `<div class="SOME_CLASS">`) 채워집니다.
+   * 지시문 입력을 설정하기 위해 호스트에서 `classes` 속성을 가려야 하므로
+   * `tNode.classes`와 개별적으로 저장해야 합니다.
+   * 만약 그렇지 않으면, 매번 템플릿 패스에서 `tNode.classes`를 사용해야 했을 것입니다.
+   * 대신, 우리는 첫 번째 생성 패스에서 한 번 처리하고 여기에 저장합니다.
    */
   classesWithoutHost: string | null;
 
   /**
-   * A `KeyValueArray` version of residual `classes`.
+   * 잔여 `classes`의 `KeyValueArray` 버전입니다.
    *
-   * Same as `TNode.residualStyles` but for classes.
+   * `TNode.residualStyles`와 동일하지만 클래스에 적용됩니다.
    *
-   * - `undefined': not initialized.
-   * - `null`: initialized but `classes` is `null`
-   * - `KeyValueArray`: parsed version of `classes`.
+   * - `undefined': 초기화되지 않음.
+   * - `null`: 초기화되었으나 `classes`는 `null`입니다.
+   * - `KeyValueArray`: 구문 분석된 `classes`의 버전입니다.
    */
   residualClasses: KeyValueArray<any> | undefined | null;
 
   /**
-   * Stores the head/tail index of the class bindings.
+   * 클래스 바인딩의 헤드/테일 인덱스를 저장합니다.
    *
-   * - If no bindings, the head and tail will both be 0.
-   * - If there are template bindings, stores the head/tail of the class bindings in the template.
-   * - If no template bindings but there are host bindings, the head value will point to the last
-   *   host binding for "class" (not the head of the linked list), tail will be 0.
+   * - 바인딩이 없으면 헤드와 테일이 모두 0이 됩니다.
+   * - 템플릿 바인딩이 있는 경우, 템플릿 내 클래스 바인딩의 헤드/테일을 저장합니다.
+   * - 템플릿 바인딩이 없지만 호스트 바인딩이 있는 경우,
+   *   헤드 값은 "class"에 대한 마지막 호스트 바인딩을 가리키며
+   *   (연결 목록의 헤드가 아닌), 테일은 0이 됩니다.
    *
-   * See: `style_binding_list.ts` for details.
+   * 세부 정보는 `style_binding_list.ts`를 참조하세요.
    *
-   * This is used by `insertTStylingBinding` to know where the next styling binding should be
-   * inserted so that they can be sorted in priority order.
+   * 이는 `insertTStylingBinding`가 다음 스타일링 바인딩이
+   * 어디에 삽입되어야 하는지 알 수 있도록 사용하는 데 필요합니다.
    */
   classBindings: TStylingRange;
 
   /**
-   * Stores the head/tail index of the class bindings.
+   * 스타일 바인딩의 헤드/테일 인덱스를 저장합니다.
    *
-   * - If no bindings, the head and tail will both be 0.
-   * - If there are template bindings, stores the head/tail of the style bindings in the template.
-   * - If no template bindings but there are host bindings, the head value will point to the last
-   *   host binding for "style" (not the head of the linked list), tail will be 0.
+   * - 바인딩이 없으면 헤드와 테일이 모두 0이 됩니다.
+   * - 템플릿 바인딩이 있는 경우, 템플릿 내 스타일 바인딩의 헤드/테일을 저장합니다.
+   * - 템플릿 바인딩이 없지만 호스트 바인딩이 있는 경우,
+   *   헤드 값은 "style"에 대한 마지막 호스트 바인딩을 가리키며
+   *   (연결 목록의 헤드가 아닌), 테일은 0이 됩니다.
    *
-   * See: `style_binding_list.ts` for details.
+   * 세부 정보는 `style_binding_list.ts`를 참조하세요.
    *
-   * This is used by `insertTStylingBinding` to know where the next styling binding should be
-   * inserted so that they can be sorted in priority order.
+   * 이는 `insertTStylingBinding`가 다음 스타일링 바인딩이
+   * 어디에 삽입되어야 하는지 알 수 있도록 사용하는 데 필요합니다.
    */
   styleBindings: TStylingRange;
 }
 
 /**
- * See `TNode.insertBeforeIndex`
+ * `TNode.insertBeforeIndex`를 참조합니다.
  */
 export type InsertBeforeIndex = null | number | number[];
 
-/** Static data for an element  */
+/** 요소에 대한 정적 데이터  */
 export interface TElementNode extends TNode {
-  /** Index in the data[] array */
+  /** 데이터[] 배열의 인덱스 */
   index: number;
   child: TElementNode | TTextNode | TElementContainerNode | TContainerNode | TProjectionNode | null;
   /**
-   * Element nodes will have parents unless they are the first node of a component or
-   * embedded view (which means their parent is in a different view and must be
-   * retrieved using viewData[HOST_NODE]).
+   * 요소 노드는 부모를 가지며, 부모가 컴포넌트의 첫 번째 노드이거나
+   * 임베디드 뷰인 경우(부모가 다른 뷰에 있고
+   * viewData[HOST_NODE]를 사용하여 검색해야 함).
    */
   parent: TElementNode | TElementContainerNode | null;
   tView: null;
 
   /**
-   * If this is a component TNode with projection, this will be an array of projected
-   * TNodes or native nodes (see TNode.projection for more info). If it's a regular element node
-   * or a component without projection, it will be null.
+   * 이 TNode가 프로젝션이 있는 경우,
+   * 이는 프로젝션된 TNode 또는 네이티브 노드의 배열입니다
+   * (자세한 사항은 TNode.projection 참조).
+   * 일반 요소 노드이거나 프로젝션이 없는 컴포넌트이면,
+   * null이 됩니다.
    */
   projection: (TNode | RNode[])[] | null;
 
   /**
-   * Stores TagName
+   * 태그 이름을 저장합니다.
    */
   value: string;
 }
 
-/** Static data for a text node */
+/** 텍스트 노드에 대한 정적 데이터 */
 export interface TTextNode extends TNode {
-  /** Index in the data[] array */
+  /** 데이터[] 배열의 인덱스 */
   index: number;
   child: null;
   /**
-   * Text nodes will have parents unless they are the first node of a component or
-   * embedded view (which means their parent is in a different view and must be
-   * retrieved using LView.node).
+   * 텍스트 노드는 부모를 가지며,
+   * 부모가 컴포넌트의 첫 번째 노드이거나
+   * 임베디드 뷰인 경우에는 (부모가 다른 뷰에 있고
+   * LView.node를 사용하여 검색해야 함).
    */
   parent: TElementNode | TElementContainerNode | null;
   tView: null;
   projection: null;
 }
 
-/** Static data for an LContainer */
+/** LContainer에 대한 정적 데이터 */
 export interface TContainerNode extends TNode {
   /**
-   * Index in the data[] array.
+   * 데이터[] 배열의 인덱스입니다.
    *
-   * If it's -1, this is a dynamically created container node that isn't stored in
-   * data[] (e.g. when you inject ViewContainerRef) .
+   * -1이면 이는 동적으로 생성된 컨테이너 노드이며
+   * 데이터[]에 저장되지 않습니다 (예: ViewContainerRef를 주입할 때).
    */
   index: number;
   child: null;
 
   /**
-   * Container nodes will have parents unless:
+   * 컨테이너 노드는 부모를 가지며,
+   * 부모가 다음과 같은 경우에는:
    *
-   * - They are the first node of a component or embedded view
-   * - They are dynamically created
+   * - 컴포넌트의 첫 번째 노드이거나 임베디드 뷰인 경우
+   * - 동적으로 생성된 경우
    */
   parent: TElementNode | TElementContainerNode | null;
   tView: TView | null;
@@ -729,9 +736,9 @@ export interface TContainerNode extends TNode {
   value: null;
 }
 
-/** Static data for an <ng-container> */
+/** <ng-container>에 대한 정적 데이터 */
 export interface TElementContainerNode extends TNode {
-  /** Index in the LView[] array. */
+  /** LView[] 배열의 인덱스입니다. */
   index: number;
   child: TElementNode | TTextNode | TContainerNode | TElementContainerNode | TProjectionNode | null;
   parent: TElementNode | TElementContainerNode | null;
@@ -739,9 +746,9 @@ export interface TElementContainerNode extends TNode {
   projection: null;
 }
 
-/** Static data for an ICU expression */
+/** ICU 표현식에 대한 정적 데이터 */
 export interface TIcuContainerNode extends TNode {
-  /** Index in the LView[] array. */
+  /** LView[] 배열의 인덱스입니다. */
   index: number;
   child: null;
   parent: TElementNode | TElementContainerNode | null;
@@ -750,27 +757,28 @@ export interface TIcuContainerNode extends TNode {
   value: TIcu;
 }
 
-/** Static data for an LProjectionNode  */
+/** LProjectionNode에 대한 정적 데이터  */
 export interface TProjectionNode extends TNode {
-  /** Index in the data[] array */
+  /** 데이터[] 배열의 인덱스 */
   child: null;
   /**
-   * Projection nodes will have parents unless they are the first node of a component
-   * or embedded view (which means their parent is in a different view and must be
-   * retrieved using LView.node).
+   * 프로젝션 노드는 부모를 가지며,
+   * 부모가 컴포넌트의 첫 번째 노드이거나
+   * 임베디드 뷰인 경우(부모가 다른 뷰에 있고
+   * LView.node를 사용하여 검색해야 함).
    */
   parent: TElementNode | TElementContainerNode | null;
   tView: null;
 
-  /** Index of the projection node. (See TNode.projection for more info.) */
+  /** 프로젝션 노드의 인덱스입니다. (자세한 사항은 TNode.projection 참조) */
   projection: number;
   value: null;
 }
 
 /**
- * Static data for a `@let` declaration. This node is necessary, because the expression of a
- * `@let` declaration can contain code that uses the node injector (e.g. pipes). In order for
- * the node injector to work, it needs this `TNode`.
+ * `@let` 선언에 대한 정적 데이터. 이 노드는 필요합니다.
+ * `@let` 선언의 표현식이 노드 주입기를 사용할 수 있는 코드를 포함할 수 있기 때문입니다.
+ * 노드 주입기가 작동하기 위해서는 이 `TNode`가 필요합니다.
  */
 export interface TLetDeclarationNode extends TNode {
   index: number;
@@ -778,17 +786,17 @@ export interface TLetDeclarationNode extends TNode {
   parent: TElementNode | TElementContainerNode | null;
   tView: null;
   projection: null;
-  value: null; // TODO(crisbeto): capture the name here? Might come in handy for the dev tools.
+  value: null; // TODO(crisbeto): 여기에서 이름을 캡처할 수 있을까요? 개발 도구에 유용할 수 있습니다.
 }
 
 /**
- * A union type representing all TNode types that can host a directive.
+ * 디렉티브를 호스트할 수 있는 모든 TNode 유형을 나타내는 유니온 유형입니다.
  */
 export type TDirectiveHostNode = TElementNode | TContainerNode | TElementContainerNode;
 
 /**
- * Maps the public names of outputs available on a specific node to the index
- * of the directive instance that defines the output, for example:
+ * 특정 노드에서 사용할 수 있는 출력을 공용 이름으로 매핑하여
+ * 출력을 정의하는 지시문 인스턴스의 인덱스를 찾습니다. 예를 들어:
  *
  * ```
  * {
@@ -799,8 +807,8 @@ export type TDirectiveHostNode = TElementNode | TContainerNode | TElementContain
 export type NodeOutputBindings = Record<string, number[]>;
 
 /**
- * Maps the public names of inputs applied to a specific node to the index of the
- * directive instance to which the input value should be written, for example:
+ * 특정 노드에 적용된 입력의 공용 이름을 지시문 인스턴스의
+ * 인덱스에 매핑하는 방식입니다. 예를 들어:
  *
  * ```
  * {
@@ -811,69 +819,66 @@ export type NodeOutputBindings = Record<string, number[]>;
 export type NodeInputBindings = Record<string, number[]>;
 
 /**
- * This array contains information about input properties that
- * need to be set once from attribute data. It's ordered by
- * directive index (relative to element) so it's simple to
- * look up a specific directive's initial input data.
+ * 이 배열은 속성 데이터에서 한 번 설정해야 할 입력 속성에 대한 정보를 포함합니다.
+ * 지시문 인덱스에 따라 정렬되어 있어 특정 지시문의 초기 입력 데이터를 쉽게 조회할 수 있습니다.
  *
- * Within each sub-array:
+ * 각 서브 배열 내:
  *
- * i+0: public name
- * i+1: initial value
+ * i+0: 공용 이름
+ * i+1: 초기 값
  *
- * If a directive on a node does not have any input properties
- * that should be set from attributes, its index is set to null
- * to avoid a sparse array.
+ * 노드의 지시문에 속성에서 설정해야 하는 입력 속성이 없으면,
+ * 해당 인덱스는 null로 설정되어 희소 배열을 방지합니다.
  *
- * e.g. [null, ['role-min', 'minified-input', 'button']]
+ * 예: [null, ['role-min', 'minified-input', 'button']]
  */
 export type InitialInputData = (InitialInputs | null)[];
 
 /**
- * Used by InitialInputData to store input properties
- * that should be set once from attributes.
+ * InitialInputData에 의해 속성에서 한 번 설정해야 하는
+ * 입력 속성을 저장하는 데 사용됩니다.
  *
- * i+0: attribute name
- * i+1: minified/internal input name
- * i+2: input flags
- * i+3: initial value
+ * i+0: 속성 이름
+ * i+1: 축소/내부 입력 이름
+ * i+2: 입력 플래그
+ * i+3: 초기 값
  *
- * e.g. ['role-min', 'minified-input', 'button']
+ * 예: ['role-min', 'minified-input', 'button']
  */
 export type InitialInputs = string[];
 
 /**
- * Represents inputs coming from a host directive and exposed on a TNode.
+ * 호스트 지시문에서 오는 입력을 나타내며 TNode에 노출됩니다.
  *
- * - The key is the public name of an input as it is exposed on the specific node.
- * - The value is an array where:
- *   - i+0: Index of the host directive that should be written to.
- *   - i+1: Public name of the input as it was defined on the host directive before aliasing.
+ * - 키는 특정 노드에 노출된 입력의 공용 이름입니다.
+ * - 값은 다음과 같은 배열입니다:
+ *   - i+0: 쓰기 위한 호스트 지시문 인덱스.
+ *   - i+1: 노출된 입력의 공용 이름은 호스트 지시문에서 별칭을 지정한 것입니다.
  */
 export type HostDirectiveInputs = Record<string, (number | string)[]>;
 
 /**
- * Represents outputs coming from a host directive and exposed on a TNode.
+ * 호스트 지시문에서 오는 출력을 나타내며 TNode에 노출됩니다.
  *
- * - The key is the public name of an output as it is exposed on the specific node.
- * - The value is an array where:
- *   - i+0: Index of the host directive on which the output is defined..
- *   - i+1: Public name of the output as it was defined on the host directive before aliasing.
+ * - 키는 특정 노드에 노출된 출력의 공용 이름입니다.
+ * - 값은 다음과 같은 배열입니다:
+ *   - i+0: 출력이 정의된 호스트 지시문의 인덱스.
+ *   - i+1: 호스트 지시문에서 별칭을 지정하기 전의 출력의 공용 이름입니다.
  */
 export type HostDirectiveOutputs = Record<string, (number | string)[]>;
 
 /**
- * Represents a map between a class reference and the index at which its directive is available on
- * a specific TNode. The value can be either:
- *   1. A number means that there's only one selector-matched directive on the node and it
- *      doesn't have any host directives.
- *   2. An array means that there's a selector-matched directive and it has host directives.
- *      The array is structured as follows:
- *        - 0: Index of the selector-matched directive.
- *        - 1: Start index of the range within which the host directives are defined.
- *        - 2: End of the host directive range.
+ * TNode에서 호스트 지시문이 있는 지시문 클래스와 그 인덱스 간의 매핑을 나타냅니다.
+ * 값은 다음과 같을 수 있습니다:
+ * 1. 숫자는 노드에 하나의 선택기와 일치하는 지시문이 있으며,
+ *    호스트 지시문이 없음을 나타냅니다.
+ * 2. 배열은 선택기와 일치하는 지시문이 있으며,
+ *    호스트 지시문이 있습니다. 배열 구조는 다음과 같습니다:
+ *      - 0: 선택기와 일치하는 지시문의 인덱스.
+ *      - 1: 호스트 지시문이 정의된 범위 내의 시작 인덱스.
+ *      - 2: 호스트 지시문 범위의 종료 지점.
  *
- * Example:
+ * 예:
  * ```
  * Map {
  *   [NoHostDirectives]: 5,
@@ -887,25 +892,26 @@ export type DirectiveIndexMap = Map<
 >;
 
 /**
- * Type representing a set of TNodes that can have local refs (`#foo`) placed on them.
+ * 지역 레퍼런스가 배치될 수 있는 TNode 집합을 나타내는 유형입니다.
  */
 export type TNodeWithLocalRefs = TContainerNode | TElementNode | TElementContainerNode;
 
 /**
- * Type for a function that extracts a value for a local refs.
- * Example:
- * - `<div #nativeDivEl>` - `nativeDivEl` should point to the native `<div>` element;
- * - `<ng-template #tplRef>` - `tplRef` should point to the `TemplateRef` instance;
+ * 지역 레퍼런스를 위한 값을 추출하는 함수 유형입니다.
+ * 예시:
+ * - `<div #nativeDivEl>` - `nativeDivEl`은 네이티브 `<div>` 요소를 가리켜야 합니다.
+ * - `<ng-template #tplRef>` - `tplRef`는 `TemplateRef` 인스턴스를 가리켜야 합니다.
  */
 export type LocalRefExtractor = (tNode: TNodeWithLocalRefs, currentView: LView) => any;
 
 /**
- * Returns `true` if the `TNode` has a directive which has `@Input()` for `class` binding.
+ * `TNode`에 `class` 바인딩을 위한 `@Input()`을 가진 지시문이 있는지
+ * 확인하고 `true`를 반환합니다.
  *
  * ```html
  * <div my-dir [class]="exp"></div>
  * ```
- * and
+ * 그리고
  * ```ts
  * @Directive({
  * })
@@ -915,8 +921,7 @@ export type LocalRefExtractor = (tNode: TNodeWithLocalRefs, currentView: LView) 
  * }
  * ```
  *
- * In the above case it is necessary to write the reconciled styling information into the
- * directive's input.
+ * 위의 경우, 조정된 스타일링 정보를 지시문의 입력으로 작성하는 것이 필요합니다.
  *
  * @param tNode
  */
@@ -925,12 +930,13 @@ export function hasClassInput(tNode: TNode) {
 }
 
 /**
- * Returns `true` if the `TNode` has a directive which has `@Input()` for `style` binding.
+ * `TNode`에 `style` 바인딩을 위한 `@Input()`을 가진 지시문이 있는지
+ * 확인하고 `true`를 반환합니다.
  *
  * ```html
  * <div my-dir [style]="exp"></div>
  * ```
- * and
+ * 그리고
  * ```ts
  * @Directive({
  * })
@@ -940,8 +946,7 @@ export function hasClassInput(tNode: TNode) {
  * }
  * ```
  *
- * In the above case it is necessary to write the reconciled styling information into the
- * directive's input.
+ * 위의 경우, 조정된 스타일링 정보를 지시문의 입력으로 작성하는 것이 필요합니다.
  *
  * @param tNode
  */

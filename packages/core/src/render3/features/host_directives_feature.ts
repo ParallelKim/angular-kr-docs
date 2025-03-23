@@ -23,11 +23,11 @@ import type {
 } from '../interfaces/definition';
 
 /**
- * This feature adds the host directives behavior to a directive definition by patching a
- * function onto it. The expectation is that the runtime will invoke the function during
- * directive matching.
+ * 이 기능은 호스트 지시자의 동작을 지시자 정의에 추가하여
+ * 이에 함수를 패치합니다. 런타임에서 지시자를 매칭하는 동안
+ * 함수가 호출될 것으로 예상됩니다.
  *
- * For example:
+ * 예를 들어:
  * ```ts
  * class ComponentWithHostDirective {
  *   static ɵcmp = defineComponent({
@@ -64,9 +64,9 @@ export function ɵɵHostDirectivesFeature(
 }
 
 /**
- * Function that will be patched onto a definition to enable host directives. It is intended to
- * be called once during directive matching and is the same for all definitions.
- * @param matches Directives resolved through selector matching.
+ * 호스트 지시자를 활성화하기 위해 정의에 패치될 함수입니다.
+ * 이 함수는 지시자 매칭 중에 한 번 호출되며 모든 정의에 대해 동일합니다.
+ * @param matches 선택자 매칭을 통해 해결된 지시자들.
  */
 function resolveHostDirectives(matches: DirectiveDef<unknown>[]): HostDirectiveResolution {
   const allDirectiveDefs: DirectiveDef<unknown>[] = [];
@@ -74,16 +74,17 @@ function resolveHostDirectives(matches: DirectiveDef<unknown>[]): HostDirectiveR
   let hostDirectiveDefs: HostDirectiveDefs | null = null;
   let hostDirectiveRanges: HostDirectiveRanges | null = null;
 
-  // Components are inserted at the front of the matches array so that their lifecycle
-  // hooks run before any directive lifecycle hooks. This appears to be for ViewEngine
-  // compatibility. This logic doesn't make sense with host directives, because it
-  // would allow the host directives to undo any overrides the host may have made.
-  // To handle this case, the host directives of components are inserted at the beginning
-  // of the array, followed by the component. As such, the insertion order is as follows:
-  // 1. Host directives belonging to the selector-matched component.
-  // 2. Selector-matched component.
-  // 3. Host directives belonging to selector-matched directives.
-  // 4. Selector-matched dir
+  // 구성 요소는 매칭 배열의 앞쪽에 삽입되어 생명 주기
+  // 후크가 모든 지시자 생명 주기 후크 이전에 실행되도록 합니다.
+  // 이는 ViewEngine 호환성을 위한 것으로 보입니다.
+  // 이 로직은 호스트 지시자와는 잘 맞지 않으며
+  // 호스트가 수행했을 수 있는 오버라이드를 호스트 지시자가 해제할 수 있게 합니다.
+  // 이 경우를 처리하기 위해 구성 요소의 호스트 지시자는 배열의 시작 부분에 삽입되고
+  // 그 다음에 구성 요소가 옵니다. 따라서 삽입 순서는 다음과 같습니다:
+  // 1. 선택자와 일치하는 구성 요소에 소속된 호스트 지시자.
+  // 2. 선택자와 일치하는 구성 요소.
+  // 3. 선택자와 일치하는 지시자에 소속된 호스트 지시자.
+  // 4. 선택자와 일치하는 지시자.
   for (let i = 0; i < matches.length; i++) {
     const def = matches[i];
 
@@ -93,16 +94,17 @@ function resolveHostDirectives(matches: DirectiveDef<unknown>[]): HostDirectiveR
       hostDirectiveDefs ??= new Map();
       hostDirectiveRanges ??= new Map();
 
-      // TODO(pk): probably could return matches instead of taking in an array to fill in?
+      // TODO(pk): 아마도 배열을 채우기 위해 매칭을 반환할 수 있을 것입니다?
       findHostDirectiveDefs(def, allDirectiveDefs, hostDirectiveDefs);
 
-      // Note that these indexes are within the offset by `directiveStart`. We can't do the
-      // offsetting here, because `directiveStart` hasn't been initialized on the TNode yet.
+      // 이 인덱스는 `directiveStart`에 의해 오프셋되어 있습니다.
+      // 여기서 오프셋할 수는 없으며 `directiveStart`는
+      // TNode에서 아직 초기화되지 않았기 때문입니다.
       hostDirectiveRanges.set(def, [start, allDirectiveDefs.length - 1]);
     }
 
-    // Component definition is always first and needs to be
-    // pushed early to maintain the correct ordering.
+    // 구성 요소 정의는 항상 첫 번째여야 하며
+    // 올바른 순서를 유지하기 위해 빨리 푸시해야 합니다.
     if (i === 0 && isComponentDef(def)) {
       hasComponent = true;
       allDirectiveDefs.push(def);
@@ -135,7 +137,7 @@ function findHostDirectiveDefs(
   }
 }
 
-/** Tracks a single host directive during directive matching. */
+/** 지시자 매칭 중 단일 호스트 지시자를 추적합니다. */
 function trackHostDirectiveDef(
   def: HostDirectiveDef,
   matchedDefs: DirectiveDef<unknown>[],
@@ -147,17 +149,18 @@ function trackHostDirectiveDef(
     validateHostDirective(def, hostDirectiveDef);
   }
 
-  // We need to patch the `declaredInputs` so that
-  // `ngOnChanges` can map the properties correctly.
+  // `ngOnChanges`가 속성을 올바르게 매핑할 수 있도록
+  // `declaredInputs`를 패치해야 합니다.
   patchDeclaredInputs(hostDirectiveDef.declaredInputs, def.inputs);
 
-  // Host directives execute before the host so that its host bindings can be overwritten.
+  // 호스트 지시자는 호스트 전에 실행되므로
+  // 호스트 바인딩을 덮어쓸 수 있습니다.
   findHostDirectiveDefs(hostDirectiveDef, matchedDefs, hostDirectiveDefs);
   hostDirectiveDefs.set(hostDirectiveDef, def);
   matchedDefs.push(hostDirectiveDef);
 }
 
-/** Creates a `HostDirectiveDef` from a used-defined host directive configuration. */
+/** 사용자 정의 호스트 지시자 구성에서 `HostDirectiveDef`를 생성합니다. */
 function createHostDirectiveDef(config: HostDirectiveConfig): HostDirectiveDef {
   return typeof config === 'function'
     ? {directive: resolveForwardRef(config), inputs: EMPTY_OBJ, outputs: EMPTY_OBJ}
@@ -169,8 +172,8 @@ function createHostDirectiveDef(config: HostDirectiveConfig): HostDirectiveDef {
 }
 
 /**
- * Converts an array in the form of `['publicName', 'alias', 'otherPublicName', 'otherAlias']` into
- * a map in the form of `{publicName: 'alias', otherPublicName: 'otherAlias'}`.
+ * `'publicName', 'alias', 'otherPublicName', 'otherAlias'` 형식의 배열을
+ * `{publicName: 'alias', otherPublicName: 'otherAlias'}` 형식의 맵으로 변환합니다.
  */
 function bindingArrayToMap(bindings: string[] | undefined): HostDirectiveBindingMap {
   if (bindings === undefined || bindings.length === 0) {
@@ -187,23 +190,25 @@ function bindingArrayToMap(bindings: string[] | undefined): HostDirectiveBinding
 }
 
 /**
- * `ngOnChanges` has some leftover legacy ViewEngine behavior where the keys inside the
- * `SimpleChanges` event refer to the *declared* name of the input, not its public name or its
- * minified name. E.g. in `@Input('alias') foo: string`, the name in the `SimpleChanges` object
- * will always be `foo`, and not `alias` or the minified name of `foo` in apps using property
- * minification.
+ * `ngOnChanges`에는 일부 남은 레거시 ViewEngine 동작이 존재하여
+ * `SimpleChanges` 이벤트 내의 키는 입력의 *정의된* 이름을 가리키며
+ * 공개 이름이나 축소된 이름이 아닙니다.
+ * 예를 들어 `@Input('alias') foo: string`에서
+ * `SimpleChanges` 객체의 이름은 항상 `foo`입니다.
+ * `alias` 또는 속성 축소를 사용하는 앱에서 `foo`의 축소된 이름이 아닙니다.
  *
- * This is achieved through the `DirectiveDef.declaredInputs` map that is constructed when the
- * definition is declared. When a property is written to the directive instance, the
- * `NgOnChangesFeature` will try to remap the property name being written to using the
- * `declaredInputs`.
+ * 이는 정의가 선언될 때 생성되는 `DirectiveDef.declaredInputs` 맵을 통해 달성됩니다.
+ * 속성이 지시자 인스턴스에 작성될 때 `NgOnChangesFeature`는
+ * 작성되고 있는 속성 이름을 `declaredInputs`를 사용하여 재매핑하려고 합니다.
  *
- * Since the host directive input remapping happens during directive matching, `declaredInputs`
- * won't contain the new alias that the input is available under. This function addresses the
- * issue by patching the host directive aliases to the `declaredInputs`. There is *not* a risk of
- * this patching accidentally introducing new inputs to the host directive, because `declaredInputs`
- * is used *only* by the `NgOnChangesFeature` when determining what name is used in the
- * `SimpleChanges` object which won't be reached if an input doesn't exist.
+ * 호스트 지시자 입력 재매핑은 지시자 매칭 중에 발생하므로
+ * `declaredInputs`에는 입력이 사용 가능한 새로운 별명이 포함되지 않습니다.
+ * 이 함수는 호스트 지시자 별명을 `declaredInputs`에 패치하여
+ * 문제를 해결합니다. 이 패치로 인해 호스트 지시자에
+ * 새로운 입력이 우연히 도입될 위험이 없습니다.
+ * 왜냐하면 `declaredInputs`는 입력이 존재하지 않는 경우에
+ * 도달하지 않는 `SimpleChanges` 객체의 어떤 이름이 사용되는지를 결정하기 위해
+ * 오직 `NgOnChangesFeature`에 의해 사용되기 때문입니다.
  */
 function patchDeclaredInputs(
   declaredInputs: Record<string, string>,
@@ -214,10 +219,12 @@ function patchDeclaredInputs(
       const remappedPublicName = exposedInputs[publicName];
       const privateName = declaredInputs[publicName];
 
-      // We *technically* shouldn't be able to hit this case because we can't have multiple
-      // inputs on the same property and we have validations against conflicting aliases in
-      // `validateMappings`. If we somehow did, it would lead to `ngOnChanges` being invoked
-      // with the wrong name so we have a non-user-friendly assertion here just in case.
+      // 우리가 여러 개의 속성에 대해 동일한 입력을 가질 수 없으므로
+      // 기술적으로는 이 상황에 부딪힐 수 없습니다.
+      // `validateMappings`에서 충돌하는 별명에 대한 검증이 있기 때문입니다.
+      // 만약 그랬다면, 잘못된 이름으로 `ngOnChanges`가 호출되도록
+      // 이어질 것입니다. 따라서 만일에 대비해 비사용자 친화적인
+      // 단정문이 있습니다.
       if (
         (typeof ngDevMode === 'undefined' || ngDevMode) &&
         declaredInputs.hasOwnProperty(remappedPublicName)
@@ -225,7 +232,7 @@ function patchDeclaredInputs(
         assertEqual(
           declaredInputs[remappedPublicName],
           declaredInputs[publicName],
-          `Conflicting host directive input alias ${publicName}.`,
+          `충돌하는 호스트 지시자 입력 별명 ${publicName}.`,
         );
       }
 
@@ -235,9 +242,9 @@ function patchDeclaredInputs(
 }
 
 /**
- * Verifies that the host directive has been configured correctly.
- * @param hostDirectiveConfig Host directive configuration object.
- * @param directiveDef Directive definition of the host directive.
+ * 호스트 지시자가 올바르게 구성되었는지 확인합니다.
+ * @param hostDirectiveConfig 호스트 지시자 구성 객체.
+ * @param directiveDef 호스트 지시자의 지시자 정의.
  */
 function validateHostDirective(
   hostDirectiveConfig: HostDirectiveDef<unknown>,
@@ -249,21 +256,21 @@ function validateHostDirective(
     if (getComponentDef(type) !== null) {
       throw new RuntimeError(
         RuntimeErrorCode.HOST_DIRECTIVE_COMPONENT,
-        `Host directive ${type.name} cannot be a component.`,
+        `호스트 지시자 ${type.name}는 구성 요소일 수 없습니다.`,
       );
     }
 
     throw new RuntimeError(
       RuntimeErrorCode.HOST_DIRECTIVE_UNRESOLVABLE,
-      `Could not resolve metadata for host directive ${type.name}. ` +
-        `Make sure that the ${type.name} class is annotated with an @Directive decorator.`,
+      `호스트 지시자 ${type.name}의 메타데이터를 해결할 수 없습니다. ` +
+        `${type.name} 클래스에 @Directive 데코레이터가 주석으로 추가되어 있는지 확인하세요.`,
     );
   }
 
   if (!directiveDef.standalone) {
     throw new RuntimeError(
       RuntimeErrorCode.HOST_DIRECTIVE_NOT_STANDALONE,
-      `Host directive ${directiveDef.type.name} must be standalone.`,
+      `호스트 지시자 ${directiveDef.type.name}는 독립형이어야 합니다.`,
     );
   }
 
@@ -272,10 +279,10 @@ function validateHostDirective(
 }
 
 /**
- * Checks that the host directive inputs/outputs configuration is valid.
- * @param bindingType Kind of binding that is being validated. Used in the error message.
- * @param def Definition of the host directive that is being validated against.
- * @param hostDirectiveBindings Host directive mapping object that shold be validated.
+ * 호스트 지시자의 입력/출력 구성이 유효한지 확인합니다.
+ * @param bindingType 검증되는 바인딩의 종류. 오류 메시지에 사용됩니다.
+ * @param def 검증되는 호스트 지시자의 정의.
+ * @param hostDirectiveBindings 검증되어야 하는 호스트 지시자 매핑 객체.
  */
 function validateMappings<T>(
   bindingType: 'input' | 'output',
@@ -290,7 +297,7 @@ function validateMappings<T>(
       if (!bindings.hasOwnProperty(publicName)) {
         throw new RuntimeError(
           RuntimeErrorCode.HOST_DIRECTIVE_UNDEFINED_BINDING,
-          `Directive ${className} does not have an ${bindingType} with a public name of ${publicName}.`,
+          `지시자 ${className}는 공개 이름이 ${publicName}인 ${bindingType}을 가지고 있지 않습니다.`,
         );
       }
 
@@ -299,7 +306,8 @@ function validateMappings<T>(
       if (bindings.hasOwnProperty(remappedPublicName) && remappedPublicName !== publicName) {
         throw new RuntimeError(
           RuntimeErrorCode.HOST_DIRECTIVE_CONFLICTING_ALIAS,
-          `Cannot alias ${bindingType} ${publicName} of host directive ${className} to ${remappedPublicName}, because it already has a different ${bindingType} with the same public name.`,
+          `호스트 지시자 ${className}의 ${publicName} ${bindingType} 별명을 ${remappedPublicName}로 지정할 수 없습니다. 
+          이미 동일한 공개 이름을 가진 다른 ${bindingType}이 있습니다.`,
         );
       }
     }

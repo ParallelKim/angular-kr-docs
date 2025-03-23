@@ -39,16 +39,16 @@ import {ProfilerEvent} from './profiler_types';
 import {isInCheckNoChangesMode} from './state';
 
 /**
- * Adds all directive lifecycle hooks from the given `DirectiveDef` to the given `TView`.
+ * 주어진 `DirectiveDef`의 모든 지시자 생명 주기 후크를 주어진 `TView`에 추가합니다.
  *
- * Must be run *only* on the first template pass.
+ * *오직* 첫 번째 템플릿 패스에서만 실행해야 합니다.
  *
- * Sets up the pre-order hooks on the provided `tView`,
- * see {@link HookData} for details about the data structure.
+ * 제공된 `tView`에서 미리 주문 후크를 설정합니다.
+ * 데이터 구조에 대한 자세한 정보는 {@link HookData}를 참조하십시오.
  *
- * @param directiveIndex The index of the directive in LView
- * @param directiveDef The definition containing the hooks to setup in tView
- * @param tView The current TView
+ * @param directiveIndex LView에서 지시자의 인덱스
+ * @param directiveDef tView에서 설정할 후크를 포함하는 정의
+ * @param tView 현재 TView
  */
 export function registerPreOrderHooks(
   directiveIndex: number,
@@ -78,27 +78,25 @@ export function registerPreOrderHooks(
 
 /**
  *
- * Loops through the directives on the provided `tNode` and queues hooks to be
- * run that are not initialization hooks.
+ * 제공된 `tNode`의 지시자를 반복하여 초기화 후크가 아닌 후크를 실행할 수 있도록 큐에 추가합니다.
  *
- * Should be executed during `elementEnd()` and similar to
- * preserve hook execution order. Content, view, and destroy hooks for projected
- * components and directives must be called *before* their hosts.
+ * `elementEnd()` 동안 실행되어야 하며,
+ * 후크 실행 순서를 유지합니다.
+ * 프로젝트된 구성 요소 및 지시자의 내용, 보기 및 파괴 후크는
+ * 그 호스트보다 *먼저* 호출해야 합니다.
  *
- * Sets up the content, view, and destroy hooks on the provided `tView`,
- * see {@link HookData} for details about the data structure.
+ * 제공된 `tView`에서 내용, 보기 및 파괴 후크를 설정합니다.
+ * 데이터 구조에 대한 자세한 정보는 {@link HookData}를 참조하십시오.
  *
- * NOTE: This does not set up `onChanges`, `onInit` or `doCheck`, those are set up
- * separately at `elementStart`.
+ * 참고: 이는 `onChanges`, `onInit` 또는 `doCheck`를 설정하지 않습니다. 이는 `elementStart`에서 별도로 설정됩니다.
  *
- * @param tView The current TView
- * @param tNode The TNode whose directives are to be searched for hooks to queue
+ * @param tView 현재 TView
+ * @param tNode 후크를 큐에 추가할 지시자를 검색할 TNode
  */
 export function registerPostOrderHooks(tView: TView, tNode: TNode): void {
   ngDevMode && assertFirstCreatePass(tView);
-  // It's necessary to loop through the directives at elementEnd() (rather than processing in
-  // directiveCreate) so we can preserve the current hook order. Content, view, and destroy
-  // hooks for projected components and directives must be called *before* their hosts.
+  // 현재 후크 순서를 보존하기 위해 elementEnd()에서 지시자를 반복하는 것이 필요합니다.
+  // 예상된 지시자를 처리하려면.
   for (let i = tNode.directiveStart, end = tNode.directiveEnd; i < end; i++) {
     const directiveDef = tView.data[i] as DirectiveDef<any>;
     ngDevMode && assertDefined(directiveDef, 'Expecting DirectiveDef');
@@ -140,54 +138,47 @@ export function registerPostOrderHooks(tView: TView, tNode: TNode): void {
 }
 
 /**
- * Executing hooks requires complex logic as we need to deal with 2 constraints.
+ * 후크 실행에는 복잡한 논리가 필요합니다.
+ * 2가지 제약조건을 처리해야 하므로:
  *
- * 1. Init hooks (ngOnInit, ngAfterContentInit, ngAfterViewInit) must all be executed once and only
- * once, across many change detection cycles. This must be true even if some hooks throw, or if
- * some recursively trigger a change detection cycle.
- * To solve that, it is required to track the state of the execution of these init hooks.
- * This is done by storing and maintaining flags in the view: the {@link InitPhaseState},
- * and the index within that phase. They can be seen as a cursor in the following structure:
+ * 1. 초기화 후크 (ngOnInit, ngAfterContentInit, ngAfterViewInit)는 여러 변경 감지 주기 동안 한 번만 실행되어야 합니다.
+ * 일부 후크가 예외를 발생시키거나 누군가가 재귀적으로 변경 감지 주기를 트리거하더라도 마찬가지입니다.
+ * 이를 해결하기 위해 이러한 초기화 후크의 실행 상태를 추적해야 합니다.
+ * 이는 뷰에 플래그를 저장하고 유지하는 것으로 수행됩니다: {@link InitPhaseState}와 해당 단계 내 인덱스.
+ * 이들은 다음 구조에서 커서처럼 볼 수 있습니다:
  * [[onInit1, onInit2], [afterContentInit1], [afterViewInit1, afterViewInit2, afterViewInit3]]
- * They are stored as flags in LView[FLAGS].
+ * LView[FLAGS]에 플래그로 저장됩니다.
  *
- * 2. Pre-order hooks can be executed in batches, because of the select instruction.
- * To be able to pause and resume their execution, we also need some state about the hook's array
- * that is being processed:
- * - the index of the next hook to be executed
- * - the number of init hooks already found in the processed part of the  array
- * They are stored as flags in LView[PREORDER_HOOK_FLAGS].
+ * 2. 미리 주문 후크는 선택 지침으로 인해 배치로 실행될 수 있습니다.
+ * 그 실행을 일시 중지 및 재개할 수 있도록 처리 중인 후크 배열에 대한 상태도 필요합니다:
+ * - 실행할 다음 후크의 인덱스
+ * - 배열의 처리된 부분에서 이미 발견된 초기화 후크의 수
+ * 이들은 LView[PREORDER_HOOK_FLAGS]에 플래그로 저장됩니다.
  */
 
 /**
- * Executes pre-order check hooks ( OnChanges, DoChanges) given a view where all the init hooks were
- * executed once. This is a light version of executeInitAndCheckPreOrderHooks where we can skip read
- * / write of the init-hooks related flags.
- * @param lView The LView where hooks are defined
- * @param hooks Hooks to be run
- * @param nodeIndex 3 cases depending on the value:
- * - undefined: all hooks from the array should be executed (post-order case)
- * - null: execute hooks only from the saved index until the end of the array (pre-order case, when
- * flushing the remaining hooks)
- * - number: execute hooks only from the saved index until that node index exclusive (pre-order
- * case, when executing select(number))
+ * 초기화 후크가 한 번 실행된 뷰를 주어진 상태에서 전주문 체크 후크(OnChanges, DoChanges)를 실행합니다.
+ * 이는 초기 후크 관련 플래그의 읽기 / 쓰기를 건너뛸 수 있는 executeInitAndCheckPreOrderHooks의 간단한 버전입니다.
+ * @param lView 후크가 정의된 LView
+ * @param hooks 실행할 후크
+ * @param nodeIndex 값에 따라 3가지 경우:
+ * - undefined: 배열의 모든 후크가 실행되어야 합니다 (후주문 케이스)
+ * - null: 저장된 인덱스부터 배열의 끝까지 후크를 실행합니다 (전주문 케이스, 남은 후크를 플러시할 때)
+ * - number: 저장된 인덱스부터 해당 노드 인덱스까지 후크를 실행합니다( 전주문 케이스, select(number)를 실행할 때)
  */
 export function executeCheckHooks(lView: LView, hooks: HookData, nodeIndex?: number | null) {
   callHooks(lView, hooks, InitPhaseState.InitPhaseCompleted, nodeIndex);
 }
 
 /**
- * Executes post-order init and check hooks (one of AfterContentInit, AfterContentChecked,
- * AfterViewInit, AfterViewChecked) given a view where there are pending init hooks to be executed.
- * @param lView The LView where hooks are defined
- * @param hooks Hooks to be run
- * @param initPhase A phase for which hooks should be run
- * @param nodeIndex 3 cases depending on the value:
- * - undefined: all hooks from the array should be executed (post-order case)
- * - null: execute hooks only from the saved index until the end of the array (pre-order case, when
- * flushing the remaining hooks)
- * - number: execute hooks only from the saved index until that node index exclusive (pre-order
- * case, when executing select(number))
+ * 초기화 후크가 실행할 수 있는 대기 중인 경우에 대해 후주문 초기화 및 체크 후크 (AfterContentInit, AfterContentChecked, AfterViewInit, AfterViewChecked)를 실행합니다.
+ * @param lView 후크가 정의된 LView
+ * @param hooks 실행할 후크
+ * @param initPhase 후크가 실행되어야 하는 단계
+ * @param nodeIndex 값에 따라 3가지 경우:
+ * - undefined: 배열의 모든 후크가 실행되어야 합니다 (후주문 케이스)
+ * - null: 저장된 인덱스부터 배열의 끝까지 후크를 실행합니다 (전주문 케이스, 남은 후크를 플러시할 때)
+ * - number: 저장된 인덱스부터 해당 노드 인덱스까지 후크를 실행합니다( 전주문 케이스, select(number)를 실행할 때)
  */
 export function executeInitAndCheckHooks(
   lView: LView,
@@ -222,18 +213,16 @@ export function incrementInitPhaseFlags(lView: LView, initPhase: InitPhaseState)
 }
 
 /**
- * Calls lifecycle hooks with their contexts, skipping init hooks if it's not
- * the first LView pass
+ * 초기 LView 패스가 아닌 경우 초기 후크를 건너뛰고
+ * 해당 컨텍스트로 생명 주기 후크를 호출합니다.
  *
- * @param currentView The current view
- * @param arr The array in which the hooks are found
- * @param initPhaseState the current state of the init phase
- * @param currentNodeIndex 3 cases depending on the value:
- * - undefined: all hooks from the array should be executed (post-order case)
- * - null: execute hooks only from the saved index until the end of the array (pre-order case, when
- * flushing the remaining hooks)
- * - number: execute hooks only from the saved index until that node index exclusive (pre-order
- * case, when executing select(number))
+ * @param currentView 현재 뷰
+ * @param arr 후크가 발견된 배열
+ * @param initPhaseState 초기화 단계의 현재 상태
+ * @param currentNodeIndex 값에 따라 3가지 경우:
+ * - undefined: 배열의 모든 후크가 실행되어야 합니다 (후주문 케이스)
+ * - null: 저장된 인덱스부터 배열의 끝까지 후크를 실행합니다 (전주문 케이스, 남은 후크를 플러시할 때)
+ * - number: 저장된 인덱스부터 해당 노드 인덱스까지 후크를 실행합니다( 전주문 케이스, select(number)를 실행할 때)
  */
 function callHooks(
   currentView: LView,
@@ -252,7 +241,7 @@ function callHooks(
       ? currentView[PREORDER_HOOK_FLAGS] & PreOrderHookFlags.IndexOfTheNextPreOrderHookMaskMask
       : 0;
   const nodeIndexLimit = currentNodeIndex != null ? currentNodeIndex : -1;
-  const max = arr.length - 1; // Stop the loop at length - 1, because we look for the hook at i + 1
+  const max = arr.length - 1; // 우리는 i + 1에서 후크를 찾기 때문에 루프를 길이 - 1에서 멈춥니다.
   let lastNodeIndexFound = 0;
   for (let i = startIndex; i < max; i++) {
     const hook = arr[i + 1] as number | (() => void);
@@ -279,9 +268,9 @@ function callHooks(
 }
 
 /**
- * Executes a single lifecycle hook, making sure that:
- * - it is called in the non-reactive context;
- * - profiling data are registered.
+ * 단일 생명 주기 후크를 실행하고, 다음과 같은 사항을 보장합니다:
+ * - 비반응 컨텍스트에서 호출되는지;
+ * - 프로파일링 데이터가 등록됩니다.
  */
 function callHookInternal(directive: any, hook: () => void) {
   profiler(ProfilerEvent.LifecycleHookStart, directive, hook);
@@ -295,12 +284,12 @@ function callHookInternal(directive: any, hook: () => void) {
 }
 
 /**
- * Execute one hook against the current `LView`.
+ * 현재 `LView`에 대해 하나의 후크를 실행합니다.
  *
- * @param currentView The current view
- * @param initPhaseState the current state of the init phase
- * @param arr The array in which the hooks are found
- * @param i The current index within the hook data array
+ * @param currentView 현재 뷰
+ * @param initPhaseState 초기 단계의 현재 상태
+ * @param arr 후크가 발견된 배열
+ * @param i 후크 데이터 배열 내의 현재 인덱스
  */
 function callHook(currentView: LView, initPhase: InitPhaseState, arr: HookData, i: number) {
   const isInitHook = (arr[i] as number) < 0;
@@ -309,7 +298,7 @@ function callHook(currentView: LView, initPhase: InitPhaseState, arr: HookData, 
   const directive = currentView[directiveIndex];
   if (isInitHook) {
     const indexWithintInitPhase = currentView[FLAGS] >> LViewFlags.IndexWithinInitPhaseShift;
-    // The init phase state must be always checked here as it may have been recursively updated.
+    // 초기 단계 상태는 항상 여기에서 확인해야 하며, 재귀적으로 업데이트되었을 수 있습니다.
     if (
       indexWithintInitPhase <
         currentView[PREORDER_HOOK_FLAGS] >> PreOrderHookFlags.NumberOfInitHooksCalledShift &&

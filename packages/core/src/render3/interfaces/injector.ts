@@ -14,40 +14,38 @@ import {TDirectiveHostNode} from './node';
 import {LView, TData} from './view';
 
 /**
- * Offsets of the `NodeInjector` data structure in the expando.
+ * Expando에서 `NodeInjector` 데이터 구조의 오프셋.
  *
- * `NodeInjector` is stored in both `LView` as well as `TView.data`. All storage requires 9 words.
- * First 8 are reserved for bloom filter and the 9th is reserved for the associated `TNode` as well
- * as parent `NodeInjector` pointer. All indexes are starting with `index` and have an offset as
- * shown.
+ * `NodeInjector`는 `LView`와 `TView.data` 모두에 저장됩니다. 모든 저장소는 9개의 단어를 필요로 합니다.
+ * 처음 8개는 블룸 필터를 위해 예약되어 있으며, 9번째는 관련된 `TNode`와 부모 `NodeInjector` 포인터를 위해 예약되어 있습니다. 모든 인덱스는 `index`로 시작하며 오프셋이 있습니다.
  *
- * `LView` layout:
+ * `LView` 레이아웃:
  * ```
- * index + 0: cumulative bloom filter
- * index + 1: cumulative bloom filter
- * index + 2: cumulative bloom filter
- * index + 3: cumulative bloom filter
- * index + 4: cumulative bloom filter
- * index + 5: cumulative bloom filter
- * index + 6: cumulative bloom filter
- * index + 7: cumulative bloom filter
- * index + 8: cumulative bloom filter
- * index + PARENT: Index to the parent injector. See `RelativeInjectorLocation`
+ * index + 0: 누적 블룸 필터
+ * index + 1: 누적 블룸 필터
+ * index + 2: 누적 블룸 필터
+ * index + 3: 누적 블룸 필터
+ * index + 4: 누적 블룸 필터
+ * index + 5: 누적 블룸 필터
+ * index + 6: 누적 블룸 필터
+ * index + 7: 누적 블룸 필터
+ * index + 8: 누적 블룸 필터
+ * index + PARENT: 부모 주입기 인덱스. `RelativeInjectorLocation` 참조
  *                 `const parent = lView[index + NodeInjectorOffset.PARENT]`
  * ```
  *
- * `TViewData` layout:
+ * `TViewData` 레이아웃:
  * ```
- * index + 0: cumulative bloom filter
- * index + 1: cumulative bloom filter
- * index + 2: cumulative bloom filter
- * index + 3: cumulative bloom filter
- * index + 4: cumulative bloom filter
- * index + 5: cumulative bloom filter
- * index + 6: cumulative bloom filter
- * index + 7: cumulative bloom filter
- * index + 8: cumulative bloom filter
- * index + TNODE: TNode associated with this `NodeInjector`
+ * index + 0: 누적 블룸 필터
+ * index + 1: 누적 블룸 필터
+ * index + 2: 누적 블룸 필터
+ * index + 3: 누적 블룸 필터
+ * index + 4: 누적 블룸 필터
+ * index + 5: 누적 블룸 필터
+ * index + 6: 누적 블룸 필터
+ * index + 7: 누적 블룸 필터
+ * index + 8: 누적 블룸 필터
+ * index + TNODE: 이 `NodeInjector`와 관련된 TNode
  *                `const tNode = tView.data[index + NodeInjectorOffset.TNODE]`
  * ```
  */
@@ -59,10 +57,9 @@ export const enum NodeInjectorOffset {
 }
 
 /**
- * Represents a relative location of parent injector.
+ * 부모 주입기의 상대 위치를 나타냅니다.
  *
- * The interfaces encodes number of parents `LView`s to traverse and index in the `LView`
- * pointing to the parent injector.
+ * 이 인터페이스는 탐색할 부모 `LView`의 수와 부모 주입기를 가리키는 `LView`의 인덱스를 인코딩합니다.
  */
 export type RelativeInjectorLocation = number & {
   __brand__: 'RelativeInjectorLocationFlags';
@@ -77,131 +74,122 @@ export const enum RelativeInjectorLocationFlags {
 export const NO_PARENT_INJECTOR = -1 as RelativeInjectorLocation;
 
 /**
- * Each injector is saved in 9 contiguous slots in `LView` and 9 contiguous slots in
- * `TView.data`. This allows us to store information about the current node's tokens (which
- * can be shared in `TView`) as well as the tokens of its ancestor nodes (which cannot be
- * shared, so they live in `LView`).
+ * 각 주입기는 `LView`의 9개의 연속된 슬롯에 저장되고 `TView.data`의 9개의 연속된 슬롯에 저장됩니다.
+ * 이는 현재 노드의 토큰(이를 `TView`에서 공유할 수 있음)과 조상 노드의 토큰(이를 공유할 수 없어 `LView`에서 존재함)에 대한 정보를 저장할 수 있게 해줍니다.
  *
- * Each of these slots (aside from the last slot) contains a bloom filter. This bloom filter
- * determines whether a directive is available on the associated node or not. This prevents us
- * from searching the directives array at this level unless it's probable the directive is in it.
+ * 이러한 슬롯의 각 슬롯(마지막 슬롯 제외)에는 블룸 필터가 포함됩니다. 이 블룸 필터는 관련 노드에서 지시문이 사용 가능한지 여부를 결정합니다.
+ * 이로 인해 지시문이 그 안에 있을 가능성이 없지 않는 한, 이 수준에서 지시문 배열을 검색하는 것을 방지합니다.
  *
- * See: https://en.wikipedia.org/wiki/Bloom_filter for more about bloom filters.
+ * 블룸 필터에 대한 자세한 내용은: https://en.wikipedia.org/wiki/Bloom_filter 를 참조하십시오.
  *
- * Because all injectors have been flattened into `LView` and `TViewData`, they cannot typed
- * using interfaces as they were previously. The start index of each `LInjector` and `TInjector`
- * will differ based on where it is flattened into the main array, so it's not possible to know
- * the indices ahead of time and save their types here. The interfaces are still included here
- * for documentation purposes.
+ * 모든 주입기가 `LView` 및 `TViewData`로 평탄화되었기 때문에, 이전처럼 인터페이스를 사용하여 유형을 지정할 수 없습니다. 각 `LInjector` 및 `TInjector`의 시작 인덱스는 주 배열로 평탄화되는 위치에 따라 다르므로, 미리 인덱스를 알 수 없고 여기에 유형을 저장할 수 없습니다. 인터페이스는 여전히 문서화 목적으로 포함되어 있습니다.
  *
  * export interface LInjector extends Array<any> {
  *
- *    // Cumulative bloom for directive IDs 0-31  (IDs are % BLOOM_SIZE)
+ *    // 지시문 ID 0-31의 누적 블룸 (ID는 % BLOOM_SIZE)
  *    [0]: number;
  *
- *    // Cumulative bloom for directive IDs 32-63
+ *    // 지시문 ID 32-63의 누적 블룸
  *    [1]: number;
  *
- *    // Cumulative bloom for directive IDs 64-95
+ *    // 지시문 ID 64-95의 누적 블룸
  *    [2]: number;
  *
- *    // Cumulative bloom for directive IDs 96-127
+ *    // 지시문 ID 96-127의 누적 블룸
  *    [3]: number;
  *
- *    // Cumulative bloom for directive IDs 128-159
+ *    // 지시문 ID 128-159의 누적 블룸
  *    [4]: number;
  *
- *    // Cumulative bloom for directive IDs 160 - 191
+ *    // 지시문 ID 160 - 191의 누적 블룸
  *    [5]: number;
  *
- *    // Cumulative bloom for directive IDs 192 - 223
+ *    // 지시문 ID 192 - 223의 누적 블룸
  *    [6]: number;
  *
- *    // Cumulative bloom for directive IDs 224 - 255
+ *    // 지시문 ID 224 - 255의 누적 블룸
  *    [7]: number;
  *
- *    // We need to store a reference to the injector's parent so DI can keep looking up
- *    // the injector tree until it finds the dependency it's looking for.
+ *    // DI가 종속성을 찾을 때까지 주입기 트리를 계속 검색할 수 있도록 주입기의 부모에 대한 참조를 저장해야 합니다.
  *    [PARENT_INJECTOR]: number;
  * }
  *
  * export interface TInjector extends Array<any> {
  *
- *    // Shared node bloom for directive IDs 0-31  (IDs are % BLOOM_SIZE)
+ *    // 지시문 ID 0-31의 공유 노드 블룸 (ID는 % BLOOM_SIZE)
  *    [0]: number;
  *
- *    // Shared node bloom for directive IDs 32-63
+ *    // 지시문 ID 32-63의 공유 노드 블룸
  *    [1]: number;
  *
- *    // Shared node bloom for directive IDs 64-95
+ *    // 지시문 ID 64-95의 공유 노드 블룸
  *    [2]: number;
  *
- *    // Shared node bloom for directive IDs 96-127
+ *    // 지시문 ID 96-127의 공유 노드 블룸
  *    [3]: number;
  *
- *    // Shared node bloom for directive IDs 128-159
+ *    // 지시문 ID 128-159의 공유 노드 블룸
  *    [4]: number;
  *
- *    // Shared node bloom for directive IDs 160 - 191
+ *    // 지시문 ID 160 - 191의 공유 노드 블룸
  *    [5]: number;
  *
- *    // Shared node bloom for directive IDs 192 - 223
+ *    // 지시문 ID 192 - 223의 공유 노드 블룸
  *    [6]: number;
  *
- *    // Shared node bloom for directive IDs 224 - 255
+ *    // 지시문 ID 224 - 255의 공유 노드 블룸
  *    [7]: number;
  *
- *    // Necessary to find directive indices for a particular node.
+ *    // 특정 노드에 대한 지시문 인덱스를 찾는 데 필요합니다.
  *    [TNODE]: TElementNode|TElementContainerNode|TContainerNode;
  *  }
  */
 
 /**
- * Factory for creating instances of injectors in the NodeInjector.
+ * NodeInjector에서 인스턴스를 생성하기 위한 팩토리.
  *
- * This factory is complicated by the fact that it can resolve `multi` factories as well.
+ * 이 팩토리는 `multi` 팩토리를 해결할 수 있다는 사실로 인해 복잡해집니다.
  *
- * NOTE: Some of the fields are optional which means that this class has two hidden classes.
- * - One without `multi` support (most common)
- * - One with `multi` values, (rare).
+ * NOTE: 일부 필드는 선택 사항으로, 이는 이 클래스에 두 개의 숨겨진 클래스가 있음을 의미합니다.
+ * - `multi` 지원이 없는 하나(가장 일반적)
+ * - `multi` 값을 가진 하나(희귀).
  *
- * Since VMs can cache up to 4 inline hidden classes this is OK.
+ * VM이 최대 4개의 인라인 숨겨진 클래스를 캐시할 수 있으므로 괜찮습니다.
  *
- * - Single factory: Only `resolving` and `factory` is defined.
- * - `providers` factory: `componentProviders` is a number and `index = -1`.
- * - `viewProviders` factory: `componentProviders` is a number and `index` points to `providers`.
+ * - 단일 팩토리: `resolving`과 `factory`만 정의됨.
+ * - `providers` 팩토리: `componentProviders`는 숫자이고 `index = -1`.
+ * - `viewProviders` 팩토리: `componentProviders`는 숫자이고 `index`는 `providers`를 가리킴.
  */
 export class NodeInjectorFactory {
   /**
-   * The inject implementation to be activated when using the factory.
+   * 팩토리를 사용할 때 활성화할 주입 구현.
    */
   injectImpl: null | (<T>(token: ProviderToken<T>, flags?: InternalInjectFlags) => T);
 
   /**
-   * Marker set to true during factory invocation to see if we get into recursive loop.
-   * Recursive loop causes an error to be displayed.
+   * 재귀 루프에 진입하고 있는지 확인하기 위해 팩토리 호출 중에 true로 설정된 마커.
+   * 재귀 루프는 오류가 표시되게 합니다.
    */
   resolving = false;
 
   /**
-   * Marks that the token can see other Tokens declared in `viewProviders` on the same node.
+   * 토큰이 같은 노드에서 `viewProviders`에 선언된 다른 토큰을 볼 수 있음을 표시합니다.
    */
   canSeeViewProviders: boolean;
 
   /**
-   * An array of factories to use in case of `multi` provider.
+   * `multi` 제공자의 경우 사용할 팩토리 배열.
    */
   multi?: Array<() => any>;
 
   /**
-   * Number of `multi`-providers which belong to the component.
+   * 구성 요소에 속하는 `multi` 제공자의 수입니다.
    *
-   * This is needed because when multiple components and directives declare the `multi` provider
-   * they have to be concatenated in the correct order.
+   * 여러 구성 요소와 지시문이 `multi` 제공자를 선언할 때 올바른 순서로 연결되기 때문에 필요합니다.
    *
-   * Example:
+   * 예시:
    *
-   * If we have a component and directive active an a single element as declared here
+   * 여기서 선언된 단일 요소에서 활성화된 구성 요소와 지시문이 있는 경우
    * ```ts
    * component:
    *   providers: [ {provide: String, useValue: 'component', multi: true} ],
@@ -211,78 +199,72 @@ export class NodeInjectorFactory {
    *   providers: [ {provide: String, useValue: 'directive', multi: true} ],
    * ```
    *
-   * Then the expected results are:
+   * 그러면 예상 결과는 다음과 같습니다:
    *
    * ```ts
    * providers: ['component', 'directive']
    * viewProviders: ['component', 'componentView', 'directive']
    * ```
    *
-   * The way to think about it is that the `viewProviders` have been inserted after the component
-   * but before the directives, which is why we need to know how many `multi`s have been declared by
-   * the component.
+   * 생각할 수 있는 방법은 `viewProviders`가 구성 요소 뒤에 삽입되고 지시문 앞에 삽입되었다는 것입니다.
+   * 그래서 우리는 구성 요소에 의해 몇 개의 `multi`가 선언되었는지 알아야 합니다.
    */
   componentProviders?: number;
 
   /**
-   * Current index of the Factory in the `data`. Needed for `viewProviders` and `providers` merging.
-   * See `providerFactory`.
+   * `data`의 현재 팩토리 인덱스. `viewProviders` 및 `providers` 병합에 필요합니다.
+   * `providerFactory`를 보십시오.
    */
   index?: number;
 
   /**
-   * Because the same `multi` provider can be declared in `providers` and `viewProviders` it is
-   * possible for `viewProviders` to shadow the `providers`. For this reason we store the
-   * `provideFactory` of the `providers` so that `providers` can be extended with `viewProviders`.
+   * 같은 `multi` 제공자가 `providers`와 `viewProviders`에 선언될 수 있기 때문에 `viewProviders`가 `providers`를 가릴 수 있습니다.
+   * 이러한 이유로 우리는 `providers`의 `provideFactory`를 저장하여 `providers`를 `viewProviders`로 확장할 수 있도록 합니다.
    *
-   * Example:
+   * 예시:
    *
-   * Given:
+   * 주어진:
    * ```ts
    * providers: [ {provide: String, useValue: 'all', multi: true} ],
    * viewProviders: [ {provide: String, useValue: 'viewOnly', multi: true} ],
    * ```
    *
-   * We have to return `['all']` in case of content injection, but `['all', 'viewOnly']` in case
-   * of view injection. We further have to make sure that the shared instances (in our case
-   * `all`) are the exact same instance in both the content as well as the view injection. (We
-   * have to make sure that we don't double instantiate.) For this reason the `viewProviders`
-   * `Factory` has a pointer to the shadowed `providers` factory so that it can instantiate the
-   * `providers` (`['all']`) and then extend it with `viewProviders` (`['all'] + ['viewOnly'] =
-   * ['all', 'viewOnly']`).
+   * 우리는 콘텐츠 주입의 경우 `['all']`을 반환해야 하지만, 뷰 주입의 경우 `['all', 'viewOnly']`을 반환해야 합니다.
+   * 우리는 또한 공유 인스턴스(우리 경우 `all`)가 콘텐츠와 뷰 주입 모두에서 정확히 동일한 인스턴스인지 확인해야 합니다. (이중 인스턴스화되지 않도록 해야 합니다.)
+   * 이러한 이유로 `viewProviders`의 `Factory`는 가려진 `providers` 팩토리에 대한 포인터를 가지고 있어야 `providers`(`['all']`)를 인스턴스화한 다음 `viewProviders`(`['all'] + ['viewOnly'] =
+   * ['all', 'viewOnly']`)로 확장할 수 있습니다.
    */
   providerFactory?: NodeInjectorFactory | null;
 
   constructor(
     /**
-     * Factory to invoke in order to create a new instance.
+     * 새 인스턴스를 생성하기 위해 호출할 팩토리.
      */
     public factory: (
       this: NodeInjectorFactory,
       _: undefined,
       /**
-       * array where injectables tokens are stored. This is used in
-       * case of an error reporting to produce friendlier errors.
+       * 주입 가능한 토큰이 저장되는 배열. 이는 오류 보고 사례에서 더 친근한 오류를 생성하는 데 사용됩니다.
        */
       tData: TData,
       /**
-       * array where existing instances of injectables are stored. This is used in case
-       * of multi shadow is needed. See `multi` field documentation.
+       * 기존 인스턴스의 배열이 저장됩니다. 이는 다중 그림자가 필요한 경우에 사용됩니다.
+       * `multi` 필드 문서화를 참조하십시오.
        */
       lView: LView,
       /**
-       * The TNode of the same element injector.
+       * 동일한 요소 주입기의 TNode.
        */
       tNode: TDirectiveHostNode,
     ) => any,
     /**
-     * Set to `true` if the token is declared in `viewProviders` (or if it is component).
+     * 토큰이 `viewProviders`에 선언된 경우(true)로 설정합니다. (또는 구성 요소일 경우).
      */
     isViewProvider: boolean,
     injectImplementation: null | (<T>(token: ProviderToken<T>, flags?: InternalInjectFlags) => T),
   ) {
-    ngDevMode && assertDefined(factory, 'Factory not specified');
-    ngDevMode && assertEqual(typeof factory, 'function', 'Expected factory function.');
+    ngDevMode && assertDefined(factory, '팩토리가 지정되지 않았습니다.');
+    ngDevMode && assertEqual(typeof factory, 'function', '팩토리 함수여야 합니다.');
     this.canSeeViewProviders = isViewProvider;
     this.injectImpl = injectImplementation;
   }

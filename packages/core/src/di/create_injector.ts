@@ -16,7 +16,7 @@ import {getNullInjector, R3Injector} from './r3_injector';
 import {InjectorScope} from './scope';
 
 /**
- * Create a new `Injector` which is configured using a `defType` of `InjectorType<any>`s.
+ * `InjectorType<any>`s의 `defType`을 사용하여 구성된 새로운 `Injector`를 생성합니다.
  */
 export function createInjector(
   defType: /* InjectorType<any> */ any,
@@ -35,9 +35,9 @@ export function createInjector(
 }
 
 /**
- * Creates a new injector without eagerly resolving its injector types. Can be used in places
- * where resolving the injector types immediately can lead to an infinite loop. The injector types
- * should be resolved at a later point by calling `_resolveInjectorDefTypes`.
+ * 인젝터 타입을 즉각적으로 해결하지 않고 새로운 인젝터를 생성합니다. 인젝터 타입을 즉시 해결하는 것이
+ * 무한 루프를 유발할 수 있는 곳에서 사용할 수 있습니다. 인젝터 타입은
+ * `_resolveInjectorDefTypes`를 호출하여 나중에 해결해야 합니다.
  */
 export function createInjectorWithoutInjectorInstances(
   defType: /* InjectorType<any> */ any,

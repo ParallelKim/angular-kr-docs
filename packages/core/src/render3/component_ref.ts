@@ -78,7 +78,7 @@ import {BINDING, Binding, DirectiveWithBindings} from './dynamic_bindings';
 
 export class ComponentFactoryResolver extends AbstractComponentFactoryResolver {
   /**
-   * @param ngModule The NgModuleRef to which all resolved factories are bound.
+   * @param ngModule 모든 해결된 팩토리가 바인딩되는 NgModuleRef입니다.
    */
   constructor(private ngModule?: NgModuleRef<any>) {
     super();
@@ -111,7 +111,7 @@ function toOutputRefArray<T>(map: DirectiveDef<T>['outputs']): ComponentFactory<
 }
 
 function verifyNotAnOrphanComponent(componentDef: ComponentDef<unknown>) {
-  // TODO(pk): create assert that verifies ngDevMode
+  // TODO(pk): ngDevMode를 검증하는 assert 생성
   if (
     (typeof ngJitMode === 'undefined' || ngJitMode) &&
     componentDef.debugInfo?.forbidOrphanRendering
@@ -119,9 +119,9 @@ function verifyNotAnOrphanComponent(componentDef: ComponentDef<unknown>) {
     if (depsTracker.isOrphanComponent(componentDef.type)) {
       throw new RuntimeError(
         RuntimeErrorCode.RUNTIME_DEPS_ORPHAN_COMPONENT,
-        `Orphan component found! Trying to render the component ${debugStringifyTypeForError(
+        `고아 컴포넌트 발견! ${debugStringifyTypeForError(
           componentDef.type,
-        )} without first loading the NgModule that declares it. It is recommended to make this component standalone in order to avoid this error. If this is not possible now, import the component's NgModule in the appropriate NgModule, or the standalone component in which you are trying to render this component. If this is a lazy import, load the NgModule lazily as well and use its module injector.`,
+        )}를 렌더링하기 전에 선언한 NgModule을 먼저 로드해야 합니다. 이 컴포넌트를 독립적으로 만들어 이 오류를 피하는 것이 좋습니다. 현재 불가능한 경우, 적절한 NgModule에 컴포넌트의 NgModule를 가져오거나 이 컴포넌트를 렌더링하려는 독립형 컴포넌트를 가져오세요. 이것이 지연된 가져오기인 경우, NgModule을 지연 로드하고 해당 모듈 주입기를 사용하세요.`,
       );
     }
   }
@@ -154,9 +154,9 @@ function createRootLViewEnvironment(rootLViewInjector: Injector): LViewEnvironme
     throw new RuntimeError(
       RuntimeErrorCode.RENDERER_NOT_FOUND,
       ngDevMode &&
-        'Angular was not able to inject a renderer (RendererFactory2). ' +
-          'Likely this is due to a broken DI hierarchy. ' +
-          'Make sure that any injector used to create this component has a correct parent.',
+        'Angular는 렌더러 (RendererFactory2)를 주입할 수 없었습니다. ' +
+          '이는 DI 계층이 손상되었기 때문일 수 있습니다. ' +
+          '이 컴포넌트를 생성하는 데 사용되는 모든 주입기가 올바른 부모를 가지고 있는지 확인하세요.',
     );
   }
 
@@ -171,9 +171,8 @@ function createRootLViewEnvironment(rootLViewInjector: Injector): LViewEnvironme
 }
 
 function createHostElement(componentDef: ComponentDef<unknown>, render: Renderer): RElement {
-  // Determine a tag name used for creating host elements when this component is created
-  // dynamically. Default to 'div' if this component did not specify any tag name in its
-  // selector.
+  // 이 컴포넌트가 동적으로 생성될 때 호스트 요소를 생성하는 데 사용되는 태그 이름 결정
+  // 선택기에서 태그 이름을 지정하지 않은 경우 기본값으로 'div'로 설정합니다.
   const tagName = ((componentDef.selectors[0][0] as string) || 'div').toLowerCase();
   const namespace =
     tagName === 'svg' ? SVG_NAMESPACE : tagName === 'math' ? MATH_ML_NAMESPACE : null;
@@ -181,7 +180,7 @@ function createHostElement(componentDef: ComponentDef<unknown>, render: Renderer
 }
 
 /**
- * ComponentFactory interface implementation.
+ * ComponentFactory 인터페이스 구현.
  */
 export class ComponentFactory<T> extends AbstractComponentFactory<T> {
   override selector: string;
@@ -214,8 +213,8 @@ export class ComponentFactory<T> extends AbstractComponentFactory<T> {
   }
 
   /**
-   * @param componentDef The component definition.
-   * @param ngModule The NgModuleRef to which the factory is bound.
+   * @param componentDef 컴포넌트 정의.
+   * @param ngModule 팩토리가 바인딩되는 NgModuleRef.
    */
   constructor(
     private componentDef: ComponentDef<any>,
@@ -299,11 +298,11 @@ export class ComponentFactory<T> extends AbstractComponentFactory<T> {
 
       rootLView[HEADER_OFFSET] = hostElement;
 
-      // rootView is the parent when bootstrapping
-      // TODO(misko): it looks like we are entering view here but we don't really need to as
-      // `renderView` does that. However as the code is written it is needed because
-      // `createRootComponentView` and `createRootComponent` both read global state. Fixing those
-      // issues would allow us to drop this.
+      // rootView는 부팅할 때 부모입니다.
+      // TODO(misko): 여기서 실제로 뷰에 들어가고 있지만 필요하지 않은 것처럼 보입니다.
+      // `renderView`가 그렇게 합니다. 그러나 코드가 작성된 방식으로는 필요합니다.
+      // `createRootComponentView`와 `createRootComponent` 모두 전역 상태를 읽기 때문입니다.
+      // 이러한 문제를 수정하면 이를 제거할 수 있습니다.
       enterView(rootLView);
 
       let componentView: LView | null = null;
@@ -319,17 +318,17 @@ export class ComponentFactory<T> extends AbstractComponentFactory<T> {
           0,
         );
 
-        // ---- element instruction
+        // ---- 요소 지시문
 
-        // TODO(crisbeto): in practice `hostElement` should always be defined, but there are some
-        // tests where the renderer is mocked out and `undefined` is returned. We should update the
-        // tests so that this check can be removed.
+        // TODO(crisbeto): 실제로 `hostElement`는 항상 정의되어야 하지만
+        // 렌더러가 모의되는 일부 테스트에서 `undefined`가 반환됩니다.
+        // 이 검사가 제거될 수 있도록 테스트를 업데이트해야 합니다.
         if (hostElement) {
           setupStaticAttributes(hostRenderer, hostElement, hostTNode);
           attachPatchData(hostElement, rootLView);
         }
 
-        // TODO(pk): this logic is similar to the instruction code where a node can have directives
+        // TODO(pk): 이 로직은 노드에 지시문이 있을 수 있는 지시문 코드와 유사합니다.
         createDirectivesInstances(rootTView, rootLView, hostTNode);
         executeContentQueries(rootTView, hostTNode, rootLView);
 
@@ -341,13 +340,13 @@ export class ComponentFactory<T> extends AbstractComponentFactory<T> {
 
         componentView = getComponentLViewByIndex(hostTNode.index, rootLView);
 
-        // TODO(pk): why do we need this logic?
+        // TODO(pk): 왜 이 로직이 필요합니까?
         rootLView[CONTEXT] = componentView[CONTEXT] as T;
 
         renderView(rootTView, rootLView, null);
       } catch (e) {
-        // Stop tracking the views if creation failed since
-        // the consumer won't have a way to dereference them.
+        // 생성에 실패하면 뷰 추적을 중지합니다.
+        // 소비자가 이를 참조 해제할 방법이 없기 때문입니다.
         if (componentView !== null) {
           unregisterLView(componentView);
         }
@@ -373,7 +372,7 @@ function createRootTView(
 ): TView {
   const tAttributes = rootSelectorOrNode
     ? ['ng-version', '0.0.0-PLACEHOLDER']
-    : // Extract attributes and classes from the first selector only to match VE behavior.
+    : // 첫 번째 선택기에서 속성과 클래스를 추출하여 VE 동작에 맞춥니다.
       extractAttrsAndClassesFromSelector(componentDef.selectors[0]);
   let creationBindings: Binding[] | null = null;
   let updateBindings: Binding[] | null = null;
@@ -463,11 +462,10 @@ function isInputBinding(binding: Binding): boolean {
 }
 
 /**
- * Represents an instance of a Component created via a {@link ComponentFactory}.
+ * {@link ComponentFactory}를 통해 생성된 컴포넌트의 인스턴스를 나타냅니다.
  *
- * `ComponentRef` provides access to the Component Instance as well other objects related to this
- * Component Instance and allows you to destroy the Component Instance via the {@link #destroy}
- * method.
+ * `ComponentRef`는 컴포넌트 인스턴스와 관련된 다른 객체에 접근할 수 있도록 하며,
+ * {@link #destroy} 메서드를 통해 컴포넌트 인스턴스를 파괴할 수 있습니다.
  *
  */
 export class ComponentRef<T> extends AbstractComponentRef<T> {
@@ -499,14 +497,14 @@ export class ComponentRef<T> extends AbstractComponentRef<T> {
     if (this._hasInputBindings && ngDevMode) {
       throw new RuntimeError(
         RuntimeErrorCode.INVALID_SET_INPUT_CALL,
-        'Cannot call `setInput` on a component that is using the `inputBinding` or `twoWayBinding` functions.',
+        '입력 바인딩 또는 양방향 바인딩 함수를 사용 중인 컴포넌트에서 `setInput`을 호출할 수 없습니다.',
       );
     }
 
     const tNode = this._tNode;
     this.previousInputValues ??= new Map();
-    // Do not set the input if it is the same as the last value
-    // This behavior matches `bindingUpdated` when binding inputs in templates.
+    // 마지막 값과 동일한 경우 입력을 설정하지 않습니다.
+    // 이 동작은 템플릿에서 입력을 바인딩할 때 `bindingUpdated`와 일치합니다.
     if (
       this.previousInputValues.has(name) &&
       Object.is(this.previousInputValues.get(name), value)
@@ -522,8 +520,8 @@ export class ComponentRef<T> extends AbstractComponentRef<T> {
 
     if (ngDevMode && !hasSetInput) {
       const cmpNameForError = stringifyForError(this.componentType);
-      let message = `Can't set value of the '${name}' input on the '${cmpNameForError}' component. `;
-      message += `Make sure that the '${name}' property is annotated with @Input() or a mapped @Input('${name}') exists.`;
+      let message = ` '${cmpNameForError}' 컴포넌트의 '${name}' 입력 값 설정할 수 없습니다. `;
+      message += ` '${name}' 속성이 @Input()로 주석 처리되었는지 또는 매핑된 @Input('${name}')가 존재하는지 확인하세요.`;
       reportUnknownPropertyError(message);
     }
   }
@@ -541,7 +539,7 @@ export class ComponentRef<T> extends AbstractComponentRef<T> {
   }
 }
 
-/** Projects the `projectableNodes` that were specified when creating a root component. */
+/** 루트 컴포넌트를 만들 때 지정된 `projectableNodes`를 투영합니다. */
 function projectNodes(
   tNode: TElementNode,
   ngContentSelectors: string[],
@@ -550,11 +548,9 @@ function projectNodes(
   const projection: (TNode | RNode[] | null)[] = (tNode.projection = []);
   for (let i = 0; i < ngContentSelectors.length; i++) {
     const nodesforSlot = projectableNodes[i];
-    // Projectable nodes can be passed as array of arrays or an array of iterables (ngUpgrade
-    // case). Here we do normalize passed data structure to be an array of arrays to avoid
-    // complex checks down the line.
-    // We also normalize the length of the passed in projectable nodes (to match the number of
-    // <ng-container> slots defined by a component).
+    // 투영 가능한 노드는 배열의 배열 또는 반복 가능한 배열로 전달될 수 있습니다.(ngUpgrade 경우).
+    // 여기서 전달된 데이터 구조를 배열의 배열로 정규화하여 이후 복잡한 검사를 피합니다.
+    // 또한 전달된 투영 가능한 노드의 길이를 정규화하여 컴포넌트에 의해 정의된 <ng-container> 슬롯 수와 일치시킵니다.
     projection.push(nodesforSlot != null && nodesforSlot.length ? Array.from(nodesforSlot) : null);
   }
 }

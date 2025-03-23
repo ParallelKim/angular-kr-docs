@@ -30,11 +30,11 @@ import {getBindingRoot, getCurrentTNode, getLView, getTView} from './state';
 import {load} from './util/view_utils';
 
 /**
- * Create a pipe.
+ * 파이프를 생성합니다.
  *
- * @param index Pipe index where the pipe will be stored.
- * @param pipeName The name of the pipe
- * @returns T the instance of the pipe.
+ * @param index 파이프가 저장될 파이프 인덱스입니다.
+ * @param pipeName 파이프의 이름
+ * @returns T 파이프의 인스턴스입니다.
  *
  * @codeGenApi
  */
@@ -44,8 +44,8 @@ export function ɵɵpipe(index: number, pipeName: string): any {
   const adjustedIndex = index + HEADER_OFFSET;
 
   if (tView.firstCreatePass) {
-    // The `getPipeDef` throws if a pipe with a given name is not found
-    // (so we use non-null assertion below).
+    // 주어진 이름의 파이프가 발견되지 않으면 `getPipeDef`가 오류를 발생시킵니다
+    // (따라서 아래에서 널이 아님을 보장합니다).
     pipeDef = getPipeDef(pipeName, tView.pipeRegistry)!;
     tView.data[adjustedIndex] = pipeDef;
     if (pipeDef.onDestroy) {
@@ -66,34 +66,33 @@ export function ɵɵpipe(index: number, pipeName: string): any {
   }
   const previousInjectImplementation = setInjectImplementation(ɵɵdirectiveInject);
   try {
-    // DI for pipes is supposed to behave like directives when placed on a component
-    // host node, which means that we have to disable access to `viewProviders`.
+    // 파이프에 대한 DI는 구성 요소 호스트 노드에 배치될 때 지시문처럼 동작해야 하며,
+    // 그러므로 `viewProviders`에 대한 접근을 비활성화해야 합니다.
     const previousIncludeViewProviders = setIncludeViewProviders(false);
     const pipeInstance = pipeFactory();
     setIncludeViewProviders(previousIncludeViewProviders);
     store(tView, getLView(), adjustedIndex, pipeInstance);
     return pipeInstance;
   } finally {
-    // we have to restore the injector implementation in finally, just in case the creation of the
-    // pipe throws an error.
+    // 파이프 생성 중 오류가 발생할 경우를 대비하여 finally에서 인젝터 구현을 복원해야 합니다.
     setInjectImplementation(previousInjectImplementation);
     ngDevMode && setInjectorProfilerContext(previousInjectorProfilerContext!);
   }
 }
 
 /**
- * Searches the pipe registry for a pipe with the given name. If one is found,
- * returns the pipe. Otherwise, an error is thrown because the pipe cannot be resolved.
+ * 주어진 이름의 파이프를 파이프 레지스트리에서 검색합니다. 하나가 발견되면,
+ * 해당 파이프를 반환합니다. 그렇지 않으면, 파이프를 해결할 수 없기 때문에 오류가 발생합니다.
  *
- * @param name Name of pipe to resolve
- * @param registry Full list of available pipes
- * @returns Matching PipeDef
+ * @param name 해결할 파이프의 이름
+ * @param registry 사용 가능한 파이프의 전체 목록
+ * @returns 일치하는 PipeDef
  */
 function getPipeDef(name: string, registry: PipeDefList | null): PipeDef<any> | undefined {
   if (registry) {
     if (ngDevMode) {
       const pipes = registry.filter((pipe) => pipe.name === name);
-      // TODO: Throw an error in the next major
+      // TODO: 다음 주요 릴리스에서 오류 발생
       if (pipes.length > 1) {
         console.warn(
           formatRuntimeError(
@@ -117,54 +116,54 @@ function getPipeDef(name: string, registry: PipeDefList | null): PipeDef<any> | 
 }
 
 /**
- * Generates a helpful error message for the user when multiple pipes match the name.
+ * 이름이 일치하는 파이프가 여러 개일 때 사용자에게 유용한 오류 메시지를 생성합니다.
  *
- * @param name Name of the pipe
- * @returns The error message
+ * @param name 파이프의 이름
+ * @returns 오류 메시지
  */
 function getMultipleMatchingPipesMessage(name: string) {
   const lView = getLView();
   const declarationLView = lView[DECLARATION_COMPONENT_VIEW] as LView<Type<unknown>>;
   const context = declarationLView[CONTEXT];
   const hostIsStandalone = isHostComponentStandalone(lView);
-  const componentInfoMessage = context ? ` in the '${context.constructor.name}' component` : '';
-  const verifyMessage = `check ${
-    hostIsStandalone ? "'@Component.imports' of this component" : 'the imports of this module'
+  const componentInfoMessage = context ? ` '${context.constructor.name}' 구성 요소 내에서` : '';
+  const verifyMessage = `확인 ${
+    hostIsStandalone ? "'@Component.imports'의 이 구성 요소" : '이 모듈의 가져오기'
   }`;
-  const errorMessage = `Multiple pipes match the name \`${name}\`${componentInfoMessage}. ${verifyMessage}`;
+  const errorMessage = `여러 개의 파이프가 이름 \`${name}\`과 일치합니다${componentInfoMessage}. ${verifyMessage}`;
   return errorMessage;
 }
 
 /**
- * Generates a helpful error message for the user when a pipe is not found.
+ * 파이프를 찾을 수 없을 때 사용자에게 유용한 오류 메시지를 생성합니다.
  *
- * @param name Name of the missing pipe
- * @returns The error message
+ * @param name 누락된 파이프의 이름
+ * @returns 오류 메시지
  */
 function getPipeNotFoundErrorMessage(name: string) {
   const lView = getLView();
   const declarationLView = lView[DECLARATION_COMPONENT_VIEW] as LView<Type<unknown>>;
   const context = declarationLView[CONTEXT];
   const hostIsStandalone = isHostComponentStandalone(lView);
-  const componentInfoMessage = context ? ` in the '${context.constructor.name}' component` : '';
-  const verifyMessage = `Verify that it is ${
+  const componentInfoMessage = context ? ` '${context.constructor.name}' 구성 요소 내에서` : '';
+  const verifyMessage = `확인합니다 ${
     hostIsStandalone
-      ? "included in the '@Component.imports' of this component"
-      : 'declared or imported in this module'
+      ? "'@Component.imports'에 포함되어야 합니다."
+      : '이 모듈에서 선언되거나 가져와야 합니다.'
   }`;
-  const errorMessage = `The pipe '${name}' could not be found${componentInfoMessage}. ${verifyMessage}`;
+  const errorMessage = `파이프 '${name}'를 찾을 수 없습니다${componentInfoMessage}. ${verifyMessage}`;
   return errorMessage;
 }
 
 /**
- * Invokes a pipe with 1 arguments.
+ * 1개의 인수로 파이프를 호출합니다.
  *
- * This instruction acts as a guard to {@link PipeTransform#transform} invoking
- * the pipe only when an input to the pipe changes.
+ * 이 지시는 {@link PipeTransform#transform} 호출에 대한 보호 역할을 하며
+ * 파이프 입력이 변경될 때만 파이프를 호출합니다.
  *
- * @param index Pipe index where the pipe was stored on creation.
- * @param offset the binding offset
- * @param v1 1st argument to {@link PipeTransform#transform}.
+ * @param index 파이프가 생성 중에 저장된 파이프 인덱스입니다.
+ * @param offset 바인딩 오프셋
+ * @param v1 {@link PipeTransform#transform}의 1번째 인수입니다.
  *
  * @codeGenApi
  */
@@ -185,15 +184,15 @@ export function ɵɵpipeBind1(index: number, offset: number, v1: any): any {
 }
 
 /**
- * Invokes a pipe with 2 arguments.
+ * 2개의 인수로 파이프를 호출합니다.
  *
- * This instruction acts as a guard to {@link PipeTransform#transform} invoking
- * the pipe only when an input to the pipe changes.
+ * 이 지시는 {@link PipeTransform#transform} 호출에 대한 보호 역할을 하며
+ * 파이프 입력이 변경될 때만 파이프를 호출합니다.
  *
- * @param index Pipe index where the pipe was stored on creation.
- * @param slotOffset the offset in the reserved slot space
- * @param v1 1st argument to {@link PipeTransform#transform}.
- * @param v2 2nd argument to {@link PipeTransform#transform}.
+ * @param index 파이프가 생성 중에 저장된 파이프 인덱스입니다.
+ * @param slotOffset 예약된 슬롯 공간의 오프셋입니다.
+ * @param v1 {@link PipeTransform#transform}의 1번째 인수입니다.
+ * @param v2 {@link PipeTransform#transform}의 2번째 인수입니다.
  *
  * @codeGenApi
  */
@@ -215,16 +214,16 @@ export function ɵɵpipeBind2(index: number, slotOffset: number, v1: any, v2: an
 }
 
 /**
- * Invokes a pipe with 3 arguments.
+ * 3개의 인수로 파이프를 호출합니다.
  *
- * This instruction acts as a guard to {@link PipeTransform#transform} invoking
- * the pipe only when an input to the pipe changes.
+ * 이 지시는 {@link PipeTransform#transform} 호출에 대한 보호 역할을 하며
+ * 파이프 입력이 변경될 때만 파이프를 호출합니다.
  *
- * @param index Pipe index where the pipe was stored on creation.
- * @param slotOffset the offset in the reserved slot space
- * @param v1 1st argument to {@link PipeTransform#transform}.
- * @param v2 2nd argument to {@link PipeTransform#transform}.
- * @param v3 4rd argument to {@link PipeTransform#transform}.
+ * @param index 파이프가 생성 중에 저장된 파이프 인덱스입니다.
+ * @param slotOffset 예약된 슬롯 공간의 오프셋입니다.
+ * @param v1 {@link PipeTransform#transform}의 1번째 인수입니다.
+ * @param v2 {@link PipeTransform#transform}의 2번째 인수입니다.
+ * @param v3 {@link PipeTransform#transform}의 3번째 인수입니다.
  *
  * @codeGenApi
  */
@@ -247,17 +246,17 @@ export function ɵɵpipeBind3(index: number, slotOffset: number, v1: any, v2: an
 }
 
 /**
- * Invokes a pipe with 4 arguments.
+ * 4개의 인수로 파이프를 호출합니다.
  *
- * This instruction acts as a guard to {@link PipeTransform#transform} invoking
- * the pipe only when an input to the pipe changes.
+ * 이 지시는 {@link PipeTransform#transform} 호출에 대한 보호 역할을 하며
+ * 파이프 입력이 변경될 때만 파이프를 호출합니다.
  *
- * @param index Pipe index where the pipe was stored on creation.
- * @param slotOffset the offset in the reserved slot space
- * @param v1 1st argument to {@link PipeTransform#transform}.
- * @param v2 2nd argument to {@link PipeTransform#transform}.
- * @param v3 3rd argument to {@link PipeTransform#transform}.
- * @param v4 4th argument to {@link PipeTransform#transform}.
+ * @param index 파이프가 생성 중에 저장된 파이프 인덱스입니다.
+ * @param slotOffset 예약된 슬롯 공간의 오프셋입니다.
+ * @param v1 {@link PipeTransform#transform}의 1번째 인수입니다.
+ * @param v2 {@link PipeTransform#transform}의 2번째 인수입니다.
+ * @param v3 {@link PipeTransform#transform}의 3번째 인수입니다.
+ * @param v4 {@link PipeTransform#transform}의 4번째 인수입니다.
  *
  * @codeGenApi
  */
@@ -288,14 +287,14 @@ export function ɵɵpipeBind4(
 }
 
 /**
- * Invokes a pipe with variable number of arguments.
+ * 가변 개수의 인수로 파이프를 호출합니다.
  *
- * This instruction acts as a guard to {@link PipeTransform#transform} invoking
- * the pipe only when an input to the pipe changes.
+ * 이 지시는 {@link PipeTransform#transform} 호출에 대한 보호 역할을 하며
+ * 파이프 입력이 변경될 때만 파이프를 호출합니다.
  *
- * @param index Pipe index where the pipe was stored on creation.
- * @param slotOffset the offset in the reserved slot space
- * @param values Array of arguments to pass to {@link PipeTransform#transform} method.
+ * @param index 파이프가 생성 중에 저장된 파이프 인덱스입니다.
+ * @param slotOffset 예약된 슬롯 공간의 오프셋입니다.
+ * @param values {@link PipeTransform#transform} 메서드에 전달할 인수 배열입니다.
  *
  * @codeGenApi
  */

@@ -15,16 +15,14 @@ import {applyValueToInputField} from '../apply_value_input_field';
 import {DirectiveDef, DirectiveDefFeature} from '../interfaces/definition';
 
 /**
- * The NgOnChangesFeature decorates a component with support for the ngOnChanges
- * lifecycle hook, so it should be included in any component that implements
- * that hook.
+ * NgOnChangesFeature는 ngOnChanges 생명주기 훅을 지원하는 컴포넌트를 장식하므로,
+ * 해당 훅을 구현하는 모든 컴포넌트에 포함되어야 합니다.
  *
- * If the component or directive uses inheritance, the NgOnChangesFeature MUST
- * be included as a feature AFTER {@link InheritDefinitionFeature}, otherwise
- * inherited properties will not be propagated to the ngOnChanges lifecycle
- * hook.
+ * 컴포넌트나 지시문이 상속을 사용하는 경우, NgOnChangesFeature는
+ * {@link InheritDefinitionFeature} 이후에 기능으로 포함되어야 하며, 그렇지 않으면
+ * 상속된 속성이 ngOnChanges 생명주기 훅으로 전파되지 않습니다.
  *
- * Example usage:
+ * 사용 예:
  *
  * ```ts
  * static ɵcmp = defineComponent({
@@ -39,8 +37,8 @@ import {DirectiveDef, DirectiveDefFeature} from '../interfaces/definition';
 export const ɵɵNgOnChangesFeature: () => DirectiveDefFeature = /* @__PURE__ */ (() => {
   const ɵɵNgOnChangesFeatureImpl = () => NgOnChangesFeatureImpl;
 
-  // This option ensures that the ngOnChanges lifecycle hook will be inherited
-  // from superclasses (in InheritDefinitionFeature).
+  // 이 옵션은 ngOnChanges 생명주기 훅이
+  // 슈퍼클래스(상속정의기능)에서 상속될 것임을 보장합니다.
   /** @nocollapse */
   ɵɵNgOnChangesFeatureImpl.ngInherit = true;
 
@@ -55,14 +53,14 @@ export function NgOnChangesFeatureImpl<T>(definition: DirectiveDef<T>) {
 }
 
 /**
- * This is a synthetic lifecycle hook which gets inserted into `TView.preOrderHooks` to simulate
- * `ngOnChanges`.
+ * 이는 `TView.preOrderHooks`에 삽입되어 `ngOnChanges`를 시뮬레이션하는
+ * 합성 생명주기 훅입니다.
  *
- * The hook reads the `NgSimpleChangesStore` data from the component instance and if changes are
- * found it invokes `ngOnChanges` on the component instance.
+ * 이 훅은 컴포넌트 인스턴스에서 `NgSimpleChangesStore` 데이터를 읽고,
+ * 변경 사항이 발견되면 컴포넌트 인스턴스에서 `ngOnChanges`를 호출합니다.
  *
- * @param this Component instance. Because this function gets inserted into `TView.preOrderHooks`,
- *     it is guaranteed to be called with component instance.
+ * @param this 컴포넌트 인스턴스. 이 함수는 `TView.preOrderHooks`에 삽입되므로,
+ *     컴포넌트 인스턴스와 함께 호출되는 것이 보장됩니다.
  */
 function rememberChangeHistoryAndInvokeOnChangesHook(this: OnChanges) {
   const simpleChangesStore = getSimpleChangesStore(this);
@@ -73,8 +71,8 @@ function rememberChangeHistoryAndInvokeOnChangesHook(this: OnChanges) {
     if (previous === EMPTY_OBJ) {
       simpleChangesStore!.previous = current;
     } else {
-      // New changes are copied to the previous store, so that we don't lose history for inputs
-      // which were not changed this time
+      // 새로운 변경 사항이 이전 저장소에 복사되어
+      // 이번에 변경되지 않은 입력에 대한 기록을 잃지 않도록 합니다.
       for (let key in current) {
         previous[key] = current[key];
       }
@@ -93,7 +91,7 @@ function ngOnChangesSetInput<T>(
   privateName: string,
 ): void {
   const declaredName = (this.declaredInputs as {[key: string]: string})[publicName];
-  ngDevMode && assertString(declaredName, 'Name of input in ngOnChanges has to be a string');
+  ngDevMode && assertString(declaredName, 'ngOnChanges의 입력 이름은 문자열이어야 합니다.');
   const simpleChangesStore =
     getSimpleChangesStore(instance) ||
     setSimpleChangesStore(instance, {previous: EMPTY_OBJ, current: null});
@@ -120,8 +118,8 @@ function setSimpleChangesStore(instance: any, store: NgSimpleChangesStore): NgSi
 }
 
 /**
- * Data structure which is monkey-patched on the component instance and used by `ngOnChanges`
- * life-cycle hook to track previous input values.
+ * 컴포넌트 인스턴스에 원주율 패치되어 `ngOnChanges`
+ * 생명주기 훅에 의해 이전 입력 값을 추적하는 데 사용되는 데이터 구조입니다.
  */
 interface NgSimpleChangesStore {
   previous: SimpleChanges;

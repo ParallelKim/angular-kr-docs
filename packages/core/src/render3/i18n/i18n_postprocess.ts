@@ -6,7 +6,7 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 
-// i18nPostprocess consts
+// i18nPostprocess 상수
 const ROOT_TEMPLATE_ID = 0;
 const PP_MULTI_VALUE_PLACEHOLDERS_REGEXP = /\[(�.+?�?)\]/;
 const PP_PLACEHOLDERS_REGEXP = /\[(�.+?�?)\]|(�\/?\*\d+:\d+�)/g;
@@ -16,27 +16,25 @@ const PP_ICUS_REGEXP = /�I18N_EXP_(ICU(_\d+)?)�/g;
 const PP_CLOSE_TEMPLATE_REGEXP = /\/\*/;
 const PP_TEMPLATE_ID_REGEXP = /\d+\:(\d+)/;
 
-// Parsed placeholder structure used in postprocessing (within `i18nPostprocess` function)
-// Contains the following fields: [templateId, isCloseTemplateTag, placeholder]
+// 후처리에 사용되는 구문 분석된 자리 표시자 구조 (i18nPostprocess 함수 내)
+// 다음 필드를 포함합니다: [templateId, isCloseTemplateTag, placeholder]
 type PostprocessPlaceholder = [number, boolean, string];
 
 /**
- * Handles message string post-processing for internationalization.
+ * 국제화를 위한 메시지 문자열 후처리를 처리합니다.
  *
- * Handles message string post-processing by transforming it from intermediate
- * format (that might contain some markers that we need to replace) to the final
- * form, consumable by i18nStart instruction. Post processing steps include:
+ * 후처리는 중간 형식 (교체해야 할 일부 마커가 포함될 수 있음)에서 최종 형식으로 변환하여
+ * i18nStart 명령에서 사용할 수 있도록 합니다. 후처리 단계는 다음을 포함합니다:
  *
- * 1. Resolve all multi-value cases (like [�*1:1��#2:1�|�#4:1�|�5�])
- * 2. Replace all ICU vars (like "VAR_PLURAL")
- * 3. Replace all placeholders used inside ICUs in a form of {PLACEHOLDER}
- * 4. Replace all ICU references with corresponding values (like �ICU_EXP_ICU_1�)
- *    in case multiple ICUs have the same placeholder name
+ * 1. 모든 다중 값 사례 해결 (예: [�*1:1��#2:1�|�#4:1�|�5�])
+ * 2. 모든 ICU 변수 교체 (예: "VAR_PLURAL")
+ * 3. {PLACEHOLDER} 형식으로 ICU 내부에서 사용되는 모든 자리 표시자 교체
+ * 4. 여러 ICU가 동일한 자리 표시자 이름을 가질 경우 대응하는 값으로 모든 ICU 참조 교체
  *
- * @param message Raw translation string for post processing
- * @param replacements Set of replacements that should be applied
+ * @param message 후처리를 위한 원시 번역 문자열
+ * @param replacements 적용해야 할 교체 집합
  *
- * @returns Transformed string that can be consumed by i18nStart instruction
+ * @returns i18nStart 명령에서 사용할 수 있는 변환된 문자열
  *
  * @codeGenApi
  */
@@ -45,14 +43,14 @@ export function i18nPostprocess(
   replacements: {[key: string]: string | string[]} = {},
 ): string {
   /**
-   * Step 1: resolve all multi-value placeholders like [�#5�|�*1:1��#2:1�|�#4:1�]
+   * 단계 1: [�#5�|�*1:1��#2:1�|�#4:1�]와 같은 모든 다중 값 자리 표시자를 해결합니다.
    *
-   * Note: due to the way we process nested templates (BFS), multi-value placeholders are typically
-   * grouped by templates, for example: [�#5�|�#6�|�#1:1�|�#3:2�] where �#5� and �#6� belong to root
-   * template, �#1:1� belong to nested template with index 1 and �#1:2� - nested template with index
-   * 3. However in real templates the order might be different: i.e. �#1:1� and/or �#3:2� may go in
-   * front of �#6�. The post processing step restores the right order by keeping track of the
-   * template id stack and looks for placeholders that belong to the currently active template.
+   * 주의: 중첩 템플릿을 처리하는 방식 (BFS)으로 인해, 다중 값 자리 표시자는 일반적으로
+   * 템플릿별로 그룹화됩니다. 예: [�#5�|�#6�|�#1:1�|�#3:2�] 에서 �#5�와 �#6�는 루트
+   * 템플릿에 속하고, �#1:1�은 인덱스 1의 중첩 템플릿에 속하며, �#1:2�는 인덱스
+   * 3의 중첩 템플릿에 속합니다. 그러나 실제 템플릿에서는 순서가 다를 수 있습니다:
+   * 즉, �#1:1� 및/or �#3:2�가 �#6� 앞에 올 수 있습니다. 후처리 단계는
+   * 템플릿 id 스택을 추적하여 현재 활성 템플릿에 속하는 자리 표시자를 찾습니다.
    */
   let result: string = message;
   if (PP_MULTI_VALUE_PLACEHOLDERS_REGEXP.test(message)) {
@@ -77,48 +75,47 @@ export function i18nPostprocess(
 
       const currentTemplateId = templateIdsStack[templateIdsStack.length - 1];
       let idx = 0;
-      // find placeholder index that matches current template id
+      // 현재 템플릿 id와 일치하는 자리 표시자 인덱스를 찾습니다.
       for (let i = 0; i < placeholders.length; i++) {
         if (placeholders[i][0] === currentTemplateId) {
           idx = i;
           break;
         }
       }
-      // update template id stack based on the current tag extracted
+      // 추출된 현재 태그에 따라 템플릿 id 스택을 업데이트합니다.
       const [templateId, isCloseTemplateTag, placeholder] = placeholders[idx];
       if (isCloseTemplateTag) {
         templateIdsStack.pop();
       } else if (currentTemplateId !== templateId) {
         templateIdsStack.push(templateId);
       }
-      // remove processed tag from the list
+      // 처리된 태그를 목록에서 제거합니다.
       placeholders.splice(idx, 1);
       return placeholder;
     });
   }
 
-  // return current result if no replacements specified
+  // 교체가 지정되지 않은 경우 현재 결과를 반환합니다.
   if (!Object.keys(replacements).length) {
     return result;
   }
 
   /**
-   * Step 2: replace all ICU vars (like "VAR_PLURAL")
+   * 단계 2: 모든 ICU 변수 (예: "VAR_PLURAL")를 교체합니다.
    */
   result = result.replace(PP_ICU_VARS_REGEXP, (match, start, key, _type, _idx, end): string => {
     return replacements.hasOwnProperty(key) ? `${start}${replacements[key]}${end}` : match;
   });
 
   /**
-   * Step 3: replace all placeholders used inside ICUs in a form of {PLACEHOLDER}
+   * 단계 3: {PLACEHOLDER} 형식으로 ICU 내부에서 사용되는 모든 자리 표시자를 교체합니다.
    */
   result = result.replace(PP_ICU_PLACEHOLDERS_REGEXP, (match, key): string => {
     return replacements.hasOwnProperty(key) ? (replacements[key] as string) : match;
   });
 
   /**
-   * Step 4: replace all ICU references with corresponding values (like �ICU_EXP_ICU_1�) in case
-   * multiple ICUs have the same placeholder name
+   * 단계 4: 여러 ICU가 동일한 자리 표시자 이름을 가질 경우 대응하는 값으로 모든 ICU 참조를 교체합니다.
    */
   result = result.replace(PP_ICUS_REGEXP, (match, key): string => {
     if (replacements.hasOwnProperty(key)) {

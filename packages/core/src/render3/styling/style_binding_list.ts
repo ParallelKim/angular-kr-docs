@@ -26,14 +26,13 @@ import {TData} from '../interfaces/view';
 import {getTView} from '../state';
 
 /**
- * NOTE: The word `styling` is used interchangeably as style or class styling.
+ * 주의: "styling"이라는 단어는 스타일 또는 클래스 스타일링으로 서로 바꿔 사용할 수 있습니다.
  *
- * This file contains code to link styling instructions together so that they can be replayed in
- * priority order. The file exists because Ivy styling instruction execution order does not match
- * that of the priority order. The purpose of this code is to create a linked list so that the
- * instructions can be traversed in priority order when computing the styles.
+ * 이 파일은 스타일링 지침들을 연결하여 우선 순위 순서로 재생할 수 있도록 하는 코드를 포함합니다.
+ * 이 파일은 Ivy 스타일링 지침 실행 순서가 우선 순위 순서와 일치하지 않기 때문에 존재합니다.
+ * 이 코드는 스타일을 계산할 때 지침을 우선 순위 순서로 탐색할 수 있도록 연결 리스트를 생성하는 것이 목적입니다.
  *
- * Assume we are dealing with the following code:
+ * 다음 코드와 관련이 있다고 가정해 보세요:
  * ```angular-ts
  * @Component({
  *   template: `
@@ -45,7 +44,7 @@ import {getTView} from '../state';
  * class ExampleComponent {
  *   static ngComp = ... {
  *     ...
- *     // Compiler ensures that `ɵɵstyleProp` is after `ɵɵstyleMap`
+ *     // 컴파일러는 `ɵɵstyleProp`가 `ɵɵstyleMap` 이후에 오도록 보장합니다.
  *     ɵɵstyleMap({color: '#001'});
  *     ɵɵstyleProp('color', '#002');
  *     ...
@@ -61,7 +60,7 @@ import {getTView} from '../state';
  *
  *   static ngDir = ... {
  *     ...
- *     // Compiler ensures that `ɵɵstyleProp` is after `ɵɵstyleMap`
+ *     // 컴파일러는 `ɵɵstyleProp`가 `ɵɵstyleMap` 이후에 오도록 보장합니다.
  *     ɵɵstyleMap({color: '#005'});
  *     ɵɵstyleProp('color', '#006');
  *     ...
@@ -77,7 +76,7 @@ import {getTView} from '../state';
  *
  *   static ngDir = ... {
  *     ...
- *     // Compiler ensures that `ɵɵstyleProp` is after `ɵɵstyleMap`
+ *     // 컴파일러는 `ɵɵstyleProp`가 `ɵɵstyleMap` 이후에 오도록 보장합니다.
  *     ɵɵstyleMap({color: '#007'});
  *     ɵɵstyleProp('color', '#008');
  *     ...
@@ -93,7 +92,7 @@ import {getTView} from '../state';
  *
  *   static ngComp = ... {
  *     ...
- *     // Compiler ensures that `ɵɵstyleProp` is after `ɵɵstyleMap`
+ *     // 컴파일러는 `ɵɵstyleProp`가 `ɵɵstyleMap` 이후에 오도록 보장합니다.
  *     ɵɵstyleMap({color: '#003'});
  *     ɵɵstyleProp('color', '#004');
  *     ...
@@ -101,52 +100,50 @@ import {getTView} from '../state';
  * }
  * ```
  *
- * The Order of instruction execution is:
+ * 지침 실행 순서:
  *
- * NOTE: the comment binding location is for illustrative purposes only.
- *
- * ```ts
- * // Template: (ExampleComponent)
- *     ɵɵstyleMap({color: '#001'});   // Binding index: 10
- *     ɵɵstyleProp('color', '#002');  // Binding index: 12
- * // MyComponent
- *     ɵɵstyleMap({color: '#003'});   // Binding index: 20
- *     ɵɵstyleProp('color', '#004');  // Binding index: 22
- * // Style1Directive
- *     ɵɵstyleMap({color: '#005'});   // Binding index: 24
- *     ɵɵstyleProp('color', '#006');  // Binding index: 26
- * // Style2Directive
- *     ɵɵstyleMap({color: '#007'});   // Binding index: 28
- *     ɵɵstyleProp('color', '#008');  // Binding index: 30
- * ```
- *
- * The correct priority order of concatenation is:
+ * 주의: 주석 바인딩 위치는 설명을 위해서만 제공됩니다.
  *
  * ```ts
+ * // 템플릿: (ExampleComponent)
+ *     ɵɵstyleMap({color: '#001'});   // 바인딩 인덱스: 10
+ *     ɵɵstyleProp('color', '#002');  // 바인딩 인덱스: 12
  * // MyComponent
- *     ɵɵstyleMap({color: '#003'});   // Binding index: 20
- *     ɵɵstyleProp('color', '#004');  // Binding index: 22
+ *     ɵɵstyleMap({color: '#003'});   // 바인딩 인덱스: 20
+ *     ɵɵstyleProp('color', '#004');  // 바인딩 인덱스: 22
  * // Style1Directive
- *     ɵɵstyleMap({color: '#005'});   // Binding index: 24
- *     ɵɵstyleProp('color', '#006');  // Binding index: 26
+ *     ɵɵstyleMap({color: '#005'});   // 바인딩 인덱스: 24
+ *     ɵɵstyleProp('color', '#006');  // 바인딩 인덱스: 26
  * // Style2Directive
- *     ɵɵstyleMap({color: '#007'});   // Binding index: 28
- *     ɵɵstyleProp('color', '#008');  // Binding index: 30
- * // Template: (ExampleComponent)
- *     ɵɵstyleMap({color: '#001'});   // Binding index: 10
- *     ɵɵstyleProp('color', '#002');  // Binding index: 12
+ *     ɵɵstyleMap({color: '#007'});   // 바인딩 인덱스: 28
+ *     ɵɵstyleProp('color', '#008');  // 바인딩 인덱스: 30
  * ```
  *
- * What color should be rendered?
+ * 올바른 연결의 우선 순위는 다음과 같습니다:
  *
- * Once the items are correctly sorted in the list, the answer is simply the last item in the
- * concatenation list which is `#002`.
+ * ```ts
+ * // MyComponent
+ *     ɵɵstyleMap({color: '#003'});   // 바인딩 인덱스: 20
+ *     ɵɵstyleProp('color', '#004');  // 바인딩 인덱스: 22
+ * // Style1Directive
+ *     ɵɵstyleMap({color: '#005'});   // 바인딩 인덱스: 24
+ *     ɵɵstyleProp('color', '#006');  // 바인딩 인덱스: 26
+ * // Style2Directive
+ *     ɵɵstyleMap({color: '#007'});   // 바인딩 인덱스: 28
+ *     ɵɵstyleProp('color', '#008');  // 바인딩 인덱스: 30
+ * // 템플릿: (ExampleComponent)
+ *     ɵɵstyleMap({color: '#001'});   // 바인딩 인덱스: 10
+ *     ɵɵstyleProp('color', '#002');  // 바인딩 인덱스: 12
+ * ```
  *
- * To do so we keep a linked list of all of the bindings which pertain to this element.
- * Notice that the bindings are inserted in the order of execution, but the `TView.data` allows
- * us to traverse them in the order of priority.
+ * 어떤 색상이 렌더링 되어야 할까요?
  *
- * |Idx|`TView.data`|`LView`          | Notes
+ * 아이템이 목록에서 올바르게 정렬되면, 답은 단순히 연결 목록의 마지막 아이템인 `#002`입니다.
+ *
+ * 이를 위해 우리는 이 요소와 관련된 모든 바인딩의 연결 리스트를 유지합니다.
+ * 바인딩은 실행 순서에 따라 삽입되지만, `TView.data`는 우선 순위 순서로 탐색할 수 있도록 합니다.
+ *
+ * |Idx|`TView.data`|`LView`          | 비고
  * |---|------------|-----------------|--------------
  * |...|            |                 |
  * |10 |`null`      |`{color: '#001'}`| `ɵɵstyleMap('color', {color: '#001'})`
@@ -167,38 +164,31 @@ import {getTView} from '../state';
  * |30 |`color`     |`'#008'`         | `ɵɵstyleProp('color', '#008')`
  * |31 |`28 | 10`   | ...             |
  *
- * The above data structure allows us to re-concatenate the styling no matter which data binding
- * changes.
+ * 위의 데이터 구조는 어떤 데이터 바인딩이 변경되더라도 스타일링을 재결합할 수 있게 해줍니다.
  *
- * NOTE: in addition to keeping track of next/previous index the `TView.data` also stores prev/next
- * duplicate bit. The duplicate bit if true says there either is a binding with the same name or
- * there is a map (which may contain the name). This information is useful in knowing if other
- * styles with higher priority need to be searched for overwrites.
+ * 주의: 다음/이전 인덱스를 추적하는 것 외에도 `TView.data`는 이전/다음 중복 비트를 저장합니다.
+ * 중복 비트가 true일 경우, 동일한 이름을 가진 바인딩이 존재하거나 해당 이름을 포함할 수 있는 맵이 있다는 것을 의미합니다. 이 정보는 우선 순위가 더 높은 다른 스타일을 검색해야 할 필요성을 아는 데 유용합니다.
  *
- * NOTE: See `should support example in 'tnode_linked_list.ts' documentation` in
- * `tnode_linked_list_spec.ts` for working example.
+ * 주의: 작동 예제는 `tnode_linked_list_spec.ts`의 `tnode_linked_list.ts` 문서에서 확인할 수 있습니다.
  */
 let __unused_const_as_closure_does_not_like_standalone_comment_blocks__: undefined;
 
 /**
- * Insert new `tStyleValue` at `TData` and link existing style bindings such that we maintain linked
- * list of styles and compute the duplicate flag.
+ * 새로운 `tStyleValue`를 `TData`에 삽입하고 기존 스타일 바인딩을 연결하여 연결 리스트를 유지하고 중복 플래그를 계산합니다.
  *
- * Note: this function is executed during `firstUpdatePass` only to populate the `TView.data`.
+ * 참고: 이 함수는 `firstUpdatePass` 동안에만 실행되어 `TView.data`를 채웁니다.
  *
- * The function works by keeping track of `tStylingRange` which contains two pointers pointing to
- * the head/tail of the template portion of the styles.
- *  - if `isHost === false` (we are template) then insertion is at tail of `TStylingRange`
- *  - if `isHost === true` (we are host binding) then insertion is at head of `TStylingRange`
+ * 이 함수는 스타일의 템플릿 부분의 머리/꼬리를 가리키는 두 개의 포인터를 포함하는 `tStylingRange`를 추적하여 작동합니다.
+ *  - `isHost === false`인 경우(템플릿일 때) `TStylingRange`의 꼬리에 삽입됩니다.
+ *  - `isHost === true`인 경우(호스트 바인딩일 때) `TStylingRange`의 머리에 삽입됩니다.
  *
- * @param tData The `TData` to insert into.
- * @param tNode `TNode` associated with the styling element.
- * @param tStylingKey See `TStylingKey`.
- * @param index location of where `tStyleValue` should be stored (and linked into list.)
- * @param isHostBinding `true` if the insertion is for a `hostBinding`. (insertion is in front of
- *               template.)
- * @param isClassBinding True if the associated `tStylingKey` as a `class` styling.
- *                       `tNode.classBindings` should be used (or `tNode.styleBindings` otherwise.)
+ * @param tData 삽입할 `TData`.
+ * @param tNode 스타일링 요소와 관련된 `TNode`.
+ * @param tStylingKey `TStylingKey` 참조.
+ * @param index `tStyleValue`가 저장(및 리스트에 연결)되어야 하는 위치.
+ * @param isHostBinding `true`이면 삽입이 `hostBinding`에 해당합니다. (삽입은 템플릿 앞에 이루어집니다.)
+ * @param isClassBinding `true`이면 관련된 `tStylingKey`가 `class` 스타일링입니다.
+ *                       `tNode.classBindings`를 사용해야 하며 (그렇지 않으면 `tNode.styleBindings` 사용).
  */
 export function insertTStylingBinding(
   tData: TData,
@@ -217,74 +207,72 @@ export function insertTStylingBinding(
   let isKeyDuplicateOfStatic = false;
   let tStylingKey: TStylingKeyPrimitive;
   if (Array.isArray(tStylingKeyWithStatic)) {
-    // We are case when the `TStylingKey` contains static fields as well.
+    // 여기서는 `TStylingKey`가 정적 필드를 포함하는 경우입니다.
     const staticKeyValueArray = tStylingKeyWithStatic as KeyValueArray<any>;
-    tStylingKey = staticKeyValueArray[1]; // unwrap.
-    // We need to check if our key is present in the static so that we can mark it as duplicate.
+    tStylingKey = staticKeyValueArray[1]; // 해제.
+    // 정적에서 우리의 키가 존재하는지 확인하여 중복으로 표시할 수 있습니다.
     if (
       tStylingKey === null ||
       keyValueArrayIndexOf(staticKeyValueArray, tStylingKey as string) > 0
     ) {
-      // tStylingKey is present in the statics, need to mark it as duplicate.
+      // tStylingKey는 정적에 존재하므로 중복으로 표시해야 합니다.
       isKeyDuplicateOfStatic = true;
     }
   } else {
     tStylingKey = tStylingKeyWithStatic;
   }
   if (isHostBinding) {
-    // We are inserting host bindings
+    // 호스트 바인딩을 삽입하고 있습니다.
 
-    // If we don't have template bindings then `tail` is 0.
+    // 템플릿 바인딩이 없으면 `tail`은 0입니다.
     const hasTemplateBindings = tmplTail !== 0;
-    // This is important to know because that means that the `head` can't point to the first
-    // template bindings (there are none.) Instead the head points to the tail of the template.
+    // 이것은 중요합니다. 즉, `head`가 첫 번째 템플릿 바인딩을 가리킬 수 없다는 것을 의미합니다 (없기 때문입니다).
+    // 대신 `head`는 템플릿의 꼬리를 가리킵니다.
     if (hasTemplateBindings) {
-      // template head's "prev" will point to last host binding or to 0 if no host bindings yet
+      // 템플릿 헤드의 "이전"은 마지막 호스트 바인딩 또는 호스트 바인딩이 없으면 0을 가리킵니다.
       const previousNode = getTStylingRangePrev(tData[tmplHead + 1] as TStylingRange);
       tData[index + 1] = toTStylingRange(previousNode, tmplHead);
-      // if a host binding has already been registered, we need to update the next of that host
-      // binding to point to this one
+      // 이미 등록된 호스트 바인딩이 있다면, 그 호스트 바인딩의 다음을 현재로 가리키게 업데이트해야 합니다.
       if (previousNode !== 0) {
-        // We need to update the template-tail value to point to us.
+        // 템플릿-테일 값을 현재로 업데이트해야 합니다.
         tData[previousNode + 1] = setTStylingRangeNext(
           tData[previousNode + 1] as TStylingRange,
           index,
         );
       }
-      // The "previous" of the template binding head should point to this host binding
+      // 템플릿 바인딩 헤드의 "이전"은 이 호스트 바인딩을 가리켜야 합니다.
       tData[tmplHead + 1] = setTStylingRangePrev(tData[tmplHead + 1] as TStylingRange, index);
     } else {
       tData[index + 1] = toTStylingRange(tmplHead, 0);
-      // if a host binding has already been registered, we need to update the next of that host
-      // binding to point to this one
+      // 호스트 바인딩이 이미 등록되었다면, 그 호스트 바인딩의 다음을 현재로 가리키게 업데이트해야 합니다.
       if (tmplHead !== 0) {
-        // We need to update the template-tail value to point to us.
+        // 템플릿-테일 값을 현재로 업데이트해야 합니다.
         tData[tmplHead + 1] = setTStylingRangeNext(tData[tmplHead + 1] as TStylingRange, index);
       }
-      // if we don't have template, the head points to template-tail, and needs to be advanced.
+      // 템플릿이 없으면 머리는 템플릿-테일을 가리키고 진행해야 합니다.
       tmplHead = index;
     }
   } else {
-    // We are inserting in template section.
-    // We need to set this binding's "previous" to the current template tail
+    // 템플릿 섹션에 삽입하고 있습니다.
+    // 이 바인딩의 "이전"을 현재 템플릿 테일로 설정해야 합니다.
     tData[index + 1] = toTStylingRange(tmplTail, 0);
     ngDevMode &&
       assertEqual(
         tmplHead !== 0 && tmplTail === 0,
         false,
-        'Adding template bindings after hostBindings is not allowed.',
+        '호스트 바인딩 이후에 템플릿 바인딩을 추가하는 것은 허용되지 않습니다.',
       );
     if (tmplHead === 0) {
       tmplHead = index;
     } else {
-      // We need to update the previous value "next" to point to this binding
+      // 이전 값의 "다음"을 현재 바인딩을 가리키도록 업데이트해야 합니다.
       tData[tmplTail + 1] = setTStylingRangeNext(tData[tmplTail + 1] as TStylingRange, index);
     }
     tmplTail = index;
   }
 
-  // Now we need to update / compute the duplicates.
-  // Starting with our location search towards head (least priority)
+  // 이제 중복을 업데이트/계산해야 합니다.
+  // 머리를 향한 위치 검색으로 시작합니다 (우선 순위가 낮음)
   if (isKeyDuplicateOfStatic) {
     tData[index + 1] = setTStylingRangePrevDuplicate(tData[index + 1] as TStylingRange);
   }
@@ -301,14 +289,14 @@ export function insertTStylingBinding(
 }
 
 /**
- * Look into the residual styling to see if the current `tStylingKey` is duplicate of residual.
+ * 잔여 스타일링을 살펴보고 현재 `tStylingKey`가 잔여의 중복인지 확인합니다.
  *
- * @param tNode `TNode` where the residual is stored.
- * @param tStylingKey `TStylingKey` to store.
- * @param tData `TData` associated with the current `LView`.
- * @param index location of where `tStyleValue` should be stored (and linked into list.)
- * @param isClassBinding True if the associated `tStylingKey` as a `class` styling.
- *                       `tNode.classBindings` should be used (or `tNode.styleBindings` otherwise.)
+ * @param tNode 잔여가 저장된 `TNode`.
+ * @param tStylingKey 저장할 `TStylingKey`.
+ * @param tData 현재 `LView`와 관련된 `TData`.
+ * @param index `tStyleValue`가 저장(및 리스트에 연결)되어야 하는 위치.
+ * @param isClassBinding `true`이면 관련된 `tStylingKey`가 `class` 스타일링입니다.
+ *                       `tNode.classBindings`를 사용해야 하며 (그렇지 않으면 `tNode.styleBindings` 사용).
  */
 function markDuplicateOfResidualStyling(
   tNode: TNode,
@@ -319,70 +307,62 @@ function markDuplicateOfResidualStyling(
 ) {
   const residual = isClassBinding ? tNode.residualClasses : tNode.residualStyles;
   if (
-    residual != null /* or undefined */ &&
+    residual != null /* 또는 undefined */ &&
     typeof tStylingKey == 'string' &&
     keyValueArrayIndexOf(residual, tStylingKey) >= 0
   ) {
-    // We have duplicate in the residual so mark ourselves as duplicate.
+    // 잔여에서 중복이 있으므로 자신을 중복으로 표시합니다.
     tData[index + 1] = setTStylingRangeNextDuplicate(tData[index + 1] as TStylingRange);
   }
 }
 
 /**
- * Marks `TStyleValue`s as duplicates if another style binding in the list has the same
- * `TStyleValue`.
+ * 리스트의 다른 스타일 바인딩이 동일한 `TStyleValue`를 가진 경우 중복으로 `TStyleValue`를 표시합니다.
  *
- * NOTE: this function is intended to be called twice once with `isPrevDir` set to `true` and once
- * with it set to `false` to search both the previous as well as next items in the list.
+ * 주의: 이 함수는 `isPrevDir`가 `true`로 설정된 상태에서 한 번, `false`로 설정된 상태에서 한 번 호출되도록 설계되었습니다. 두 가지 모두 이전 및 다음 항목을 검색합니다.
  *
- * No duplicate case
+ * 중복이 없는 경우
  * ```
  *   [style.color]
- *   [style.width.px] <<- index
+ *   [style.width.px] <<- 인덱스
  *   [style.height.px]
  * ```
  *
- * In the above case adding `[style.width.px]` to the existing `[style.color]` produces no
- * duplicates because `width` is not found in any other part of the linked list.
+ * 위의 경우에 `[style.width.px]`를 기존의 `[style.color]`에 추가해도 중복이 발생하지 않습니다. 왜냐하면 `width`는 연결 리스트의 다른 부분에서 발견되지 않기 때문입니다.
  *
- * Duplicate case
+ * 중복 사례
  * ```
  *   [style.color]
  *   [style.width.em]
- *   [style.width.px] <<- index
+ *   [style.width.px] <<- 인덱스
  * ```
- * In the above case adding `[style.width.px]` will produce a duplicate with `[style.width.em]`
- * because `width` is found in the chain.
+ * 위의 경우에 `[style.width.px]`를 추가하면 `[style.width.em]`과 중복이 발생합니다. 이는 `width`가 체인에서 발견되기 때문입니다.
  *
- * Map case 1
+ * 맵 경우 1
  * ```
  *   [style.width.px]
  *   [style.color]
- *   [style]  <<- index
+ *   [style]  <<- 인덱스
  * ```
- * In the above case adding `[style]` will produce a duplicate with any other bindings because
- * `[style]` is a Map and as such is fully dynamic and could produce `color` or `width`.
+ * 위의 경우에 `[style]`를 추가하면 다른 바인딩과 중복이 발생합니다. 왜냐하면 `[style]`는 맵이므로 완전히 동적이며 `color` 또는 `width`를 생성할 수 있기 때문입니다.
  *
- * Map case 2
+ * 맵 경우 2
  * ```
  *   [style]
  *   [style.width.px]
- *   [style.color]  <<- index
+ *   [style.color]  <<- 인덱스
  * ```
- * In the above case adding `[style.color]` will produce a duplicate because there is already a
- * `[style]` binding which is a Map and as such is fully dynamic and could produce `color` or
- * `width`.
+ * 위의 경우에 `[style.color]`를 추가하면 이미 `[style]` 바인딩이 있어야 하므로 중복이 발생합니다. 이는 맵이므로 완전히 동적이며 `color` 또는 `width`를 생성할 수 있기 때문입니다.
  *
- * NOTE: Once `[style]` (Map) is added into the system all things are mapped as duplicates.
- * NOTE: We use `style` as example, but same logic is applied to `class`es as well.
+ * 주의: 시스템에 `[style]`(맵)이 추가되면 모든 것이 중복으로 매핑됩니다.
+ * 주의: `style`을 예시로 사용하였지만 같은 로직이 `class`에도 적용됩니다.
  *
- * @param tData `TData` where the linked list is stored.
- * @param tStylingKey `TStylingKeyPrimitive` which contains the value to compare to other keys in
- *        the linked list.
- * @param index Starting location in the linked list to search from
- * @param isPrevDir Direction.
- *        - `true` for previous (lower priority);
- *        - `false` for next (higher priority).
+ * @param tData 연결 리스트가 저장된 `TData`.
+ * @param tStylingKey `TStylingKeyPrimitive`로 연결 리스트의 다른 키와 비교할 값을 포함합니다.
+ * @param index 연결 리스트에서 검색을 시작할 위치.
+ * @param isPrevDir 방향.
+ *        - `true`는 이전(우선 순위가 낮음);
+ *        - `false`는 다음(우선 순위가 높음).
  */
 function markDuplicates(
   tData: TData,
@@ -396,11 +376,10 @@ function markDuplicates(
     ? getTStylingRangePrev(tStylingAtIndex)
     : getTStylingRangeNext(tStylingAtIndex);
   let foundDuplicate = false;
-  // We keep iterating as long as we have a cursor
-  // AND either:
-  // - we found what we are looking for, OR
-  // - we are a map in which case we have to continue searching even after we find what we were
-  //   looking for since we are a wild card and everything needs to be flipped to duplicate.
+  // 우리는 커서가 있는 한 계속 반복합니다
+  // 그리고
+  // - 우리가 찾고 있는 것을 발견했거나,
+  // - 맵이며, 우리가 찾고 있는 것을 발견했더라도 계속 검색해야 해야만 중복으로 바뀌기 때문입니다.
   while (cursor !== 0 && (foundDuplicate === false || isMap)) {
     ngDevMode && assertIndexInRange(tData, cursor);
     const tStylingValueAtCursor = tData[cursor] as TStylingKey;
@@ -416,7 +395,7 @@ function markDuplicates(
       : getTStylingRangeNext(tStyleRangeAtCursor);
   }
   if (foundDuplicate) {
-    // if we found a duplicate, than mark ourselves.
+    // 중복이 발견되면, 자신을 표시합니다.
     tData[index + 1] = isPrevDir
       ? setTStylingRangePrevDuplicate(tStylingAtIndex)
       : setTStylingRangeNextDuplicate(tStylingAtIndex);
@@ -424,42 +403,35 @@ function markDuplicates(
 }
 
 /**
- * Determines if two `TStylingKey`s are a match.
+ * 두 개의 `TStylingKey`가 일치하는지 결정합니다.
  *
- * When computing whether a binding contains a duplicate, we need to compare if the instruction
- * `TStylingKey` has a match.
+ * 바인딩에 중복이 포함되어 있는지 계산하는 동안, 우리는 지침 `TStylingKey`가 일치하는지 비교해야 합니다.
  *
- * Here are examples of `TStylingKey`s which match given `tStylingKeyCursor` is:
+ * 다음과 같은 `TStylingKey`의 예가 주어졌을 때 `tStylingKeyCursor`가 일치하는 경우:
  * - `color`
- *    - `color`    // Match another color
- *    - `null`     // That means that `tStylingKey` is a `classMap`/`styleMap` instruction
- *    - `['', 'color', 'other', true]` // wrapped `color` so match
- *    - `['', null, 'other', true]`       // wrapped `null` so match
- *    - `['', 'width', 'color', 'value']` // wrapped static value contains a match on `'color'`
- * - `null`       // `tStylingKeyCursor` always match as it is `classMap`/`styleMap` instruction
+ *    - `color`    // 다른 색상과 일치
+ *    - `null`     // 즉, `tStylingKey`는 `classMap`/`styleMap` 지침임을 의미
+ *    - `['', 'color', 'other', true]` // 래핑된 `color`로 일치
+ *    - `['', null, 'other', true]`       // 래핑된 `null`로 일치
+ *    - `['', 'width', 'color', 'value']` // 래핑된 정적 값에 `'color'`에 대한 일치 포함
+ * - `null`       // `tStylingKeyCursor`는 항상 `classMap`/`styleMap` 지침과 일치
  *
  * @param tStylingKeyCursor
  * @param tStylingKey
  */
 function isStylingMatch(tStylingKeyCursor: TStylingKey, tStylingKey: TStylingKeyPrimitive) {
   ngDevMode &&
-    assertNotEqual(
-      Array.isArray(tStylingKey),
-      true,
-      "Expected that 'tStylingKey' has been unwrapped",
-    );
+    assertNotEqual(Array.isArray(tStylingKey), true, "'tStylingKey'가 해제되었다고 기대합니다.");
   if (
-    tStylingKeyCursor === null || // If the cursor is `null` it means that we have map at that
-    // location so we must assume that we have a match.
-    tStylingKey == null || // If `tStylingKey` is `null` then it is a map therefor assume that it
-    // contains a match.
-    (Array.isArray(tStylingKeyCursor) ? tStylingKeyCursor[1] : tStylingKeyCursor) === tStylingKey // If the keys match explicitly than we are a match.
+    tStylingKeyCursor === null || // 커서가 `null`이면 그 위치에 맵이 있다는 것을 의미하므로 우리는 일치한다고 가정합니다.
+    tStylingKey == null || // `tStylingKey`가 `null`이면 맵이라는 것이므로 일치한다고 가정합니다.
+    (Array.isArray(tStylingKeyCursor) ? tStylingKeyCursor[1] : tStylingKeyCursor) === tStylingKey // 키가 명시적으로 일치하면 일치합니다.
   ) {
     return true;
   } else if (Array.isArray(tStylingKeyCursor) && typeof tStylingKey === 'string') {
-    // if we did not find a match, but `tStylingKeyCursor` is `KeyValueArray` that means cursor has
-    // statics and we need to check those as well.
-    return keyValueArrayIndexOf(tStylingKeyCursor, tStylingKey) >= 0; // see if we are matching the key
+    // 일치를 발견하지 못한 경우, 하지만 `tStylingKeyCursor`가 `KeyValueArray` 경우, 커서가 정적을 가리킵니다.
+    // 그리고 우리는 그것 역시 확인해야 합니다.
+    return keyValueArrayIndexOf(tStylingKeyCursor, tStylingKey) >= 0; // 키가 일치하는지 확인합니다.
   }
   return false;
 }

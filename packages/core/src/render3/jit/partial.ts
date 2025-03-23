@@ -24,7 +24,7 @@ import {setClassMetadata, setClassMetadataAsync} from '../metadata';
 import {angularCoreEnv} from './environment';
 
 /**
- * Compiles a partial directive declaration object into a full directive definition object.
+ * 부분 디렉티브 선언 객체를 전체 디렉티브 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -42,7 +42,7 @@ export function ɵɵngDeclareDirective(decl: R3DeclareDirectiveFacade): unknown 
 }
 
 /**
- * Evaluates the class metadata declaration.
+ * 클래스 메타데이터 선언을 평가합니다.
  *
  * @codeGenApi
  */
@@ -61,7 +61,7 @@ export function ɵɵngDeclareClassMetadata(decl: {
 }
 
 /**
- * Evaluates the class metadata of a component that contains deferred blocks.
+ * 지연 블록을 포함하는 컴포넌트의 클래스 메타데이터를 평가합니다.
  *
  * @codeGenApi
  */
@@ -81,7 +81,7 @@ export function ɵɵngDeclareClassMetadataAsync(decl: {
 }
 
 /**
- * Compiles a partial component declaration object into a full component definition object.
+ * 부분 컴포넌트 선언 객체를 전체 컴포넌트 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -99,7 +99,7 @@ export function ɵɵngDeclareComponent(decl: R3DeclareComponentFacade): unknown 
 }
 
 /**
- * Compiles a partial pipe declaration object into a full pipe definition object.
+ * 부분 팝 선언 객체를 전체 팝 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -132,7 +132,7 @@ function getFactoryKind(target: FactoryTarget) {
 }
 
 /**
- * Compiles a partial injectable declaration object into a full injectable definition object.
+ * 부분 주입 가능 선언 객체를 전체 주입 가능 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -150,12 +150,12 @@ export function ɵɵngDeclareInjectable(decl: R3DeclareInjectableFacade): unknow
 }
 
 /**
- * These enums are used in the partial factory declaration calls.
+ * 이 열거형은 부분 팩토리 선언 호출에 사용됩니다.
  */
 export {FactoryTarget} from '../../compiler/compiler_facade';
 
 /**
- * Compiles a partial injector declaration object into a full injector definition object.
+ * 부분 Injector 선언 객체를 전체 Injector 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -173,7 +173,7 @@ export function ɵɵngDeclareInjector(decl: R3DeclareInjectorFacade): unknown {
 }
 
 /**
- * Compiles a partial NgModule declaration object into a full NgModule definition object.
+ * 부분 NgModule 선언 객체를 전체 NgModule 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */
@@ -191,7 +191,7 @@ export function ɵɵngDeclareNgModule(decl: R3DeclareNgModuleFacade): unknown {
 }
 
 /**
- * Compiles a partial pipe declaration object into a full pipe definition object.
+ * 부분 팝 선언 객체를 전체 팝 정의 객체로 컴파일합니다.
  *
  * @codeGenApi
  */

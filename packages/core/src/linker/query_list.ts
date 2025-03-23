@@ -18,22 +18,21 @@ function symbolIterator<T>(this: QueryList<T>): Iterator<T> {
 }
 
 /**
- * An unmodifiable list of items that Angular keeps up to date when the state
- * of the application changes.
+ * Angular가 응용 프로그램의 상태가 변경될 때 업데이트하는 변경할 수 없는 항목 목록입니다.
  *
- * The type of object that {@link ViewChildren}, {@link ContentChildren}, and {@link QueryList}
- * provide.
+ * {@link ViewChildren}, {@link ContentChildren}, 및 {@link QueryList}
+ * 가 제공하는 객체 유형입니다.
  *
- * Implements an iterable interface, therefore it can be used in both ES6
- * javascript `for (var i of items)` loops as well as in Angular templates with
- * `*ngFor="let i of myList"`.
+ * iterable 인터페이스를 구현하므로 ES6
+ * 자바스크립트 `for (var i of items)` 루프와 Angular 템플릿에서
+ * `*ngFor="let i of myList"`와 동시에 사용할 수 있습니다.
  *
- * Changes can be observed by subscribing to the changes `Observable`.
+ * 변경 사항은 변경 `Observable`에 구독하여 관찰할 수 있습니다.
  *
- * NOTE: In the future this class will implement an `Observable` interface.
+ * 주의: 미래에 이 클래스는 `Observable` 인터페이스를 구현할 것입니다.
  *
  * @usageNotes
- * ### Example
+ * ### 예제
  * ```ts
  * @Component({...})
  * class Container {
@@ -55,21 +54,20 @@ export class QueryList<T> implements Iterable<T> {
   readonly last: T = undefined!;
 
   /**
-   * Returns `Observable` of `QueryList` notifying the subscriber of changes.
+   * 변경 사항을 알리는 `QueryList`의 `Observable`을 반환합니다.
    */
   get changes(): Observable<any> {
     return (this._changes ??= new Subject());
   }
 
   /**
-   * @param emitDistinctChangesOnly Whether `QueryList.changes` should fire only when actual change
-   *     has occurred. Or if it should fire when query is recomputed. (recomputing could resolve in
-   *     the same result)
+   * @param emitDistinctChangesOnly 실제 변경이 발생할 때만 `QueryList.changes`가 발생해야 하는지.
+   *     또는 쿼리가 재계산될 때 발생해야 하는지 여부. (재계산이 동일한 결과로 이어질 수 있음)
    */
   constructor(private _emitDistinctChangesOnly: boolean = false) {}
 
   /**
-   * Returns the QueryList entry at `index`.
+   * `index`에서 QueryList 항목을 반환합니다.
    */
   get(index: number): T | undefined {
     return this._results[index];
@@ -126,7 +124,7 @@ export class QueryList<T> implements Iterable<T> {
   }
 
   /**
-   * Returns a copy of the internal results list as an Array.
+   * 내부 결과 목록의 복사본을 배열로 반환합니다.
    */
   toArray(): T[] {
     return this._results.slice();
@@ -137,16 +135,16 @@ export class QueryList<T> implements Iterable<T> {
   }
 
   /**
-   * Updates the stored data of the query list, and resets the `dirty` flag to `false`, so that
-   * on change detection, it will not notify of changes to the queries, unless a new change
-   * occurs.
+   * 쿼리 목록의 저장된 데이터를 업데이트하고 `dirty` 플래그를 `false`로 재설정하여
+   * 변경 감지시 쿼리에 대한 변경 사항을 알리지 않도록 하며, 새 변경 사항이 발생하지 않는 한
+   * 알리지 않습니다.
    *
-   * @param resultsTree The query results to store
-   * @param identityAccessor Optional function for extracting stable object identity from a value
-   *    in the array. This function is executed for each element of the query result list while
-   *    comparing current query list with the new one (provided as a first argument of the `reset`
-   *    function) to detect if the lists are different. If the function is not provided, elements
-   *    are compared as is (without any pre-processing).
+   * @param resultsTree 저장할 쿼리 결과
+   * @param identityAccessor 안정적인 객체 식별성을 값에서 추출하기 위한 선택적 함수
+   *    배열의. 이 함수는 쿼리 결과 목록의 각 요소에 대해 실행되며
+   *    현재 쿼리 목록과 새 쿼리 목록(첫 번째 인수로 제공됨)을 비교하여
+   *    목록이 다른지 확인합니다. 함수가 제공되지 않으면 요소는
+   *    있는 그대로 비교됩니다 (사전 처리 없이).
    */
   reset(resultsTree: Array<T | any[]>, identityAccessor?: (value: T) => unknown): void {
     (this as {dirty: boolean}).dirty = false;
@@ -160,7 +158,7 @@ export class QueryList<T> implements Iterable<T> {
   }
 
   /**
-   * Triggers a change event by emitting on the `changes` {@link EventEmitter}.
+   * `changes` {@link EventEmitter}에서 방출하여 변경 이벤트를 발생시킵니다.
    */
   notifyOnChanges(): void {
     if (this._changes !== undefined && (this._changesDetected || !this._emitDistinctChangesOnly))

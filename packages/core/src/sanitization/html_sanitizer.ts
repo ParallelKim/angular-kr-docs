@@ -29,15 +29,15 @@ function merge(...sets: {[k: string]: boolean}[]): {[k: string]: boolean} {
   return res;
 }
 
-// Good source of info about elements and attributes
+// 요소 및 속성에 대한 좋은 정보 소스
 // https://html.spec.whatwg.org/#semantics
 // https://simon.html5.org/html-elements
 
-// Safe Void Elements - HTML5
+// 안전한 무효 요소 - HTML5
 // https://html.spec.whatwg.org/#void-elements
 const VOID_ELEMENTS = tagSet('area,br,col,hr,img,wbr');
 
-// Elements that you can, intentionally, leave open (and which close themselves)
+// 일부러 열어 두어야 하는 요소(자체적으로 닫히는 요소)
 // https://html.spec.whatwg.org/#optional-tags
 const OPTIONAL_END_TAG_BLOCK_ELEMENTS = tagSet('colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr');
 const OPTIONAL_END_TAG_INLINE_ELEMENTS = tagSet('rp,rt');
@@ -46,7 +46,7 @@ const OPTIONAL_END_TAG_ELEMENTS = merge(
   OPTIONAL_END_TAG_BLOCK_ELEMENTS,
 );
 
-// Safe Block Elements - HTML5
+// 안전한 블록 요소 - HTML5
 const BLOCK_ELEMENTS = merge(
   OPTIONAL_END_TAG_BLOCK_ELEMENTS,
   tagSet(
@@ -56,7 +56,7 @@ const BLOCK_ELEMENTS = merge(
   ),
 );
 
-// Inline Elements - HTML5
+// 인라인 요소 - HTML5
 const INLINE_ELEMENTS = merge(
   OPTIONAL_END_TAG_INLINE_ELEMENTS,
   tagSet(
@@ -73,7 +73,7 @@ export const VALID_ELEMENTS = merge(
   OPTIONAL_END_TAG_ELEMENTS,
 );
 
-// Attributes that have href and hence need to be sanitized
+// href 속성이 있는 속성으로, 따라서 정리를 필요로 함
 export const URI_ATTRS = tagSet('background,cite,href,itemtype,longdesc,poster,src,xlink:href');
 
 const HTML_ATTRS = tagSet(
@@ -84,7 +84,7 @@ const HTML_ATTRS = tagSet(
     'valign,value,vspace,width',
 );
 
-// Accessibility attributes as per WAI-ARIA 1.1 (W3C Working Draft 14 December 2018)
+// WAI-ARIA 1.1에 따른 접근성 속성 (W3C Working Draft 2018년 12월 14일)
 const ARIA_ATTRS = tagSet(
   'aria-activedescendant,aria-atomic,aria-autocomplete,aria-busy,aria-checked,aria-colcount,aria-colindex,' +
     'aria-colspan,aria-controls,aria-current,aria-describedby,aria-details,aria-disabled,aria-dropeffect,' +
@@ -95,37 +95,34 @@ const ARIA_ATTRS = tagSet(
     'aria-setsize,aria-sort,aria-valuemax,aria-valuemin,aria-valuenow,aria-valuetext',
 );
 
-// NB: This currently consciously doesn't support SVG. SVG sanitization has had several security
-// issues in the past, so it seems safer to leave it out if possible. If support for binding SVG via
-// innerHTML is required, SVG attributes should be added here.
+// 주: 현재 SVG를 지원하지 않습니다. SVG 정리는 과거에 여러 보안 문제를 일으켰기 때문에 가능한 한 제외하는 것이 더 안전해 보입니다.
+// innerHTML을 통해 SVG 바인딩을 지원해야 하는 경우, 여기에 SVG 속성을 추가해야 합니다.
 
-// NB: Sanitization does not allow <form> elements or other active elements (<button> etc). Those
-// can be sanitized, but they increase security surface area without a legitimate use case, so they
-// are left out here.
+// 주: 정리는 <form> 요소 또는 기타 활성 요소(<button> 등)를 허용하지 않습니다. 이러한 요소는 정리할 수 있지만,
+// 정당한 사용 사례 없이 보안 표면을 증가시키므로 여기서는 제외합니다.
 
 export const VALID_ATTRS = merge(URI_ATTRS, HTML_ATTRS, ARIA_ATTRS);
 
-// Elements whose content should not be traversed/preserved, if the elements themselves are invalid.
+// 요소 자체가 잘못된 경우 해당 콘텐츠를 순회/보존하지 않아야 합니다.
 //
-// Typically, `<invalid>Some content</invalid>` would traverse (and in this case preserve)
-// `Some content`, but strip `invalid-element` opening/closing tags. For some elements, though, we
-// don't want to preserve the content, if the elements themselves are going to be removed.
+// 일반적으로 `<invalid>Some content</invalid>`는 (이 경우 보존)
+// `Some content`를 순회하겠지만 `invalid-element` 개폐 태그는 제거합니다. 하지만 일부 요소는,
+// 요소 자체가 제거될 경우 콘텐츠를 보존하고 싶지 않습니다.
 const SKIP_TRAVERSING_CONTENT_IF_INVALID_ELEMENTS = tagSet('script,style,template');
 
 /**
- * SanitizingHtmlSerializer serializes a DOM fragment, stripping out any unsafe elements and unsafe
- * attributes.
+ * SanitizingHtmlSerializer는 DOM 조각을 직렬화하여 안전하지 않은 요소와 안전하지 않은
+ * 속성을 제거합니다.
  */
 class SanitizingHtmlSerializer {
-  // Explicitly track if something was stripped, to avoid accidentally warning of sanitization just
-  // because characters were re-encoded.
+  // 무언가가 제거된 것을 명시적으로 추적하여, 단지 문자가 다시 인코딩되었기 때문에 정리에 대한 경고를
+  // 실수로 하지 않도록 합니다.
   public sanitizedSomething = false;
   private buf: string[] = [];
 
   sanitizeChildren(el: Element): string {
-    // This cannot use a TreeWalker, as it has to run on Angular's various DOM adapters.
-    // However this code never accesses properties off of `document` before deleting its contents
-    // again, so it shouldn't be vulnerable to DOM clobbering.
+    // 이것은 Angular의 다양한 DOM 어댑터에서 실행되어야 하므로 TreeWalker를 사용할 수 없습니다.
+    // 그러나 이 코드는 `document`의 속성에 접근하는 일을 하지 않으므로 DOM 클로버링에 취약하지 않아야 합니다.
     let current: Node = el.firstChild!;
     let traverseContent = true;
     let parentNodes = [];
@@ -135,18 +132,18 @@ class SanitizingHtmlSerializer {
       } else if (current.nodeType === Node.TEXT_NODE) {
         this.chars(current.nodeValue!);
       } else {
-        // Strip non-element, non-text nodes.
+        // 비요소, 비텍스트 노드를 제거합니다.
         this.sanitizedSomething = true;
       }
       if (traverseContent && current.firstChild) {
-        // Push current node to the parent stack before entering its content.
+        // 콘텐츠에 들어가기 전에 현재 노드를 부모 스택에 푸시합니다.
         parentNodes.push(current);
         current = getFirstChild(current)!;
         continue;
       }
       while (current) {
-        // Leaving the element.
-        // Walk up and to the right, closing tags as we go.
+        // 요소를 떠납니다.
+        // 닫는 태그와 함께 위쪽으로 및 오른쪽으로 이동합니다.
         if (current.nodeType === Node.ELEMENT_NODE) {
           this.endElement(current as Element);
         }
@@ -158,7 +155,7 @@ class SanitizingHtmlSerializer {
           break;
         }
 
-        // There was no next sibling, walk up to the parent node (extract it from the stack).
+        // 다음 형제 노드가 없으므로 부모 노드로 올라갑니다 (스택에서 추출).
         current = parentNodes.pop()!;
       }
     }
@@ -166,12 +163,12 @@ class SanitizingHtmlSerializer {
   }
 
   /**
-   * Sanitizes an opening element tag (if valid) and returns whether the element's contents should
-   * be traversed. Element content must always be traversed (even if the element itself is not
-   * valid/safe), unless the element is one of `SKIP_TRAVERSING_CONTENT_IF_INVALID_ELEMENTS`.
+   * 열기 요소 태그를 정리하고(유효한 경우) 요소의 콘텐츠를 순회해야 하는지 반환합니다.
+   * 요소 콘텐츠는 항상 순회해야 합니다(요소 자체가 유효/안전하지 않더라도),
+   * `SKIP_TRAVERSING_CONTENT_IF_INVALID_ELEMENTS` 중 하나가 아닌 경우에만 예외입니다.
    *
-   * @param element The element to sanitize.
-   * @return True if the element's contents should be traversed.
+   * @param element 정리할 요소.
+   * @return 요소의 콘텐츠를 순회해야 하는지 여부.
    */
   private startElement(element: Element): boolean {
     const tagName = getNodeName(element).toLowerCase();
@@ -191,7 +188,7 @@ class SanitizingHtmlSerializer {
         continue;
       }
       let value = elAttr!.value;
-      // TODO(martinprobst): Special case image URIs for data:image/...
+      // TODO(martinprobst): data:image/...의 이미지 URI에 대한 특수 사례 처리
       if (URI_ATTRS[lower]) value = _sanitizeUrl(value);
       this.buf.push(' ', attrName, '="', encodeEntities(value), '"');
     }
@@ -214,9 +211,9 @@ class SanitizingHtmlSerializer {
 }
 
 /**
- * Verifies whether a given child node is a descendant of a given parent node.
- * It may not be the case when properties like `.firstChild` are clobbered and
- * accessing `.firstChild` results in an unexpected node returned.
+ * 주어진 자식 노드가 주어진 부모 노드의 자손인지 확인합니다.
+ * `.firstChild`와 같은 속성이 클로버링될 때는 그렇지 않을 수 있고,
+ * `.firstChild`에 접근 시 예상치 못한 노드가 반환되기 때문입니다.
  */
 function isClobberedElement(parentNode: Node, childNode: Node): boolean {
   return (
@@ -226,14 +223,12 @@ function isClobberedElement(parentNode: Node, childNode: Node): boolean {
 }
 
 /**
- * Retrieves next sibling node and makes sure that there is no
- * clobbering of the `nextSibling` property happening.
+ * 다음 형제 노드를 검색하고 `nextSibling` 속성이 클로버링되었는지 확인합니다.
  */
 function getNextSibling(node: Node): Node | null {
   const nextSibling = node.nextSibling;
-  // Make sure there is no `nextSibling` clobbering: navigating to
-  // the next sibling and going back to the previous one should result
-  // in the original node.
+  // `nextSibling`이 클로버링되지 않았는지 확인합니다: 다음 형제로 탐색한 후,
+  // 이전 노드로 돌아갈 때 원래 노드가 반환되어야 합니다.
   if (nextSibling && node !== nextSibling.previousSibling) {
     throw clobberedElementError(nextSibling);
   }
@@ -241,8 +236,7 @@ function getNextSibling(node: Node): Node | null {
 }
 
 /**
- * Retrieves first child node and makes sure that there is no
- * clobbering of the `firstChild` property happening.
+ * 첫 번째 자식 노드를 검색하고 `firstChild` 속성이 클로버링되지 않았는지 확인합니다.
  */
 function getFirstChild(node: Node): Node | null {
   const firstChild = node.firstChild;
@@ -252,28 +246,25 @@ function getFirstChild(node: Node): Node | null {
   return firstChild;
 }
 
-/** Gets a reasonable nodeName, even for clobbered nodes. */
+/** 합리적인 nodeName을 가져옵니다. 클로버링된 노드에도 적용됩니다. */
 export function getNodeName(node: Node): string {
   const nodeName = node.nodeName;
-  // If the property is clobbered, assume it is an `HTMLFormElement`.
+  // 속성이 클로버링되었으면 `HTMLFormElement`로 가정합니다.
   return typeof nodeName === 'string' ? nodeName : 'FORM';
 }
 
 function clobberedElementError(node: Node) {
-  return new Error(
-    `Failed to sanitize html because the element is clobbered: ${(node as Element).outerHTML}`,
-  );
+  return new Error(`HTML 정리를 실패했습니다. 요소가 클로버링됨: ${(node as Element).outerHTML}`);
 }
 
-// Regular Expressions for parsing tags and attributes
+// 태그 및 속성을 파싱하기 위한 정규 표현식
 const SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g;
-// ! to ~ is the ASCII range.
+// !부터 ~까지의 ASCII 범위.
 const NON_ALPHANUMERIC_REGEXP = /([^\#-~ |!])/g;
 
 /**
- * Escapes all potentially dangerous characters, so that the
- * resulting string can be safely inserted into attribute or
- * element text.
+ * 잠재적으로 위험한 모든 문자를 이스케이프하여
+ * 결과 문자열이 속성 또는 요소 텍스트에 안전하게 삽입될 수 있도록 합니다.
  * @param value
  */
 function encodeEntities(value: string) {
@@ -294,25 +285,25 @@ function encodeEntities(value: string) {
 let inertBodyHelper: InertBodyHelper;
 
 /**
- * Sanitizes the given unsafe, untrusted HTML fragment, and returns HTML text that is safe to add to
- * the DOM in a browser environment.
+ * 주어진 안전하지 않은, 신뢰할 수 없는 HTML 조각을 정리하고,
+ * 브라우저 환경에서 DOM에 추가하기에 안전한 HTML 텍스트를 반환합니다.
  */
 export function _sanitizeHtml(defaultDoc: any, unsafeHtmlInput: string): TrustedHTML | string {
   let inertBodyElement: HTMLElement | null = null;
   try {
     inertBodyHelper = inertBodyHelper || getInertBodyHelper(defaultDoc);
-    // Make sure unsafeHtml is actually a string (TypeScript types are not enforced at runtime).
+    // unsafeHtml가 실제로 문자열인지 확인합니다 (TypeScript 타입은 런타임에서 강제 적용되지 않습니다).
     let unsafeHtml = unsafeHtmlInput ? String(unsafeHtmlInput) : '';
     inertBodyElement = inertBodyHelper.getInertBodyElement(unsafeHtml);
 
-    // mXSS protection. Repeatedly parse the document to make sure it stabilizes, so that a browser
-    // trying to auto-correct incorrect HTML cannot cause formerly inert HTML to become dangerous.
+    // mXSS 보호. 문서를 반복적으로 파싱하여 안정성을 보장합니다.
+    // 브라우저가 잘못된 HTML을 자동으로 수정하려고 할 때, 비활성 HTML이 위험해지는 일을 방지합니다.
     let mXSSAttempts = 5;
     let parsedHtml = unsafeHtml;
 
     do {
       if (mXSSAttempts === 0) {
-        throw new Error('Failed to sanitize html because the input is unstable');
+        throw new Error('입력을 안정적으로 하기 위해 HTML 정리를 실패했습니다.');
       }
       mXSSAttempts--;
 
@@ -326,12 +317,14 @@ export function _sanitizeHtml(defaultDoc: any, unsafeHtmlInput: string): Trusted
       (getTemplateContent(inertBodyElement!) as Element) || inertBodyElement,
     );
     if ((typeof ngDevMode === 'undefined' || ngDevMode) && sanitizer.sanitizedSomething) {
-      console.warn(`WARNING: sanitizing HTML stripped some content, see ${XSS_SECURITY_URL}`);
+      console.warn(
+        `경고: HTML 정리로 일부 콘텐츠가 제거되었습니다. ${XSS_SECURITY_URL}을 확인하세요.`,
+      );
     }
 
     return trustedHTMLFromString(safeHtml);
   } finally {
-    // In case anything goes wrong, clear out inertElement to reset the entire DOM structure.
+    // 문제가 발생할 경우, inertElement를 지워 DOM 구조를 초기화합니다.
     if (inertBodyElement) {
       const parent = getTemplateContent(inertBodyElement) || inertBodyElement;
       while (parent.firstChild) {

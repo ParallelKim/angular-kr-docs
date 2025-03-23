@@ -8,53 +8,50 @@
 
 import {InjectionToken} from '../di/injection_token';
 
-/** Actions that are supported by the tracing framework. */
+/** 추적 프레임워크에서 지원하는 작업. */
 export enum TracingAction {
   CHANGE_DETECTION,
   AFTER_NEXT_RENDER,
 }
 
-/** A single tracing snapshot. */
+/** 단일 추적 스냅샷. */
 export interface TracingSnapshot {
   run<T>(action: TracingAction, fn: () => T): T;
 
-  /** Disposes of the tracing snapshot. Must be run exactly once per TracingSnapshot. */
+  /** 추적 스냅샷을 처리합니다. TracingSnapshot 당 정확히 한 번 실행되어야 합니다. */
   dispose(): void;
 }
 
 /**
- * Injection token for a `TracingService`, optionally provided.
+ * `TracingService`에 대한 주입 토큰, 선택적으로 제공됩니다.
  */
 export const TracingService = new InjectionToken<TracingService<TracingSnapshot>>(
   ngDevMode ? 'TracingService' : '',
 );
 
 /**
- * Tracing mechanism which can associate causes (snapshots) with runs of
- * subsequent operations.
+ * 원인(스냅샷)과 후속 작업 실행을 연결할 수 있는 추적 메커니즘.
  *
- * Not defined by Angular directly, but defined in contexts where tracing is
- * desired.
+ * Angular에 의해 직접 정의되지 않지만 추적이 원하는 컨텍스트에서 정의됩니다.
  */
 export interface TracingService<T extends TracingSnapshot> {
   /**
-   * Take a snapshot of the current context which will be stored by Angular and
-   * used when additional work is performed that was scheduled in this context.
+   * Angular에 의해 저장되고 이 컨텍스트에서 예약된 추가 작업이 수행될 때 사용될
+   * 현재 컨텍스트의 스냅샷을 가져옵니다.
    *
-   * @param linkedSnapshot Optional snapshot to use link to the current context.
-   * The caller is no longer responsible for calling dispose on the linkedSnapshot.
+   * @param linkedSnapshot 현재 컨텍스트에 연결할 선택적 스냅샷입니다.
+   * 호출자는 더 이상 linkedSnapshot에 대해 dispose를 호출할 책임이 없습니다.
    *
-   * @return The tracing snapshot. The caller is responsible for diposing of the
-   * snapshot.
+   * @return 추적 스냅샷입니다. 호출자가 스냅샷을 처리할 책임이 있습니다.
    */
   snapshot(linkedSnapshot: T | null): T;
 
   /**
-   * Wrap an event listener bound by the framework for tracing.
-   * @param element Element on which the event is bound.
-   * @param eventName Name of the event.
-   * @param handler Event handler.
-   * @return A new event handler to be bound instead of the original one.
+   * 추적을 위한 프레임워크에서 바인딩된 이벤트 리스너를 래핑합니다.
+   * @param element 이벤트가 바인딩된 요소입니다.
+   * @param eventName 이벤트의 이름입니다.
+   * @param handler 이벤트 핸들러입니다.
+   * @return 원래의 핸들러 대신 바인딩될 새 이벤트 핸들러입니다.
    */
   wrapEventListener?<T extends Function>(element: HTMLElement, eventName: string, handler: T): T;
 }

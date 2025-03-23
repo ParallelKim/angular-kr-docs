@@ -71,16 +71,15 @@ import {
 } from './shared';
 
 /**
- * Create DOM element. The instruction must later be followed by `elementEnd()` call.
+ * DOM 요소를 생성합니다. 이 명령은 나중에 `elementEnd()` 호출이 뒤따라야 합니다.
  *
- * @param index Index of the element in the LView array
- * @param name Name of the DOM Node
- * @param attrsIndex Index of the element's attributes in the `consts` array.
- * @param localRefsIndex Index of the element's local references in the `consts` array.
- * @returns This function returns itself so that it may be chained.
+ * @param index LView 배열에서 요소의 인덱스
+ * @param name DOM 노드의 이름
+ * @param attrsIndex `consts` 배열에서 요소의 속성 인덱스.
+ * @param localRefsIndex `consts` 배열에서 요소의 로컬 참조 인덱스.
+ * @returns 이 함수는 체이닝할 수 있도록 자신을 반환합니다.
  *
- * Attributes and localRefs are passed as an array of strings where elements with an even index
- * hold an attribute name and elements with an odd index hold an attribute value, ex.:
+ * 속성과 localRefs는 요소의 짝수 인덱스에 속성 이름을, 홀수 인덱스에 속성 값을 가진 문자열 배열로 전달됩니다. 예:
  * ['id', 'warning5', 'class', 'alert']
  *
  * @codeGenApi
@@ -130,14 +129,14 @@ export function ɵɵelementStart(
   setupStaticAttributes(renderer, native, tNode);
 
   if (!isDetachedByI18n(tNode) && wasLastNodeCreated()) {
-    // In the i18n case, the translation may have removed this element, so only add it if it is not
-    // detached. See `TNodeType.Placeholder` and `LFrame.inI18n` for more context.
+    // i18n의 경우 번역이 이 요소를 제거했을 수 있으므로 분리되지 않은 경우에만 추가합니다.
+    // 추가 컨텍스트는 `TNodeType.Placeholder` 및 `LFrame.inI18n`를 참조하세요.
     appendChild(tView, lView, native, tNode);
   }
 
-  // any immediate children of a component or template container must be pre-emptively
-  // monkey-patched with the component view data so that the element can be inspected
-  // later on using any element discovery utility methods (see `element_discovery.ts`)
+  // 구성 요소 또는 템플릿 컨테이너의 모든 즉각적인 자식은
+  // 나중에 어떤 요소 탐색 유틸리티 메서드를 사용하여 검사할 수 있도록
+  // 구성 요소 뷰 데이터로 사전 패치해야 합니다. (자세한 내용은 `element_discovery.ts` 참조)
   if (getElementDepthCount() === 0 || hasDirectives) {
     attachPatchData(native, lView);
   }
@@ -154,14 +153,14 @@ export function ɵɵelementStart(
 }
 
 /**
- * Mark the end of the element.
- * @returns This function returns itself so that it may be chained.
+ * 요소의 끝을 표시합니다.
+ * @returns 이 함수는 체이닝할 수 있도록 자신을 반환합니다.
  *
  * @codeGenApi
  */
 export function ɵɵelementEnd(): typeof ɵɵelementEnd {
   let currentTNode = getCurrentTNode()!;
-  ngDevMode && assertDefined(currentTNode, 'No parent node to close.');
+  ngDevMode && assertDefined(currentTNode, '닫아야 할 부모 노드가 없습니다.');
   if (isCurrentTNodeParent()) {
     setCurrentTNodeAsNotParent();
   } else {
@@ -195,13 +194,13 @@ export function ɵɵelementEnd(): typeof ɵɵelementEnd {
 }
 
 /**
- * Creates an empty element using {@link elementStart} and {@link elementEnd}
+ * {@link elementStart}와 {@link elementEnd}를 사용하여 빈 요소를 생성합니다.
  *
- * @param index Index of the element in the data array
- * @param name Name of the DOM Node
- * @param attrsIndex Index of the element's attributes in the `consts` array.
- * @param localRefsIndex Index of the element's local references in the `consts` array.
- * @returns This function returns itself so that it may be chained.
+ * @param index 데이터 배열에서 요소의 인덱스
+ * @param name DOM 노드의 이름
+ * @param attrsIndex `consts` 배열에서 요소의 속성 인덱스.
+ * @param localRefsIndex `consts` 배열에서 요소의 로컬 참조 인덱스.
+ * @returns 이 함수는 체이닝할 수 있도록 자신을 반환합니다.
  *
  * @codeGenApi
  */
@@ -229,8 +228,8 @@ let _locateOrCreateElementNode: typeof locateOrCreateElementNodeImpl = (
 };
 
 /**
- * Enables hydration code path (to lookup existing elements in DOM)
- * in addition to the regular creation mode of element nodes.
+ * DOM에서 기존 요소를 lookup하는 수분 코드 경로를 활성화합니다.
+ * 요소 노드를 생성하는 일반 모드 외에도 사용됩니다.
  */
 function locateOrCreateElementNodeImpl(
   tView: TView,
@@ -248,32 +247,29 @@ function locateOrCreateElementNodeImpl(
     isDisconnectedNode(hydrationInfo, index);
   lastNodeWasCreated(isNodeCreationMode);
 
-  // Regular creation mode.
+  // 일반 생성 모드.
   if (isNodeCreationMode) {
     return createElementNode(renderer, name, getNamespace());
   }
 
-  // Hydration mode, looking up an existing element in DOM.
+  // 수분 모드, DOM에서 기존 요소를 lookup합니다.
   const native = locateNextRNode<RElement>(hydrationInfo, tView, lView, tNode)!;
   ngDevMode && validateMatchingNode(native, Node.ELEMENT_NODE, name, lView, tNode);
   ngDevMode && markRNodeAsClaimedByHydration(native);
 
-  // This element might also be an anchor of a view container.
+  // 이 요소는 뷰 컨테이너의 앵커일 수도 있습니다.
   if (getSerializedContainerViews(hydrationInfo, index)) {
-    // Important note: this element acts as an anchor, but it's **not** a part
-    // of the embedded view, so we start the segment **after** this element, taking
-    // a reference to the next sibling. For example, the following template:
-    // `<div #vcrTarget>` is represented in the DOM as `<div></div>...<!--container-->`,
-    // so while processing a `<div>` instruction, point to the next sibling as a
-    // start of a segment.
+    // 중요한 주의: 이 요소는 앵커 역할을 하지만 **내장된 뷰의 일부가 아닙니다**.
+    // 그러므로 이 요소 **후에** 세그먼트를 시작합니다. 다음 형제를 참조합니다.
+    // 예를 들어, 다음 템플릿: `<div #vcrTarget>`은 DOM에서 `<div></div>...<!--container-->`로 표현됩니다.
+    // 따라서 `<div>` 명령을 처리할 때 다음 형제를 세그먼트 시작으로 가리킵니다.
     ngDevMode && validateNodeExists(native.nextSibling, lView, tNode);
     setSegmentHead(hydrationInfo, index, native.nextSibling);
   }
 
-  // Checks if the skip hydration attribute is present during hydration so we know to
-  // skip attempting to hydrate this block. We check both TNode and RElement for an
-  // attribute: the RElement case is needed for i18n cases, when we add it to host
-  // elements during the annotation phase (after all internal data structures are setup).
+  // 수분 처리 중 수분 생략 속성이 존재하는지 확인하여 이 블록을 수분 처리하지 않도록
+  // 확인합니다. 우리는 TNode와 RElement 모두에서 속성을 확인합니다.
+  // RElement 경우는 주석 단계에서 호스트 요소에 추가할 때 필요합니다.
   if (
     hydrationInfo &&
     (hasSkipHydrationAttrOnTNode(tNode) || hasSkipHydrationAttrOnRElement(native))
@@ -281,14 +277,13 @@ function locateOrCreateElementNodeImpl(
     if (isComponentHost(tNode)) {
       enterSkipHydrationBlock(tNode);
 
-      // Since this isn't hydratable, we need to empty the node
-      // so there's no duplicate content after render
+      // 수분 처리할 수 없으므로 노드를 비워서 렌더 후 중복 콘텐츠가 없도록 합니다.
       clearElementContents(native);
 
       ngDevMode && markRNodeAsSkippedByHydration(native);
     } else if (ngDevMode) {
-      // If this is not a component host, throw an error.
-      // Hydration can be skipped on per-component basis only.
+      // 이 요소가 컴포넌트 호스트가 아니므로 오류를 발생시킵니다.
+      // 수분 처리는 개별 컴포넌트 기준으로만 생략할 수 있습니다.
       throw invalidSkipHydrationHost(native);
     }
   }

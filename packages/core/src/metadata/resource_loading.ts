@@ -11,44 +11,43 @@ import {Type} from '../interface/type';
 import type {Component} from './directives';
 
 /**
- * Used to resolve resource URLs on `@Component` when used with JIT compilation.
+ * JIT 컴파일과 함께 사용될 때 `@Component`에서 리소스 URL을 해결하는 데 사용됩니다.
  *
- * Example:
+ * 예:
  * ```ts
  * @Component({
  *   selector: 'my-comp',
- *   templateUrl: 'my-comp.html', // This requires asynchronous resolution
+ *   templateUrl: 'my-comp.html', // 이는 비동기 해결이 필요합니다
  * })
  * class MyComponent{
  * }
  *
- * // Calling `renderComponent` will fail because `renderComponent` is a synchronous process
- * // and `MyComponent`'s `@Component.templateUrl` needs to be resolved asynchronously.
+ * // `renderComponent`를 호출하면 실패합니다. 왜냐하면 `renderComponent`는 동기적 프로세스이며
+ * // `MyComponent`의 `@Component.templateUrl`은 비동기적으로 해결되어야 합니다.
  *
- * // Calling `resolveComponentResources()` will resolve `@Component.templateUrl` into
- * // `@Component.template`, which allows `renderComponent` to proceed in a synchronous manner.
+ * // `resolveComponentResources()`를 호출하면 `@Component.templateUrl`이
+ * // `@Component.template`로 해결되어 `renderComponent`가 동기적 방식으로 진행할 수 있습니다.
  *
- * // Use browser's `fetch()` function as the default resource resolution strategy.
+ * // 브라우저의 `fetch()` 함수를 기본 리소스 해결 전략으로 사용합니다.
  * resolveComponentResources(fetch).then(() => {
- *   // After resolution all URLs have been converted into `template` strings.
+ *   // 해결 후 모든 URL이 `template` 문자열로 변환되었습니다.
  *   renderComponent(MyComponent);
  * });
  *
  * ```
  *
- * NOTE: In AOT the resolution happens during compilation, and so there should be no need
- * to call this method outside JIT mode.
+ * 참고: AOT에서는 해결이 컴파일 중에 발생하므로 JIT 모드 외부에서 이 메소드를 호출할 필요가 없습니다.
  *
- * @param resourceResolver a function which is responsible for returning a `Promise` to the
- * contents of the resolved URL. Browser's `fetch()` method is a good default implementation.
+ * @param resourceResolver 해결된 URL의 내용을 반환할 `Promise`를 반환하는 기능입니다.
+ * 브라우저의 `fetch()` 메서드는 좋은 기본 구현입니다.
  */
 export function resolveComponentResources(
   resourceResolver: (url: string) => Promise<string | {text(): Promise<string>}>,
 ): Promise<void> {
-  // Store all promises which are fetching the resources.
+  // 리소스를 가져오는 모든 약속을 저장합니다.
   const componentResolved: Promise<void>[] = [];
 
-  // Cache so that we don't fetch the same resource more than once.
+  // 같은 리소스를 두 번 이상 가져오지 않도록 캐시를 만듭니다.
   const urlMap = new Map<string, Promise<string>>();
   function cachedResourceResolve(url: string): Promise<string> {
     let promise = urlMap.get(url);
@@ -74,14 +73,14 @@ export function resolveComponentResources(
 
     if (component.styleUrl && component.styleUrls?.length) {
       throw new Error(
-        '@Component cannot define both `styleUrl` and `styleUrls`. ' +
-          'Use `styleUrl` if the component has one stylesheet, or `styleUrls` if it has multiple',
+        '@Component는 `styleUrl`과 `styleUrls`를 동시에 정의할 수 없습니다. ' +
+          '하나의 스타일시트가 있을 경우 `styleUrl`을 사용하고, 여러 개의 스타일시트가 있을 경우 `styleUrls`를 사용하세요.',
       );
     } else if (component.styleUrls?.length) {
       const styleOffset = component.styles.length;
       const styleUrls = component.styleUrls;
       component.styleUrls.forEach((styleUrl, index) => {
-        styles.push(''); // pre-allocate array.
+        styles.push(''); // 배열 미리 할당.
         promises.push(
           cachedResourceResolve(styleUrl).then((style) => {
             styles[styleOffset + index] = style;
@@ -110,7 +109,7 @@ export function resolveComponentResources(
 
 let componentResourceResolutionQueue = new Map<Type<any>, Component>();
 
-// Track when existing ɵcmp for a Type is waiting on resources.
+// Type에 대해 기존 ɵcmp가 리소스를 기다리고 있는지 추적합니다.
 const componentDefPendingResolution = new Set<Type<any>>();
 
 export function maybeQueueResolutionOfComponentResources(type: Type<any>, metadata: Component) {

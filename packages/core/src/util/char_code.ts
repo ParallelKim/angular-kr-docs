@@ -7,10 +7,10 @@
  */
 
 /**
- * List ASCII char codes to be used with `String.charCodeAt`
+ * `String.charCodeAt`과 함께 사용할 ASCII 문자 코드를 나열합니다.
  */
 export const enum CharCode {
-  UPPER_CASE = ~32, // & with this will make the char uppercase
+  UPPER_CASE = ~32, // & 사용 시 문자가 대문자로 변환됩니다.
   SPACE = 32, // " "
   DOUBLE_QUOTE = 34, // "\""
   HASH = 35, // "#"

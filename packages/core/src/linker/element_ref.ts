@@ -13,48 +13,48 @@ import {getCurrentTNode, getLView} from '../render3/state';
 import {getNativeByTNode} from '../render3/util/view_utils';
 
 /**
- * Creates an ElementRef from the most recent node.
+ * 가장 최근의 노드에서 ElementRef를 생성합니다.
  *
- * @returns The ElementRef instance to use
+ * @returns 사용할 ElementRef 인스턴스
  */
 export function injectElementRef(): ElementRef {
   return createElementRef(getCurrentTNode()!, getLView());
 }
 
 /**
- * Creates an ElementRef given a node.
+ * 주어진 노드로부터 ElementRef를 생성합니다.
  *
- * @param tNode The node for which you'd like an ElementRef
- * @param lView The view to which the node belongs
- * @returns The ElementRef instance to use
+ * @param tNode ElementRef를 원하는 노드
+ * @param lView 노드가 포함된 뷰
+ * @returns 사용할 ElementRef 인스턴스
  */
 export function createElementRef(tNode: TNode, lView: LView): ElementRef {
   return new ElementRef(getNativeByTNode(tNode, lView) as RElement);
 }
 
 /**
- * A wrapper around a native element inside of a View.
+ * View 내의 네이티브 요소에 대한 래퍼입니다.
  *
- * An `ElementRef` is backed by a render-specific element. In the browser, this is usually a DOM
- * element.
+ * `ElementRef`는 렌더링 특정 요소로 지원됩니다. 브라우저에서는 일반적으로 DOM
+ * 요소입니다.
  *
- * @security Permitting direct access to the DOM can make your application more vulnerable to
- * XSS attacks. Carefully review any use of `ElementRef` in your code. For more detail, see the
- * [Security Guide](https://g.co/ng/security).
+ * @security DOM에 대한 직접 접근을 허용하면 애플리케이션이 XSS 공격에 더 취약해질 수 있습니다.
+ * 코드에서 `ElementRef`의 사용을 신중하게 검토하십시오. 더 자세한 내용은
+ * [Security Guide](https://g.co/ng/security)를 참조하십시오.
  *
  * @publicApi
  */
-// Note: We don't expose things like `Injector`, `ViewContainer`, ... here,
-// i.e. users have to ask for what they need. With that, we can build better analysis tools
-// and could do better codegen in the future.
+// 주의: 여기서는 `Injector`, `ViewContainer`와 같은 것을 노출하지 않습니다,
+// 즉, 사용자는 필요로 하는 것을 요청해야 합니다. 이를 통해 더 나은 분석 도구를 구축할 수 있으며,
+// 미래에는 더 나은 코드 생성을 할 수 있습니다.
 export class ElementRef<T = any> {
   /**
    * <div class="callout is-critical">
-   *   <header>Use with caution</header>
+   *   <header>주의하여 사용하십시오</header>
    *   <p>
-   *    Use this API as the last resort when direct access to DOM is needed. Use templating and
-   *    data-binding provided by Angular instead. Alternatively you can take a look at
-   *    {@link Renderer2} which provides an API that can be safely used.
+   *    DOM에 대한 직접 접근이 필요할 때 이 API를 마지막 수단으로 사용하십시오. 대신 Angular에서 제공하는 템플릿과
+   *    데이터 바인딩을 사용하십시오. 또는 안전하게 사용할 수 있는 API를 제공하는
+   *    {@link Renderer2}를 살펴볼 수 있습니다.
    *   </p>
    * </div>
    */
@@ -72,10 +72,10 @@ export class ElementRef<T = any> {
 }
 
 /**
- * Unwraps `ElementRef` and return the `nativeElement`.
+ * `ElementRef`를 언래핑하고 `nativeElement`를 반환합니다.
  *
- * @param value value to unwrap
- * @returns `nativeElement` if `ElementRef` otherwise returns value as is.
+ * @param value 언래핑할 값
+ * @returns `ElementRef`인 경우 `nativeElement`를, 그렇지 않으면 값 그대로를 반환합니다.
  */
 export function unwrapElementRef<T, R>(value: T | ElementRef<R>): T | R {
   return value instanceof ElementRef ? value.nativeElement : value;

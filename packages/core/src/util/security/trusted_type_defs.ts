@@ -8,21 +8,20 @@
 
 /**
  * @fileoverview
- * While Angular only uses Trusted Types internally for the time being,
- * references to Trusted Types could leak into our core.d.ts, which would force
- * anyone compiling against @angular/core to provide the @types/trusted-types
- * package in their compilation unit.
+ * Angular는 현재 Trusted Types를 내부적으로만 사용하지만,
+ * Trusted Types에 대한 참조가 core.d.ts로 누출될 수 있으며, 이는
+ * @angular/core에 대해 컴파일하는 모든 사람이
+ * @types/trusted-types 패키지를 컴파일 단위에 제공해야 함을 강제할 수 있습니다.
  *
- * Until https://github.com/microsoft/TypeScript/issues/30024 is resolved, we
- * will keep Angular's public API surface free of references to Trusted Types.
- * For internal and semi-private APIs that need to reference Trusted Types, the
- * minimal type definitions for the Trusted Types API provided by this module
- * should be used instead. They are marked as "declare" to prevent them from
- * being renamed by compiler optimization.
+ * https://github.com/microsoft/TypeScript/issues/30024가 해결될 때까지,
+ * Angular의 공용 API 영역은 Trusted Types에 대한 참조 없이 유지됩니다.
+ * Trusted Types를 참조해야 하는 내부 및 반공식 API의 경우,
+ * 이 모듈에서 제공하는 Trusted Types API에 대한 최소한의 타입 정의를 대신 사용해야 합니다.
+ * 최적화에 의해 이름이 바뀌는 것을 방지하기 위해 "declare"로 표시되어 있습니다.
  *
- * Adapted from
+ * 다음에서 수정되었습니다:
  * https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/trusted-types/index.d.ts
- * but restricted to the API surface used within Angular.
+ * 그러나 Angular 내에서 사용되는 API 영역으로 제한됩니다.
  */
 
 export type TrustedHTML = string & {

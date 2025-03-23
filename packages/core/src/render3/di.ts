@@ -73,14 +73,14 @@ import {
 import {stringifyForError} from './util/stringify_utils';
 
 /**
- * Defines if the call to `inject` should include `viewProviders` in its resolution.
+ * `inject` 호출이 `viewProviders`를 포함해야 하는지를 정의합니다.
  *
- * This is set to true when we try to instantiate a component. This value is reset in
- * `getNodeInjectable` to a value which matches the declaration location of the token about to be
- * instantiated. This is done so that if we are injecting a token which was declared outside of
- * `viewProviders` we don't accidentally pull `viewProviders` in.
+ * 이것은 우리가 컴포넌트를 인스턴스화하려고 할 때 true로 설정됩니다. 이 값은
+ * `getNodeInjectable`에서 인스턴스화할 수 있는 토큰의 선언 위치와 일치하는 값으로
+ * 재설정됩니다. 이는 `viewProviders` 외부에 선언된 토큰을 주입하고자 할 때
+ * 우연히 `viewProviders`를 포함하지 않도록 하기 위함입니다.
  *
- * Example:
+ * 예:
  *
  * ```ts
  * @Injectable()
@@ -99,9 +99,9 @@ import {stringifyForError} from './util/stringify_utils';
  * })
  * class MyComponent {
  *   constructor(myService: MyService, value: String) {
- *     // We expect that Component can see into `viewProviders`.
+ *     // 우리는 컴포넌트가 `viewProviders`를 볼 수 있을 것이라고 기대합니다.
  *     expect(value).toEqual('viewProviders');
- *     // `MyService` was not declared in `viewProviders` hence it can't see it.
+ *     // `MyService`는 `viewProviders`에 선언되지 않았으므로 볼 수 없습니다.
  *     expect(myService.value).toEqual('providers');
  *   }
  * }
@@ -117,33 +117,31 @@ export function setIncludeViewProviders(v: boolean): boolean {
 }
 
 /**
- * The number of slots in each bloom filter (used by DI). The larger this number, the fewer
- * directives that will share slots, and thus, the fewer false positives when checking for
- * the existence of a directive.
+ * 각 블룸 필터의 슬롯 수입니다 (DI에 의해 사용됨). 이 숫자가 커질수록 슬롯을 공유하는
+ * 디렉티브가 적어지며 따라서 디렉티브 존재 여부를 확인할 때의 오탐지가 줄어듭니다.
  */
 const BLOOM_SIZE = 256;
 const BLOOM_MASK = BLOOM_SIZE - 1;
 
 /**
- * The number of bits that is represented by a single bloom bucket. JS bit operations are 32 bits,
- * so each bucket represents 32 distinct tokens which accounts for log2(32) = 5 bits of a bloom hash
- * number.
+ * 단일 블룸 버킷에 의해 표현되는 비트 수입니다. JS 비트 연산은 32비트이므로 각 버킷은
+ * 32개의 고유한 토큰을 나타내며 로그2(32) = 5 비트의 블룸 해시 숫자를 account합니다.
  */
 const BLOOM_BUCKET_BITS = 5;
 
-/** Counter used to generate unique IDs for directives. */
+/** 디렉티브를 위한 고유 ID를 생성하는 데 사용되는 카운터입니다. */
 let nextNgElementId = 0;
 
-/** Value used when something wasn't found by an injector. */
+/** 인젝터에 의해 어떤 것이 발견되지 않았을 때 사용되는 값입니다. */
 const NOT_FOUND = {};
 
 /**
- * Registers this directive as present in its node's injector by flipping the directive's
- * corresponding bit in the injector's bloom filter.
+ * 이 지시어를 해당 노드의 인젝터에 존재하는 것으로 등록하여 인젝터의 블룸 필터에서
+ * 지시어의 해당 비트를 뒤집습니다.
  *
- * @param injectorIndex The index of the node injector where this token should be registered
- * @param tView The TView for the injector's bloom filters
- * @param type The directive token to register
+ * @param injectorIndex 이 토큰이 등록되어야 하는 노드 인젝터의 인덱스
+ * @param tView 인젝터의 블룸 필터를 위한 TView
+ * @param type 등록할 지시어 토큰
  */
 export function bloomAdd(
   injectorIndex: number,
@@ -158,33 +156,33 @@ export function bloomAdd(
     id = (type as any)[NG_ELEMENT_ID];
   }
 
-  // Set a unique ID on the directive type, so if something tries to inject the directive,
-  // we can easily retrieve the ID and hash it into the bloom bit that should be checked.
+  // 지시어 유형에 고유 ID를 설정하여, 누군가가 지시어를 주입하려고 할 때
+  // ID를 쉽게 검색하고 확인할 수 있게 합니다.
   if (id == null) {
     id = (type as any)[NG_ELEMENT_ID] = nextNgElementId++;
   }
 
-  // We only have BLOOM_SIZE (256) slots in our bloom filter (8 buckets * 32 bits each),
-  // so all unique IDs must be modulo-ed into a number from 0 - 255 to fit into the filter.
+  // 블룸 필터에는 BLOOM_SIZE(256) 슬롯만 있으므로 모든 고유 ID는 0 - 255의 숫자로
+  // 모듈러 연산을 통해 적합해야 합니다.
   const bloomHash = id & BLOOM_MASK;
 
-  // Create a mask that targets the specific bit associated with the directive.
-  // JS bit operations are 32 bits, so this will be a number between 2^0 and 2^31, corresponding
-  // to bit positions 0 - 31 in a 32 bit integer.
+  // 지시어에 연관된 특정 비트를 대상으로 하는 마스크를 생성합니다.
+  // JS 비트 연산은 32비트이므로, 이는 2^0에서 2^31까지의 숫자가 되며,
+  // 32비트 정수에서 비트 위치 0 - 31에 해당합니다.
   const mask = 1 << bloomHash;
 
-  // Each bloom bucket in `tData` represents `BLOOM_BUCKET_BITS` number of bits of `bloomHash`.
-  // Any bits in `bloomHash` beyond `BLOOM_BUCKET_BITS` indicate the bucket offset that the mask
-  // should be written to.
+  // `tData`의 각 블룸 버킷은 `bloomHash`의 `BLOOM_BUCKET_BITS` 수의 비트를 나타냅니다.
+  // `BLOOM_BUCKET_BITS`를 초과하는 `bloomHash`의 비트는 마스크가 기록되어야 하는
+  // 버킷 오프셋을 나타냅니다.
   (tView.data as number[])[injectorIndex + (bloomHash >> BLOOM_BUCKET_BITS)] |= mask;
 }
 
 /**
- * Creates (or gets an existing) injector for a given element or container.
+ * 주어진 요소 또는 컨테이너에 대한 (또는 기존) 인젝터를 생성합니다.
  *
- * @param tNode for which an injector should be retrieved / created.
- * @param lView View where the node is stored
- * @returns Node injector
+ * @param tNode 인젝터를 검색/생성해야 하는 노드
+ * @param lView 노드가 저장된 뷰
+ * @returns 노드 인젝터
  */
 export function getOrCreateNodeInjectorForNode(
   tNode: TElementNode | TContainerNode | TElementContainerNode,
@@ -198,22 +196,21 @@ export function getOrCreateNodeInjectorForNode(
   const tView = lView[TVIEW];
   if (tView.firstCreatePass) {
     tNode.injectorIndex = lView.length;
-    insertBloom(tView.data, tNode); // foundation for node bloom
-    insertBloom(lView, null); // foundation for cumulative bloom
+    insertBloom(tView.data, tNode); // 노드 블룸의 기초
+    insertBloom(lView, null); // 누적 블룸의 기초
     insertBloom(tView.blueprint, null);
   }
 
   const parentLoc = getParentInjectorLocation(tNode, lView);
   const injectorIndex = tNode.injectorIndex;
 
-  // If a parent injector can't be found, its location is set to -1.
-  // In that case, we don't need to set up a cumulative bloom
+  // 부모 인젝터를 찾을 수 없는 경우, 그 위치가 -1로 설정됩니다.
+  // 그런 경우, 누적 블룸을 설정할 필요가 없습니다.
   if (hasParentInjector(parentLoc)) {
     const parentIndex = getParentInjectorIndex(parentLoc);
     const parentLView = getParentInjectorView(parentLoc, lView);
     const parentData = parentLView[TVIEW].data as any;
-    // Creates a cumulative bloom filter that merges the parent's bloom filter
-    // and its own cumulative bloom (which contains tokens for all ancestors)
+    // 부모의 블룸 필터와 자신의 누적 블룸(모든 조상의 토큰 포함)을 합병하는 누적 블룸 필터를 생성합니다.
     for (let i = 0; i < NodeInjectorOffset.BLOOM_SIZE; i++) {
       lView[injectorIndex + i] = parentLView[parentIndex + i] | parentData[parentIndex + i];
     }
@@ -230,11 +227,11 @@ function insertBloom(arr: any[], footer: TNode | null): void {
 export function getInjectorIndex(tNode: TNode, lView: LView): number {
   if (
     tNode.injectorIndex === -1 ||
-    // If the injector index is the same as its parent's injector index, then the index has been
-    // copied down from the parent node. No injector has been created yet on this node.
+    // 인젝터 인덱스가 부모의 인젝터 인덱스와 동일하면, 해당 인덱스는 부모 노드로부터
+    // 복사된 것입니다. 이 노드에는 인젝터가 아직 생성되지 않았습니다.
     (tNode.parent && tNode.parent.injectorIndex === tNode.injectorIndex) ||
-    // After the first template pass, the injector index might exist but the parent values
-    // might not have been calculated yet for this instance
+    // 첫 번째 템플릿 패스 이후에 인젝터 인덱스가 존재할 수 있지만, 부모 값이
+    // 이 인스턴스에 대해 아직 계산되지 않았을 수 있습니다.
     lView[tNode.injectorIndex + NodeInjectorOffset.PARENT] === null
   ) {
     return -1;
@@ -245,44 +242,42 @@ export function getInjectorIndex(tNode: TNode, lView: LView): number {
 }
 
 /**
- * Finds the index of the parent injector, with a view offset if applicable. Used to set the
- * parent injector initially.
+ * 부모 인젝터의 인덱스를 찾습니다. 적용 가능한 경우 뷰 오프셋 포함. 부모 인젝터를
+ * 처음에 설정하는 데 사용됩니다.
  *
- * @returns Returns a number that is the combination of the number of LViews that we have to go up
- * to find the LView containing the parent inject AND the index of the injector within that LView.
+ * @returns LView를 포함하는 부모 인젝터를 찾기 위해 올라가야 하는 LViews의 수와
+ * 해당 LView 내 인젝터의 인덱스의 조합으로서의 숫자입니다.
  */
 export function getParentInjectorLocation(tNode: TNode, lView: LView): RelativeInjectorLocation {
   if (tNode.parent && tNode.parent.injectorIndex !== -1) {
-    // If we have a parent `TNode` and there is an injector associated with it we are done, because
-    // the parent injector is within the current `LView`.
-    return tNode.parent.injectorIndex as RelativeInjectorLocation; // ViewOffset is 0
+    // 부모 `TNode`가 있고 그와 연관된 인젝터가 있다면 현재 `LView` 내에 부모 인젝터가 있습니다.
+    return tNode.parent.injectorIndex as RelativeInjectorLocation; // ViewOffset은 0입니다.
   }
 
-  // When parent injector location is computed it may be outside of the current view. (ie it could
-  // be pointing to a declared parent location). This variable stores number of declaration parents
-  // we need to walk up in order to find the parent injector location.
+  // 부모 인젝터의 위치가 계산될 때 현재 뷰 외부에 있을 수 있습니다. (즉, 선언된 부모 위치를
+  // 가리킬 수 있습니다). 이 변수는 부모 인젝터 위치를 찾기 위해 올라가야 할 선언 부모의 수를
+  // 저장합니다.
   let declarationViewOffset = 0;
   let parentTNode: TNode | null = null;
   let lViewCursor: LView | null = lView;
 
-  // The parent injector is not in the current `LView`. We will have to walk the declared parent
-  // `LView` hierarchy and look for it. If we walk of the top, that means that there is no parent
-  // `NodeInjector`.
+  // 부모 인젝터가 현재 `LView` 내에 없습니다. 선언된 부모 LView 계층을 따라가야 합니다.
+  // 우리가 가장 위로 올라간다면, 그 의미는 부모 NodeInjector가 없다는 것입니다.
   while (lViewCursor !== null) {
     parentTNode = getTNodeFromLView(lViewCursor);
 
     if (parentTNode === null) {
-      // If we have no parent, than we are done.
+      // 부모가 없다면, 우리는 종료됩니다.
       return NO_PARENT_INJECTOR;
     }
 
     ngDevMode && parentTNode && assertTNodeForLView(parentTNode!, lViewCursor[DECLARATION_VIEW]!);
-    // Every iteration of the loop requires that we go to the declared parent.
+    // 반복당시 선언된 부모로 가야 합니다.
     declarationViewOffset++;
     lViewCursor = lViewCursor[DECLARATION_VIEW];
 
     if (parentTNode.injectorIndex !== -1) {
-      // We found a NodeInjector which points to something.
+      // NodeInjector가 발견되었습니다.
       return (parentTNode.injectorIndex |
         (declarationViewOffset <<
           RelativeInjectorLocationFlags.ViewOffsetShift)) as RelativeInjectorLocation;
@@ -290,12 +285,12 @@ export function getParentInjectorLocation(tNode: TNode, lView: LView): RelativeI
   }
   return NO_PARENT_INJECTOR;
 }
+
 /**
- * Makes a type or an injection token public to the DI system by adding it to an
- * injector's bloom filter.
+ * DI 시스템에 대한 유형 또는 주입 토큰을 공개하여 인젝터의 블룸 필터에 추가합니다.
  *
- * @param di The node injector in which a directive will be added
- * @param token The type or the injection token to be made public
+ * @param di 지시어가 추가될 노드 인젝터
+ * @param token 공개될 유형 또는 주입 토큰
  */
 export function diPublicInInjector(
   injectorIndex: number,
@@ -306,27 +301,26 @@ export function diPublicInInjector(
 }
 
 /**
- * Inject static attribute value into directive constructor.
+ * 정적 속성 값을 지시어 생성자에 주입합니다.
  *
- * This method is used with `factory` functions which are generated as part of
- * `defineDirective` or `defineComponent`. The method retrieves the static value
- * of an attribute. (Dynamic attributes are not supported since they are not resolved
- *  at the time of injection and can change over time.)
+ * 이 메소드는 `defineDirective` 또는 `defineComponent`의 일환으로 생성된 `factory`
+ * 함수와 함께 사용됩니다. 이 메소드는 속성의 정적 값을 검색합니다. (동적 속성은 주입 시점에
+ * 해결되지 않으며 시간이 지남에 따라 변경될 수 없으므로 지원되지 않습니다.)
  *
- * # Example
- * Given:
+ * # 예
+ * 주어진:
  * ```ts
  * @Component(...)
  * class MyComponent {
  *   constructor(@Attribute('title') title: string) { ... }
  * }
  * ```
- * When instantiated with
+ * 다음과 같이 인스턴스화될 때
  * ```html
  * <my-component title="Hello"></my-component>
  * ```
  *
- * Then factory method generated is:
+ * 생성된 팩토리 메소드는 다음과 같습니다:
  * ```ts
  * MyComponent.ɵcmp = defineComponent({
  *   factory: () => new MyComponent(injectAttribute('title'))
@@ -353,18 +347,18 @@ export function injectAttributeImpl(tNode: TNode, attrNameToInject: string): str
     while (i < attrsLength) {
       const value = attrs[i];
 
-      // If we hit a `Bindings` or `Template` marker then we are done.
+      // `Bindings` 또는 `Template` 마커에 도달하면 우리는 종료됩니다.
       if (isNameOnlyAttributeMarker(value)) break;
 
-      // Skip namespaced attributes
+      // 네임스페이스가 있는 속성은 건너뜁니다.
       if (value === AttributeMarker.NamespaceURI) {
-        // we skip the next two values
-        // as namespaced attributes looks like
+        // 우리는 다음 두 값을 건너뜁니다.
+        // 네임스페이스가 있는 속성은 다음과 같습니다:
         // [..., AttributeMarker.NamespaceURI, 'http://someuri.com/test', 'test:exist',
         // 'existValue', ...]
         i = i + 2;
       } else if (typeof value === 'number') {
-        // Skip to the first value of the marked attribute.
+        // 마커 속성의 첫 번째 값으로 건너뜁니다.
         i++;
         while (i < attrsLength && typeof attrs[i] === 'string') {
           i++;
@@ -392,13 +386,13 @@ function notFoundValueOrThrow<T>(
 }
 
 /**
- * Returns the value associated to the given token from the ModuleInjector or throws exception
+ * 주어진 토큰과 관련된 값을 ModuleInjector에서 반환하거나 예외를 발생시킵니다.
  *
- * @param lView The `LView` that contains the `tNode`
- * @param token The token to look for
- * @param flags Injection flags
- * @param notFoundValue The value to return when the injection flags is `InternalInjectFlags.Optional`
- * @returns the value from the injector or throws an exception
+ * @param lView `tNode`를 포함하는 `LView`
+ * @param token 찾을 토큰
+ * @param flags 주입 플래그
+ * @param notFoundValue 주입 플래그가 `InternalInjectFlags.Optional`일 때 반환할 값
+ * @returns 인젝터의 값 또는 예외를 발생시킵니다.
  */
 function lookupTokenUsingModuleInjector<T>(
   lView: LView,
@@ -407,15 +401,14 @@ function lookupTokenUsingModuleInjector<T>(
   notFoundValue?: any,
 ): T | null {
   if (flags & InternalInjectFlags.Optional && notFoundValue === undefined) {
-    // This must be set or the NullInjector will throw for optional deps
+    // 이것은 설정되어야 합니다. 그렇지 않으면 NullInjector가 선택적 deps에 대해 오류를 발생시킵니다.
     notFoundValue = null;
   }
 
   if ((flags & (InternalInjectFlags.Self | InternalInjectFlags.Host)) === 0) {
     const moduleInjector = lView[INJECTOR];
-    // switch to `injectInjectorOnly` implementation for module injector, since module injector
-    // should not have access to Component/Directive DI scope (that may happen through
-    // `directiveInject` implementation)
+    // 모듈 인젝터를 위한 `injectInjectorOnly` 구현으로 전환합니다. 모듈 인젝터는
+    // 컴포넌트/디렉티브 DI 범위에 접근할 수 없어야 합니다 (이는 `directiveInject` 구현을 통해 발생할 수 있습니다).
     const previousInjectImplementation = setInjectImplementation(undefined);
     try {
       if (moduleInjector) {
@@ -435,20 +428,19 @@ function lookupTokenUsingModuleInjector<T>(
 }
 
 /**
- * Returns the value associated to the given token from the NodeInjectors => ModuleInjector.
+ * NodeInjectors에서 ModuleInjector로 주어진 토큰과 관련된 값을 반환합니다.
  *
- * Look for the injector providing the token by walking up the node injector tree and then
- * the module injector tree.
+ * 노드 인젝터 트리를 올라가면서 토큰을 제공하는 인젝터를 찾습니다.
  *
- * This function patches `token` with `__NG_ELEMENT_ID__` which contains the id for the bloom
- * filter. `-1` is reserved for injecting `Injector` (implemented by `NodeInjector`)
+ * 이 함수는 `__NG_ELEMENT_ID__`로 `token`에 패치합니다. 이는 블룸 필터의 ID를 포함합니다.
+ * `-1`은 `Injector` 주입을 위해 예약되어 있습니다 (NodeInjector에 의해 구현됨).
  *
- * @param tNode The Node where the search for the injector should start
- * @param lView The `LView` that contains the `tNode`
- * @param token The token to look for
- * @param flags Injection flags
- * @param notFoundValue The value to return when the injection flags is `InternalInjectFlags.Optional`
- * @returns the value from the injector, `null` when not found, or `notFoundValue` if provided
+ * @param tNode 인젝터 검색이 시작될 노드
+ * @param lView `tNode`를 포함하는 `LView`
+ * @param token 찾을 토큰
+ * @param flags 주입 플래그
+ * @param notFoundValue 주입 플래그가 `InternalInjectFlags.Optional`일 때 반환할 값
+ * @returns 인젝터에서의 값, 찾을 수 없을 때 `null`, 제공된 경우 `notFoundValue`
  */
 export function getOrCreateInjectable<T>(
   tNode: TDirectiveHostNode | null,
@@ -458,12 +450,12 @@ export function getOrCreateInjectable<T>(
   notFoundValue?: any,
 ): T | null {
   if (tNode !== null) {
-    // If the view or any of its ancestors have an embedded
-    // view injector, we have to look it up there first.
+    // 뷰나 그 조상 중 하나에 내장된 뷰 인젝터가 있다면
+    // 먼저 거기에서 검색해야 합니다.
     if (
       lView[FLAGS] & LViewFlags.HasEmbeddedViewInjector &&
-      // The token must be present on the current node injector when the `Self`
-      // flag is set, so the lookup on embedded view injector(s) can be skipped.
+      // `Self` 플래그가 설정될 때, 현재 노드 인젝터에서 토큰이 존재해야 하므로
+      // 내장 뷰 인젝터를건너뛰어야 합니다.
       !(flags & InternalInjectFlags.Self)
     ) {
       const embeddedInjectorValue = lookupTokenUsingEmbeddedInjector(
@@ -478,26 +470,26 @@ export function getOrCreateInjectable<T>(
       }
     }
 
-    // Otherwise try the node injector.
+    // 그렇지 않으면 노드 인젝터를 시도합니다.
     const value = lookupTokenUsingNodeInjector(tNode, lView, token, flags, NOT_FOUND);
     if (value !== NOT_FOUND) {
       return value;
     }
   }
 
-  // Finally, fall back to the module injector.
+  // 마침내 모듈 인젝터로 되돌아갑니다.
   return lookupTokenUsingModuleInjector<T>(lView, token, flags, notFoundValue);
 }
 
 /**
- * Returns the value associated to the given token from the node injector.
+ * 노드 인젝터에서 주어진 토큰과 관련된 값을 반환합니다.
  *
- * @param tNode The Node where the search for the injector should start
- * @param lView The `LView` that contains the `tNode`
- * @param token The token to look for
- * @param flags Injection flags
- * @param notFoundValue The value to return when the injection flags is `InternalInjectFlags.Optional`
- * @returns the value from the injector, `null` when not found, or `notFoundValue` if provided
+ * @param tNode 인젝터 검색이 시작될 노드
+ * @param lView `tNode`를 포함하는 `LView`
+ * @param token 찾을 토큰
+ * @param flags 주입 플래그
+ * @param notFoundValue 주입 플래그가 `InternalInjectFlags.Optional`일 때 반환할 값
+ * @returns 인젝터의 값, 찾을 수 없을 때 `null`, 제공된 경우 `notFoundValue`
  */
 function lookupTokenUsingNodeInjector<T>(
   tNode: TDirectiveHostNode,
@@ -507,12 +499,12 @@ function lookupTokenUsingNodeInjector<T>(
   notFoundValue?: any,
 ) {
   const bloomHash = bloomHashBitOrFactory(token);
-  // If the ID stored here is a function, this is a special object like ElementRef or TemplateRef
-  // so just call the factory function to create it.
+  // 여기에 저장된 ID가 함수라면, 이는 ElementRef 또는 TemplateRef와 같은 특수 객체이므로
+  // 공장 함수를 호출하여 생성해야 합니다.
   if (typeof bloomHash === 'function') {
     if (!enterDI(lView, tNode, flags)) {
-      // Failed to enter DI, try module injector instead. If a token is injected with the @Host
-      // flag, the module injector is not searched for that token in Ivy.
+      // DI에 진입하지 못했습니다. 대신 모듈 인젝터를 시도하세요. @Host 플래그가 붙은 토큰이 주입되면,
+      // Ivy에서는 해당 토큰에 대한 모듈 인젝터를 검색하지 않습니다.
       return flags & InternalInjectFlags.Host
         ? notFoundValueOrThrow<T>(notFoundValue, token, flags)
         : lookupTokenUsingModuleInjector<T>(lView, token, flags, notFoundValue);
@@ -543,17 +535,15 @@ function lookupTokenUsingNodeInjector<T>(
       leaveDI();
     }
   } else if (typeof bloomHash === 'number') {
-    // A reference to the previous injector TView that was found while climbing the element
-    // injector tree. This is used to know if viewProviders can be accessed on the current
-    // injector.
+    // 요소 인젝터 트리를 오르는 동안 발견된 이전 인젝터 TView에 대한 참조입니다.
+    // 이는 현재 인젝터에서 viewProviders에 접근할 수 있는지 아는 데 사용됩니다.
     let previousTView: TView | null = null;
     let injectorIndex = getInjectorIndex(tNode, lView);
     let parentLocation = NO_PARENT_INJECTOR;
     let hostTElementNode: TNode | null =
       flags & InternalInjectFlags.Host ? lView[DECLARATION_COMPONENT_VIEW][T_HOST] : null;
 
-    // If we should skip this injector, or if there is no injector on this node, start by
-    // searching the parent injector.
+    // 인젝터를 건너뛰거나 이 노드에 인젝터가 없다면 부모 인젝터를 검색하여 시작합니다.
     if (injectorIndex === -1 || flags & InternalInjectFlags.SkipSelf) {
       parentLocation =
         injectorIndex === -1
@@ -569,19 +559,17 @@ function lookupTokenUsingNodeInjector<T>(
       }
     }
 
-    // Traverse up the injector tree until we find a potential match or until we know there
-    // *isn't* a match.
+    // 인젝터 트리를 따라 올라가면서 잠재적인 일치를 찾거나 일치하는 것이 없는지 확인합니다.
     while (injectorIndex !== -1) {
       ngDevMode && assertNodeInjector(lView, injectorIndex);
 
-      // Check the current injector. If it matches, see if it contains token.
+      // 현재 인젝터를 확인합니다. 만약 일치한다면, 토큰이 포함되어 있는지 확인합니다.
       const tView = lView[TVIEW];
       ngDevMode &&
         assertTNodeForLView(tView.data[injectorIndex + NodeInjectorOffset.TNODE] as TNode, lView);
       if (bloomHasToken(bloomHash, injectorIndex, tView.data)) {
-        // At this point, we have an injector which *may* contain the token, so we step through
-        // the providers and directives associated with the injector's corresponding node to get
-        // the instance.
+        // 이 시점에서 토큰을 포함할 수 있는 인젝터를 가지므로, 인젝터의 해당 노드와 관련된
+        // 프로바이더 및 지시어를 검색합니다.
         const instance: T | {} | null = searchTokensOnInjector<T>(
           injectorIndex,
           lView,
@@ -603,15 +591,14 @@ function lookupTokenUsingNodeInjector<T>(
         ) &&
         bloomHasToken(bloomHash, injectorIndex, lView)
       ) {
-        // The def wasn't found anywhere on this node, so it was a false positive.
-        // Traverse up the tree and continue searching.
+        // 이 노드에서 정의가 발견되지 않았으므로 잘못된 긍정입니다.
+        // 트리를 오르면서 계속 검색합니다.
         previousTView = tView;
         injectorIndex = getParentInjectorIndex(parentLocation);
         lView = getParentInjectorView(parentLocation, lView);
       } else {
-        // If we should not search parent OR If the ancestor bloom filter value does not have the
-        // bit corresponding to the directive we can give up on traversing up to find the specific
-        // injector.
+        // 부모를 검색하면 안 되거나 조상 블룸 필터 값이 지시어에 해당하는 비트를 가지지 않는 경우,
+        // 특정 인젝터를 찾기 위해 상승하는 것을 포기할 수 있습니다.
         injectorIndex = -1;
       }
     }
@@ -630,28 +617,24 @@ function searchTokensOnInjector<T>(
 ) {
   const currentTView = lView[TVIEW];
   const tNode = currentTView.data[injectorIndex + NodeInjectorOffset.TNODE] as TNode;
-  // First, we need to determine if view providers can be accessed by the starting element.
-  // There are two possibilities
+  // 먼저 시작 요소가 뷰 프로바이더에 접근할 수 있는지 결정해야 합니다.
+  // 두 가지 가능성이 있습니다.
   const canAccessViewProviders =
     previousTView == null
-      ? // 1) This is the first invocation `previousTView == null` which means that we are at the
-        // `TNode` of where injector is starting to look. In such a case the only time we are allowed
-        // to look into the ViewProviders is if:
-        // - we are on a component
-        // - AND the injector set `includeViewProviders` to true (implying that the token can see
-        // ViewProviders because it is the Component or a Service which itself was declared in
-        // ViewProviders)
+      ? // 1) 첫 번째 호출 `previousTView == null`, 이는 인젝터가 토큰을 검색하기 시작한
+        // `TNode`에 있는 경우입니다. 이 경우 뷰 프로바이더를 조회할 수 있는 유일한 경우는:
+        // - 우리는 컴포넌트에 있으며
+        // - 인젝터가 `includeViewProviders`를 true로 설정합니다. (이는 토큰이 컴포넌트이거나
+        // 필요한 경우 뷰 프로바이더 내에서 선언된 서비스라는 것을 의미합니다.)
         isComponentHost(tNode) && includeViewProviders
-      : // 2) `previousTView != null` which means that we are now walking across the parent nodes.
-        // In such a case we are only allowed to look into the ViewProviders if:
-        // - We just crossed from child View to Parent View `previousTView != currentTView`
-        // - AND the parent TNode is an Element.
-        // This means that we just came from the Component's View and therefore are allowed to see
-        // into the ViewProviders.
+      : // 2) `previousTView != null`, 즉 우리는 부모 노드를 가로지고 있습니다.
+        // 이 경우, 뷰 프로바이더를 조회할 수 있는 경우는:
+        // - 컴포넌트의 뷰에 있으며 `previousTView != currentTView`일 경우
+        // - 그리고 부모 TNode가 요소입니다.
+        // 즉, 우리는 컴포넌트의 뷰에서 나갔고 따라서 뷰 프로바이더를 볼 수 있습니다.
         previousTView != currentTView && (tNode.type & TNodeType.AnyRNode) !== 0;
 
-  // This special case happens when there is a @host on the inject and when we are searching
-  // on the host element node.
+  // 이 특별한 경우는 @host가 주입되고 우리가 호스트 요소 노드에서 검색할 때 발생합니다.
   const isHostSpecialCase = flags & InternalInjectFlags.Host && hostTElementNode === tNode;
 
   const injectableIdx = locateDirectiveOrProvider(
@@ -669,14 +652,14 @@ function searchTokensOnInjector<T>(
 }
 
 /**
- * Searches for the given token among the node's directives and providers.
+ * 노드의 지시어 및 프로바이더 중에서 주어진 토큰을 검색합니다.
  *
- * @param tNode TNode on which directives are present.
- * @param tView The tView we are currently processing
- * @param token Provider token or type of a directive to look for.
- * @param canAccessViewProviders Whether view providers should be considered.
- * @param isHostSpecialCase Whether the host special case applies.
- * @returns Index of a found directive or provider, or null when none found.
+ * @param tNode 지시어가 있는 TNode
+ * @param tView 현재 처리 중인 tView
+ * @param token 찾을 프로바이더 토큰 또는 지시어 유형
+ * @param canAccessViewProviders 뷰 프로바이더를 고려해야 하는지 여부
+ * @param isHostSpecialCase 호스트 특별 케이스 여부
+ * @returns 발견된 지시어 또는 프로바이더의 인덱스, 없으면 null
  */
 export function locateDirectiveOrProvider<T>(
   tNode: TNode,
@@ -696,7 +679,7 @@ export function locateDirectiveOrProvider<T>(
   const startingIndex = canAccessViewProviders
     ? injectablesStart
     : injectablesStart + cptViewProvidersCount;
-  // When the host special case applies, only the viewProviders and the component are visible
+  // 호스트 특별 케이스가 적용되면, 뷰 프로바이더와 컴포넌트만 볼 수 있습니다.
   const endIndex = isHostSpecialCase ? injectablesStart + cptViewProvidersCount : directiveEnd;
   for (let i = startingIndex; i < endIndex; i++) {
     const providerTokenOrDef = tInjectables[i] as ProviderToken<any> | DirectiveDef<any> | string;
@@ -717,11 +700,10 @@ export function locateDirectiveOrProvider<T>(
 }
 
 /**
- * Retrieve or instantiate the injectable from the `LView` at particular `index`.
+ * 특정 `index`에서 `LView`로부터 주입 가능한 값을 검색하거나 인스턴스화합니다.
  *
- * This function checks to see if the value has already been instantiated and if so returns the
- * cached `injectable`. Otherwise if it detects that the value is still a factory it
- * instantiates the `injectable` and caches the value.
+ * 이 함수는 값이 이미 인스턴스화되었는지 확인하고, 그렇다면 캐시된 `injectable`을 반환합니다.
+ * 그렇지 않으면 값이 여전히 공장인 경우 `injectable`을 인스턴스화하고 값을 캐시합니다.
  */
 export function getNodeInjectable(
   lView: LView,
@@ -739,10 +721,10 @@ export function getNodeInjectable(
     const previousIncludeViewProviders = setIncludeViewProviders(factory.canSeeViewProviders);
     factory.resolving = true;
 
-    // tData indexes mirror the concrete instances in its corresponding LView.
-    // lView[index] here is either the injectable instance itself or a factory,
-    // therefore tData[index] is the constructor of that injectable or a
-    // definition object that contains the constructor in a `.type` field.
+    // tData 인덱스는 해당 LView에서의 구체적인 인스턴스를 반영합니다.
+    // lView[index]는 주입 가능한 인스턴스 자체 또는 공장일 수 있으므로,
+    // 따라서 tData[index]는 해당 주입 가능한 항목의 구성자 또는 정의 객체가
+    // `.type` 필드에 포함되어 있습니다.
     const token =
       (tData[index] as DirectiveDef<unknown> | ComponentDef<unknown>).type || tData[index];
 
@@ -760,7 +742,7 @@ export function getNodeInjectable(
       assertEqual(
         success,
         true,
-        "Because flags do not contain `SkipSelf' we expect this to always succeed.",
+        "플래그에 `SkipSelf'가 포함되어 있지 않으므로 항상 성공할 것으로 예상합니다.",
       );
     try {
       ngDevMode && emitInjectorToCreateInstanceEvent(token);
@@ -769,12 +751,12 @@ export function getNodeInjectable(
 
       ngDevMode && emitInstanceCreatedByInjectorEvent(value);
 
-      // This code path is hit for both directives and providers.
-      // For perf reasons, we want to avoid searching for hooks on providers.
-      // It does no harm to try (the hooks just won't exist), but the extra
-      // checks are unnecessary and this is a hot path. So we check to see
-      // if the index of the dependency is in the directive range for this
-      // tNode. If it's not, we know it's a provider and skip hook registration.
+      // 이 코드 경로는 지시어와 프로바이더 모두에 적용됩니다.
+      // 성능상의 이유로, 프로바이더의 훅을 검색하는 것을 피하려고 합니다.
+      // 해가 되지 않도록 시도하지만 (훅은 존재하지 않을 것입니다), 추가 확인은 필요 없으며
+      // 이는 중요한 경로임을 고려해야 합니다. 따라서 종속성의 인덱스가 이
+      // tNode에 대한 지시어 범위에 있는지 확인합니다. 그렇지 않으면, 이는 프로바이더임을 알고
+      // 훅 등록을 건너뛰게 됩니다.
       if (tView.firstCreatePass && index >= tNode.directiveStart) {
         ngDevMode && assertDirectiveDef(tData[index]);
         registerPreOrderHooks(index, tData[index] as DirectiveDef<any>, tView);
@@ -793,16 +775,15 @@ export function getNodeInjectable(
 }
 
 /**
- * Returns the bit in an injector's bloom filter that should be used to determine whether or not
- * the directive might be provided by the injector.
+ * 인젝터의 블룸 필터에서 토큰이 인젝터가 이 지시어를 제공할 수 있는지를 결정하기 위해
+ * 사용해야 하는 비트를 반환합니다.
  *
- * When a directive is public, it is added to the bloom filter and given a unique ID that can be
- * retrieved on the Type. When the directive isn't public or the token is not a directive `null`
- * is returned as the node injector can not possibly provide that token.
+ * 지시어가 공개되면, 블룸 필터에 추가되고 고유 ID를 부여받아 Type에서 검색할 수 있습니다.
+ * 지시어가 공개되지 않거나 토큰이 지시어가 아닌 경우 `null`이 반환됩니다.
  *
- * @param token the injection token
- * @returns the matching bit to check in the bloom filter or `null` if the token is not known.
- *   When the returned value is negative then it represents special values such as `Injector`.
+ * @param token 주입 토큰
+ * @returns 블룸 필터에서 확인할 일치하는 비트 또는 알려지지 않은 토큰인 경우 `null`.
+ *   반환된 값이 음수이면, 이는 `Injector`와 같은 특수 값을 나타냅니다.
  */
 export function bloomHashBitOrFactory(
   token: ProviderToken<any> | string,
@@ -812,9 +793,9 @@ export function bloomHashBitOrFactory(
     return token.charCodeAt(0) || 0;
   }
   const tokenId: number | undefined =
-    // First check with `hasOwnProperty` so we don't get an inherited ID.
+    // 상속된 ID를 가져오지 않기 위해 `hasOwnProperty`로 먼저 확인합니다.
     token.hasOwnProperty(NG_ELEMENT_ID) ? (token as any)[NG_ELEMENT_ID] : undefined;
-  // Negative token IDs are used for special objects such as `Injector`
+  // 음수 토큰 ID는 `Injector`와 같은 특수 객체에 사용됩니다.
   if (typeof tokenId === 'number') {
     if (tokenId >= 0) {
       return tokenId & BLOOM_MASK;
@@ -833,22 +814,21 @@ export function bloomHasToken(
   injectorIndex: number,
   injectorView: LView | TData,
 ) {
-  // Create a mask that targets the specific bit associated with the directive we're looking for.
-  // JS bit operations are 32 bits, so this will be a number between 2^0 and 2^31, corresponding
-  // to bit positions 0 - 31 in a 32 bit integer.
+  // 지시어와 관련된 특정 비트를 대상으로 하는 마스크를 생성합니다.
+  // JS 비트 연산은 32비트이므로, 이는 2^0에서 2^31까지의 숫자가 되며,
+  // 32비트 정수에서 비트 위치 0 - 31에 해당합니다.
   const mask = 1 << bloomHash;
 
-  // Each bloom bucket in `injectorView` represents `BLOOM_BUCKET_BITS` number of bits of
-  // `bloomHash`. Any bits in `bloomHash` beyond `BLOOM_BUCKET_BITS` indicate the bucket offset
-  // that should be used.
+  // `injectorView`의 각 블룸 버킷은 `bloomHash`의 `BLOOM_BUCKET_BITS` 수의 비트를 나타냅니다.
+  // `BLOOM_BUCKET_BITS`를 초과하는 `bloomHash`의 비트는 사용되어야 할 버킷 오프셋을 나타냅니다.
   const value = injectorView[injectorIndex + (bloomHash >> BLOOM_BUCKET_BITS)];
 
-  // If the bloom filter value has the bit corresponding to the directive's bloomBit flipped on,
-  // this injector is a potential match.
+  // 블룸 필터 값이 지시어의 bloomBit에 해당하는 비트를 포함하고 있으면,
+  // 이 인젝터는 잠재적인 일치입니다.
   return !!(value & mask);
 }
 
-/** Returns true if flags prevent parent injector from being searched for tokens */
+/** 플래그가 토큰을 위한 부모 인젝터 검색을 방지할 경우 true를 반환합니다 */
 function shouldSearchParent(
   flags: InternalInjectFlags,
   isFirstHostTNode: boolean,
@@ -889,7 +869,7 @@ export class NodeInjector implements Injector {
   }
 }
 
-/** Creates a `NodeInjector` for the current node. */
+/** 현재 노드에 대한 `NodeInjector`를 생성합니다. */
 export function createNodeInjector(): Injector {
   return new NodeInjector(getCurrentTNode()! as TDirectiveHostNode, getLView()) as any;
 }
@@ -904,15 +884,15 @@ export function ɵɵgetInheritedFactory<T>(type: Type<any>): (type: Type<T>) => 
     const objectPrototype = Object.prototype;
     let parent = Object.getPrototypeOf(type.prototype).constructor;
 
-    // Go up the prototype until we hit `Object`.
+    // `Object`에 도달할 때까지 프로토타입을 위로 이동합니다.
     while (parent && parent !== objectPrototype) {
       const factory = parent[NG_FACTORY_DEF] || getFactoryOf(parent);
 
-      // If we hit something that has a factory and the factory isn't the same as the type,
-      // we've found the inherited factory. Note the check that the factory isn't the type's
-      // own factory is redundant in most cases, but if the user has custom decorators on the
-      // class, this lookup will start one level down in the prototype chain, causing us to
-      // find the own factory first and potentially triggering an infinite loop downstream.
+      // 공장이 있는 것을 발견하고 그 공장이 유형과 같지 않으면,
+      // 상속된 공장을 찾았습니다. 공장이 유형의 고유한 공장이 아니라는 확인은
+      // 대부분의 경우 불필요하지만 사용자가 클래스에서 사용자 정의 데코레이터가 있으면,
+      // 이 조회는 프로토타입 체인에서 한 수준 아래에서 시작하여 우연히
+      // 자신의 공장을 최초로 발견하고 잠재적으로 하류에서 무한 루프를 트리거할 수 있습니다.
       if (factory && factory !== ownFactory) {
         return factory;
       }
@@ -920,10 +900,9 @@ export function ɵɵgetInheritedFactory<T>(type: Type<any>): (type: Type<T>) => 
       parent = Object.getPrototypeOf(parent);
     }
 
-    // There is no factory defined. Either this was improper usage of inheritance
-    // (no Angular decorator on the superclass) or there is no constructor at all
-    // in the inheritance chain. Since the two cases cannot be distinguished, the
-    // latter has to be assumed.
+    // 정의된 공장이 없습니다. 이는 상속이 부적절하게 사용되었거나
+    // (슈퍼클래스에 Angular 데코레이터가 없음) 상속 체인에 구성자가 전혀 없는 경우입니다.
+    // 두 경우를 구분할 수 없으므로 후자가 가정되어야 합니다.
     return (t: Type<T>) => new t();
   });
 }
@@ -939,14 +918,14 @@ function getFactoryOf<T>(type: Type<any>): ((type?: Type<T>) => T | null) | null
 }
 
 /**
- * Returns a value from the closest embedded or node injector.
+ * 가장 가까운 내장 인젝터 또는 노드 인젝터에서 값을 반환합니다.
  *
- * @param tNode The Node where the search for the injector should start
- * @param lView The `LView` that contains the `tNode`
- * @param token The token to look for
- * @param flags Injection flags
- * @param notFoundValue The value to return when the injection flags is `InternalInjectFlags.Optional`
- * @returns the value from the injector, `null` when not found, or `notFoundValue` if provided
+ * @param tNode 인젝터 검색이 시작될 노드
+ * @param lView `tNode`를 포함하는 `LView`
+ * @param token 찾을 토큰
+ * @param flags 주입 플래그
+ * @param notFoundValue 주입 플래그가 `InternalInjectFlags.Optional`일 때 반환할 값
+ * @returns 인젝터에서의 값, 찾을 수 없을 때 `null`, 제공된 경우 `notFoundValue`
  */
 function lookupTokenUsingEmbeddedInjector<T>(
   tNode: TDirectiveHostNode,
@@ -958,12 +937,10 @@ function lookupTokenUsingEmbeddedInjector<T>(
   let currentTNode: TDirectiveHostNode | null = tNode;
   let currentLView: LView | null = lView;
 
-  // When an LView with an embedded view injector is inserted, it'll likely be interlaced with
-  // nodes who may have injectors (e.g. node injector -> embedded view injector -> node injector).
-  // Since the bloom filters for the node injectors have already been constructed and we don't
-  // have a way of extracting the records from an injector, the only way to maintain the correct
-  // hierarchy when resolving the value is to walk it node-by-node while attempting to resolve
-  // the token at each level.
+  // 내장 뷰 인젝터가 삽입될 때, 노드에 인젝터가 있을 가능성이 높습니다.
+  // 노드 인젝터 -> 내장 뷰 인젝터 -> 노드 인젝터 순서로 있을 수 있습니다.
+  // 노드 인젝터의 블룸 필터가 이미 구성되었고 인젝터의 기록을 추출할 방법이 없으므로,
+  // 각 레벨에서 값을 확인하려면 노드 단위로 아래로 내려가야 합니다.
   while (
     currentTNode !== null &&
     currentLView !== null &&
@@ -972,9 +949,9 @@ function lookupTokenUsingEmbeddedInjector<T>(
   ) {
     ngDevMode && assertTNodeForLView(currentTNode, currentLView);
 
-    // Note that this lookup on the node injector is using the `Self` flag, because
-    // we don't want the node injector to look at any parent injectors since we
-    // may hit the embedded view injector first.
+    // 노드 인젝터에서 이 조회는 `Self` 플래그를 사용하고 있습니다, 왜냐하면
+    // 노드 인젝터가 부모 인젝터를 참조하지 않아야 하므로, 먼저 내장 뷰 인젝터에
+    // 도달할 수 있기 때문입니다.
     const nodeInjectorValue = lookupTokenUsingNodeInjector(
       currentTNode,
       currentLView,
@@ -986,13 +963,13 @@ function lookupTokenUsingEmbeddedInjector<T>(
       return nodeInjectorValue;
     }
 
-    // Has an explicit type due to a TS bug: https://github.com/microsoft/TypeScript/issues/33191
+    // TS 버그로 인한 명시적 유형: https://github.com/microsoft/TypeScript/issues/33191
     let parentTNode: TElementNode | TContainerNode | null = currentTNode.parent;
 
-    // `TNode.parent` includes the parent within the current view only. If it doesn't exist,
-    // it means that we've hit the view boundary and we need to go up to the next view.
+    // `TNode.parent`는 현재 뷰 내의 부모를 포함합니다. 존재하지 않으면,
+    // 뷰 경계를 만났음을 의미하며 다음 뷰로 올라가야 합니다.
     if (!parentTNode) {
-      // Before we go to the next LView, check if the token exists on the current embedded injector.
+      // 다음 LView로 이동하기 전에 현재 내장 인젝터에서의 토큰이 존재하는지 확인합니다.
       const embeddedViewInjector = currentLView[EMBEDDED_VIEW_INJECTOR];
       if (embeddedViewInjector) {
         const embeddedViewInjectorValue = (embeddedViewInjector as BackwardsCompatibleInjector).get(
@@ -1005,7 +982,7 @@ function lookupTokenUsingEmbeddedInjector<T>(
         }
       }
 
-      // Otherwise keep going up the tree.
+      // 그렇지 않으면, 트리를 계속 올라갑니다.
       parentTNode = getTNodeFromLView(currentLView);
       currentLView = currentLView[DECLARATION_VIEW];
     }
@@ -1016,18 +993,18 @@ function lookupTokenUsingEmbeddedInjector<T>(
   return notFoundValue;
 }
 
-/** Gets the TNode associated with an LView inside of the declaration view. */
+/** 선언된 뷰 내에서 LView와 관련된 TNode를 가져옵니다. */
 function getTNodeFromLView(lView: LView): TElementNode | TElementContainerNode | null {
   const tView = lView[TVIEW];
   const tViewType = tView.type;
 
-  // The parent pointer differs based on `TView.type`.
+  // 부모 포인터는 `TView.type`에 따라 다릅니다.
   if (tViewType === TViewType.Embedded) {
     ngDevMode && assertDefined(tView.declTNode, 'Embedded TNodes should have declaration parents.');
     return tView.declTNode as TElementContainerNode;
   } else if (tViewType === TViewType.Component) {
-    // Components don't have `TView.declTNode` because each instance of component could be
-    // inserted in different location, hence `TView.declTNode` is meaningless.
+    // 컴포넌트는 `TView.declTNode`가 없으므로,
+    // 각 컴포넌트 인스턴스가 서로 다른 위치에 삽입될 수 있습니다.
     return lView[T_HOST] as TElementNode;
   }
 

@@ -15,34 +15,34 @@ import {DehydratedDeferBlock, TDeferBlockDetails} from './interfaces';
 import {getTDeferBlockDetails, isTDeferBlockDetails} from './utils';
 
 /**
- * Defer block instance for testing.
+ * 테스트를 위한 Defer 블록 인스턴스.
  */
 export interface DeferBlockDetails extends DehydratedDeferBlock {
   tDetails: TDeferBlockDetails;
 }
 
 /**
- * Retrieves all defer blocks in a given LView.
+ * 주어진 LView에서 모든 Defer 블록을 검색합니다.
  *
- * @param lView lView with defer blocks
- * @param deferBlocks defer block aggregator array
+ * @param lView Defer 블록이 있는 lView
+ * @param deferBlocks Defer 블록 집계 배열
  */
 export function getDeferBlocks(lView: LView, deferBlocks: DeferBlockDetails[]) {
   const tView = lView[TVIEW];
   for (let i = HEADER_OFFSET; i < tView.bindingStartIndex; i++) {
     if (isLContainer(lView[i])) {
       const lContainer = lView[i];
-      // An LContainer may represent an instance of a defer block, in which case
-      // we store it as a result. Otherwise, keep iterating over LContainer views and
-      // look for defer blocks.
+      // LContainer는 Defer 블록의 인스턴스를 나타낼 수 있으며,
+      // 이 경우 결과로 저장합니다. 그렇지 않으면 LContainer 뷰를 계속 반복하며
+      // Defer 블록을 찾습니다.
       const isLast = i === tView.bindingStartIndex - 1;
       if (!isLast) {
         const tNode = tView.data[i] as TNode;
         const tDetails = getTDeferBlockDetails(tView, tNode);
         if (isTDeferBlockDetails(tDetails)) {
           deferBlocks.push({lContainer, lView, tNode, tDetails});
-          // This LContainer represents a defer block, so we exit
-          // this iteration and don't inspect views in this LContainer.
+          // 이 LContainer는 Defer 블록을 나타내므로
+          // 이 반복을 종료하고 이 LContainer의 뷰를 검사하지 않습니다.
           continue;
         }
       }
@@ -50,7 +50,7 @@ export function getDeferBlocks(lView: LView, deferBlocks: DeferBlockDetails[]) {
         getDeferBlocks(lContainer[i] as LView, deferBlocks);
       }
     } else if (isLView(lView[i])) {
-      // This is a component, enter the `getDeferBlocks` recursively.
+      // 이것은 컴포넌트이며, `getDeferBlocks`를 재귀적으로 호출합니다.
       getDeferBlocks(lView[i], deferBlocks);
     }
   }

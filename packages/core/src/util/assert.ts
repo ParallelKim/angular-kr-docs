@@ -6,9 +6,9 @@
  * found in the LICENSE file at https://angular.dev/license
  */
 
-// The functions in this file verify that the assumptions we are making
-// about state in an instruction are correct before implementing any logic.
-// They are meant only to be called in dev mode as sanity checks.
+// 이 파일의 함수는 명령어의 상태에 대한 우리의 가정이
+// 어떤 로직을 구현하기 전에 올바른지 확인합니다.
+// 이 함수들은 오직 개발 모드에서만 호출해야 하는 검사 목적으로 의도되었습니다.
 
 import {getActiveConsumer} from '@angular/core/primitives/signals';
 

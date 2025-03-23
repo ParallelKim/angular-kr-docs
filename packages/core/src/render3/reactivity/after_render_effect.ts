@@ -43,34 +43,34 @@ import {assertNotInReactiveContext} from './asserts';
 const NOT_SET = Symbol('NOT_SET');
 const EMPTY_CLEANUP_SET = new Set<() => void>();
 
-/** Callback type for an `afterRenderEffect` phase effect */
+/** `afterRenderEffect` 단계 효과에 대한 콜백 유형 */
 type AfterRenderPhaseEffectHook = (
-  // Either a cleanup function or a pipelined value and a cleanup function
+  // 클린업 함수 또는 파이프라인된 값과 클린업 함수
   ...args:
     | [onCleanup: EffectCleanupRegisterFn]
     | [previousPhaseValue: unknown, onCleanup: EffectCleanupRegisterFn]
 ) => unknown;
 
 /**
- * Reactive node in the graph for this `afterRenderEffect` phase effect.
+ * 이 `afterRenderEffect` 단계 효과에 대한 그래프의 반응형 노드입니다.
  *
- * This node type extends `SignalNode` because `afterRenderEffect` phases effects produce a value
- * which is consumed as a `Signal` by subsequent phases.
+ * 이 노드 유형은 `SignalNode`를 확장합니다. 왜냐하면 `afterRenderEffect` 단계 효과가
+ * 후속 단계에서 `Signal`로 소비되는 값을 생성하기 때문입니다.
  */
 interface AfterRenderPhaseEffectNode extends SignalNode<unknown> {
-  /** The phase of the effect implemented by this node */
+  /** 이 노드에 의해 구현된 효과의 단계 */
   phase: AfterRenderPhase;
-  /** The sequence of phases to which this node belongs, used for state of the whole sequence */
+  /** 이 노드가 속하는 단계의 시퀀스, 전체 시퀀스의 상태에 사용됩니다 */
   sequence: AfterRenderEffectSequence;
-  /** The user's callback function */
+  /** 사용자의 콜백 함수 */
   userFn: AfterRenderPhaseEffectHook;
-  /** Signal function that retrieves the value of this node, used as the value for the next phase */
+  /** 이 노드의 값을 검색하는 신호 함수, 다음 단계의 값으로 사용됩니다 */
   signal: Signal<unknown>;
-  /** Registered cleanup functions, or `null` if none have ever been registered */
+  /** 등록된 클린업 함수, 등록된 것이 없으면 `null` */
   cleanup: Set<() => void> | null;
-  /** Pre-bound helper function passed to the user's callback which writes to `this.cleanup` */
+  /** `this.cleanup`에 기록하는 사용자의 콜백에 전달되는 미리 바인딩된 도우미 함수 */
   registerCleanupFn: EffectCleanupRegisterFn;
-  /** Entrypoint to running this effect that's given to the `afterRender` machinery */
+  /** `afterRender` 기계에 주어진 이 효과를 실행하는 진입점 */
   phaseFn(previousValue?: unknown): unknown;
 }
 
@@ -80,23 +80,22 @@ const AFTER_RENDER_PHASE_EFFECT_NODE = /* @__PURE__ */ (() => ({
   consumerAllowSignalWrites: true,
   value: NOT_SET,
   cleanup: null,
-  /** Called when the effect becomes dirty */
+  /** 효과가 더러워질 때 호출됨 */
   consumerMarkedDirty(this: AfterRenderPhaseEffectNode): void {
     if (this.sequence.impl.executing) {
-      // If hooks are in the middle of executing, then it matters whether this node has yet been
-      // executed within its sequence. If not, then we don't want to notify the scheduler since
-      // this node will be reached naturally.
+      // 훅이 실행되는 중이면, 이 노드가 시퀀스 내에서 아직 실행되었는지 여부가 중요합니다.
+      // 그렇지 않으면, 스케줄러에 알리기를 원하지 않습니다. 왜냐하면
+      // 이 노드는 자연스럽게 도달할 것이기 때문입니다.
       if (this.sequence.lastPhase === null || this.sequence.lastPhase < this.phase) {
         return;
       }
 
-      // If during the execution of a later phase an earlier phase became dirty, then we should not
-      // run any further phases until the earlier one reruns.
+      // 후속 단계의 실행 중에 이전 단계가 더러워진 경우,
+      // 이전이 다시 실행될 때까지 추가 단계 실행을 방지해야 합니다.
       this.sequence.erroredOrDestroyed = true;
     }
 
-    // Either hooks are not running, or we're marking a node dirty that has already run within its
-    // sequence.
+    // 훅이 실행되고 있지 않거나, 이미 실행된 시퀀스 내의 노드를 더럽히고 있습니다.
     this.sequence.scheduler.notify(NotificationSource.RenderHook);
   },
   phaseFn(this: AfterRenderPhaseEffectNode, previousValue?: unknown): unknown {
@@ -108,30 +107,30 @@ const AFTER_RENDER_PHASE_EFFECT_NODE = /* @__PURE__ */ (() => ({
 
     this.dirty = false;
     if (this.value !== NOT_SET && !consumerPollProducersForChange(this)) {
-      // None of our producers report a change since the last time they were read, so no
-      // recomputation of our value is necessary.
+      // 마지막으로 읽은 이후로 프로듀서가 변화를 보고하지 않았다면,
+      // 우리의 값의 재계산이 필요하지 않습니다.
       return this.signal;
     }
 
-    // Run any needed cleanup functions.
+    // 필요한 클린업 함수를 실행합니다.
     try {
       for (const cleanupFn of this.cleanup ?? EMPTY_CLEANUP_SET) {
         cleanupFn();
       }
     } finally {
-      // Even if a cleanup function errors, ensure it's cleared.
+      // 클린업 함수에서 오류가 발생하더라도, 이를 지워야 합니다.
       this.cleanup?.clear();
     }
 
-    // Prepare to call the user's effect callback. If there was a previous phase, then it gave us
-    // its value as a `Signal`, otherwise `previousValue` will be `undefined`.
+    // 사용자의 효과 콜백을 호출할 준비를 합니다. 이전 단계가 있었다면,
+    // 그것은 `Signal`로서의 값을 주었고, 그렇지 않으면 `previousValue`는 `undefined`가 됩니다.
     const args: unknown[] = [];
     if (previousValue !== undefined) {
       args.push(previousValue);
     }
     args.push(this.registerCleanupFn);
 
-    // Call the user's callback in our reactive context.
+    // 우리의 반응형 컨텍스트 내에서 사용자의 콜백을 호출합니다.
     const prevConsumer = consumerBeforeComputation(this);
     let newValue;
     try {
@@ -150,21 +149,20 @@ const AFTER_RENDER_PHASE_EFFECT_NODE = /* @__PURE__ */ (() => ({
 }))();
 
 /**
- * An `AfterRenderSequence` that manages an `afterRenderEffect`'s phase effects.
+ * `afterRenderEffect`의 단계 효과를 관리하는 `AfterRenderSequence`입니다.
  */
 class AfterRenderEffectSequence extends AfterRenderSequence {
   /**
-   * While this sequence is executing, this tracks the last phase which was called by the
-   * `afterRender` machinery.
+   * 이 시퀀스가 실행되는 동안, 이는 `afterRender` 기계에 의해 호출된 마지막 단계를 추적합니다.
    *
-   * When a phase effect is marked dirty, this is used to determine whether it's already run or not.
+   * 단계 효과가 더러워지면, 이는 이미 실행되었는지 여부를 판단하는 데 사용됩니다.
    */
   lastPhase: AfterRenderPhase | null = null;
 
   /**
-   * The reactive nodes for each phase, if a phase effect is defined for that phase.
+   * 각 단계의 반응형 노드입니다. 해당 단계에 대한 단계 효과가 정의된 경우.
    *
-   * These are initialized to `undefined` but set in the constructor.
+   * 초기화는 `undefined`로 되어 있지만 생성자에서 설정됩니다.
    */
   private readonly nodes: [
     AfterRenderPhaseEffectNode | undefined,
@@ -181,11 +179,11 @@ class AfterRenderEffectSequence extends AfterRenderSequence {
     destroyRef: DestroyRef,
     snapshot: TracingSnapshot | null = null,
   ) {
-    // Note that we also initialize the underlying `AfterRenderSequence` hooks to `undefined` and
-    // populate them as we create reactive nodes below.
+    // 기본 `AfterRenderSequence` 훅을 `undefined`로 초기화하고,
+    // 아래의 반응형 노드를 생성할 때 채웁니다.
     super(impl, [undefined, undefined, undefined, undefined], view, false, destroyRef, snapshot);
 
-    // Setup a reactive node for each phase.
+    // 각 단계에 대한 반응형 노드를 설정합니다.
     for (const phase of AFTER_RENDER_PHASES) {
       const effectHook = effectHooks[phase];
       if (effectHook === undefined) {
@@ -207,21 +205,21 @@ class AfterRenderEffectSequence extends AfterRenderSequence {
 
       this.nodes[phase] = node;
 
-      // Install the upstream hook which runs the `phaseFn` for this phase.
+      // 이 단계에 대한 `phaseFn`을 실행하는 업스트림 훅을 설치합니다.
       this.hooks[phase] = (value) => node.phaseFn(value);
     }
   }
 
   override afterRun(): void {
     super.afterRun();
-    // We're done running this sequence, so reset `lastPhase`.
+    // 이 시퀀스 실행이 끝났으므로 `lastPhase`를 리셋합니다.
     this.lastPhase = null;
   }
 
   override destroy(): void {
     super.destroy();
 
-    // Run the cleanup functions for each node.
+    // 각 노드에 대한 클린업 함수를 실행합니다.
     for (const node of this.nodes) {
       for (const fn of node?.cleanup ?? EMPTY_CLEANUP_SET) {
         fn();
@@ -231,8 +229,8 @@ class AfterRenderEffectSequence extends AfterRenderSequence {
 }
 
 /**
- * An argument list containing the first non-never type in the given type array, or an empty
- * argument list if there are no non-never types in the type array.
+ * 주어진 유형 배열에서 첫 번째 비-네버 유형을 포함하는 인수 목록,
+ * 또는 유형 배열에 비-네버 유형이 없는 경우 빈 인수 목록입니다.
  */
 export type ɵFirstAvailableSignal<T extends unknown[]> = T extends [infer H, ...infer R]
   ? [H] extends [never]
@@ -241,31 +239,31 @@ export type ɵFirstAvailableSignal<T extends unknown[]> = T extends [infer H, ..
   : [];
 
 /**
- * Register an effect that, when triggered, is invoked when the application finishes rendering, during the
- * `mixedReadWrite` phase.
+ * 효과를 등록하여, 이 효과가 트리거될 때 애플리케이션의 렌더링이 끝난 후
+ * `mixedReadWrite` 단계에서 호출되도록 합니다.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer specifying an explicit phase for the effect instead, or you risk significant
- * performance degradation.
+ * 효과에 대해 명시적인 단계를 지정하는 것이 바람직하며,
+ * 그렇지 않으면 성능 저하가 발생할 위험이 있습니다.
  *
  * </div>
  *
- * Note that callback-based `afterRenderEffect`s will run
- * - in the order it they are registered
- * - only when dirty
- * - on browser platforms only
- * - during the `mixedReadWrite` phase
+ * 콜백 기반의 `afterRenderEffect`는 다음과 같이 실행됩니다.
+ * - 등록된 순서로
+ * - 더럽혀졌을 때만
+ * - 브라우저 플랫폼에서만
+ * - `mixedReadWrite` 단계에서
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [하이드레이션](guide/hydration)되었다고 보장되지 않습니다.
+ * DOM과 레이아웃을 직접 읽거나 기록할 때 주의해야 합니다.
  *
  * </div>
  *
- * @param callback An effect callback function to register
- * @param options Options to control the behavior of the callback
+ * @param callback 등록할 효과 콜백 함수
+ * @param options 콜백 동작을 제어하는 옵션
  *
  * @experimental
  */
@@ -274,62 +272,61 @@ export function afterRenderEffect(
   options?: Omit<AfterRenderOptions, 'phase'>,
 ): AfterRenderRef;
 /**
- * Register effects that, when triggered, are invoked when the application finishes rendering,
- * during the specified phases. The available phases are:
+ * 트리거될 때 애플리케이션이 렌더링을 끝낸 후,
+ * 지정된 단계에서 호출되는 효과를 등록합니다. 사용 가능한 단계는 다음과 같습니다:
  * - `earlyRead`
- *   Use this phase to **read** from the DOM before a subsequent `write` callback, for example to
- *   perform custom layout that the browser doesn't natively support. Prefer the `read` phase if
- *   reading can wait until after the write phase. **Never** write to the DOM in this phase.
+ *   다음 `write` 콜백 이전에 DOM에서 **읽기** 위해 이 단계를 사용합니다.
+ *   예를 들어 브라우저가 원래 지원하지 않는 사용자 정의 레이아웃을 수행합니다.
+ *   쓰기 단계가 끝난 후 읽기가 가능하다면 `read` 단계를 선호합니다.
+ *   이 단계에서는 **절대** DOM에 쓰지 마십시오.
  * - `write`
- *    Use this phase to **write** to the DOM. **Never** read from the DOM in this phase.
+ *    DOM에 **쓰기** 위해 이 단계를 사용합니다. 이 단계에서는 **절대** DOM에서 읽지 마십시오.
  * - `mixedReadWrite`
- *    Use this phase to read from and write to the DOM simultaneously. **Never** use this phase if
- *    it is possible to divide the work among the other phases instead.
+ *    DOM에서 동시에 읽고 쓰기 위해 이 단계를 사용합니다.
+ *    다른 단계 간에 작업을 나눌 수 있다면 이 단계를 사용하지 마십시오.
  * - `read`
- *    Use this phase to **read** from the DOM. **Never** write to the DOM in this phase.
+ *    DOM에서 **읽기** 위해 이 단계를 사용합니다. 이 단계에서는 **절대** DOM에 쓰지 마십시오.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer using the `read` and `write` phases over the `earlyRead` and `mixedReadWrite`
- * phases when possible, to avoid performance degradation.
+ * 가능한 경우 `earlyRead`와 `mixedReadWrite` 단계보다 `read` 및 `write` 단계를 사용하는 것이 성능 저하를 피하는 데 바람직합니다.
  *
  * </div>
  *
- * Note that:
- * - Effects run in the following phase order, only when dirty through signal dependencies:
+ * 다음과 같은 점에 유의하세요:
+ * - 효과는 신호 종속성을 통해 더럽혀졌을 때만 실행됩니다.
  *   1. `earlyRead`
  *   2. `write`
  *   3. `mixedReadWrite`
  *   4. `read`
- * - `afterRenderEffect`s in the same phase run in the order they are registered.
- * - `afterRenderEffect`s run on browser platforms only, they will not run on the server.
- * - `afterRenderEffect`s will run at least once.
+ * - 동일한 단계의 `afterRenderEffect`는 등록된 순서대로 실행됩니다.
+ * - `afterRenderEffect`는 브라우저 플랫폼에서만 실행되며, 서버에서는 실행되지 않습니다.
+ * - `afterRenderEffect`는 최소한 한 번은 실행됩니다.
  *
- * The first phase callback to run as part of this spec will receive no parameters. Each
- * subsequent phase callback in this spec will receive the return value of the previously run
- * phase callback as a `Signal`. This can be used to coordinate work across multiple phases.
+ * 이 스펙의 일부로 실행되는 첫 번째 단계 콜백은 매개변수를 받지 않습니다.
+ * 이 스펙의 이후 단계 콜백은 이전에 실행된 단계 콜백의 반환 값을 `Signal`로 받게 됩니다.
+ * 이는 여러 단계 간 작업을 조정하는 데 사용할 수 있습니다.
  *
- * Angular is unable to verify or enforce that phases are used correctly, and instead
- * relies on each developer to follow the guidelines documented for each value and
- * carefully choose the appropriate one, refactoring their code if necessary. By doing
- * so, Angular is better able to minimize the performance degradation associated with
- * manual DOM access, ensuring the best experience for the end users of your application
- * or library.
+ * Angular는 단계가 올바르게 사용되었는지를 확인하거나 강제할 수 없으며,
+ * 대신 각 개발자가 각 값에 대한 문서화된 지침을 따르고,
+ * 필요한 경우 적절한 값을 신중하게 선택하여 코드 리팩토링을 진행해야 합니다.
+ * 이렇게 하면 Angular는 수동 DOM 접근과 관련된 성능 저하를 최소화하고,
+ * 애플리케이션이나 라이브러리의 최종 사용자에게 최고의 경험을 제공할 수 있습니다.
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [하이드레이션](guide/hydration)되었다고 보장되지 않습니다.
+ * DOM과 레이아웃을 직접 읽거나 기록할 때 주의해야 합니다.
  *
  * </div>
  *
- * @param spec The effect functions to register
- * @param options Options to control the behavior of the effects
+ * @param spec 등록할 효과 함수들
+ * @param options 효과 동작을 제어하는 옵션
  *
  * @usageNotes
  *
- * Use `afterRenderEffect` to create effects that will read or write from the DOM and thus should
- * run after rendering.
+ * `afterRenderEffect`를 사용하여 DOM에서 읽거나 쓸 효과를 생성하고,
+ * 따라서 렌더링 후 실행해야 합니다.
  *
  * @experimental
  */
@@ -362,8 +359,7 @@ export function afterRenderEffect<E = never, W = never, M = never>(
   ngDevMode &&
     assertNotInReactiveContext(
       afterRenderEffect,
-      'Call `afterRenderEffect` outside of a reactive context. For example, create the render ' +
-        'effect inside the component constructor`.',
+      '`afterRenderEffect`를 반응형 컨텍스트 외부에서 호출하십시오. 예를 들어 컴포넌트 생성자 내부에서 렌더링 효과를 생성하세요.',
     );
 
   !options?.injector && assertInInjectionContext(afterRenderEffect);

@@ -15,19 +15,18 @@ export const NG_MOD_DEF = getClosureSafeProperty({ɵmod: getClosureSafeProperty}
 export const NG_FACTORY_DEF = getClosureSafeProperty({ɵfac: getClosureSafeProperty});
 
 /**
- * If a directive is diPublic, bloomAdd sets a property on the type with this constant as
- * the key and the directive's unique ID as the value. This allows us to map directives to their
- * bloom filter bit for DI.
+ * 지시어가 diPublic인 경우, bloomAdd는 이 상수를 키로 하고 지시어의 고유 ID를 값으로 가지는
+ * 유형에 대한 속성을 설정합니다. 이는 지시어를 DI를 위한 bloom 필터 비트에 매핑할 수 있게 해줍니다.
  */
-// TODO(misko): This is wrong. The NG_ELEMENT_ID should never be minified.
+// TODO(misko): 이것은 잘못되었습니다. NG_ELEMENT_ID는 절대 축소되어서는 안 됩니다.
 export const NG_ELEMENT_ID = getClosureSafeProperty({__NG_ELEMENT_ID__: getClosureSafeProperty});
 
 /**
- * The `NG_ENV_ID` field on a DI token indicates special processing in the `EnvironmentInjector`:
- * getting such tokens from the `EnvironmentInjector` will bypass the standard DI resolution
- * strategy and instead will return implementation produced by the `NG_ENV_ID` factory function.
+ * DI 토큰의 `NG_ENV_ID` 필드는 `EnvironmentInjector`에서 특별한 처리를 나타냅니다:
+ * `EnvironmentInjector`에서 이러한 토큰을 가져오는 것은 표준 DI 해결 전략을 우회하고
+ * 대신 `NG_ENV_ID` 팩토리 함수로 생성된 구현을 반환합니다.
  *
- * This particular retrieval of DI tokens is mostly done to eliminate circular dependencies and
- * improve tree-shaking.
+ * 이 DI 토큰의 특정 검색은 주로 순환 종속성을 제거하고
+ * 트리 쉐이킹을 개선하기 위해 수행됩니다.
  */
 export const NG_ENV_ID = getClosureSafeProperty({__NG_ENV_ID__: getClosureSafeProperty});

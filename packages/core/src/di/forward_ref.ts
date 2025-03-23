@@ -11,10 +11,10 @@ import {getClosureSafeProperty} from '../util/property';
 import {stringify} from '../util/stringify';
 
 /**
- * An interface that a function passed into `forwardRef` has to implement.
+ * `forwardRef`에 전달된 함수가 구현해야 하는 인터페이스입니다.
  *
  * @usageNotes
- * ### Example
+ * ### 예제
  *
  * {@example core/di/ts/forward_ref/forward_ref_spec.ts region='forward_ref_fn'}
  * @publicApi
@@ -26,19 +26,18 @@ export interface ForwardRefFn {
 const __forward_ref__ = getClosureSafeProperty({__forward_ref__: getClosureSafeProperty});
 
 /**
- * Allows to refer to references which are not yet defined.
+ * 정의되지 않은 참조를 참조할 수 있도록 허용합니다.
  *
- * For instance, `forwardRef` is used when the `token` which we need to refer to for the purposes of
- * DI is declared, but not yet defined. It is also used when the `token` which we use when creating
- * a query is not yet defined.
+ * 예를 들어, DI를 위해 참조해야 하는 `token`이 선언되었으나 아직 정의되지 않았을 때 `forwardRef`가 사용됩니다.
+ * 또한 쿼리를 생성할 때 사용하는 `token`이 아직 정의되지 않았을 때도 사용됩니다.
  *
- * `forwardRef` is also used to break circularities in standalone components imports.
+ * `forwardRef`는 독립형 구성 요소 가져오기에서 순환성을 끊는 데에도 사용됩니다.
  *
  * @usageNotes
- * ### Circular dependency example
+ * ### 순환 의존성 예제
  * {@example core/di/ts/forward_ref/forward_ref_spec.ts region='forward_ref'}
  *
- * ### Circular standalone reference import example
+ * ### 순환 독립형 참조 가져오기 예제
  * ```angular-ts
  * @Component({
  *   standalone: true,
@@ -73,12 +72,12 @@ export function forwardRef(forwardRefFn: ForwardRefFn): Type<any> {
 }
 
 /**
- * Lazily retrieves the reference value from a forwardRef.
+ * forwardRef에서 참조 값을 지연 검색합니다.
  *
- * Acts as the identity function when given a non-forward-ref value.
+ * 비forward-ref 값이 주어지면 항등 함수로 작용합니다.
  *
  * @usageNotes
- * ### Example
+ * ### 예제
  *
  * {@example core/di/ts/forward_ref/forward_ref_spec.ts region='resolve_forward_ref'}
  *
@@ -89,7 +88,7 @@ export function resolveForwardRef<T>(type: T): T {
   return isForwardRef(type) ? type() : type;
 }
 
-/** Checks whether a function is wrapped by a `forwardRef`. */
+/** 함수가 `forwardRef`에 의해 래핑되었는지 확인합니다. */
 export function isForwardRef(fn: any): fn is () => any {
   return (
     typeof fn === 'function' &&

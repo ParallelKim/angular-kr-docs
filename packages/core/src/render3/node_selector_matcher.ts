@@ -19,13 +19,13 @@ import {isNameOnlyAttributeMarker} from './util/attrs_utils';
 const NG_TEMPLATE_SELECTOR = 'ng-template';
 
 /**
- * Search the `TAttributes` to see if it contains `cssClassToMatch` (case insensitive)
+ * `TAttributes`에서 `cssClassToMatch`가 포함되어 있는지 대소문자를 구분하지 않고 확인합니다.
  *
- * @param tNode static data of the node to match
- * @param attrs `TAttributes` to search through.
- * @param cssClassToMatch class to match (lowercase)
- * @param isProjectionMode Whether or not class matching should look into the attribute `class` in
- *    addition to the `AttributeMarker.Classes`.
+ * @param tNode 일치시킬 노드의 정적 데이터
+ * @param attrs 검색할 `TAttributes`.
+ * @param cssClassToMatch 일치할 클래스(소문자)
+ * @param isProjectionMode 클래스 일치가 `AttributeMarker.Classes`와 함께
+ *    `class` 속성도 고려해야 하는지 여부.
  */
 function isCssClassMatching(
   tNode: TNode,
@@ -34,15 +34,11 @@ function isCssClassMatching(
   isProjectionMode: boolean,
 ): boolean {
   ngDevMode &&
-    assertEqual(
-      cssClassToMatch,
-      cssClassToMatch.toLowerCase(),
-      'Class name expected to be lowercase.',
-    );
+    assertEqual(cssClassToMatch, cssClassToMatch.toLowerCase(), '클래스 이름은 소문자여야 합니다.');
   let i = 0;
   if (isProjectionMode) {
     for (; i < attrs.length && typeof attrs[i] === 'string'; i += 2) {
-      // Search for an implicit `class` attribute and check if its value matches `cssClassToMatch`.
+      // 암시적인 `class` 속성을 찾아 그 값이 `cssClassToMatch`와 일치하는지 확인합니다.
       if (
         attrs[i] === 'class' &&
         classIndexOf((attrs[i + 1] as string).toLowerCase(), cssClassToMatch, 0) !== -1
@@ -51,16 +47,16 @@ function isCssClassMatching(
       }
     }
   } else if (isInlineTemplate(tNode)) {
-    // Matching directives (i.e. when not matching for projection mode) should not consider the
-    // class bindings that are present on inline templates, as those class bindings only target
-    // the root node of the template, not the template itself.
+    // 일치하는 지시문 (즉, 프로젝션 모드에 대해 일치하지 않을 때)은
+    // 인라인 템플릿에 있는 클래스 바인딩을 고려하지 않아야 하며,
+    // 이러한 클래스 바인딩은 템플릿의 루트 노드만 대상으로 하므로 템플릿 자체에는 해당되지 않습니다.
     return false;
   }
 
-  // Resume the search for classes after the `Classes` marker.
+  // `Classes` 마커 이후에 클래스 검색을 재개합니다.
   i = attrs.indexOf(AttributeMarker.Classes, i);
   if (i > -1) {
-    // We found the classes section. Start searching for the class.
+    // 클래스 섹션을 찾았습니다. 클래스를 찾기 시작합니다.
     let item: TAttributes[number];
     while (++i < attrs.length && typeof (item = attrs[i]) === 'string') {
       if (item.toLowerCase() === cssClassToMatch) {
@@ -72,24 +68,22 @@ function isCssClassMatching(
 }
 
 /**
- * Checks whether the `tNode` represents an inline template (e.g. `*ngFor`).
+ * `tNode`가 인라인 템플릿(예: `*ngFor`)인지 확인합니다.
  *
- * @param tNode current TNode
+ * @param tNode 현재 TNode
  */
 export function isInlineTemplate(tNode: TNode): boolean {
   return tNode.type === TNodeType.Container && tNode.value !== NG_TEMPLATE_SELECTOR;
 }
 
 /**
- * Function that checks whether a given tNode matches tag-based selector and has a valid type.
+ * 주어진 tNode가 태그 기반 선택자와 일치하고 유효한 유형인지 확인하는 함수입니다.
  *
- * Matching can be performed in 2 modes: projection mode (when we project nodes) and regular
- * directive matching mode:
- * - in the "directive matching" mode we do _not_ take TContainer's tagName into account if it is
- * different from NG_TEMPLATE_SELECTOR (value different from NG_TEMPLATE_SELECTOR indicates that a
- * tag name was extracted from * syntax so we would match the same directive twice);
- * - in the "projection" mode, we use a tag name potentially extracted from the * syntax processing
- * (applicable to TNodeType.Container only).
+ * 일치는 2가지 모드에서 수행할 수 있습니다: 프로젝션 모드(노드를 프로젝션할 때)와 일반 지시문 일치 모드:
+ * - "지시문 일치" 모드에서는 NG_TEMPLATE_SELECTOR와 다른 경우 TContainer의 tagName은 고려하지 않습니다
+ * (NG_TEMPLATE_SELECTOR와 다른 값은 * 구문에서 태그 이름이 추출되었음을 나타내므로 동일한 지시문이 두 번 일치함);
+ * - "프로젝션" 모드에서는 * 구문 처리에서 잠재적으로 추출된 태그 이름을 사용합니다
+ * (TNodeType.Container에만 적용됨).
  */
 function hasTagAndTypeMatch(
   tNode: TNode,
@@ -102,39 +96,38 @@ function hasTagAndTypeMatch(
 }
 
 /**
- * A utility function to match an Ivy node static data against a simple CSS selector
+ * Ivy 노드 정적 데이터를 간단한 CSS 선택자와 일치시키는 유틸리티 함수입니다.
  *
- * @param tNode static data of the node to match
- * @param selector The selector to try matching against the node.
- * @param isProjectionMode if `true` we are matching for content projection, otherwise we are doing
- * directive matching.
- * @returns true if node matches the selector.
+ * @param tNode 일치시킬 노드의 정적 데이터
+ * @param selector 노드와 일치시킬 선택자.
+ * @param isProjectionMode `true`인 경우 콘텐츠 프로젝션에 대해 일치시키고, 그렇지 않으면
+ * 지시문 일치를 수행하고 있습니다.
+ * @returns 노드가 선택자와 일치하는 경우 true.
  */
 export function isNodeMatchingSelector(
   tNode: TNode,
   selector: CssSelector,
   isProjectionMode: boolean,
 ): boolean {
-  ngDevMode && assertDefined(selector[0], 'Selector should have a tag name');
+  ngDevMode && assertDefined(selector[0], '선택자는 태그 이름이 있어야 합니다.');
   let mode: SelectorFlags = SelectorFlags.ELEMENT;
   const nodeAttrs = tNode.attrs;
 
-  // Find the index of first attribute that has no value, only a name.
+  // 값이 없는 첫 번째 속성의 인덱스를 찾습니다. 이름만 있습니다.
   const nameOnlyMarkerIdx = nodeAttrs !== null ? getNameOnlyMarkerIndex(nodeAttrs) : 0;
 
-  // When processing ":not" selectors, we skip to the next ":not" if the
-  // current one doesn't match
+  // ":not" 선택자를 처리할 때 현재 선택자가 일치하지 않으면 다음 ":not"으로 건너뜁니다.
   let skipToNextSelector = false;
 
   for (let i = 0; i < selector.length; i++) {
     const current = selector[i];
     if (typeof current === 'number') {
-      // If we finish processing a :not selector and it hasn't failed, return false
+      // :not 선택자를 처리한 후 실패하지 않았다면 false를 반환합니다.
       if (!skipToNextSelector && !isPositive(mode) && !isPositive(current)) {
         return false;
       }
-      // If we are skipping to the next :not() and this mode flag is positive,
-      // it's a part of the current :not() selector, and we should keep skipping
+      // 현재 :not()를 건너뛰고 있고 이 모드 플래그가 양수인 경우,
+      // 이는 현재 :not() 선택자의 일부이며 계속 건너뛰어야 합니다.
       if (skipToNextSelector && isPositive(current)) continue;
       skipToNextSelector = false;
       mode = (current as number) | (mode & SelectorFlags.NOT);
@@ -181,11 +174,10 @@ export function isNodeMatchingSelector(
             assertNotEqual(
               nodeAttrs![attrIndexInNode],
               AttributeMarker.NamespaceURI,
-              'We do not match directives on namespaced attributes',
+              '우리는 네임스페이스 속성에서 지시문과 일치하지 않습니다.',
             );
-          // we lowercase the attribute value to be able to match
-          // selectors without case-sensitivity
-          // (selectors are already in lowercase when generated)
+          // 선택자를 대소문자 구분 없이 일치시키기 위해 속성 값을 소문자로 변환합니다.
+          // (선택자는 이미 생성 시 소문자입니다.)
           nodeAttrValue = (nodeAttrs![attrIndexInNode + 1] as string).toLowerCase();
         }
 
@@ -205,33 +197,31 @@ function isPositive(mode: SelectorFlags): boolean {
 }
 
 /**
- * Examines the attribute's definition array for a node to find the index of the
- * attribute that matches the given `name`.
+ * 노드의 속성 정의 배열을 검사하여 주어진 `name`과 일치하는 속성의 인덱스를 찾습니다.
  *
- * NOTE: This will not match namespaced attributes.
+ * NOTE: 이것은 네임스페이스 속성과 일치하지 않습니다.
  *
- * Attribute matching depends upon `isInlineTemplate` and `isProjectionMode`.
- * The following table summarizes which types of attributes we attempt to match:
+ * 속성 일치는 `isInlineTemplate` 및 `isProjectionMode`에 따라 다릅니다.
+ * 다음 표는 일치시키려는 속성 유형을 요약합니다:
  *
  * ===========================================================================================================
- * Modes                   | Normal Attributes | Bindings Attributes | Template Attributes | I18n
- * Attributes
+ * 모드                   | 일반 속성 | 바인딩 속성 | 템플릿 속성 | I18n 속성
  * ===========================================================================================================
- * Inline + Projection     | YES               | YES                 | NO                  | YES
+ * 인라인 + 프로젝션     | 예               | 예                 | 아니요                  | 예
  * -----------------------------------------------------------------------------------------------------------
- * Inline + Directive      | NO                | NO                  | YES                 | NO
+ * 인라인 + 지시문      | 아니요                | 아니요                  | 예                 | 아니요
  * -----------------------------------------------------------------------------------------------------------
- * Non-inline + Projection | YES               | YES                 | NO                  | YES
+ * 비인라인 + 프로젝션 | 예               | 예                 | 아니요                  | 예
  * -----------------------------------------------------------------------------------------------------------
- * Non-inline + Directive  | YES               | YES                 | NO                  | YES
+ * 비인라인 + 지시문  | 예               | 예                 | 아니요                  | 예
  * ===========================================================================================================
  *
- * @param name the name of the attribute to find
- * @param attrs the attribute array to examine
- * @param isInlineTemplate true if the node being matched is an inline template (e.g. `*ngFor`)
- * rather than a manually expanded template node (e.g `<ng-template>`).
- * @param isProjectionMode true if we are matching against content projection otherwise we are
- * matching against directives.
+ * @param name 찾을 속성의 이름
+ * @param attrs 검사할 속성 배열
+ * @param isInlineTemplate 노드가 인라인 템플릿(예: `*ngFor`)인 경우 true
+ * 대신 수동으로 확장된 템플릿 노드(예: `<ng-template>`).
+ * @param isProjectionMode true 인 경우 콘텐츠 프로젝션에 대해 일치하고,
+ * 그렇지 않으면 지시문에 대해 일치하고 있습니다.
  */
 function findAttrIndexInNode(
   name: string,
@@ -259,24 +249,24 @@ function findAttrIndexInNode(
         maybeAttrName === AttributeMarker.Styles
       ) {
         let value = attrs[++i];
-        // We should skip classes here because we have a separate mechanism for
-        // matching classes in projection mode.
+        // 우리는 이곳에서 클래스를 건너뛰어야 하며,
+        // 프로젝션 모드에서 클래스를 일치시키기 위한 별도의 메커니즘이 있습니다.
         while (typeof value === 'string') {
           value = attrs[++i];
         }
         continue;
       } else if (maybeAttrName === AttributeMarker.Template) {
-        // We do not care about Template attributes in this scenario.
+        // 이 시나리오에서 템플릿 속성에 대해 신경 쓰지 않습니다.
         break;
       } else if (maybeAttrName === AttributeMarker.NamespaceURI) {
-        // Skip the whole namespaced attribute and value. This is by design.
+        // 전체 네임스페이스 속성 및 값을 건너뜁니다. 이는 설계된 것입니다.
         i += 4;
         continue;
       }
-      // In binding mode there are only names, rather than name-value pairs.
+      // 바인딩 모드에서 이름-값 쌍이 아닌 이름만 있습니다.
       i += bindingsMode ? 1 : 2;
     }
-    // We did not match the attribute
+    // 속성과 일치하지 않았습니다.
     return -1;
   } else {
     return matchTemplateAttribute(attrs, name);
@@ -301,8 +291,8 @@ export function getProjectAsAttrValue(tNode: TNode): CssSelector | null {
   const nodeAttrs = tNode.attrs;
   if (nodeAttrs != null) {
     const ngProjectAsAttrIdx = nodeAttrs.indexOf(AttributeMarker.ProjectAs);
-    // only check for ngProjectAs in attribute names, don't accidentally match attribute's value
-    // (attribute names are stored at even indexes)
+    // 속성 이름에서만 ngProjectAs를 확인하고, 속성의 값과 우연히 일치하지 않도록 합니다.
+    // (속성 이름은 짝수 인덱스에 저장됩니다.)
     if ((ngProjectAsAttrIdx & 1) === 0) {
       return nodeAttrs[ngProjectAsAttrIdx + 1] as CssSelector;
     }
@@ -326,8 +316,8 @@ function matchTemplateAttribute(attrs: TAttributes, name: string): number {
     i++;
     while (i < attrs.length) {
       const attr = attrs[i];
-      // Return in case we checked all template attrs and are switching to the next section in the
-      // attrs array (that starts with a number that represents an attribute marker).
+      // 템플릿 속성을 모두 검사하고, 속성 어레이에서 다음 섹션으로 전환하므로 반환합니다.
+      // (이는 속성 마커를 나타내는 숫자로 시작하는 섹션입니다.)
       if (typeof attr === 'number') return -1;
       if (attr === name) return i;
       i++;
@@ -337,9 +327,9 @@ function matchTemplateAttribute(attrs: TAttributes, name: string): number {
 }
 
 /**
- * Checks whether a selector is inside a CssSelectorList
- * @param selector Selector to be checked.
- * @param list List in which to look for the selector.
+ * 선택자가 CssSelectorList 안에 있는지 확인합니다.
+ * @param selector 확인할 선택자.
+ * @param list 선택자를 찾을 목록.
  */
 export function isSelectorInSelectorList(selector: CssSelector, list: CssSelectorList): boolean {
   selectorListLoop: for (let i = 0; i < list.length; i++) {
@@ -381,29 +371,29 @@ function stringifyCSSSelector(selector: CssSelector): string {
       }
     } else {
       //
-      // Append current chunk to the final result in case we come across SelectorFlag, which
-      // indicates that the previous section of a selector is over. We need to accumulate content
-      // between flags to make sure we wrap the chunk later in :not() selector if needed, e.g.
+      // SelectorFlag를 만나면 현재 청크를 최종 결과에 추가합니다.
+      // 이는 선택자의 이전 섹션이 끝났음을 나타냅니다.
+      // 선택자 사이에 있는 내용을 누적하여 나중에 필요한 경우 :not() 선택기에 청크를 감싸야 합니다.
       // ```
       //  ['', Flags.CLASS, '.classA', Flags.CLASS | Flags.NOT, '.classB', '.classC']
       // ```
-      // should be transformed to `.classA :not(.classB .classC)`.
+      // `.classA :not(.classB .classC)`로 변환되어야 합니다.
       //
-      // Note: for negative selector part, we accumulate content between flags until we find the
-      // next negative flag. This is needed to support a case where `:not()` rule contains more than
-      // one chunk, e.g. the following selector:
+      // 음수 선택자 부분의 경우, 다음 음수 플래그를 찾을 때까지 플래그 사이에 내용을 누적합니다.
+      // 이는 `:not()` 규칙에 둘 이상의 청크가 포함될 수 있는 경우를 지원하기 위해 필요합니다.
+      // 예를 들어,
       // ```
       //  ['', Flags.ELEMENT | Flags.NOT, 'p', Flags.CLASS, 'foo', Flags.CLASS | Flags.NOT, 'bar']
       // ```
-      // should be stringified to `:not(p.foo) :not(.bar)`
+      // `:not(p.foo) :not(.bar)`로 문자열화되어야 합니다.
       //
       if (currentChunk !== '' && !isPositive(valueOrMarker)) {
         result += maybeWrapInNotSelector(isNegativeMode, currentChunk);
         currentChunk = '';
       }
       mode = valueOrMarker;
-      // According to CssSelector spec, once we come across `SelectorFlags.NOT` flag, the negative
-      // mode is maintained for remaining chunks of a selector.
+      // CssSelector 사양에 따르면, 한 번이라도 `SelectorFlags.NOT` 플래그를 만나면
+      // 선택자의 나머지 조각에 대해 음수 모드를 유지합니다.
       isNegativeMode = isNegativeMode || !isPositive(mode);
     }
     i++;
@@ -415,30 +405,28 @@ function stringifyCSSSelector(selector: CssSelector): string {
 }
 
 /**
- * Generates string representation of CSS selector in parsed form.
+ * 구문 분석된 형식의 CSS 선택자의 문자열 표현을 생성합니다.
  *
- * ComponentDef and DirectiveDef are generated with the selector in parsed form to avoid doing
- * additional parsing at runtime (for example, for directive matching). However in some cases (for
- * example, while bootstrapping a component), a string version of the selector is required to query
- * for the host element on the page. This function takes the parsed form of a selector and returns
- * its string representation.
+ * ComponentDef 및 DirectiveDef는 구문 분석된 형식의 선택자를 사용하여 생성되어
+ * 런타임 시 추가 파싱을 방지합니다 (예: 지시문 일치의 경우). 그러나 일부 경우(예: 구성 요소 부트스트랩 시)
+ * 페이지의 호스트 요소를 조회하기 위해 선택자의 문자열 버전이 필요합니다.
+ * 이 함수는 선택자의 구문 분석된 형식을 가져와 문자열 표현을 반환합니다.
  *
- * @param selectorList selector in parsed form
- * @returns string representation of a given selector
+ * @param selectorList 구문 분석된 형식의 선택자
+ * @returns 주어진 선택자의 문자열 표현
  */
 export function stringifyCSSSelectorList(selectorList: CssSelectorList): string {
   return selectorList.map(stringifyCSSSelector).join(',');
 }
 
 /**
- * Extracts attributes and classes information from a given CSS selector.
+ * 주어진 CSS 선택자에서 속성 및 클래스 정보를 추출합니다.
  *
- * This function is used while creating a component dynamically. In this case, the host element
- * (that is created dynamically) should contain attributes and classes specified in component's CSS
- * selector.
+ * 이 함수는 구성 요소를 동적으로 생성할 때 사용됩니다. 이 경우 동적으로 생성된
+ * 호스트 요소는 구성 요소의 CSS 선택자에 지정된 속성 및 클래스를 포함해야 합니다.
  *
- * @param selector CSS selector in parsed form (in a form of array)
- * @returns object with `attrs` and `classes` fields that contain extracted information
+ * @param selector 구문 분석된 형식의 CSS 선택자 (배열 형태)
+ * @returns 추출된 정보를 포함하는 `attrs` 및 `classes` 필드가 있는 객체
  */
 export function extractAttrsAndClassesFromSelector(selector: CssSelector): TAttributes {
   const attrs: TAttributes = [];
@@ -456,9 +444,9 @@ export function extractAttrsAndClassesFromSelector(selector: CssSelector): TAttr
         classes.push(valueOrMarker);
       }
     } else {
-      // According to CssSelector spec, once we come across `SelectorFlags.NOT` flag, the negative
-      // mode is maintained for remaining chunks of a selector. Since attributes and classes are
-      // extracted only for "positive" part of the selector, we can stop here.
+      // CssSelector 사양에 따르면, 한 번이라도 `SelectorFlags.NOT` 플래그를 만나면,
+      // 나머지 조각에 대해 음수 모드가 유지됩니다. 속성과 클래스는
+      // 선택자의 "양수" 부분에 대해서만 추출되므로, 우리는 여기서 멈출 수 있습니다.
       if (!isPositive(mode)) break;
       mode = valueOrMarker;
     }

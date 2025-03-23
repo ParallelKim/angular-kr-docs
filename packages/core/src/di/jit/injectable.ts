@@ -29,14 +29,14 @@ import {angularCoreDiEnv} from './environment';
 import {convertDependencies, reflectDependencies} from './util';
 
 /**
- * Compile an Angular injectable according to its `Injectable` metadata, and patch the resulting
- * injectable def (`ɵprov`) onto the injectable type.
+ * Angular 주입 가능성을 `@Injectable` 메타데이터에 따라 컴파일하고,
+ * 결과 주입 가능성 정의(`ɵprov`)를 주입 가능성 타입에 패치합니다.
  */
 export function compileInjectable(type: Type<any>, meta?: Injectable): void {
   let ngInjectableDef: any = null;
   let ngFactoryDef: any = null;
 
-  // if NG_PROV_DEF is already defined on this class then don't overwrite it
+  // 이 클래스에 NG_PROV_DEF가 이미 정의되어 있으면 덮어쓰지 않습니다.
   if (!type.hasOwnProperty(NG_PROV_DEF)) {
     Object.defineProperty(type, NG_PROV_DEF, {
       get: () => {
@@ -57,7 +57,7 @@ export function compileInjectable(type: Type<any>, meta?: Injectable): void {
     });
   }
 
-  // if NG_FACTORY_DEF is already defined on this class then don't overwrite it
+  // 이 클래스에 NG_FACTORY_DEF가 이미 정의되어 있으면 덮어쓰지 않습니다.
   if (!type.hasOwnProperty(NG_FACTORY_DEF)) {
     Object.defineProperty(type, NG_FACTORY_DEF, {
       get: () => {
@@ -70,14 +70,14 @@ export function compileInjectable(type: Type<any>, meta?: Injectable): void {
           ngFactoryDef = compiler.compileFactory(angularCoreDiEnv, `ng:///${type.name}/ɵfac.js`, {
             name: type.name,
             type,
-            typeArgumentCount: 0, // In JIT mode types are not available nor used.
+            typeArgumentCount: 0, // JIT 모드에서는 타입이 사용 가능하지 않음.
             deps: reflectDependencies(type),
             target: compiler.FactoryTarget.Injectable,
           });
         }
         return ngFactoryDef;
       },
-      // Leave this configurable so that the factories from directives or pipes can take precedence.
+      // 이 부분은 조정 가능하게 두어, 디렉티브나 파이프의 팩토리들이 우선순위를 가질 수 있도록 합니다.
       configurable: true,
     });
   }
@@ -107,7 +107,7 @@ function isUseExistingProvider(meta: Injectable): meta is Injectable & ExistingS
 }
 
 function getInjectableMetadata(type: Type<any>, srcMeta?: Injectable): R3InjectableMetadataFacade {
-  // Allow the compilation of a class with a `@Injectable()` decorator without parameters
+  // 매개변수 없이 `@Injectable()` 데코레이터가 있는 클래스의 컴파일을 허용합니다.
   const meta: Injectable = srcMeta || {providedIn: null};
   const compilerMeta: R3InjectableMetadataFacade = {
     name: type.name,
@@ -118,7 +118,7 @@ function getInjectableMetadata(type: Type<any>, srcMeta?: Injectable): R3Injecta
   if ((isUseClassProvider(meta) || isUseFactoryProvider(meta)) && meta.deps !== undefined) {
     compilerMeta.deps = convertDependencies(meta.deps);
   }
-  // Check to see if the user explicitly provided a `useXxxx` property.
+  // 사용자가 명시적으로 `useXxxx` 속성을 제공했는지 확인합니다.
   if (isUseClassProvider(meta)) {
     compilerMeta.useClass = meta.useClass;
   } else if (isUseValueProvider(meta)) {

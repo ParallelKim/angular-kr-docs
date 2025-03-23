@@ -9,7 +9,7 @@ import {injectAttributeImpl} from '../di';
 import {getCurrentTNode} from '../state';
 
 /**
- * Facade for the attribute injection from DI.
+ * DI로부터 속성 주입의 파사드.
  *
  * @codeGenApi
  */

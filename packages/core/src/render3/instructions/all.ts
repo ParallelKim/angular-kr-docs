@@ -7,21 +7,20 @@
  */
 
 /*
- * This file re-exports all symbols contained in this directory.
+ * 이 파일은 이 디렉토리에 포함된 모든 심볼을 재수출합니다.
  *
- * Why is this file not `index.ts`?
+ * 왜 이 파일은 `index.ts`가 아닐까요?
  *
- * There seems to be an inconsistent path resolution of an `index.ts` file
- * when only the parent directory is referenced. This could be due to the
- * node module resolution configuration differing from rollup and/or typescript.
+ * 부모 디렉토리만 참조할 때 `index.ts` 파일의 경로 해결이 일관되지 않는 것 같습니다.
+ * 이는 노드 모듈 해상도 구성과 rollup 및/또는 typescript가 다르기 때문일 수 있습니다.
  *
- * With commit
+ * 커밋
  * https://github.com/angular/angular/commit/d5e3f2c64bd13ce83e7c70788b7fc514ca4a9918
- * the `instructions.ts` file was moved to `instructions/instructions.ts` and an
- * `index.ts` file was used to re-export everything. Having had file names that were
- * importing from `instructions' directly (not the from the sub file or the `index.ts`
- * file) caused strange CI issues. `index.ts` had to be renamed to `all.ts` for this
- * to work.
+ * `instructions.ts` 파일이 `instructions/instructions.ts`로 이동했으며,
+ * 모든 것을 재수출하기 위해 `index.ts` 파일이 사용되었습니다.
+ * `instructions`에서 직접 가져오는 파일 이름이 있었던 것은
+ * (하위 파일이나 `index.ts` 파일이 아닌) 이상한 CI 문제를 일으켰습니다.
+ * 작동하기 위해 `index.ts`는 `all.ts`로 이름이 변경되어야 했습니다.
  *
  * Jira Issue = FW-1184
  */

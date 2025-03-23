@@ -45,7 +45,7 @@ import {
   getOrCreateComponentTView,
 } from './view/construction';
 
-/** Represents `import.meta` plus some information that's not in the built-in types. */
+/** `import.meta`를 나타내며, 내장 타입에 없는 정보가 추가되어 있습니다. */
 type ImportMetaExtended = ImportMeta & {
   hot?: {
     send?: (name: string, payload: unknown) => void;
@@ -53,15 +53,13 @@ type ImportMetaExtended = ImportMeta & {
 };
 
 /**
- * Replaces the metadata of a component type and re-renders all live instances of the component.
- * @param type Class whose metadata will be replaced.
- * @param applyMetadata Callback that will apply a new set of metadata on the `type` when invoked.
- * @param environment Syntehtic namespace imports that need to be passed along to the callback.
- * @param locals Local symbols from the source location that have to be exposed to the callback.
- * @param importMeta `import.meta` from the call site of the replacement function. Optional since
- *   it isn't used internally.
- * @param id ID to the class being replaced. **Not** the same as the component definition ID.
- *   Optional since the ID might not be available internally.
+ * 컴포넌트 타입의 메타데이터를 교체하고 모든 라이브 인스턴스를 다시 렌더링합니다.
+ * @param type 메타데이터가 교체될 클래스입니다.
+ * @param applyMetadata 호출 시 `type`에 새 메타데이터 세트를 적용할 콜백입니다.
+ * @param environment 콜백에 전달되어야 하는 합성 네임스페이스 가져오기입니다.
+ * @param locals 콜백에 노출해야 하는 소스 위치의 로컬 심볼입니다.
+ * @param importMeta 교체 함수의 호출 위치에서의 `import.meta`입니다. 내부적으로 사용되지 않으므로 선택적입니다.
+ * @param id 교체되는 클래스의 ID입니다. **컴포넌트 정의 ID와는 다릅니다.** 내부에서 ID가 이용할 수 없을 수 있으므로 선택적입니다.
  * @codeGenApi
  */
 export function ɵɵreplaceMetadata(
@@ -75,27 +73,26 @@ export function ɵɵreplaceMetadata(
   ngDevMode && assertComponentDef(type);
   const currentDef = getComponentDef(type)!;
 
-  // The reason `applyMetadata` is a callback that is invoked (almost) immediately is because
-  // the compiler usually produces more code than just the component definition, e.g. there
-  // can be functions for embedded views, the variables for the constant pool and `setClassMetadata`
-  // calls. The callback allows us to keep them isolate from the rest of the app and to invoke
-  // them at the right time.
+  // `applyMetadata`가 거의 즉시 호출되는 콜백인 이유는 컴파일러가
+  // 일반적으로 컴포넌트 정의보다 더 많은 코드를 생성하기 때문입니다. 예를 들어,
+  // 내장 뷰의 함수, 상수 풀의 변수 및 `setClassMetadata` 호출이 있을 수 있습니다.
+  // 콜백을 사용하면 이러한 것들이 나머지 앱과 격리되어 있고
+  // 적절한 시점에 호출되도록 할 수 있습니다.
   applyMetadata.apply(null, [type, namespaces, ...locals]);
 
   const {newDef, oldDef} = mergeWithExistingDefinition(currentDef, getComponentDef(type)!);
 
-  // TODO(crisbeto): the `applyMetadata` call above will replace the definition on the type.
-  // Ideally we should adjust the compiler output so the metadata is returned, however that'll
-  // require some internal changes. We re-add the metadata here manually.
+  // TODO(crisbeto): 위의 `applyMetadata` 호출은 타입의 정의를 교체합니다.
+  // 이상적으로는 컴파일러 출력을 조정하여 메타데이터가 반환되도록 해야 합니다.
+  // 그러나 이는 내부 변경이 필요합니다. 우리는 여기서 메타데이터를 수동으로 다시 추가합니다.
   (type as any)[NG_COMP_DEF] = newDef;
 
-  // If a `tView` hasn't been created yet, it means that this component hasn't been instantianted
-  // before. In this case there's nothing left for us to do aside from patching it in.
+  // `tView`가 아직 생성되지 않았다면, 이는 이 컴포넌트가 이전에 인스턴스화되지 않았음을 의미합니다.
+  // 이 경우 우리는 패치하는 것 외에 할 일이 없습니다.
   if (oldDef.tView) {
     const trackedViews = getTrackedLViews().values();
     for (const root of trackedViews) {
-      // Note: we have the additional check, because `IsRoot` can also indicate
-      // a component created through something like `createComponent`.
+      // 참고: `IsRoot`는 `createComponent`와 같은 방법을 통해 생성된 컴포넌트도 나타낼 수 있습니다.
       if (isRootView(root) && root[PARENT] === null) {
         recreateMatchingLViews(importMeta, id, newDef, oldDef, root);
       }
@@ -104,35 +101,34 @@ export function ɵɵreplaceMetadata(
 }
 
 /**
- * Merges two component definitions while preseving the original one in place.
- * @param currentDef Definition that should receive the new metadata.
- * @param newDef Source of the new metadata.
+ * 두 개의 컴포넌트 정의를 병합하면서 원래 정의를 그대로 유지합니다.
+ * @param currentDef 새로운 메타데이터를 받을 정의입니다.
+ * @param newDef 새로운 메타데이터의 출처입니다.
  */
 function mergeWithExistingDefinition(
   currentDef: ComponentDef<unknown>,
   newDef: ComponentDef<unknown>,
 ) {
-  // Clone the current definition since we reference its original data further
-  // down in the replacement process (e.g. when destroying the renderer).
+  // 교체 과정에서 원본 데이터를 더 이상 참조하지 않도록 현재 정의를 클론합니다.
   const clone = {...currentDef};
 
-  // Assign the new metadata in place while preserving the object literal. It's important to
-  // Keep the object in place, because there can be references to it, for example in the
-  // `directiveDefs` of another definition.
+  // 객체 리터럴을 유지하면서 제자리에 새 메타데이터를 할당합니다.
+  // 객체를 제자리에 두는 것이 중요합니다. 그 이유는 다른 정의의
+  // `directiveDefs`와 같이 이를 참조할 수 있기 때문입니다.
   const replacement = Object.assign(currentDef, newDef, {
-    // We need to keep the existing directive and pipe defs, because they can get patched on
-    // by a call to `setComponentScope` from a module file. That call won't make it into the
-    // HMR replacement function, because it lives in an entirely different file.
+    // 기존 디렉티브 및 파이프 정의가 유지되어야 하며,
+    // 원래 모듈 파일에서 `setComponentScope`를 호출하여 패치될 수 있습니다.
+    // 해당 호출은 완전히 다른 파일에 존재하므로 HMR 교체 함수에 포함되지는 않습니다.
     directiveDefs: clone.directiveDefs,
     pipeDefs: clone.pipeDefs,
 
-    // Preserve the old `setInput` function, because it has some state.
-    // This is fine, because the component instance is preserved as well.
+    // 상태가 있는 오래된 `setInput` 함수를 유지합니다.
+    // 이는 괜찮습니다. 컴포넌트 인스턴스도 보존되기 때문입니다.
     setInput: clone.setInput,
 
-    // Externally this is redundant since we redeclare the definition using the original type.
-    // Internally we may receive a definition with an alternate, but identical, type so we have
-    // to ensure that the original one is preserved.
+    // 외부적으로는 이 정의를 원래 타입으로 재선언하므로 중복입니다.
+    // 내부적으로는 교체할 정의가 대체하지만 동일한 타입일 수 있으므로
+    // 원래 정의가 보존되도록 해야 합니다.
     type: clone.type,
   });
 
@@ -141,11 +137,11 @@ function mergeWithExistingDefinition(
 }
 
 /**
- * Finds all LViews matching a specific component definition and recreates them.
- * @param importMeta `import.meta` information.
- * @param id HMR ID of the component.
- * @param oldDef Component definition to search for.
- * @param rootLView View from which to start the search.
+ * 특정 컴포넌트 정의와 일치하는 모든 LViews를 찾아서 재생성합니다.
+ * @param importMeta `import.meta` 정보입니다.
+ * @param id 컴포넌트의 HMR ID입니다.
+ * @param oldDef 검색할 컴포넌트 정의입니다.
+ * @param rootLView 검색을 시작할 뷰입니다.
  */
 function recreateMatchingLViews(
   importMeta: ImportMetaExtended | null,
@@ -155,15 +151,13 @@ function recreateMatchingLViews(
   rootLView: LView,
 ): void {
   ngDevMode &&
-    assertDefined(
-      oldDef.tView,
-      'Expected a component definition that has been instantiated at least once',
-    );
+    assertDefined(oldDef.tView, '최소한 한 번 인스턴스화된 컴포넌트 정의가 예상되었습니다.');
 
   const tView = rootLView[TVIEW];
 
-  // Use `tView` to match the LView since `instanceof` can
-  // produce false positives when using inheritance.
+  // `tView`를 사용하여 LView와 일치시킵니다.
+  // 왜냐하면 상속을 사용할 때 `instanceof`가
+  // 잘못된 긍정을 생성할 수 있기 때문입니다.
   if (tView === oldDef.tView) {
     ngDevMode && assertComponentDef(oldDef.type);
     recreateLView(importMeta, id, newDef, oldDef, rootLView);
@@ -174,7 +168,7 @@ function recreateMatchingLViews(
     const current = rootLView[i];
 
     if (isLContainer(current)) {
-      // The host can be an LView if a component is injecting `ViewContainerRef`.
+      // 호스트는 컴포넌트가 `ViewContainerRef`를 주입하는 경우 LView일 수 있습니다.
       if (isLView(current[HOST])) {
         recreateMatchingLViews(importMeta, id, newDef, oldDef, current[HOST]);
       }
@@ -189,26 +183,26 @@ function recreateMatchingLViews(
 }
 
 /**
- * Removes any cached renderers from the factory for the provided type.
- * This is currently used by the HMR logic to ensure Renderers are kept
- * synchronized with any definition metadata updates.
- * @param factory A RendererFactory2 instance.
- * @param def A ComponentDef instance.
+ * 제공된 타입에 대한 모든 캐시된 렌더러를 팩토리에서 제거합니다.
+ * 이는 현재 HMR 로직에 의해 사용되어 렌더러가 정의 메타데이터 업데이트와
+ * 동기화되는 것이 보장됩니다.
+ * @param factory RendererFactory2 인스턴스입니다.
+ * @param def ComponentDef 인스턴스입니다.
  */
 function clearRendererCache(factory: RendererFactory, def: ComponentDef<unknown>) {
-  // Cast to read a private field.
-  // NOTE: This must be kept synchronized with the renderer factory implementation in
-  // platform-browser and platform-browser/animations.
+  // 비공식 필드를 읽기 위해 캐스팅합니다.
+  // NOTE: 이는 platform-browser 및 platform-browser/animations의
+  // 렌더러 팩토리 구현과 동기화되어야 합니다.
   (factory as {componentReplaced?: (id: string) => void}).componentReplaced?.(def.id);
 }
 
 /**
- * Recreates an LView in-place from a new component definition.
- * @param importMeta `import.meta` information.
- * @param id HMR ID for the component.
- * @param newDef Definition from which to recreate the view.
- * @param oldDef Previous component definition being swapped out.
- * @param lView View to be recreated.
+ * 새 컴포넌트 정의에서 인-플레이스에서 LView를 재생성합니다.
+ * @param importMeta `import.meta` 정보입니다.
+ * @param id 컴포넌트의 HMR ID입니다.
+ * @param newDef 뷰를 재생성하는 데 사용되는 정의입니다.
+ * @param oldDef 교체되는 이전 컴포넌트 정의입니다.
+ * @param lView 재생성될 뷰입니다.
  */
 function recreateLView(
   importMeta: ImportMetaExtended | null,
@@ -219,29 +213,30 @@ function recreateLView(
 ): void {
   const instance = lView[CONTEXT];
   let host = lView[HOST]! as HTMLElement;
-  // In theory the parent can also be an LContainer, but it appears like that's
-  // only the case for embedded views which we won't be replacing here.
+  // 이론적으로 부모도 LContainer가 될 수 있지만,
+  // 이는 여기서 교체되지 않을 내장 뷰에만 해당하는 것 같습니다.
   const parentLView = lView[PARENT] as LView;
   ngDevMode && assertLView(parentLView);
   const tNode = lView[T_HOST] as TElementNode;
   ngDevMode && assertTNodeType(tNode, TNodeType.Element);
-  ngDevMode && assertNotEqual(newDef, oldDef, 'Expected different component definition');
+  ngDevMode && assertNotEqual(newDef, oldDef, '기대되는 다른 컴포넌트 정의입니다.');
   const zone = lView[INJECTOR].get(NgZone, null);
   const recreate = () => {
-    // If we're recreating a component with shadow DOM encapsulation, it will have attached a
-    // shadow root. The browser will throw if we attempt to attach another one and there's no way
-    // to detach it. Our only option is to make a clone only of the root node, replace the node
-    // with the clone and use it for the newly-created LView.
+    // 그림자 DOM 캡슐화를 가진 컴포넌트를 재생성하는 경우,
+    // 그림자 루트가 첨부될 것입니다.
+    // 또 다른 그림자를 붙이려고 하면 브라우저가 오류를 발생시키고
+    // 이를 분리할 방법이 없습니다. 우리의 유일한 선택은 루트 노드만을 클론하여
+    // 노드를 클론으로 교체하고 이를 새로 생성된 LView에 사용하는 것입니다.
     if (oldDef.encapsulation === ViewEncapsulation.ShadowDom) {
       const newHost = host.cloneNode(false) as HTMLElement;
       host.replaceWith(newHost);
       host = newHost;
     }
 
-    // Recreate the TView since the template might've changed.
+    // 템플릿이 변경되었을 수 있으므로 TView를 다시 생성합니다.
     const newTView = getOrCreateComponentTView(newDef);
 
-    // Create a new LView from the new TView, but reusing the existing TNode and DOM node.
+    // 기존 TNode 및 DOM 노드를 재사용하되 새 TView에서 새 LView를 생성합니다.
     const newLView = createLView(
       parentLView,
       newTView,
@@ -250,45 +245,45 @@ function recreateLView(
       host,
       tNode,
       null,
-      null, // The renderer will be created a bit further down once the old one is destroyed.
+      null, // 렌더러는 이전 것이 파괴된 후 조금 더 아래에서 생성됩니다.
       null,
       null,
       null,
     );
 
-    // Detach the LView from its current place in the tree so we don't
-    // start traversing any siblings and modifying their structure.
+    // LView를 현재 트리 구조에서 분리하여 형제를 탐색하고
+    // 그 구조를 수정하지 않도록 합니다.
     replaceLViewInTree(parentLView, lView, newLView, tNode.index);
 
-    // Destroy the detached LView.
+    // 분리된 LView를 파괴합니다.
     destroyLView(lView[TVIEW], lView);
 
-    // Always force the creation of a new renderer to ensure state captured during construction
-    // stays consistent with the new component definition by clearing any old ached factories.
+    // 새 컴포넌트 정의와의 상태 일관성을 보장하기 위해
+    // 항상 새 렌더러를 생성하게 하며 모든 오래된 캐시된 팩토리를 지웁니다.
     const rendererFactory = lView[ENVIRONMENT].rendererFactory;
     clearRendererCache(rendererFactory, oldDef);
 
-    // Patch a brand-new renderer onto the new view only after the old
-    // view is destroyed so that the runtime doesn't try to reuse it.
+    // 구식 뷰가 파괴된 후에만 새 뷰에 새로운 렌더러를 패치합니다.
+    // 그렇지 않으면 런타임이 이를 재사용하려 할 수 있습니다.
     newLView[RENDERER] = rendererFactory.createRenderer(host, newDef);
 
-    // Remove the nodes associated with the destroyed LView. This removes the
-    // descendants, but not the host which we want to stay in place.
+    // 파괴된 LView와 관련된 노드를 제거합니다. 이는 하위 요소를 제거하지만,
+    // 우리는 위치에 남아 있는 호스트를 원합니다.
     removeViewFromDOM(lView[TVIEW], lView);
 
-    // Reset the content projection state of the TNode before the first render.
-    // Note that this has to happen after the LView has been destroyed or we
-    // risk some projected nodes not being removed correctly.
+    // 첫 번째 렌더링 전 TNode의 콘텐츠 투영 상태를 재설정합니다.
+    // LView가 파괴된 후에 이것이 발생해야 합니다. 그렇지 않으면
+    // 일부 투영된 노드가 올바르게 제거되지 않을 수 있습니다.
     resetProjectionState(tNode);
 
-    // Creation pass for the new view.
+    // 새 뷰 생성을 위한 패스입니다.
     renderView(newTView, newLView, instance);
 
-    // Update pass for the new view.
+    // 새 뷰에 대한 업데이트 패스입니다.
     refreshView(newTView, newLView, newTView.template, instance);
   };
 
-  // The callback isn't guaranteed to be inside the Zone so we need to bring it in ourselves.
+  // 콜백이 반드시 Zone 안에 있는 것은 아니므로 직접 가져와야 합니다.
   if (zone === null) {
     executeWithInvalidateFallback(importMeta, id, recreate);
   } else {
@@ -297,8 +292,8 @@ function recreateLView(
 }
 
 /**
- * Runs an HMR-related function and falls back to
- * invalidating the HMR data if it throws an error.
+ * HMR 관련 기능을 실행하며
+ * 오류가 발생하면 HMR 데이터를 무효화하도록 폴백합니다.
  */
 function executeWithInvalidateFallback(
   importMeta: ImportMetaExtended | null,
@@ -310,24 +305,25 @@ function executeWithInvalidateFallback(
   } catch (e) {
     const error = e as {message?: string; stack?: string};
 
-    // If we have all the necessary information and APIs to send off the invalidation
-    // request, send it before rethrowing so the dev server can decide what to do.
+    // 무효화 요청을 보내기에 필요한 모든 정보와 API가 준비되어 있는 경우,
+    // 다시 던지기 전에 요청을 보내도록 하여 개발 서버가
+    // 어떤 조치를 취해야 할지를 결정할 수 있습니다.
     if (id !== null && error.message) {
       const toLog = error.message + (error.stack ? '\n' + error.stack : '');
       importMeta?.hot?.send?.('angular:invalidate', {id, message: toLog, error: true});
     }
 
-    // Throw the error in case the page doesn't get refreshed.
+    // 페이지가 새로 고쳐지지 않도록 오류를 던집니다.
     throw e;
   }
 }
 
 /**
- * Replaces one LView in the tree with another one.
- * @param parentLView Parent of the LView being replaced.
- * @param oldLView LView being replaced.
- * @param newLView Replacement LView to be inserted.
- * @param index Index at which the LView should be inserted.
+ * 트리에서 하나의 LView를 다른 LView로 교체합니다.
+ * @param parentLView 교체되는 LView의 부모입니다.
+ * @param oldLView 교체되는 LView입니다.
+ * @param newLView 삽입될 교체 LView입니다.
+ * @param index LView가 삽입되어야 하는 인덱스입니다.
  */
 function replaceLViewInTree(
   parentLView: LView,
@@ -335,7 +331,7 @@ function replaceLViewInTree(
   newLView: LView,
   index: number,
 ): void {
-  // Update the sibling whose `NEXT` pointer refers to the old view.
+  // 이전 뷰를 가리키는 `NEXT` 포인터를 업데이트합니다.
   for (let i = HEADER_OFFSET; i < parentLView[TVIEW].bindingStartIndex; i++) {
     const current = parentLView[i];
 
@@ -345,38 +341,38 @@ function replaceLViewInTree(
     }
   }
 
-  // Set the new view as the head, if the old view was first.
+  // 이전 뷰가 최초인 경우 새 뷰를 헤드로 설정합니다.
   if (parentLView[CHILD_HEAD] === oldLView) {
     parentLView[CHILD_HEAD] = newLView;
   }
 
-  // Set the new view as the tail, if the old view was last.
+  // 이전 뷰가 마지막인 경우 새 뷰를 테일로 설정합니다.
   if (parentLView[CHILD_TAIL] === oldLView) {
     parentLView[CHILD_TAIL] = newLView;
   }
 
-  // Update the `NEXT` pointer to the same as the old view.
+  // `NEXT` 포인터를 이전 뷰와 동일하게 설정합니다.
   newLView[NEXT] = oldLView[NEXT];
 
-  // Clear out the `NEXT` of the old view.
+  // 이전 뷰의 `NEXT`를 지웁니다.
   oldLView[NEXT] = null;
 
-  // Insert the new LView at the correct index.
+  // 올바른 인덱스에 새 LView를 삽입합니다.
   parentLView[index] = newLView;
 }
 
 /**
- * Child nodes mutate the `projection` state of their parent node as they're being projected.
- * This function resets the `project` back to its initial state.
+ * 자식 노드는 투영되는 동안 부모 노드의 `projection` 상태를 변경합니다.
+ * 이 함수는 `project`를 초기 상태로 재설정합니다.
  * @param tNode
  */
 function resetProjectionState(tNode: TElementNode): void {
-  // The `projection` is mutated by child nodes as they're being projected. We need to
-  // reset it to the initial state so projection works after the template is swapped out.
+  // 자식 노드에 의해 투영되는 동안 `projection`이 변경됩니다.
+  // 우리는 템플릿이 교체된 후에 투영이 작동하도록 초기 상태로 재설정할 필요가 있습니다.
   if (tNode.projection !== null) {
     for (const current of tNode.projection) {
       if (isTNodeShape(current)) {
-        // Reset `projectionNext` since it can affect the traversal order during projection.
+        // 투영 중 순회 순서에 영향을 줄 수 있는 `projectionNext`를 재설정합니다.
         current.projectionNext = null;
         current.flags &= ~TNodeFlags.isProjected;
       }

@@ -21,13 +21,13 @@ import {getCurrentQueryIndex, getLView, getTView, setCurrentQueryIndex} from '..
 import {isCreationMode} from '../util/view_utils';
 
 /**
- * Registers a QueryList, associated with a content query, for later refresh (part of a view
- * refresh).
+ * 나중에 새로 고침을 위해 콘텐츠 쿼리와 연결된 QueryList를 등록합니다 (보기
+ * 새로 고침의 일부).
  *
- * @param directiveIndex Current directive index
- * @param predicate The type for which the query will search
- * @param flags Flags associated with the query
- * @param read What to save in the query
+ * @param directiveIndex 현재 지시문 인덱스
+ * @param predicate 쿼리가 검색할 유형
+ * @param flags 쿼리와 관련된 플래그
+ * @param read 쿼리에 저장할 내용
  * @returns QueryList<T>
  *
  * @codeGenApi
@@ -42,11 +42,11 @@ export function ɵɵcontentQuery<T>(
 }
 
 /**
- * Creates a new view query by initializing internal data structures.
+ * 내부 데이터 구조를 초기화하여 새 뷰 쿼리를 생성합니다.
  *
- * @param predicate The type for which the query will search
- * @param flags Flags associated with the query
- * @param read What to save in the query
+ * @param predicate 쿼리가 검색할 유형
+ * @param flags 쿼리와 관련된 플래그
+ * @param read 쿼리에 저장할 내용
  *
  * @codeGenApi
  */
@@ -59,11 +59,10 @@ export function ɵɵviewQuery<T>(
 }
 
 /**
- * Refreshes a query by combining matches from all active views and removing matches from deleted
- * views.
+ * 모든 활성 뷰에서 일치 항목을 결합하고 삭제된
+ * 뷰에서 일치 항목을 제거하여 쿼리를 새로 고칩니다.
  *
- * @returns `true` if a query got dirty during change detection or if this is a static query
- * resolving in creation mode, `false` otherwise.
+ * @returns 변경 감지 중 쿼리가 더러워졌거나 생성 모드에서 해결되는 정적 쿼리인 경우 `true`를 반환하고, 그렇지 않으면 `false`를 반환합니다.
  *
  * @codeGenApi
  */
@@ -94,7 +93,7 @@ export function ɵɵqueryRefresh(queryList: QueryList<any>): boolean {
 }
 
 /**
- * Loads a QueryList corresponding to the current view or content query.
+ * 현재 뷰 또는 콘텐츠 쿼리에 해당하는 QueryList를 로드합니다.
  *
  * @codeGenApi
  */

@@ -11,8 +11,8 @@ export const PERFORMANCE_MARK_PREFIX = '🅰️';
 let enablePerfLogging = false;
 
 /**
- * Function that will start measuring against the performance API
- * Should be used in pair with stopMeasuring
+ * 성능 API에 대한 측정을 시작하는 함수
+ * stopMeasuring와 쌍으로 사용해야 합니다.
  */
 export function startMeasuring<T>(label: string): void {
   if (!enablePerfLogging) {
@@ -26,8 +26,8 @@ export function startMeasuring<T>(label: string): void {
 }
 
 /**
- * Function that will stop measuring against the performance API
- * Should be used in pair with stopMeasuring
+ * 성능 API에 대한 측정을 멈추는 함수
+ * stopMeasuring와 쌍으로 사용해야 합니다.
  */
 export function stopMeasuring(label: string): void {
   if (!enablePerfLogging) {
@@ -54,9 +54,9 @@ export function labels(label: string) {
 
 let warningLogged = false;
 /**
- * This enables an internal performance profiler
+ * 내부 성능 프로파일러를 활성화합니다.
  *
- * It should not be imported in application code
+ * 애플리케이션 코드에 가져와서는 안 됩니다.
  */
 export function enableProfiling() {
   if (
@@ -64,7 +64,7 @@ export function enableProfiling() {
     (typeof performance === 'undefined' || !performance.mark || !performance.measure)
   ) {
     warningLogged = true;
-    console.warn('Performance API is not supported on this platform');
+    console.warn('이 플랫폼에서 성능 API를 지원하지 않습니다.');
     return;
   }
 

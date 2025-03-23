@@ -14,211 +14,208 @@ import {getComponentLViewByIndex} from '../render3/util/view_utils';
 import {RendererStyleFlags2, RendererType2} from './api_flags';
 
 /**
- * Creates and initializes a custom renderer that implements the `Renderer2` base class.
+ * 커스텀 렌더러를 생성하고 초기화합니다. 이 렌더러는 `Renderer2` 기본 클래스를 구현합니다.
  *
  * @publicApi
  */
 export abstract class RendererFactory2 {
   /**
-   * Creates and initializes a custom renderer for a host DOM element.
-   * @param hostElement The element to render.
-   * @param type The base class to implement.
-   * @returns The new custom renderer instance.
+   * 호스트 DOM 요소에 대한 커스텀 렌더러를 생성하고 초기화합니다.
+   * @param hostElement 렌더링할 요소입니다.
+   * @param type 구현할 기본 클래스입니다.
+   * @returns 새로운 커스텀 렌더러 인스턴스입니다.
    */
   abstract createRenderer(hostElement: any, type: RendererType2 | null): Renderer2;
   /**
-   * A callback invoked when rendering has begun.
+   * 렌더링이 시작될 때 호출되는 콜백입니다.
    */
   abstract begin?(): void;
   /**
-   * A callback invoked when rendering has completed.
+   * 렌더링이 완료될 때 호출되는 콜백입니다.
    */
   abstract end?(): void;
   /**
-   * Use with animations test-only mode. Notifies the test when rendering has completed.
-   * @returns The asynchronous result of the developer-defined function.
+   * 애니메이션 테스트 전용 모드와 함께 사용합니다. 렌더링이 완료되었을 때 테스트에 알림을 보냅니다.
+   * @returns 개발자가 정의한 함수의 비동기 결과입니다.
    */
   abstract whenRenderingDone?(): Promise<any>;
 }
 
 /**
- * Extend this base class to implement custom rendering. By default, Angular
- * renders a template into DOM. You can use custom rendering to intercept
- * rendering calls, or to render to something other than DOM.
+ * 이 기본 클래스를 확장하여 커스텀 렌더링을 구현합니다. 기본적으로 Angular는
+ * 템플릿을 DOM에 렌더링합니다. 커스텀 렌더링을 사용하여
+ * 렌더링 호출을 가로채거나 DOM 외의 다른 곳에 렌더링할 수 있습니다.
  *
- * Create your custom renderer using `RendererFactory2`.
+ * `RendererFactory2`를 사용하여 커스텀 렌더러를 만듭니다.
  *
- * Use a custom renderer to bypass Angular's templating and
- * make custom UI changes that can't be expressed declaratively.
- * For example if you need to set a property or an attribute whose name is
- * not statically known, use the `setProperty()` or
- * `setAttribute()` method.
+ * 커스텀 렌더러를 사용하여 Angular의 템플릿을 우회하고
+ * 선언적으로 표현할 수 없는 커스텀 UI 변경을 수행합니다.
+ * 예를 들어, 이름이 정적으로 알려지지 않은 속성이나 속성을 설정해야 하는 경우
+ * `setProperty()` 또는
+ * `setAttribute()` 메서드를 사용하세요.
  *
  * @publicApi
  */
 export abstract class Renderer2 {
   /**
-   * Use to store arbitrary developer-defined data on a renderer instance,
-   * as an object containing key-value pairs.
-   * This is useful for renderers that delegate to other renderers.
+   * 렌더러 인스턴스에 임의의 개발자 정의 데이터를 저장하는 데 사용합니다.
+   * 키-값 쌍을 포함하는 객체로 저장합니다.
+   * 이는 다른 렌더러에 위임하는 렌더러에 유용합니다.
    */
   abstract get data(): {[key: string]: any};
 
   /**
-   * Implement this callback to destroy the renderer or the host element.
+   * 이 콜백을 구현하여 렌더러 또는 호스트 요소를 제거합니다.
    */
   abstract destroy(): void;
   /**
-   * Implement this callback to create an instance of the host element.
-   * @param name An identifying name for the new element, unique within the namespace.
-   * @param namespace The namespace for the new element.
-   * @returns The new element.
+   * 호스트 요소의 인스턴스를 생성하기 위해 이 콜백을 구현합니다.
+   * @param name 새 요소의 식별 이름, 네임스페이스 내에서 고유합니다.
+   * @param namespace 새 요소의 네임스페이스입니다.
+   * @returns 새 요소입니다.
    */
   abstract createElement(name: string, namespace?: string | null): any;
   /**
-   * Implement this callback to add a comment to the DOM of the host element.
-   * @param value The comment text.
-   * @returns The modified element.
+   * 호스트 요소의 DOM에 주석을 추가하기 위해 이 콜백을 구현합니다.
+   * @param value 주석 텍스트입니다.
+   * @returns 수정된 요소입니다.
    */
   abstract createComment(value: string): any;
 
   /**
-   * Implement this callback to add text to the DOM of the host element.
-   * @param value The text string.
-   * @returns The modified element.
+   * 호스트 요소의 DOM에 텍스트를 추가하기 위해 이 콜백을 구현합니다.
+   * @param value 텍스트 문자열입니다.
+   * @returns 수정된 요소입니다.
    */
   abstract createText(value: string): any;
   /**
-   * If null or undefined, the view engine won't call it.
-   * This is used as a performance optimization for production mode.
+   * null 또는 undefined인 경우, 뷰 엔진은 이를 호출하지 않습니다.
+   * 이는 생산 모드의 성능 최적화로 사용됩니다.
    */
   destroyNode: ((node: any) => void) | null = null;
   /**
-   * Appends a child to a given parent node in the host element DOM.
-   * @param parent The parent node.
-   * @param newChild The new child node.
+   * 호스트 요소 DOM의 주어진 부모 노드에 자식을 추가합니다.
+   * @param parent 부모 노드입니다.
+   * @param newChild 새로운 자식 노드입니다.
    */
   abstract appendChild(parent: any, newChild: any): void;
   /**
-   * Implement this callback to insert a child node at a given position in a parent node
-   * in the host element DOM.
-   * @param parent The parent node.
-   * @param newChild The new child nodes.
-   * @param refChild The existing child node before which `newChild` is inserted.
-   * @param isMove Optional argument which signifies if the current `insertBefore` is a result of a
-   *     move. Animation uses this information to trigger move animations. In the past the Animation
-   *     would always assume that any `insertBefore` is a move. This is not strictly true because
-   *     with runtime i18n it is possible to invoke `insertBefore` as a result of i18n and it should
-   *     not trigger an animation move.
+   * 호스트 요소 DOM 내의 부모 노드의 주어진 위치에 자식 노드를 삽입하기 위해
+   * 이 콜백을 구현합니다.
+   * @param parent 부모 노드입니다.
+   * @param newChild 새로운 자식 노드입니다.
+   * @param refChild `newChild`가 삽입되는 기존 자식 노드입니다.
+   * @param isMove 현재의 `insertBefore`가 이동의 결과인지 여부를 표시하는 선택적 인수입니다.
+   *     애니메이션은 이 정보를 사용하여 이동 애니메이션을 트리거합니다. 과거에 애니메이션은
+   *     모든 `insertBefore`가 이동이라고 가정했습니다. 이는 항상 사실이 아니며,
+   *     런타임 i18n을 사용하여 `insertBefore`를 호출할 수 있으므로 애니메이션 이동을
+   *     트리거하지 않아야 합니다.
    */
   abstract insertBefore(parent: any, newChild: any, refChild: any, isMove?: boolean): void;
   /**
-   * Implement this callback to remove a child node from the host element's DOM.
-   * @param parent The parent node.
-   * @param oldChild The child node to remove.
-   * @param isHostElement Optionally signal to the renderer whether this element is a host element
-   * or not
+   * 호스트 요소의 DOM에서 자식 노드를 제거하기 위해 이 콜백을 구현합니다.
+   * @param parent 부모 노드입니다.
+   * @param oldChild 제거할 자식 노드입니다.
+   * @param isHostElement 이 요소가 호스트 요소인지 여부를 렌더러에 선택적으로 신호 보내기
    */
   abstract removeChild(parent: any, oldChild: any, isHostElement?: boolean): void;
   /**
-   * Implement this callback to prepare an element to be bootstrapped
-   * as a root element, and return the element instance.
-   * @param selectorOrNode The DOM element.
-   * @param preserveContent Whether the contents of the root element
-   * should be preserved, or cleared upon bootstrap (default behavior).
-   * Use with `ViewEncapsulation.ShadowDom` to allow simple native
-   * content projection via `<slot>` elements.
-   * @returns The root element.
+   * 부트스트랩할 루트 요소로 준비하기 위해 이 콜백을 구현하고,
+   * 요소 인스턴스를 반환합니다.
+   * @param selectorOrNode DOM 요소입니다.
+   * @param preserveContent 루트 요소의 내용을 유지할지 여부
+   * 부트스트랩 중에 지워져야 할 것입니다 (기본 동작).
+   * `<slot>` 요소를 통해 간단한 네이티브 콘텐츠 투영을 허용하려면 `ViewEncapsulation.ShadowDom`와 함께 사용하세요.
+   * @returns 루트 요소입니다.
    */
   abstract selectRootElement(selectorOrNode: string | any, preserveContent?: boolean): any;
   /**
-   * Implement this callback to get the parent of a given node
-   * in the host element's DOM.
-   * @param node The child node to query.
-   * @returns The parent node, or null if there is no parent.
-   * This is because the check is synchronous,
-   * and the caller can't rely on checking for null.
+   * 호스트 요소의 DOM에서 주어진 노드의 부모를 얻기 위해
+   * 이 콜백을 구현합니다.
+   * @param node 쿼리할 자식 노드입니다.
+   * @returns 부모 노드, 또는 Eltern이 없으면 null입니다.
+   * 이는 체크가 동기적이며,
+   * 호출자가 null 확인에 의존할 수 없기 때문입니다.
    */
   abstract parentNode(node: any): any;
   /**
-   * Implement this callback to get the next sibling node of a given node
-   * in the host element's DOM.
-   * @returns The sibling node, or null if there is no sibling.
-   * This is because the check is synchronous,
-   * and the caller can't rely on checking for null.
+   * 호스트 요소의 DOM에서 주어진 노드의 다음 형제 노드를 얻기 위해
+   * 이 콜백을 구현합니다.
+   * @returns 형제 노드, 없으면 null입니다.
+   * 이는 체크가 동기적이며,
+   * 호출자가 null 확인에 의존할 수 없기 때문입니다.
    */
   abstract nextSibling(node: any): any;
   /**
-   * Implement this callback to set an attribute value for an element in the DOM.
-   * @param el The element.
-   * @param name The attribute name.
-   * @param value The new value.
-   * @param namespace The namespace.
+   * DOM의 요소에 대한 속성 값을 설정하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param name 속성 이름입니다.
+   * @param value 새로운 값입니다.
+   * @param namespace 네임스페이스입니다.
    */
   abstract setAttribute(el: any, name: string, value: string, namespace?: string | null): void;
 
   /**
-   * Implement this callback to remove an attribute from an element in the DOM.
-   * @param el The element.
-   * @param name The attribute name.
-   * @param namespace The namespace.
+   * DOM의 요소에서 속성을 제거하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param name 속성 이름입니다.
+   * @param namespace 네임스페이스입니다.
    */
   abstract removeAttribute(el: any, name: string, namespace?: string | null): void;
   /**
-   * Implement this callback to add a class to an element in the DOM.
-   * @param el The element.
-   * @param name The class name.
+   * DOM의 요소에 클래스를 추가하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param name 클래스 이름입니다.
    */
   abstract addClass(el: any, name: string): void;
 
   /**
-   * Implement this callback to remove a class from an element in the DOM.
-   * @param el The element.
-   * @param name The class name.
+   * DOM의 요소에서 클래스를 제거하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param name 클래스 이름입니다.
    */
   abstract removeClass(el: any, name: string): void;
 
   /**
-   * Implement this callback to set a CSS style for an element in the DOM.
-   * @param el The element.
-   * @param style The name of the style.
-   * @param value The new value.
-   * @param flags Flags for style variations. No flags are set by default.
+   * DOM의 요소에 대한 CSS 스타일을 설정하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param style 스타일 이름입니다.
+   * @param value 새로운 값입니다.
+   * @param flags 스타일 변형을 위한 플래그입니다. 기본적으로 아무 플래그도 설정되지 않습니다.
    */
   abstract setStyle(el: any, style: string, value: any, flags?: RendererStyleFlags2): void;
 
   /**
-   * Implement this callback to remove the value from a CSS style for an element in the DOM.
-   * @param el The element.
-   * @param style The name of the style.
-   * @param flags Flags for style variations to remove, if set. ???
+   * DOM의 요소에 대한 CSS 스타일에서 값을 제거하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param style 스타일 이름입니다.
+   * @param flags 제거할 스타일 변형을 위한 플래그, 설정되어 있으면.
    */
   abstract removeStyle(el: any, style: string, flags?: RendererStyleFlags2): void;
 
   /**
-   * Implement this callback to set the value of a property of an element in the DOM.
-   * @param el The element.
-   * @param name The property name.
-   * @param value The new value.
+   * DOM의 요소 속성값을 설정하기 위해 이 콜백을 구현합니다.
+   * @param el 요소입니다.
+   * @param name 속성 이름입니다.
+   * @param value 새로운 값입니다.
    */
   abstract setProperty(el: any, name: string, value: any): void;
 
   /**
-   * Implement this callback to set the value of a node in the host element.
-   * @param node The node.
-   * @param value The new value.
+   * 호스트 요소의 노드 값을 설정하기 위해 이 콜백을 구현합니다.
+   * @param node 노드입니다.
+   * @param value 새로운 값입니다.
    */
   abstract setValue(node: any, value: string): void;
 
   /**
-   * Implement this callback to start an event listener.
-   * @param target The context in which to listen for events. Can be
-   * the entire window or document, the body of the document, or a specific
-   * DOM element.
-   * @param eventName The event to listen for.
-   * @param callback A handler function to invoke when the event occurs.
-   * @param options Options that configure how the event listener is bound.
-   * @returns An "unlisten" function for disposing of this handler.
+   * 이벤트 리스너를 시작하기 위해 이 콜백을 구현합니다.
+   * @param target 이벤트를 수신하기 위한 컨텍스트입니다. 전체 창 또는 문서,
+   * 문서의 본문 또는 특정 DOM 요소일 수 있습니다.
+   * @param eventName 수신할 이벤트입니다.
+   * @param callback 이벤트가 발생할 때 호출할 핸들러 함수입니다.
+   * @param options 이벤트 리스너가 바인딩되는 방법을 구성하는 옵션입니다.
+   * @returns 이 핸들러를 처리하기 위한 "unlisten" 함수입니다.
    */
   abstract listen(
     target: 'window' | 'document' | 'body' | any,
@@ -234,10 +231,10 @@ export abstract class Renderer2 {
   static __NG_ELEMENT_ID__: () => Renderer2 = () => injectRenderer2();
 }
 
-/** Injects a Renderer2 for the current component. */
+/** 현재 구성 요소에 대한 Renderer2를 주입합니다. */
 export function injectRenderer2(): Renderer2 {
-  // We need the Renderer to be based on the component that it's being injected into, however since
-  // DI happens before we've entered its view, `getLView` will return the parent view instead.
+  // 우리는 주입되는 구성 요소를 기반으로 렌더러가 필요하지만,
+  // DI는 뷰에 들어가기 전에 발생하므로, `getLView`는 부모 뷰를 반환합니다.
   const lView = getLView();
   const tNode = getCurrentTNode()!;
   const nodeAtIndex = getComponentLViewByIndex(tNode.index, lView);
@@ -245,10 +242,9 @@ export function injectRenderer2(): Renderer2 {
 }
 
 /**
- * This enum is meant to be used by `ɵtype` properties of the different renderers implemented
- * by the framework
+ * 이 열거형은 프레임워크에 의해 구현된 다양한 렌더러의 `ɵtype` 속성을 사용하기 위한 것입니다.
  *
- * We choose to not add `ɵtype` to `Renderer2` to no expose it to the public API.
+ * 공개 API에 노출되는 것을 피하기 위해 `Renderer2`에 `ɵtype`을 추가하지 않기로 선택합니다.
  */
 export const enum AnimationRendererType {
   Regular = 0,
@@ -256,7 +252,7 @@ export const enum AnimationRendererType {
 }
 
 /**
- * Options that can be used to configure an event listener.
+ * 이벤트 리스너를 구성하는 데 사용할 수 있는 옵션입니다.
  * @publicApi
  */
 export interface ListenerOptions {

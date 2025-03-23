@@ -19,14 +19,14 @@ import {ErrorHandler} from '../../error_handler';
 import {markViewDirty} from '../instructions/mark_view_dirty';
 
 /**
- * Wraps an event listener with a function that marks ancestors dirty and prevents default behavior,
- * if applicable.
+ * 이벤트 리스터를 래핑하여 조상 노드를 더럽히고 기본 동작을 방지하는 함수입니다,
+ * 적용 가능한 경우.
  *
- * @param tNode The TNode associated with this listener
- * @param lView The LView that contains this listener
- * @param listenerFn The listener function to call
- * @param wrapWithPreventDefault Whether or not to prevent default behavior
- * (the procedural renderer does this already, so in those cases, we should skip)
+ * @param tNode 이 리스터와 관련된 TNode
+ * @param lView 이 리스터를 포함하는 LView
+ * @param listenerFn 호출할 리스터 함수
+ * @param wrapWithPreventDefault 기본 동작을 방지할지 여부
+ * (절차적 렌더러는 이미 이를 수행하므로 이러한 경우는 건너뛰어야 합니다)
  */
 export function wrapListener(
   tNode: TNode,
@@ -34,26 +34,25 @@ export function wrapListener(
   context: {} | null,
   listenerFn: (e?: any) => any,
 ): EventListener {
-  // Note: we are performing most of the work in the listener function itself
-  // to optimize listener registration.
+  // 참고: 리스터 등록을 최적화하기 위해 리스터 함수 자체에서 대부분의 작업을 수행하고 있습니다.
   return function wrapListenerIn_markDirtyAndPreventDefault(e: any) {
-    // Ivy uses `Function` as a special token that allows us to unwrap the function
-    // so that it can be invoked programmatically by `DebugNode.triggerEventHandler`.
+    // Ivy는 `Function`을 특별한 토큰으로 사용하여 함수를 언랩할 수 있도록
+    // 하고, 이렇게 하면 `DebugNode.triggerEventHandler`로 프로그램적으로 호출될 수 있습니다.
     if (e === Function) {
       return listenerFn;
     }
 
-    // In order to be backwards compatible with View Engine, events on component host nodes
-    // must also mark the component view itself dirty (i.e. the view that it owns).
+    // View Engine과의 호환성을 유지하기 위해, 컴포넌트 호스트 노드의 이벤트는
+    // 해당 컴포넌트 뷰 자체를 더럽히도록 해야 합니다 (즉, 소유하는 뷰).
     const startView = isComponentHost(tNode) ? getComponentLViewByIndex(tNode.index, lView) : lView;
     markViewDirty(startView, NotificationSource.Listener);
 
     let result = executeListenerWithErrorHandling(lView, context, listenerFn, e);
-    // A just-invoked listener function might have coalesced listeners so we need to check for
-    // their presence and invoke as needed.
+    // 방금 호출된 리스터 함수는 합쳐진 리스터를 가질 수 있으므로,
+    // 그 존재 여부를 확인하고 필요에 따라 호출해야 합니다.
     let nextListenerFn = (<any>wrapListenerIn_markDirtyAndPreventDefault).__ngNextListenerFn__;
     while (nextListenerFn) {
-      // We should prevent default if any of the listeners explicitly return false
+      // 리스터가 명시적으로 false를 반환하는 경우 기본 동작을 방지해야 합니다.
       result = executeListenerWithErrorHandling(lView, context, nextListenerFn, e) && result;
       nextListenerFn = (<any>nextListenerFn).__ngNextListenerFn__;
     }
@@ -71,10 +70,10 @@ function executeListenerWithErrorHandling(
   const prevConsumer = setActiveConsumer(null);
   try {
     profiler(ProfilerEvent.OutputStart, context, listenerFn);
-    // Only explicitly returning false from a listener should preventDefault
+    // 리스터에서 명시적으로 false를 반환하는 경우에만 preventDefault
     return listenerFn(e) !== false;
   } catch (error) {
-    // TODO(atscott): This should report to the application error handler, not the ErrorHandler on LView injector
+    // TODO(atscott): 이 오류는 LView 주입기의 ErrorHandler가 아닌 애플리케이션 오류 처리기에 보고해야 합니다.
     handleError(lView, error);
     return false;
   } finally {
@@ -84,8 +83,8 @@ function executeListenerWithErrorHandling(
 }
 
 /**
- * Handles an error thrown in an LView.
- * @deprecated Use handleUncaughtError to report to application error handler
+ * LView에서 발생한 오류를 처리합니다.
+ * @deprecated 애플리케이션 오류 처리기에 보고하려면 handleUncaughtError를 사용하십시오.
  */
 function handleError(lView: LView, error: any): void {
   const injector = lView[INJECTOR];

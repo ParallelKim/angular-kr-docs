@@ -25,20 +25,18 @@ interface QuerySignalNode<T> extends ComputedNode<T | ReadonlyArray<T>> {
   _queryList?: QueryList<T>;
   _dirtyCounter: WritableSignal<number>;
   /**
-   * Stores the last seen, flattened results for a query. This is to avoid marking the signal result
-   * computed as dirty when there was view manipulation that didn't impact final results.
+   * 쿼리에 대해 마지막으로 본 평탄화된 결과를 저장합니다. 이는 결과에 영향을 미치지 않는 뷰 조작으로 인해 신호 결과가 더럽게 컴퓨터로 표시되는 것을 피하기 위한 것입니다.
    */
   _flatValue?: T | ReadonlyArray<T>;
 }
 
 /**
- * A signal factory function in charge of creating a new computed signal capturing query
- * results. This centralized creation function is used by all types of queries (child / children,
- * required / optional).
+ * 쿼리 결과를 캡처하는 새로운 계산된 신호를 생성하는 신호 팩토리 함수입니다. 이 중앙 집중식 생성 함수는 모든 유형의 쿼리(자식 / 자식들,
+ * 필수 / 선택적)에서 사용됩니다.
  *
- * @param firstOnly indicates if all or only the first result should be returned
- * @param required indicates if at least one result is required
- * @returns a read-only signal with query results
+ * @param firstOnly 모든 결과 또는 첫 번째 결과만 반환해야 하는지 여부를 나타냅니다.
+ * @param required 최소한 하나의 결과가 필요한지 여부를 나타냅니다.
+ * @returns 쿼리 결과를 가진 읽기 전용 신호
  */
 function createQuerySignalFn<V>(
   firstOnly: boolean,
@@ -47,12 +45,10 @@ function createQuerySignalFn<V>(
 ) {
   let node: QuerySignalNode<V>;
   const signalFn = createComputed(() => {
-    // A dedicated signal that increments its value every time a query changes its dirty status. By
-    // using this signal we can implement a query as computed and avoid creation of a specialized
-    // reactive node type. Please note that a query gets marked dirty under the following
-    // circumstances:
-    // - a view (where a query is active) finished its first creation pass;
-    // - a new view is inserted / deleted and it impacts query results.
+    // 쿼리가 더럽힌 상태를 변경할 때마다 값을 증가시키는 전용 신호입니다. 이 신호를 사용하여 쿼리를 계산된 것으로 구현하고
+    // 전문적인 반응형 노드 유형의 생성을 피할 수 있습니다. 쿼리가 더럽혀지는 경우는 다음과 같습니다:
+    // - 뷰(쿼리가 활성화된 곳)가 첫 번째 생성 패스를 마쳤을 때;
+    // - 새로운 뷰가 삽입/삭제되었고 쿼리 결과에 영향을 미쳤을 때.
     node._dirtyCounter();
 
     const value = refreshSignalQuery<V>(node, firstOnly);
@@ -60,7 +56,7 @@ function createQuerySignalFn<V>(
     if (required && value === undefined) {
       throw new RuntimeError(
         RuntimeErrorCode.REQUIRED_QUERY_NO_VALUE,
-        ngDevMode && 'Child query result is required but no value is available.',
+        ngDevMode && '자식 쿼리 결과가 필요하지만 사용할 수 있는 값이 없습니다.',
       );
     }
 
@@ -112,17 +108,13 @@ function refreshSignalQuery<V>(node: QuerySignalNode<V>, firstOnly: boolean): V 
   const lView = node._lView;
   const queryIndex = node._queryIndex;
 
-  // There are 2 conditions under which we want to return "empty" results instead of the ones
-  // collected by a query:
+  // "빈" 결과를 반환하려는 두 가지 조건이 있습니다:
   //
-  // 1) a given query wasn't created yet (this is a period of time between the directive creation
-  // and execution of the query creation function) - in this case a query doesn't exist yet and we
-  // don't have any results to return.
+  // 1) 주어진 쿼리가 아직 생성되지 않았습니다(이는 지시문 생성과 쿼리 생성 함수 실행 사이의 시간입니다) - 이 경우 쿼리가 존재하지 않으며 반환할
+  // 결과가 없습니다.
   //
-  // 2) we are in the process of constructing a view (the first
-  // creation pass didn't finish) and a query might have partial results, but we don't want to
-  // return those - instead we do delay results collection until all nodes had a chance of matching
-  // and we can present consistent, "atomic" (on a view level) results.
+  // 2) 우리가 뷰를 구성하는 과정에 있으며(첫 번째 생성 패스가 끝나지 않았음) 쿼리가 부분 결과를 가질 수 있지만 반환하고 싶지 않습니다 - 대신
+  // 모든 노드가 일치할 기회를 가질 때까지 결과 수집을 지연하고 일관된 "원자적"(뷰 수준) 결과를 제시합니다.
   if (lView === undefined || queryIndex === undefined || lView[FLAGS] & LViewFlags.CreationMode) {
     return (firstOnly ? undefined : EMPTY_ARRAY) as V;
   }
@@ -135,8 +127,7 @@ function refreshSignalQuery<V>(node: QuerySignalNode<V>, firstOnly: boolean): V 
   if (firstOnly) {
     return queryList.first;
   } else {
-    // TODO: remove access to the private _changesDetected field by abstracting / removing usage of
-    // QueryList in the signal-based queries (perf follow-up)
+    // TODO: 성능 후속 조치를 위해 Signal 기반 쿼리에서 QueryList 사용을 추상화/제거하여 private _changesDetected 필드 접근 제거하기
     const resultChanged = (queryList as any as {_changesDetected: boolean})._changesDetected;
     if (resultChanged || node._flatValue === undefined) {
       return (node._flatValue = queryList.toArray());

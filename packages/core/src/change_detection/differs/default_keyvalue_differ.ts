@@ -31,7 +31,7 @@ export class DefaultKeyValueDifferFactory<K, V> implements KeyValueDifferFactory
 export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyValueChanges<K, V> {
   private _records = new Map<K, KeyValueChangeRecord_<K, V>>();
   private _mapHead: KeyValueChangeRecord_<K, V> | null = null;
-  // _appendAfter is used in the check loop
+  // _appendAfter는 체크 루프에서 사용됩니다.
   private _appendAfter: KeyValueChangeRecord_<K, V> | null = null;
   private _previousMapHead: KeyValueChangeRecord_<K, V> | null = null;
   private _changesHead: KeyValueChangeRecord_<K, V> | null = null;
@@ -88,7 +88,8 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
     } else if (!(map instanceof Map || isJsObject(map))) {
       throw new RuntimeError(
         RuntimeErrorCode.INVALID_DIFFER_INPUT,
-        ngDevMode && `Error trying to diff '${stringify(map)}'. Only maps and objects are allowed`,
+        ngDevMode &&
+          `오류: '${stringify(map)}'를 비교하려고 시도했습니다. 오직 맵과 객체만 허용됩니다.`,
       );
     }
 
@@ -98,8 +99,8 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
   onDestroy() {}
 
   /**
-   * Check the current state of the map vs the previous.
-   * The algorithm is optimised for when the keys do no change.
+   * 현재 맵 상태와 이전 상태를 체크합니다.
+   * 알고리즘은 키가 변경되지 않을 때 최적화되어 있습니다.
    */
   check(map: Map<any, any> | {[k: string]: any}): boolean {
     this._reset();
@@ -118,7 +119,7 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
       }
     });
 
-    // Items remaining at the end of the list have been deleted
+    // 목록의 끝에 남은 아이템은 삭제된 것입니다.
     if (insertBefore) {
       if (insertBefore._prev) {
         insertBefore._prev._next = null;
@@ -143,7 +144,7 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
       }
     }
 
-    // Make sure tails have no next records from previous runs
+    // 테일이 이전 실행에서 다음 레코드를 가지지 않도록 보호합니다.
     if (this._changesTail) this._changesTail._nextChanged = null;
     if (this._additionsTail) this._additionsTail._nextAdded = null;
 
@@ -151,12 +152,12 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
   }
 
   /**
-   * Inserts a record before `before` or append at the end of the list when `before` is null.
+   * `before` 전에 레코드를 삽입하거나 `before`가 null일 때 목록의 끝에 추가합니다.
    *
-   * Notes:
-   * - This method appends at `this._appendAfter`,
-   * - This method updates `this._appendAfter`,
-   * - The return value is the new value for the insertion pointer.
+   * 참고:
+   * - 이 방법은 `this._appendAfter`에 추가합니다,
+   * - 이 방법은 `this._appendAfter`를 업데이트합니다,
+   * - 반환값은 삽입 포인터의 새로운 값입니다.
    */
   private _insertBeforeOrAppend(
     before: KeyValueChangeRecord_<K, V> | null,
@@ -218,14 +219,14 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
   _reset() {
     if (this.isDirty) {
       let record: KeyValueChangeRecord_<K, V> | null;
-      // let `_previousMapHead` contain the state of the map before the changes
+      // let `_previousMapHead`는 변경 전에 맵의 상태를 포함합니다.
       this._previousMapHead = this._mapHead;
       for (record = this._previousMapHead; record !== null; record = record._next) {
         record._nextPrevious = record._next;
       }
 
-      // Update `record.previousValue` with the value of the item before the changes
-      // We need to update all changed items (that's those which have been added and changed)
+      // `record.previousValue`를 변경 전 아이템의 값으로 업데이트합니다.
+      // 우리는 변경된 모든 아이템(추가되고 변경된 것들)을 업데이트해야 합니다.
       for (record = this._changesHead; record !== null; record = record._nextChanged) {
         record.previousValue = record.currentValue;
       }
@@ -239,7 +240,7 @@ export class DefaultKeyValueDiffer<K, V> implements KeyValueDiffer<K, V>, KeyVal
     }
   }
 
-  // Add the record or a given key to the list of changes only when the value has actually changed
+  // 값이 실제로 변경된 경우에만 레코드 또는 지정된 키를 변경 목록에 추가합니다.
   private _maybeAddToChanges(record: KeyValueChangeRecord_<K, V>, newValue: any): void {
     if (!Object.is(newValue, record.currentValue)) {
       record.previousValue = record.currentValue;

@@ -25,20 +25,19 @@ export function setJSActionAttributes(
   eventTypes: string[],
   parentDeferBlockId: string | null = null,
 ) {
-  // jsaction attributes specifically should be applied to elements and not comment nodes.
-  // Comment nodes also have no setAttribute function. So this avoids errors.
+  // jsaction 속성은 요소에만 적용되어야 하며 주석 노드에는 적용되지 않아야 합니다.
+  // 주석 노드는 setAttribute 함수도 없으므로 이를 통해 오류를 피할 수 있습니다.
   if (eventTypes.length === 0 || nativeElement.nodeType !== Node.ELEMENT_NODE) {
     return;
   }
   const existingAttr = nativeElement.getAttribute(Attribute.JSACTION);
-  // we dedupe cases where hydrate triggers are used as it's possible that
-  // someone may have added an event binding to the root node that matches what the
-  // hydrate trigger adds.
+  // hydrate 트리거가 사용되는 경우를 중복 제거합니다. 이는
+  // 누군가가 hydrate 트리거가 추가하는 것과 일치하는 이벤트 바인딩을 루트 노드에 추가했을 가능성이 있습니다.
   const parts = eventTypes.reduce((prev, curr) => {
-    // if there is no existing attribute OR it's not in the existing one, we need to add it
+    // 기존 속성이 없거나 기존 속성에 없으면 추가해야 합니다.
     return (existingAttr?.indexOf(curr) ?? -1) === -1 ? prev + curr + ':;' : prev;
   }, '');
-  //  This is required to be a module accessor to appease security tests on setAttribute.
+  // 이는 보안 테스트를 만족시키기 위해 모듈 접근자가 되어야 합니다.
   nativeElement.setAttribute(Attribute.JSACTION, `${existingAttr ?? ''}${parts}`);
 
   const blockName = parentDeferBlockId ?? '';

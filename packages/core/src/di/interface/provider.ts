@@ -9,29 +9,29 @@
 import {Type} from '../../interface/type';
 
 /**
- * Configures the `Injector` to return a value for a token.
- * Base for `ValueProvider` decorator.
+ * `Injector`가 토큰에 대한 값을 반환하도록 구성합니다.
+ * `ValueProvider` 데코레이터의 기반입니다.
  *
  * @publicApi
  */
 export interface ValueSansProvider {
   /**
-   * The value to inject.
+   * 주입할 값.
    */
   useValue: any;
 }
 
 /**
- * Configures the `Injector` to return a value for a token.
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * `Injector`가 토큰에 대한 값을 반환하도록 구성합니다.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
- * ### Example
+ * ### 예제
  *
  * {@example core/di/ts/provider_spec.ts region='ValueProvider'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -39,50 +39,50 @@ export interface ValueSansProvider {
  */
 export interface ValueProvider extends ValueSansProvider {
   /**
-   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   * 주입 토큰. 일반적으로 `Type` 또는 `InjectionToken`의 인스턴스지만 `any`일 수 있습니다.
    */
   provide: any;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Configures the `Injector` to return an instance of `useClass` for a token.
- * Base for `StaticClassProvider` decorator.
+ * `Injector`가 토큰에 대한 `useClass` 인스턴스를 반환하도록 구성합니다.
+ * `StaticClassProvider` 데코레이터의 기반입니다.
  *
  * @publicApi
  */
 export interface StaticClassSansProvider {
   /**
-   * An optional class to instantiate for the `token`. By default, the `provide`
-   * class is instantiated.
+   * `token`에 대해 인스턴스화할 선택적 클래스. 기본적으로 `provide`
+   * 클래스가 인스턴스화됩니다.
    */
   useClass: Type<any>;
 
   /**
-   * A list of `token`s to be resolved by the injector. The list of values is then
-   * used as arguments to the `useClass` constructor.
+   * injector에 의해 해결될 `token` 목록입니다. 값 목록은
+   * `useClass` 생성자에 대한 인수로 사용됩니다.
    */
   deps: any[];
 }
 
 /**
- * Configures the `Injector` to return an instance of `useClass` for a token.
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * `Injector`가 토큰에 대한 `useClass` 인스턴스를 반환하도록 구성합니다.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
  * {@example core/di/ts/provider_spec.ts region='StaticClassProvider'}
  *
- * Note that following two providers are not equal:
+ * 다음 두 프로바이더는 같지 않음에 유의하십시오:
  *
  * {@example core/di/ts/provider_spec.ts region='StaticClassProviderDifference'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -90,21 +90,21 @@ export interface StaticClassSansProvider {
  */
 export interface StaticClassProvider extends StaticClassSansProvider {
   /**
-   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   * 주입 토큰. 일반적으로 `Type` 또는 `InjectionToken`의 인스턴스지만 `any`일 수 있습니다.
    */
   provide: any;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Configures the `Injector` to return an instance of a token.
+ * `Injector`가 토큰의 인스턴스를 반환하도록 구성합니다.
  *
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
@@ -117,21 +117,21 @@ export interface StaticClassProvider extends StaticClassSansProvider {
  */
 export interface ConstructorSansProvider {
   /**
-   * A list of `token`s to be resolved by the injector.
+   * injector에 의해 해결될 `token` 목록입니다.
    */
   deps?: any[];
 }
 
 /**
- * Configures the `Injector` to return an instance of a token.
+ * `Injector`가 토큰의 인스턴스를 반환하도록 구성합니다.
  *
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
  * {@example core/di/ts/provider_spec.ts region='ConstructorProvider'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -139,42 +139,42 @@ export interface ConstructorSansProvider {
  */
 export interface ConstructorProvider extends ConstructorSansProvider {
   /**
-   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   * 주입 토큰. 일반적으로 `Type` 또는 `InjectionToken`의 인스턴스지만 `any`일 수 있습니다.
    */
   provide: Type<any>;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Configures the `Injector` to return a value of another `useExisting` token.
+ * 또 다른 `useExisting` 토큰의 값을 반환하도록 `Injector`를 구성합니다.
  *
  * @see {@link ExistingProvider}
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @publicApi
  */
 export interface ExistingSansProvider {
   /**
-   * Existing `token` to return. (Equivalent to `injector.get(useExisting)`)
+   * 반환할 기존 `token`. (Equivalent to `injector.get(useExisting)`)
    */
   useExisting: any;
 }
 
 /**
- * Configures the `Injector` to return a value of another `useExisting` token.
+ * 또 다른 `useExisting` 토큰의 값을 반환하도록 `Injector`를 구성합니다.
  *
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
  * {@example core/di/ts/provider_spec.ts region='ExistingProvider'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -182,52 +182,52 @@ export interface ExistingSansProvider {
  */
 export interface ExistingProvider extends ExistingSansProvider {
   /**
-   * An injection token. Typically an instance of `Type` or `InjectionToken`, but can be `any`.
+   * 주입 토큰. 일반적으로 `Type` 또는 `InjectionToken`의 인스턴스지만 `any`일 수 있습니다.
    */
   provide: any;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Configures the `Injector` to return a value by invoking a `useFactory` function.
+ * `useFactory` 함수를 호출하여 값을 반환하도록 `Injector`를 구성합니다.
  *
  * @see {@link FactoryProvider}
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @publicApi
  */
 export interface FactorySansProvider {
   /**
-   * A function to invoke to create a value for this `token`. The function is invoked with
-   * resolved values of `token`s in the `deps` field.
+   * 이 `token`에 대한 값을 생성하기 위해 호출할 함수. 함수는
+   * `deps` 필드에 있는 `token`의 해결된 값으로 호출됩니다.
    */
   useFactory: Function;
 
   /**
-   * A list of `token`s to be resolved by the injector. The list of values is then
-   * used as arguments to the `useFactory` function.
+   * injector에 의해 해결될 `token` 목록입니다. 값 목록은
+   * `useFactory` 함수에 대한 인수로 사용됩니다.
    */
   deps?: any[];
 }
 
 /**
- * Configures the `Injector` to return a value by invoking a `useFactory` function.
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * `useFactory` 함수를 호출하여 값을 반환하도록 `Injector`를 구성합니다.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
  * {@example core/di/ts/provider_spec.ts region='FactoryProvider'}
  *
- * Dependencies can also be marked as optional:
+ * 종속성은 선택적일 수도 있습니다:
  *
  * {@example core/di/ts/provider_spec.ts region='FactoryProviderOptionalDeps'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -235,23 +235,23 @@ export interface FactorySansProvider {
  */
 export interface FactoryProvider extends FactorySansProvider {
   /**
-   * An injection token. (Typically an instance of `Type` or `InjectionToken`, but can be `any`).
+   * 주입 토큰. (일반적으로 `Type` 또는 `InjectionToken`의 인스턴스이지만 `any`일 수 있습니다).
    */
   provide: any;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Describes how an `Injector` should be configured as static (that is, without reflection).
- * A static provider provides tokens to an injector for various types of dependencies.
+ * `Injector`가 정적으로 구성되어야 함을 기술합니다 (즉, 반사가 없이).
+ * 정적 프로바이더는 다양한 종속성 유형에 대해 injector에 토큰을 제공합니다.
  *
  * @see {@link Injector.create()}
- * @see [Dependency Injection Guide](guide/di/dependency-injection-providers).
+ * @see [의존성 주입 가이드](guide/di/dependency-injection-providers).
  *
  * @publicApi
  */
@@ -264,12 +264,12 @@ export type StaticProvider =
   | any[];
 
 /**
- * Configures the `Injector` to return an instance of `Type` when `Type' is used as the token.
+ * `Type`이 토큰으로 사용될 때 `Injector`가 `Type`의 인스턴스를 반환하도록 구성합니다.
  *
- * Create an instance by invoking the `new` operator and supplying additional arguments.
- * This form is a short form of `TypeProvider`;
+ * `new` 연산자를 호출하고 추가 인자를 제공합니다.
+ * 이 형식은 `TypeProvider`의 축약형입니다;
  *
- * For more details, see the ["Dependency Injection Guide"](guide/di/dependency-injection.
+ * 자세한 내용은 ["의존성 주입 가이드"](guide/di/dependency-injection)를 참조하십시오.
  *
  * @usageNotes
  *
@@ -280,33 +280,33 @@ export type StaticProvider =
 export interface TypeProvider extends Type<any> {}
 
 /**
- * Configures the `Injector` to return a value by invoking a `useClass` function.
- * Base for `ClassProvider` decorator.
+ * `useClass` 함수를 호출하여 값을 반환하도록 `Injector`를 구성합니다.
+ * `ClassProvider` 데코레이터의 기반입니다.
  *
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @publicApi
  */
 export interface ClassSansProvider {
   /**
-   * Class to instantiate for the `token`.
+   * `token`에 대해 인스턴스화할 클래스.
    */
   useClass: Type<any>;
 }
 
 /**
- * Configures the `Injector` to return an instance of `useClass` for a token.
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * `Injector`가 토큰에 대한 `useClass` 인스턴스를 반환하도록 구성합니다.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @usageNotes
  *
  * {@example core/di/ts/provider_spec.ts region='ClassProvider'}
  *
- * Note that following two providers are not equal:
+ * 다음 두 프로바이더는 같지 않음에 유의하십시오:
  *
  * {@example core/di/ts/provider_spec.ts region='ClassProviderDifference'}
  *
- * ### Multi-value example
+ * ### 다중 값 예제
  *
  * {@example core/di/ts/provider_spec.ts region='MultiProviderAspect'}
  *
@@ -314,20 +314,20 @@ export interface ClassSansProvider {
  */
 export interface ClassProvider extends ClassSansProvider {
   /**
-   * An injection token. (Typically an instance of `Type` or `InjectionToken`, but can be `any`).
+   * 주입 토큰. (일반적으로 `Type` 또는 `InjectionToken`의 인스턴스지만 `any`일 수 있습니다).
    */
   provide: any;
 
   /**
-   * When true, injector returns an array of instances. This is useful to allow multiple
-   * providers spread across many files to provide configuration information to a common token.
+   * true인 경우, injector는 인스턴스 배열을 반환합니다. 이는 여러 파일에 분산된
+   * 여러 프로바이더가 공통 토큰에 구성 정보를 제공하는 데 유용합니다.
    */
   multi?: boolean;
 }
 
 /**
- * Describes how the `Injector` should be configured.
- * @see [Dependency Injection Guide](guide/di/dependency-injection.
+ * `Injector`를 구성하는 방법을 설명합니다.
+ * @see [의존성 주입 가이드](guide/di/dependency-injection).
  *
  * @see {@link StaticProvider}
  *
@@ -343,14 +343,13 @@ export type Provider =
   | any[];
 
 /**
- * Encapsulated `Provider`s that are only accepted during creation of an `EnvironmentInjector` (e.g.
- * in an `NgModule`).
+ * `EnvironmentInjector`를 생성하는 동안만 허용되는 `Provider`s을 캡슐화합니다 (예를 들어
+ * `NgModule`에서).
  *
- * Using this wrapper type prevents providers which are only designed to work in
- * application/environment injectors from being accidentally included in
- * `@Component.providers` and ending up in a component injector.
+ * 이 래퍼 타입을 사용하면 애플리케이션/환경 주입기에만 적합한 프로바이더가
+ * 실수로 `@Component.providers`에 포함되어 구성 요소 주입기에 포함되는 것을 방지합니다.
  *
- * This wrapper type prevents access to the `Provider`s inside.
+ * 이 래퍼 타입은 내부의 `Provider`s에 대한 접근을 방지합니다.
  *
  * @see {@link makeEnvironmentProviders}
  * @see {@link importProvidersFrom}
@@ -365,9 +364,9 @@ export interface InternalEnvironmentProviders extends EnvironmentProviders {
   ɵproviders: (Provider | EnvironmentProviders)[];
 
   /**
-   * If present, indicates that the `EnvironmentProviders` were derived from NgModule providers.
+   * 존재하는 경우, `EnvironmentProviders`가 NgModule 프로바이더에서 파생되었음을 나타냅니다.
    *
-   * This is used to produce clearer error messages.
+   * 이는 더 명확한 오류 메시지를 생성하는 데 사용됩니다.
    */
   ɵfromNgModule?: true;
 }
@@ -379,14 +378,13 @@ export function isEnvironmentProviders(
 }
 
 /**
- * Describes a function that is used to process provider lists (such as provider
- * overrides).
+ * 프로바이더 목록(예: 프로바이더 오버라이드)을 처리하는 데 사용되는 함수를 설명합니다.
  */
 export type ProcessProvidersFunction = (providers: Provider[]) => Provider[];
 
 /**
- * A wrapper around an NgModule that associates it with providers
- * Usage without a generic type is deprecated.
+ * 프로바이더와 연결된 NgModule 주변 래퍼
+ * 일반 유형 없이 사용하는 것은 더 이상 권장되지 않습니다.
  *
  * @publicApi
  */
@@ -396,17 +394,17 @@ export interface ModuleWithProviders<T> {
 }
 
 /**
- * Providers that were imported from NgModules via the `importProvidersFrom` function.
+ * `importProvidersFrom` 함수를 통해 NgModules에서 가져온 프로바이더.
  *
- * These providers are meant for use in an application injector (or other environment injectors) and
- * should not be used in component injectors.
+ * 이러한 프로바이더는 애플리케이션 주입기(또는 기타 환경 주입기)에서 사용되며
+ * 구성 요소 주입기에서 사용해서는 안 됩니다.
  *
- * This type cannot be directly implemented. It's returned from the `importProvidersFrom` function
- * and serves to prevent the extracted NgModule providers from being used in the wrong contexts.
+ * 이 유형은 직접 구현할 수 없습니다. 이는 `importProvidersFrom` 함수에서 반환되며
+ * 잘못된 컨텍스트에서 추출된 NgModule 프로바이더가 사용되지 않도록 방지합니다.
  *
  * @see {@link importProvidersFrom}
  *
  * @publicApi
- * @deprecated replaced by `EnvironmentProviders`
+ * @deprecated `EnvironmentProviders`로 대체됨
  */
 export type ImportedNgModuleProviders = EnvironmentProviders;

@@ -50,10 +50,9 @@ import {ApplicationInitStatus} from './application_init';
 import {TracingAction, TracingService, TracingSnapshot} from './tracing';
 
 /**
- * A DI token that provides a set of callbacks to
- * be called for every component that is bootstrapped.
+ * 부트스트랩된 모든 컴포넌트에 대해 호출될 콜백의 집합을 제공하는 DI 토큰입니다.
  *
- * Each callback must take a `ComponentRef` instance and return nothing.
+ * 각 콜백은 `ComponentRef` 인스턴스를 받고 아무 것도 반환하지 않아야 합니다.
  *
  * `(componentRef: ComponentRef) => void`
  *
@@ -68,13 +67,13 @@ export function publishDefaultGlobalUtils() {
 }
 
 /**
- * Sets the error for an invalid write to a signal to be an Angular `RuntimeError`.
+ * 신호에 대한 잘못된 쓰기의 오류를 Angular `RuntimeError`로 설정합니다.
  */
 export function publishSignalConfiguration(): void {
   setThrowInvalidWriteToSignalError(() => {
     throw new RuntimeError(
       RuntimeErrorCode.SIGNAL_WRITE_FROM_ILLEGAL_CONTEXT,
-      ngDevMode && 'Writing to signals is not allowed in a `computed`.',
+      ngDevMode && '`computed`에서 신호에 쓰는 것은 허용되지 않습니다.',
     );
   });
 }
@@ -84,7 +83,7 @@ export function isBoundToModule<C>(cf: ComponentFactory<C>): boolean {
 }
 
 /**
- * A token for third-party components that can register themselves with NgProbe.
+ * NgProbe에 자신을 등록할 수 있는 서드파티 컴포넌트용 토큰입니다.
  *
  * @deprecated
  * @publicApi
@@ -97,23 +96,23 @@ export class NgProbeToken {
 }
 
 /**
- * Provides additional options to the bootstrapping process.
+ * 부트스트랩 프로세스에 추가 옵션을 제공합니다.
  *
  * @publicApi
  */
 export interface BootstrapOptions {
   /**
-   * Optionally specify which `NgZone` should be used when not configured in the providers.
+   * 제공자에서 구성되지 않은 경우 사용할 `NgZone`을 선택적으로 지정합니다.
    *
-   * - Provide your own `NgZone` instance.
-   * - `zone.js` - Use default `NgZone` which requires `Zone.js`.
-   * - `noop` - Use `NoopNgZone` which does nothing.
+   * - 자체 `NgZone` 인스턴스를 제공합니다.
+   * - `zone.js` - `Zone.js`가 필요한 기본 `NgZone`을 사용합니다.
+   * - `noop` - 아무 작업도 수행하지 않는 `NoopNgZone`을 사용합니다.
    */
   ngZone?: NgZone | 'zone.js' | 'noop';
 
   /**
-   * Optionally specify coalescing event change detections or not.
-   * Consider the following case.
+   * 이벤트 변경 감지를 병합할지 여부를 선택적으로 지정합니다.
+   * 다음과 같은 경우를 고려하십시오.
    *
    * ```html
    * <div (click)="doSomething()">
@@ -121,60 +120,50 @@ export interface BootstrapOptions {
    * </div>
    * ```
    *
-   * When button is clicked, because of the event bubbling, both
-   * event handlers will be called and 2 change detections will be
-   * triggered. We can coalesce such kind of events to only trigger
-   * change detection only once.
+   * 버튼을 클릭하면 이벤트 버블링 때문에 두 개의 이벤트 핸들러가 호출되고 2개의 변경 감지가 트리거됩니다.
+   * 우리는 이런 종류의 이벤트를 병합하여 변경 감지가 한 번만 트리거되도록 할 수 있습니다.
    *
-   * By default, this option will be false. So the events will not be
-   * coalesced and the change detection will be triggered multiple times.
-   * And if this option be set to true, the change detection will be
-   * triggered async by scheduling a animation frame. So in the case above,
-   * the change detection will only be triggered once.
+   * 기본적으로 이 옵션은 false로 설정됩니다. 따라서 이벤트는 병합되지 않고 변경 감지가 여러 번 트리거됩니다.
+   * 이 옵션이 true로 설정되면 변경 감지는 애니메이션 프레임을 예약하여 비동기로 트리거됩니다. 따라서 위의 경우에서
+   * 변경 감지는 한 번만 트리거됩니다.
    */
   ngZoneEventCoalescing?: boolean;
 
   /**
-   * Optionally specify if `NgZone#run()` method invocations should be coalesced
-   * into a single change detection.
+   * `NgZone#run()` 메서드 호출이 단일 변경 감지로 병합되어야 하는지 여부를 선택적으로 지정합니다.
    *
-   * Consider the following case.
+   * 다음 상황을 고려하십시오.
    * ```ts
    * for (let i = 0; i < 10; i ++) {
    *   ngZone.run(() => {
-   *     // do something
+   *     // 무언가를 수행합니다
    *   });
    * }
    * ```
    *
-   * This case triggers the change detection multiple times.
-   * With ngZoneRunCoalescing options, all change detections in an event loop trigger only once.
-   * In addition, the change detection executes in requestAnimation.
+   * 이 경우는 여러 번 변경 감지를 트리거합니다.
+   * ngZoneRunCoalescing 옵션을 사용하면 이벤트 루프의 모든 변경 감지가 한 번만 트리거됩니다.
+   * 또한 변경 감지는 requestAnimation에서 실행됩니다.
    *
    */
   ngZoneRunCoalescing?: boolean;
 
   /**
-   * When false, change detection is scheduled when Angular receives
-   * a clear indication that templates need to be refreshed. This includes:
+   * false로 설정하면 Angular가 템플릿을 새로 고칠 필요가 있다는 명확한 표시를 받으면 변경 감지가 예약됩니다. 이는 다음을 포함합니다:
    *
-   * - calling `ChangeDetectorRef.markForCheck`
-   * - calling `ComponentRef.setInput`
-   * - updating a signal that is read in a template
-   * - attaching a view that is marked dirty
-   * - removing a view
-   * - registering a render hook (templates are only refreshed if render hooks do one of the above)
+   * - `ChangeDetectorRef.markForCheck` 호출
+   * - `ComponentRef.setInput` 호출
+   * - 템플릿에서 읽는 신호 업데이트
+   * - 더럽혀진 마크가 있는 뷰 부착
+   * - 뷰 제거
+   * - 렌더 후 훅 등록(렌더 훅이 위의 작업 중 하나를 수행해야만 템플릿이 새로 고쳐짐)
    *
-   * @deprecated This option was introduced out of caution as a way for developers to opt out of the
-   *    new behavior in v18 which schedule change detection for the above events when they occur
-   *    outside the Zone. After monitoring the results post-release, we have determined that this
-   *    feature is working as desired and do not believe it should ever be disabled by setting
-   *    this option to `true`.
+   * @deprecated 이 옵션은 주의로 인해 도입되었습니다. 모니터링 결과, 이 기능은 의도한 대로 작동하며 이 옵션을 `true`로 설정하여 비활성화되어서는 안 된다고 판단했습니다.
    */
   ignoreChangesOutsideZone?: boolean;
 }
 
-/** Maximum number of times ApplicationRef will refresh all attached views in a single tick. */
+/** ApplicationRef가 단일 틱에서 모든 부착된 뷰를 새로 고치는 최대 횟수. */
 const MAXIMUM_REFRESH_RERUNS = 10;
 
 export function optionsReducer<T extends Object>(dst: T, objs: T | T[]): T {
@@ -185,56 +174,51 @@ export function optionsReducer<T extends Object>(dst: T, objs: T | T[]): T {
 }
 
 /**
- * A reference to an Angular application running on a page.
+ * 페이지에서 실행 중인 Angular 애플리케이션에 대한 참조입니다.
  *
  * @usageNotes
- * ### isStable examples and caveats
+ * ### isStable 예제 및 주의사항
  *
- * Note two important points about `isStable`, demonstrated in the examples below:
- * - the application will never be stable if you start any kind
- * of recurrent asynchronous task when the application starts
- * (for example for a polling process, started with a `setInterval`, a `setTimeout`
- * or using RxJS operators like `interval`);
- * - the `isStable` Observable runs outside of the Angular zone.
+ * 다음과 같이 `isStable`에 대한 두 가지 중요한 사항이 있습니다:
+ * - 애플리케이션 시작 시 반복 비동기 작업을 시작하면 애플리케이션은 절대 안정적이지 않습니다
+ * (예를 들어 `setInterval`, `setTimeout`으로 시작된 폴링 프로세스 또는 `interval`과 같은 RxJS 연산자를 사용).
+ * - `isStable` Observable은 Angular 영역 외부에서 실행됩니다.
  *
- * Let's imagine that you start a recurrent task
- * (here incrementing a counter, using RxJS `interval`),
- * and at the same time subscribe to `isStable`.
+ * 다음과 같이 반복 작업을 시작한다면
+ * (여기서는 카운터를 증가시키는 RxJS `interval` 사용)
+ * 그리고 동시에 `isStable`에 구독합니다.
  *
  * ```ts
  * constructor(appRef: ApplicationRef) {
  *   appRef.isStable.pipe(
  *      filter(stable => stable)
- *   ).subscribe(() => console.log('App is stable now');
+ *   ).subscribe(() => console.log('앱이 이제 안정적입니다.'));
  *   interval(1000).subscribe(counter => console.log(counter));
  * }
  * ```
- * In this example, `isStable` will never emit `true`,
- * and the trace "App is stable now" will never get logged.
+ * 이 예제에서 `isStable`은 절대 `true`를 방출하지 않으며,
+ * "앱이 이제 안정적입니다."라는 로그가 기록되지 않습니다.
  *
- * If you want to execute something when the app is stable,
- * you have to wait for the application to be stable
- * before starting your polling process.
+ * 앱이 안정적일 때 무언가를 실행하려면,
+ * 폴링 프로세스를 시작하기 전에 애플리케이션이 안정적이 될 때까지 기다려야 합니다.
  *
  * ```ts
  * constructor(appRef: ApplicationRef) {
  *   appRef.isStable.pipe(
  *     first(stable => stable),
- *     tap(stable => console.log('App is stable now')),
+ *     tap(stable => console.log('앱이 이제 안정적입니다.')),
  *     switchMap(() => interval(1000))
  *   ).subscribe(counter => console.log(counter));
  * }
  * ```
- * In this example, the trace "App is stable now" will be logged
- * and then the counter starts incrementing every second.
+ * 이 예제에서 "앱이 이제 안정적입니다."라는 로그가 기록되고
+ * 카운터가 매초 증가하기 시작합니다.
  *
- * Note also that this Observable runs outside of the Angular zone,
- * which means that the code in the subscription
- * to this Observable will not trigger the change detection.
+ * 또한 이 Observable은 Angular 영역 외부에서 실행되므로,
+ * 이 Observable에 대한 구독의 코드는 변경 감지를 트리거하지 않습니다.
  *
- * Let's imagine that instead of logging the counter value,
- * you update a field of your component
- * and display it in its template.
+ * 만약 카운터 값을 로그하는 대신,
+ * 컴포넌트의 필드를 업데이트하고 이를 템플릿에 표시한다면.
  *
  * ```ts
  * constructor(appRef: ApplicationRef) {
@@ -244,11 +228,11 @@ export function optionsReducer<T extends Object>(dst: T, objs: T | T[]): T {
  *   ).subscribe(counter => this.value = counter);
  * }
  * ```
- * As the `isStable` Observable runs outside the zone,
- * the `value` field will be updated properly,
- * but the template will not be refreshed!
+ * `isStable` Observable이 영역 외부에서 실행되므로,
+ * `value` 필드는 제대로 업데이트되지만,
+ * 템플릿은 새로 고쳐지지 않을 것입니다!
  *
- * You'll have to manually trigger the change detection to update the template.
+ * 템플릿 업데이트를 위해 수동으로 변경 감지를 트리거해야 합니다.
  *
  * ```ts
  * constructor(appRef: ApplicationRef, cd: ChangeDetectorRef) {
@@ -262,7 +246,7 @@ export function optionsReducer<T extends Object>(dst: T, objs: T | T[]): T {
  * }
  * ```
  *
- * Or make the subscription callback run inside the zone.
+ * 또는 구독 콜백이 영역 내에서 실행되도록 만듭니다.
  *
  * ```ts
  * constructor(appRef: ApplicationRef, zone: NgZone) {
@@ -289,26 +273,24 @@ export class ApplicationRef {
   private readonly rootEffectScheduler = inject(EffectScheduler);
 
   /**
-   * Current dirty state of the application across a number of dimensions (views, afterRender hooks,
-   * etc).
+   * 여러 차원(뷰, 후속 렌더 훅 등)에서 애플리케이션의 현재 더러운 상태입니다.
    *
-   * A flag set here means that `tick()` will attempt to resolve the dirtiness when executed.
+   * 여기서 설정된 플래그는 `tick()`이 실행될 때 불순성을 해결하려고 시도함을 의미합니다.
    *
    * @internal
    */
   dirtyFlags = ApplicationRefDirtyFlags.None;
 
   /**
-   * Most recent snapshot from the `TracingService`, if any.
+   * `TracingService`의 가장 최근 스냅샷, 존재하는 경우입니다.
    *
-   * This snapshot attempts to capture the context when `tick()` was first
-   * scheduled. It then runs wrapped in this context.
+   * 이 스냅샷은 `tick()`이 처음 예약될 때의 컨텍스트를 캡처하려고 시도합니다. 그런 다음 이 컨텍스트 내에서 실행됩니다.
    *
    * @internal
    */
   tracingSnapshot: TracingSnapshot | null = null;
 
-  // Needed for ComponentFixture temporarily during migration of autoDetect behavior
+  // ComponentFixture의 자동 감지 동작 마이그레이션 동안 임시로 필요합니다
   // Eventually the hostView of the fixture should just attach to ApplicationRef.
   private externalTestViews: Set<InternalViewRef<unknown>> = new Set();
   /** @internal */
@@ -319,37 +301,37 @@ export class ApplicationRef {
   }
 
   /**
-   * Indicates whether this instance was destroyed.
+   * 이 인스턴스가 파괴되었는지 여부를 나타냅니다.
    */
   get destroyed() {
     return this._destroyed;
   }
 
   /**
-   * Get a list of component types registered to this application.
-   * This list is populated even before the component is created.
+   * 이 애플리케이션에 등록된 컴포넌트 유형의 목록을 가져옵니다.
+   * 이 목록은 컴포넌트가 생성되기 전에도 채워집니다.
    */
   public readonly componentTypes: Type<any>[] = [];
 
   /**
-   * Get a list of components registered to this application.
+   * 이 애플리케이션에 등록된 컴포넌트의 목록을 가져옵니다.
    */
   public readonly components: ComponentRef<any>[] = [];
 
   /**
-   * Returns an Observable that indicates when the application is stable or unstable.
+   * 애플리케이션이 안정적이거나 불안정함을 나타내는 Observable을 반환합니다.
    */
   public readonly isStable: Observable<boolean> = inject(PendingTasksInternal).hasPendingTasks.pipe(
     map((pending) => !pending),
   );
 
   constructor() {
-    // Inject the tracing service to initialize it.
+    // 추적 서비스를 주입하여 초기화합니다.
     inject(TracingService, {optional: true});
   }
 
   /**
-   * @returns A promise that resolves when the application becomes stable
+   * @returns 애플리케이션이 안정적이 될 때 해결되는 약속입니다.
    */
   whenStable(): Promise<void> {
     let subscription: Subscription;
@@ -370,90 +352,82 @@ export class ApplicationRef {
   private _rendererFactory: RendererFactory2 | null = null;
 
   /**
-   * The `EnvironmentInjector` used to create this application.
+   * 이 애플리케이션을 생성하는 데 사용되는 `EnvironmentInjector`입니다.
    */
   get injector(): EnvironmentInjector {
     return this._injector;
   }
 
   /**
-   * Bootstrap a component onto the element identified by its selector or, optionally, to a
-   * specified element.
+   * 선택기로 식별된 요소에 컴포넌트를 부트스트랩하거나, 선택적으로 지정된 요소에 부트스트랩합니다.
    *
    * @usageNotes
-   * ### Bootstrap process
+   * ### 부트스트랩 프로세스
    *
-   * When bootstrapping a component, Angular mounts it onto a target DOM element
-   * and kicks off automatic change detection. The target DOM element can be
-   * provided using the `rootSelectorOrNode` argument.
+   * 컴포넌트를 부트스트랩할 때 Angular는 이를 대상 DOM 요소에 마운트하고 자동 변경 감지를 시작합니다.
+   * 대상 DOM 요소는 `rootSelectorOrNode` 인수를 사용하여 제공할 수 있습니다.
    *
-   * If the target DOM element is not provided, Angular tries to find one on a page
-   * using the `selector` of the component that is being bootstrapped
-   * (first matched element is used).
+   * 대상 DOM 요소가 제공되지 않으면 Angular는 부트스트랩되는 컴포넌트의 `selector`를 사용하여 페이지에서 하나를 찾으려고 시도합니다
+   * (첫 번째로 일치하는 요소가 사용됩니다).
    *
-   * ### Example
+   * ### 예제
    *
-   * Generally, we define the component to bootstrap in the `bootstrap` array of `NgModule`,
-   * but it requires us to know the component while writing the application code.
+   * 일반적으로 부트스트랩할 컴포넌트는 `NgModule`의 `bootstrap` 배열에 정의하지만,
+   * 이를 위해서는 애플리케이션 코드를 작성할 때 컴포넌트를 알아야 합니다.
    *
-   * Imagine a situation where we have to wait for an API call to decide about the component to
-   * bootstrap. We can use the `ngDoBootstrap` hook of the `NgModule` and call this method to
-   * dynamically bootstrap a component.
+   * API 호출을 기다려야 컴포넌트를 부트스트랩해야 하는 상황을 상상해 보십시오.
+   * `NgModule`의 `ngDoBootstrap` 훅을 사용하여 이 메서드를 호출하여
+   * 동적으로 컴포넌트를 부트스트랩할 수 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='componentSelector'}
    *
-   * Optionally, a component can be mounted onto a DOM element that does not match the
-   * selector of the bootstrapped component.
+   * 선택적으로, 컴포넌트는 부트스트랩된 컴포넌트의 선택자와 일치하지 않는 DOM 요소에 마운트될 수 있습니다.
    *
-   * In the following example, we are providing a CSS selector to match the target element.
+   * 다음 예제에서는 대상 요소와 일치하는 CSS 선택기를 제공하고 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='cssSelector'}
    *
-   * While in this example, we are providing reference to a DOM node.
+   * 이 예제에서는 DOM 노드에 대한 참조를 제공합니다.
    *
    * {@example core/ts/platform/platform.ts region='domNode'}
    */
   bootstrap<C>(component: Type<C>, rootSelectorOrNode?: string | any): ComponentRef<C>;
 
   /**
-   * Bootstrap a component onto the element identified by its selector or, optionally, to a
-   * specified element.
+   * 선택기로 식별된 요소에 컴포넌트를 부트스트랩하거나, 선택적으로 지정된 요소에 부트스트랩합니다.
    *
    * @usageNotes
-   * ### Bootstrap process
+   * ### 부트스트랩 프로세스
    *
-   * When bootstrapping a component, Angular mounts it onto a target DOM element
-   * and kicks off automatic change detection. The target DOM element can be
-   * provided using the `rootSelectorOrNode` argument.
+   * 컴포넌트를 부트스트랩할 때 Angular는 이를 대상 DOM 요소에 마운트하고 자동 변경 감지를 시작합니다.
+   * 대상 DOM 요소는 `rootSelectorOrNode` 인수를 사용하여 제공할 수 있습니다.
    *
-   * If the target DOM element is not provided, Angular tries to find one on a page
-   * using the `selector` of the component that is being bootstrapped
-   * (first matched element is used).
+   * 대상 DOM 요소가 제공되지 않으면 Angular는 부트스트랩되는 컴포넌트의 `selector`를 사용하여 페이지에서 하나를 찾으려고 시도합니다
+   * (첫 번째로 일치하는 요소가 사용됩니다).
    *
-   * ### Example
+   * ### 예제
    *
-   * Generally, we define the component to bootstrap in the `bootstrap` array of `NgModule`,
-   * but it requires us to know the component while writing the application code.
+   * 일반적으로 부트스트랩할 컴포넌트는 `NgModule`의 `bootstrap` 배열에 정의하지만,
+   * 이를 위해서는 애플리케이션 코드를 작성할 때 컴포넌트를 알아야 합니다.
    *
-   * Imagine a situation where we have to wait for an API call to decide about the component to
-   * bootstrap. We can use the `ngDoBootstrap` hook of the `NgModule` and call this method to
-   * dynamically bootstrap a component.
+   * API 호출을 기다려야 컴포넌트를 부트스트랩해야 하는 상황을 상상해 보십시오.
+   * `NgModule`의 `ngDoBootstrap` 훅을 사용하여 이 메서드를 호출하여
+   * 동적으로 컴포넌트를 부트스트랩할 수 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='componentSelector'}
    *
-   * Optionally, a component can be mounted onto a DOM element that does not match the
-   * selector of the bootstrapped component.
+   * 선택적으로, 컴포넌트는 부트스트랩된 컴포넌트의 선택자와 일치하지 않는 DOM 요소에 마운트될 수 있습니다.
    *
-   * In the following example, we are providing a CSS selector to match the target element.
+   * 다음 예제에서는 대상 요소와 일치하는 CSS 선택기를 제공하고 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='cssSelector'}
    *
-   * While in this example, we are providing reference to a DOM node.
+   * 이 예제에서는 DOM 노드에 대한 참조를 제공합니다.
    *
    * {@example core/ts/platform/platform.ts region='domNode'}
    *
-   * @deprecated Passing Component factories as the `Application.bootstrap` function argument is
-   *     deprecated. Pass Component Types instead.
+   * @deprecated 컴포넌트 팩토리를 `Application.bootstrap` 함수 인수로 전달하는 것이
+   *     더 이상 지원되지 않습니다. 대신 컴포넌트 유형을 전달하십시오.
    */
   bootstrap<C>(
     componentFactory: ComponentFactory<C>,
@@ -461,39 +435,35 @@ export class ApplicationRef {
   ): ComponentRef<C>;
 
   /**
-   * Bootstrap a component onto the element identified by its selector or, optionally, to a
-   * specified element.
+   * 선택기로 식별된 요소에 컴포넌트를 부트스트랩하거나, 선택적으로 지정된 요소에 부트스트랩합니다.
    *
    * @usageNotes
-   * ### Bootstrap process
+   * ### 부트스트랩 프로세스
    *
-   * When bootstrapping a component, Angular mounts it onto a target DOM element
-   * and kicks off automatic change detection. The target DOM element can be
-   * provided using the `rootSelectorOrNode` argument.
+   * 컴포넌트를 부트스트랩할 때 Angular는 이를 대상 DOM 요소에 마운트하고 자동 변경 감지를 시작합니다.
+   * 대상 DOM 요소는 `rootSelectorOrNode` 인수를 사용하여 제공할 수 있습니다.
    *
-   * If the target DOM element is not provided, Angular tries to find one on a page
-   * using the `selector` of the component that is being bootstrapped
-   * (first matched element is used).
+   * 대상 DOM 요소가 제공되지 않으면 Angular는 부트스트랩되는 컴포넌트의 `selector`를 사용하여 페이지에서 하나를 찾으려고 시도합니다
+   * (첫 번째로 일치하는 요소가 사용됩니다).
    *
-   * ### Example
+   * ### 예제
    *
-   * Generally, we define the component to bootstrap in the `bootstrap` array of `NgModule`,
-   * but it requires us to know the component while writing the application code.
+   * 일반적으로 부트스트랩할 컴포넌트는 `NgModule`의 `bootstrap` 배열에 정의하지만,
+   * 이를 위해서는 애플리케이션 코드를 작성할 때 컴포넌트를 알아야 합니다.
    *
-   * Imagine a situation where we have to wait for an API call to decide about the component to
-   * bootstrap. We can use the `ngDoBootstrap` hook of the `NgModule` and call this method to
-   * dynamically bootstrap a component.
+   * API 호출을 기다려야 컴포넌트를 부트스트랩해야 하는 상황을 상상해 보십시오.
+   * `NgModule`의 `ngDoBootstrap` 훅을 사용하여 이 메서드를 호출하여
+   * 동적으로 컴포넌트를 부트스트랩할 수 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='componentSelector'}
    *
-   * Optionally, a component can be mounted onto a DOM element that does not match the
-   * selector of the bootstrapped component.
+   * 선택적으로, 컴포넌트는 부트스트랩된 컴포넌트의 선택자와 일치하지 않는 DOM 요소에 마운트될 수 있습니다.
    *
-   * In the following example, we are providing a CSS selector to match the target element.
+   * 다음 예제에서는 대상 요소와 일치하는 CSS 선택기를 제공하고 있습니다.
    *
    * {@example core/ts/platform/platform.ts region='cssSelector'}
    *
-   * While in this example, we are providing reference to a DOM node.
+   * 이 예제에서는 DOM 노드에 대한 참조를 제공합니다.
    *
    * {@example core/ts/platform/platform.ts region='domNode'}
    */
@@ -512,10 +482,10 @@ export class ApplicationRef {
       if (typeof ngDevMode === 'undefined' || ngDevMode) {
         const standalone = !isComponentFactory && isStandalone(componentOrFactory);
         errorMessage =
-          'Cannot bootstrap as there are still asynchronous initializers running.' +
+          '여전히 비동기 초기화기가 실행되고 있으므로 부트스트랩할 수 없습니다. ' +
           (standalone
             ? ''
-            : ' Bootstrap components in the `ngDoBootstrap` method of the root module.');
+            : ' 루트 모듈의 `ngDoBootstrap` 메서드에서 컴포넌트를 부트스트랩하십시오.');
       }
       throw new RuntimeError(RuntimeErrorCode.ASYNC_INITIALIZERS_STILL_RUNNING, errorMessage);
     }
@@ -529,7 +499,7 @@ export class ApplicationRef {
     }
     this.componentTypes.push(componentFactory.componentType);
 
-    // Create a factory associated with the current module if it's not bound to some other
+    // 현재 모듈에 연관된 팩토리를 생성하지만 다른 것에 바인딩되지 않았습니다.
     const ngModule = isBoundToModule(componentFactory)
       ? undefined
       : this._injector.get(NgModuleRef);
@@ -548,7 +518,7 @@ export class ApplicationRef {
     this._loadComponent(compRef);
     if (typeof ngDevMode === 'undefined' || ngDevMode) {
       const _console = this._injector.get(Console);
-      _console.log(`Angular is running in development mode.`);
+      _console.log(`Angular가 개발 모드에서 실행되고 있습니다.`);
     }
 
     profiler(ProfilerEvent.BootstrapComponentEnd, compRef);
@@ -557,14 +527,11 @@ export class ApplicationRef {
   }
 
   /**
-   * Invoke this method to explicitly process change detection and its side-effects.
+   * 변경 감지 및 그 부작용을 명시적으로 처리하려면 이 메서드를 호출합니다.
    *
-   * In development mode, `tick()` also performs a second change detection cycle to ensure that no
-   * further changes are detected. If additional changes are picked up during this second cycle,
-   * bindings in the app have side-effects that cannot be resolved in a single change detection
-   * pass.
-   * In this case, Angular throws an error, since an Angular application can only have one change
-   * detection pass during which all change detection must complete.
+   * 개발 모드에서 `tick()`은 추가 변경이 감지되지 않도록 두 번째 변경 감지 주기를 수행합니다. 이 두 번째 주기 동안 추가 변경이 감지되면,
+   * 애플리케이션의 바인딩에 대해 단일 변경 감지 주기에서 해결할 수 없는 부작용이 발생합니다.
+   * 이 경우 Angular는 오류를 발생시킵니다. Angular 애플리케이션은 모든 변경 감지가 완료되는 동안 단 하나의 변경 감지 패스만 가질 수 있습니다.
    */
   tick(): void {
     if (!this.zonelessEnabled) {
@@ -578,9 +545,9 @@ export class ApplicationRef {
     profiler(ProfilerEvent.ChangeDetectionStart);
 
     if (this.tracingSnapshot !== null) {
-      // Ensure we always run `tickImpl()` in the context of the most recent snapshot,
-      // if one exists. Snapshots may be reference counted by the implementation so
-      // we want to ensure that if we request a snapshot that we use it.
+      // 가장 최근 스냅샷의 컨텍스트 내에서 `tickImpl()`이 항상 실행되도록 합니다,
+      // 존재하는 경우에 대해서입니다. 스냅샷은 구현에 의해 참조 카운트될 수 있으므로
+      // 요청한 스냅샷을 사용하도록 합니다.
       this.tracingSnapshot.run(TracingAction.CHANGE_DETECTION, this.tickImpl);
     } else {
       this.tickImpl();
@@ -592,7 +559,7 @@ export class ApplicationRef {
     if (this._runningTick) {
       throw new RuntimeError(
         RuntimeErrorCode.RECURSIVE_APPLICATION_REF_TICK,
-        ngDevMode && 'ApplicationRef.tick is called recursively',
+        ngDevMode && 'ApplicationRef.tick이 재귀적으로 호출되었습니다.',
       );
     }
 
@@ -617,8 +584,8 @@ export class ApplicationRef {
   };
 
   /**
-   * Performs the core work of synchronizing the application state with the UI, resolving any
-   * pending dirtiness (potentially in a loop).
+   * 애플리케이션 상태를 UI와 동기화하는 핵심 작업을 수행하고,
+   * 모든 대기 중인 더러움을 해결합니다(상당히 루프에서).
    */
   private synchronize(): void {
     if (this._rendererFactory === null && !(this._injector as R3Injector).destroyed) {
@@ -636,103 +603,104 @@ export class ApplicationRef {
       throw new RuntimeError(
         RuntimeErrorCode.INFINITE_CHANGE_DETECTION,
         ngDevMode &&
-          'Infinite change detection while refreshing application views. ' +
-            'Ensure views are not calling `markForCheck` on every template execution or ' +
-            'that afterRender hooks always mark views for check.',
+          '애플리케이션 뷰를 새로 고치는 동안 무한 변경 감지가 발생했습니다. ' +
+            '템플릿 실행 중에 모든 뷰가 `markForCheck`를 호출하지 않거나, ' +
+            'afterRender 훅이 항상 뷰를 검사하도록 설정되어 있는지 확인해주세요.',
       );
     }
   }
 
   /**
-   * Perform a single synchronization pass.
+   * 단일 동기화 패스를 수행합니다.
    */
   private synchronizeOnce(): void {
-    // First, process any dirty root effects.
+    // 먼저, 더러운 루트 효과를 처리합니다.
     if (this.dirtyFlags & ApplicationRefDirtyFlags.RootEffects) {
       this.dirtyFlags &= ~ApplicationRefDirtyFlags.RootEffects;
       this.rootEffectScheduler.flush();
     }
 
-    // First check dirty views, if there are any.
+    // 먼저 더러운 뷰를 확인합니다, 있다면.
     if (this.dirtyFlags & ApplicationRefDirtyFlags.ViewTreeAny) {
-      // Change detection on views starts in targeted mode (only check components if they're
-      // marked as dirty) unless global checking is specifically requested via APIs like
-      // `ApplicationRef.tick()` and the `NgZone` integration.
+      // 뷰에 대한 변경 감지는 타겟 모드에서 시작됩니다
+      // (더럽혀진 경우에만 컴포넌트를 확인) 그러나 글로벌 확인이
+      // `ApplicationRef.tick()`과 같은 API를 통해 특별히 요청되는 경우에는 아닙니다.
       const useGlobalCheck = Boolean(this.dirtyFlags & ApplicationRefDirtyFlags.ViewTreeGlobal);
 
-      // Clear the view-related dirty flags.
+      // 뷰 관련 더러움을 지웁니다.
       this.dirtyFlags &= ~ApplicationRefDirtyFlags.ViewTreeAny;
 
-      // Set the AfterRender bit, as we're checking views and will need to run afterRender hooks.
+      // 렌더 후 비트를 설정합니다. 뷰를 검사하고 렌더 후 훅을 실행해야 합니다.
       this.dirtyFlags |= ApplicationRefDirtyFlags.AfterRender;
 
-      // Check all potentially dirty views.
+      // 모든 잠재적으로 더러운 뷰를 확인합니다.
       for (let {_lView} of this.allViews) {
         detectChangesInViewIfRequired(_lView, useGlobalCheck, this.zonelessEnabled);
       }
 
-      // If `markForCheck()` was called during view checking, it will have set the `ViewTreeCheck`
-      // flag. We clear the flag here because, for backwards compatibility, `markForCheck()`
-      // during view checking doesn't cause the view to be re-checked.
+      // `markForCheck()`가 뷰 검사 중에 호출된 경우, `ViewTreeCheck` 플래그를 설정했을 것입니다.
+      // 이 플래그를 지우는 것은 호환성을 위해, 뷰 검사를 수행한다는 이유로,
+      // 뷰를 재검사하지 않도록 했습니다.
       this.dirtyFlags &= ~ApplicationRefDirtyFlags.ViewTreeCheck;
 
-      // Check if any views are still dirty after checking and we need to loop back.
+      // 확인 후 여전히 더러운 뷰가 있는지 확인하고 루프를 다시 돌고,
+      // 실행하기 전에 더럽혀진 루트 효과가 여전히 있는지 확인합니다.
       this.syncDirtyFlagsWithViews();
       if (
         this.dirtyFlags &
         (ApplicationRefDirtyFlags.ViewTreeAny | ApplicationRefDirtyFlags.RootEffects)
       ) {
-        // If any views or effects are still dirty after checking, loop back before running render
-        // hooks.
+        // 확인 후 여전히 더러운 뷰 또는 효과가 있으면 렌더
+        // 훅을 실행하기 전에 루프를 다시 돌립니다.
         return;
       }
     } else {
-      // If we skipped refreshing views above, there might still be unflushed animations
-      // because we never called `detectChangesInternal` on the views.
+      // 위에서 뷰를 새로 고치지 않았다면,
+      // 여전히 플러시되지 않은 애니메이션이 있을 수 있으므로,
+      // 뷰에서 `detectChangesInternal`을 호출하지 않습니다.
       this._rendererFactory?.begin?.();
       this._rendererFactory?.end?.();
     }
 
-    // Even if there were no dirty views, afterRender hooks might still be dirty.
+    // 더러운 뷰가 없더라도 afterRender 훅이 여전히 더럽혀진 상태일 수 있습니다.
     if (this.dirtyFlags & ApplicationRefDirtyFlags.AfterRender) {
       this.dirtyFlags &= ~ApplicationRefDirtyFlags.AfterRender;
       this.afterRenderManager.execute();
 
-      // afterRender hooks might influence dirty flags.
+      // afterRender 훅은 더러운 플래그에 영향을 줄 수 있습니다.
     }
     this.syncDirtyFlagsWithViews();
   }
 
   /**
-   * Checks `allViews` for views which require refresh/traversal, and updates `dirtyFlags`
-   * accordingly, with two potential behaviors:
+   * `allViews`에서 새로 고침/순회가 필요한 뷰를 확인하고,
+   * 그에 따라 `dirtyFlags`를 업데이트합니다. 두 가지 잠재적 행동:
    *
-   * 1. If any of our views require updating, then this adds the `ViewTreeTraversal` dirty flag.
-   *    This _should_ be a no-op, since the scheduler should've added the flag at the same time the
-   *    view was marked as needing updating.
+   * 1. 뷰 중 어느 것이든 업데이트가 필요한 경우, `ViewTreeTraversal` 더러운 플래그가 추가됩니다.
+   *    이는 비어 있어야 하며, 스케줄러는 뷰가 업데이트가 필요하다고 표시될 때 이미 플래그를 추가했어야 합니다.
    *
-   *    TODO(alxhub): figure out if this behavior is still needed for edge cases.
+   *    TODO(alxhub): 이 행동이 여전히 엣지 케이스에 필요하다면 알아내기.
    *
-   * 2. If none of our views require updating, then clear the view-related `dirtyFlag`s. This
-   *    happens when the scheduler is notified of a view becoming dirty, but the view itself isn't
-   *    reachable through traversal from our roots (e.g. it's detached from the CD tree).
+   * 2. 뷰 중 어느 것도 업데이트가 필요하지 않은 경우,
+   *    뷰 관련 `dirtyFlag`를 지웁니다. 이는 스케줄러가
+   *    뷰가 더럽혀졌음을 알렸지만 뷰 자체가 우리의 뿌리에서 순회 가능하지 않을 때 발생합니다.
    */
   private syncDirtyFlagsWithViews(): void {
     if (this.allViews.some(({_lView}) => requiresRefreshOrTraversal(_lView))) {
-      // If after running all afterRender callbacks new views are dirty, ensure we loop back.
+      // 모든 afterRender 콜백을 실행한 후 새 뷰가 더럽혀진 경우, 루프를 다시 돌도록 합니다.
       this.dirtyFlags |= ApplicationRefDirtyFlags.ViewTreeTraversal;
       return;
     } else {
-      // Even though this flag may be set, none of _our_ views require traversal, and so the
-      // `ApplicationRef` doesn't require any repeated checking.
+      // 이 플래그가 설정되어 있을 수 있지만, 우리의 뷰 중 어느 것도 순회가 필요하지 않으므로,
+      // `ApplicationRef`는 반복된 확인이 필요하지 않습니다.
       this.dirtyFlags &= ~ApplicationRefDirtyFlags.ViewTreeAny;
     }
   }
 
   /**
-   * Attaches a view so that it will be dirty checked.
-   * The view will be automatically detached when it is destroyed.
-   * This will throw if the view is already attached to a ViewContainer.
+   * 뷰를 부착하여 더러운 검사할 수 있도록 합니다.
+   * 뷰는 파괴될 때 자동으로 분리됩니다.
+   * 뷰가 이미 ViewContainer에 부착되어 있으면 예외가 발생합니다.
    */
   attachView(viewRef: ViewRef): void {
     (typeof ngDevMode === 'undefined' || ngDevMode) && warnIfDestroyed(this._destroyed);
@@ -742,7 +710,7 @@ export class ApplicationRef {
   }
 
   /**
-   * Detaches a view from dirty checking again.
+   * 뷰를 다시 더러운 검사에서 분리합니다.
    */
   detachView(viewRef: ViewRef): void {
     (typeof ngDevMode === 'undefined' || ngDevMode) && warnIfDestroyed(this._destroyed);
@@ -759,15 +727,14 @@ export class ApplicationRef {
       this.internalErrorHandler(e);
     }
     this.components.push(componentRef);
-    // Get the listeners lazily to prevent DI cycles.
+    // DI 사이클을 방지하기 위해 리스너를 게으르게 가져옵니다.
     const listeners = this._injector.get(APP_BOOTSTRAP_LISTENER, []);
     if (ngDevMode && !Array.isArray(listeners)) {
       throw new RuntimeError(
         RuntimeErrorCode.INVALID_MULTI_PROVIDER,
-        'Unexpected type of the `APP_BOOTSTRAP_LISTENER` token value ' +
-          `(expected an array, but got ${typeof listeners}). ` +
-          'Please check that the `APP_BOOTSTRAP_LISTENER` token is configured as a ' +
-          '`multi: true` provider.',
+        '`APP_BOOTSTRAP_LISTENER` 토큰 값의 예기치 않은 유형 ' +
+          `(예상된 배열이지만 ${typeof listeners}이(가) 나왔습니다). ` +
+          '`APP_BOOTSTRAP_LISTENER` 토큰이 `multi: true` 제공자로 구성되어 있는지 확인하십시오.',
       );
     }
     listeners.forEach((listener) => listener(componentRef));
@@ -778,26 +745,26 @@ export class ApplicationRef {
     if (this._destroyed) return;
 
     try {
-      // Call all the lifecycle hooks.
+      // 모든 생명주기 훅을 호출합니다.
       this._destroyListeners.forEach((listener) => listener());
 
-      // Destroy all registered views.
+      // 모든 등록된 뷰를 파괴합니다.
       this._views.slice().forEach((view) => view.destroy());
     } finally {
-      // Indicate that this instance is destroyed.
+      // 이 인스턴스가 파괴되었음을 나타냅니다.
       this._destroyed = true;
 
-      // Release all references.
+      // 모든 참조를 해제합니다.
       this._views = [];
       this._destroyListeners = [];
     }
   }
 
   /**
-   * Registers a listener to be called when an instance is destroyed.
+   * 인스턴스가 파괴될 때 호출될 리스너를 등록합니다.
    *
-   * @param callback A callback function to add as a listener.
-   * @returns A function which unregisters a listener.
+   * @param callback 리스너로 추가할 콜백 함수입니다.
+   * @returns 리스너를 등록 해제하는 함수입니다.
    */
   onDestroy(callback: () => void): VoidFunction {
     (typeof ngDevMode === 'undefined' || ngDevMode) && warnIfDestroyed(this._destroyed);
@@ -806,30 +773,29 @@ export class ApplicationRef {
   }
 
   /**
-   * Destroys an Angular application represented by this `ApplicationRef`. Calling this function
-   * will destroy the associated environment injectors as well as all the bootstrapped components
-   * with their views.
+   * 이 `ApplicationRef`로 표현된 Angular 애플리케이션을 파괴합니다. 이 함수를 호출하면
+   * 연결된 환경 주입기와 모든 부트스트랩된 컴포넌트가 그들의 뷰와 함께 파괴됩니다.
    */
   destroy(): void {
     if (this._destroyed) {
       throw new RuntimeError(
         RuntimeErrorCode.APPLICATION_REF_ALREADY_DESTROYED,
-        ngDevMode && 'This instance of the `ApplicationRef` has already been destroyed.',
+        ngDevMode && '`ApplicationRef`의 이 인스턴스는 이미 파괴되었습니다.',
       );
     }
 
     const injector = this._injector as R3Injector;
 
-    // Check that this injector instance supports destroy operation.
+    // 이 주입기 인스턴스가 파괴 작업을 지원하는지 확인합니다.
     if (injector.destroy && !injector.destroyed) {
-      // Destroying an underlying injector will trigger the `ngOnDestroy` lifecycle
-      // hook, which invokes the remaining cleanup actions.
+      // 기본 주입기를 파괴하면 남은 정리 작업을 호출하는 `ngOnDestroy` 생명주기
+      // 훅이 트리거됩니다.
       injector.destroy();
     }
   }
 
   /**
-   * Returns the number of attached views.
+   * 부착된 뷰의 수를 반환합니다.
    */
   get viewCount() {
     return this._views.length;
@@ -841,7 +807,7 @@ function warnIfDestroyed(destroyed: boolean): void {
     console.warn(
       formatRuntimeError(
         RuntimeErrorCode.APPLICATION_REF_ALREADY_DESTROYED,
-        'This instance of the `ApplicationRef` has already been destroyed.',
+        '`ApplicationRef`의 이 인스턴스는 이미 파괴되었습니다.',
       ),
     );
   }
@@ -858,32 +824,32 @@ export const enum ApplicationRefDirtyFlags {
   None = 0,
 
   /**
-   * A global change detection round has been requested.
+   * 글로벌 변경 감지 라운드가 요청되었습니다.
    */
   ViewTreeGlobal = 0b00000001,
 
   /**
-   * Part of the view tree is marked for traversal.
+   * 뷰 트리의 일부가 순회로 표시됩니다.
    */
   ViewTreeTraversal = 0b00000010,
 
   /**
-   * Part of the view tree is marked to be checked (dirty).
+   * 뷰 트리의 일부가 확인(더러운)로 표시됩니다.
    */
   ViewTreeCheck = 0b00000100,
 
   /**
-   * Helper for any view tree bit being set.
+   * 어떤 뷰 트리 비트가 설정되는 데 도움이 됩니다.
    */
   ViewTreeAny = ViewTreeGlobal | ViewTreeTraversal | ViewTreeCheck,
 
   /**
-   * After render hooks need to run.
+   * 렌더 후 훅을 실행해야 합니다.
    */
   AfterRender = 0b00001000,
 
   /**
-   * Effects at the `ApplicationRef` level.
+   * `ApplicationRef` 수준의 효과입니다.
    */
   RootEffects = 0b00010000,
 }
@@ -893,18 +859,18 @@ export function detectChangesInViewIfRequired(
   isFirstPass: boolean,
   zonelessEnabled: boolean,
 ) {
-  // When re-checking, only check views which actually need it.
+  // 재확인할 때, 실제로 필요한 뷰만 확인합니다.
   if (!isFirstPass && !requiresRefreshOrTraversal(lView)) {
     return;
   }
 
   const mode =
     isFirstPass && !zonelessEnabled
-      ? // The first pass is always in Global mode, which includes `CheckAlways` views.
-        // When using zoneless, all root views must be explicitly marked for refresh, even if they are
-        // `CheckAlways`.
+      ? // 첫 번째 패스는 항상 글로벌 모드에서 수행되며, `CheckAlways` 뷰가 포함됩니다.
+        // 존리스 사용 시 모든 루트 뷰는 새로 고침을 위해 명시적으로 표시해야 하며, 아니면
+        // `CheckAlways`여도 마찬가지입니다.
         ChangeDetectionMode.Global
-      : // Only refresh views with the `RefreshView` flag or views is a changed signal
+      : // `RefreshView` 플래그가 있는 뷰 또는 변경된 신호가 있는 뷰만 새로 고칩니다.
         ChangeDetectionMode.Targeted;
   detectChangesInternal(lView, mode);
 }

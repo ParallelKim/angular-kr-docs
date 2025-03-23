@@ -7,8 +7,8 @@
  */
 
 /**
- * TODO(incremental-hydration): Remove this file entirely once PromiseWithResolvers lands in stable
- * node / TS.
+ * TODO(incremental-hydration): PromiseWithResolvers가 안정적인 node / TS에 도달하면
+ * 이 파일을 완전히 제거하십시오.
  */
 interface PromiseWithResolvers<T> {
   promise: Promise<T>;
@@ -18,8 +18,8 @@ interface PromiseWithResolvers<T> {
 
 interface PromiseConstructor {
   /**
-   * Creates a new Promise and returns it in an object, along with its resolve and reject functions.
-   * @returns An object with the properties `promise`, `resolve`, and `reject`.
+   * 새로운 Promise를 생성하고, 그것과 resolve 및 reject 함수와 함께 객체로 반환합니다.
+   * @returns `promise`, `resolve`, 및 `reject` 속성이 포함된 객체입니다.
    *
    * ```ts
    * const { promise, resolve, reject } = Promise.withResolvers<T>();

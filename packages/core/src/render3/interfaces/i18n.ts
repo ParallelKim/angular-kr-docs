@@ -9,9 +9,9 @@
 import {SanitizerFn} from './sanitization';
 
 /**
- * Stores a list of nodes which need to be removed.
+ * 제거해야 하는 노드 목록을 저장합니다.
  *
- * Numbers are indexes into the `LView`
+ * 숫자는 `LView`의 인덱스입니다.
  * - index > 0: `removeRNode(lView[0])`
  * - index < 0: `removeICU(~lView[0])`
  */
@@ -20,15 +20,14 @@ export interface I18nRemoveOpCodes extends Array<number> {
 }
 
 /**
- * `I18nMutateOpCode` defines OpCodes for `I18nMutateOpCodes` array.
+ * `I18nMutateOpCode`는 `I18nMutateOpCodes` 배열에 대한 OpCodes를 정의합니다.
  *
- * OpCodes are efficient operations which can be applied to the DOM to update it. (For example to
- * update to a new ICU case requires that we clean up previous elements and create new ones.)
+ * OpCodes는 DOM에 적용되어 업데이트할 수 있는 효율적인 작업입니다. (예를 들어, 새로운 ICU 케이스로 업데이트하려면 이전 요소를 정리하고 새 요소를 만들어야 합니다.)
  *
- * OpCodes contain three parts:
- *  1) Parent node index offset. (p)
- *  2) Reference node index offset. (r)
- *  3) The instruction to execute. (i)
+ * OpCodes는 세 부분으로 구성됩니다:
+ *  1) 부모 노드 인덱스 오프셋. (p)
+ *  2) 참조 노드 인덱스 오프셋. (r)
+ *  3) 실행할 명령. (i)
  *
  * pppp pppp pppp pppp rrrr rrrr rrrr riii
  * 3322 2222 2222 1111 1111 1110 0000 0000
@@ -40,78 +39,78 @@ export interface I18nRemoveOpCodes extends Array<number> {
  * var instruction = opCode & MASK_OPCODE;
  * ```
  *
- * See: `I18nCreateOpCodes` for example of usage.
+ * 사용 예는 `I18nCreateOpCodes`를 참조하십시오.
  */
 export const enum IcuCreateOpCode {
   /**
-   * Stores shift amount for bits 17-3 that contain reference index.
+   * 참조 인덱스를 포함하는 비트 17-3의 shift 양을 저장합니다.
    */
   SHIFT_REF = 1,
   /**
-   * Stores shift amount for bits 31-17 that contain parent index.
+   * 부모 인덱스를 포함하는 비트 31-17의 shift 양을 저장합니다.
    */
   SHIFT_PARENT = 17,
   /**
-   * Mask for OpCode
+   * OpCode의 마스크
    */
   MASK_INSTRUCTION = 0b1,
 
   /**
-   * Mask for the Reference node (bits 16-3)
+   * 참조 노드를 위한 마스크 (비트 16-3)
    */
   MASK_REF = 0b11111111111111110,
   //           11111110000000000
   //           65432109876543210
 
   /**
-   * Instruction to append the current node to `PARENT`.
+   * 현재 노드를 `PARENT`에 추가하는 명령입니다.
    */
   AppendChild = 0b0,
 
   /**
-   * Instruction to set the attribute of a node.
+   * 노드의 속성을 설정하는 명령입니다.
    */
   Attr = 0b1,
 }
 
 /**
- * Array storing OpCode for dynamically creating `i18n` blocks.
+ * 동적으로 `i18n` 블록을 생성하기 위한 OpCode를 저장하는 배열입니다.
  *
- * Example:
+ * 예시:
  * ```ts
  * <I18nCreateOpCode>[
- *   // For adding text nodes
+ *   // 텍스트 노드를 추가하기 위한 것
  *   // ---------------------
- *   // Equivalent to:
+ *   // 이에 해당합니다:
  *   //   lView[1].appendChild(lView[0] = document.createTextNode('xyz'));
  *   'xyz', 0, 1 << SHIFT_PARENT | 0 << SHIFT_REF | AppendChild,
  *
- *   // For adding element nodes
+ *   // 엘리먼트 노드를 추가하기 위한 것
  *   // ---------------------
- *   // Equivalent to:
+ *   // 이에 해당합니다:
  *   //   lView[1].appendChild(lView[0] = document.createElement('div'));
  *   ELEMENT_MARKER, 'div', 0, 1 << SHIFT_PARENT | 0 << SHIFT_REF | AppendChild,
  *
- *   // For adding comment nodes
+ *   // 코멘트 노드를 추가하기 위한 것
  *   // ---------------------
- *   // Equivalent to:
+ *   // 이에 해당합니다:
  *   //   lView[1].appendChild(lView[0] = document.createComment(''));
  *   ICU_MARKER, '', 0, 1 << SHIFT_PARENT | 0 << SHIFT_REF | AppendChild,
  *
- *   // For moving existing nodes to a different location
+ *   // 기존 노드를 다른 위치로 이동하기 위한 것
  *   // --------------------------------------------------
- *   // Equivalent to:
+ *   // 이에 해당합니다:
  *   //   const node = lView[1];
  *   //   lView[2].appendChild(node);
  *   1 << SHIFT_REF | Select, 2 << SHIFT_PARENT | 0 << SHIFT_REF | AppendChild,
  *
- *   // For removing existing nodes
+ *   // 기존 노드를 제거하기 위한 것
  *   // --------------------------------------------------
  *   //   const node = lView[1];
  *   //   removeChild(tView.data(1), node, lView);
  *   1 << SHIFT_REF | Remove,
  *
- *   // For writing attributes
+ *   // 속성 쓰기 위한 것
  *   // --------------------------------------------------
  *   //   const node = lView[1];
  *   //   node.setAttribute('attr', 'value');
@@ -127,36 +126,36 @@ export interface IcuCreateOpCodes
 
 export const enum I18nUpdateOpCode {
   /**
-   * Stores shift amount for bits 17-2 that contain reference index.
+   * 참조 인덱스를 포함하는 비트 17-2의 shift 양을 저장합니다.
    */
   SHIFT_REF = 2,
   /**
-   * Mask for OpCode
+   * OpCode의 마스크
    */
   MASK_OPCODE = 0b11,
 
   /**
-   * Instruction to update a text node.
+   * 텍스트 노드를 업데이트하는 명령입니다.
    */
   Text = 0b00,
   /**
-   * Instruction to update a attribute of a node.
+   * 노드의 속성을 업데이트하는 명령입니다.
    */
   Attr = 0b01,
   /**
-   * Instruction to switch the current ICU case.
+   * 현재 ICU 케이스를 전환하는 명령입니다.
    */
   IcuSwitch = 0b10,
   /**
-   * Instruction to update the current ICU case.
+   * 현재 ICU 케이스를 업데이트하는 명령입니다.
    */
   IcuUpdate = 0b11,
 }
 
 /**
- * Marks that the next string is an element name.
+ * 다음 문자열이 엘리먼트 이름임을 표시합니다.
  *
- * See `I18nMutateOpCodes` documentation.
+ * `I18nMutateOpCodes` 문서를 참조하십시오.
  */
 export const ELEMENT_MARKER: ELEMENT_MARKER = {
   marker: 'element',
@@ -166,9 +165,9 @@ export interface ELEMENT_MARKER {
 }
 
 /**
- * Marks that the next string is comment text need for ICU.
+ * 다음 문자열이 ICU에 필요한 코멘트 텍스트임을 표시합니다.
  *
- * See `I18nMutateOpCodes` documentation.
+ * `I18nMutateOpCodes` 문서를 참조하십시오.
  */
 export const ICU_MARKER: ICU_MARKER = {
   marker: 'ICU',
@@ -180,30 +179,26 @@ export interface ICU_MARKER {
 
 export interface I18nDebug {
   /**
-   * Human readable representation of the OpCode arrays.
+   * OpCode 배열의 사람이 읽을 수 있는 표현입니다.
    *
-   * NOTE: This property only exists if `ngDevMode` is set to `true` and it is not present in
-   * production. Its presence is purely to help debug issue in development, and should not be relied
-   * on in production application.
+   * NOTE: 이 속성은 `ngDevMode`가 `true`로 설정된 경우에만 존재하며, 프로덕션에서는 존재하지 않습니다. 이 속성은 개발 중 문제를 디버그하는 데만 사용되며, 프로덕션 애플리케이션에서는 의존하지 않아야 합니다.
    */
   debug?: string[];
 }
 
 /**
- * Array storing OpCode for dynamically creating `i18n` translation DOM elements.
+ * 동적으로 `i18n` 번역 DOM 요소를 생성하기 위한 OpCode를 저장하는 배열입니다.
  *
- * This array creates a sequence of `Text` and `Comment` (as ICU anchor) DOM elements. It consists
- * of a pair of `number` and `string` pairs which encode the operations for the creation of the
- * translated block.
+ * 이 배열은 `Text`와 `Comment`(ICU 앵커로서)의 DOM 요소 시퀀스를 생성합니다. 이는 번역 블록 생성을 위한 작업을 인코딩하는 `number`와 `string` 쌍으로 구성됩니다.
  *
- * The number is shifted and encoded according to `I18nCreateOpCode`
+ * 숫자는 `I18nCreateOpCode`에 따라 shift되고 인코딩됩니다.
  *
- * Pseudocode:
+ * 의사 코드:
  * ```ts
  * const i18nCreateOpCodes = [
- *   10 << I18nCreateOpCode.SHIFT, "Text Node add to DOM",
- *   11 << I18nCreateOpCode.SHIFT | I18nCreateOpCode.COMMENT, "Comment Node add to DOM",
- *   12 << I18nCreateOpCode.SHIFT | I18nCreateOpCode.APPEND_LATER, "Text Node added later"
+ *   10 << I18nCreateOpCode.SHIFT, "DOM에 텍스트 노드 추가",
+ *   11 << I18nCreateOpCode.SHIFT | I18nCreateOpCode.COMMENT, "DOM에 코멘트 노드 추가",
+ *   12 << I18nCreateOpCode.SHIFT | I18nCreateOpCode.APPEND_LATER, "나중에 추가된 텍스트 노드"
  * ];
  *
  * for(var i=0; i<i18nCreateOpCodes.length; i++) {
@@ -227,92 +222,84 @@ export interface I18nCreateOpCodes extends Array<number | string>, I18nDebug {
 }
 
 /**
- * See `I18nCreateOpCodes`
+ * `I18nCreateOpCodes`를 참조하십시오.
  */
 export enum I18nCreateOpCode {
   /**
-   * Number of bits to shift index so that it can be combined with the `APPEND_EAGERLY` and
-   * `COMMENT`.
+   * `APPEND_EAGERLY` 및 `COMMENT`와 결합될 수 있도록 인덱스를 shift하기 위한 비트 수입니다.
    */
   SHIFT = 2,
 
   /**
-   * Should the node be appended to parent immediately after creation.
+   * 노드는 생성 직후 부모에 즉시 추가되어야 합니다.
    */
   APPEND_EAGERLY = 0b01,
 
   /**
-   * If set the node should be comment (rather than a text) node.
+   * 노드는 코멘트(텍스트가 아닌) 노드여야 합니다.
    */
   COMMENT = 0b10,
 }
 
 /**
- * Stores DOM operations which need to be applied to update DOM render tree due to changes in
- * expressions.
+ * 표현식의 변경으로 인해 DOM 렌더 트리를 업데이트하기 위해 적용해야 하는 DOM 작업을 저장합니다.
  *
- * The basic idea is that `i18nExp` OpCodes capture expression changes and update a change
- * mask bit. (Bit 1 for expression 1, bit 2 for expression 2 etc..., bit 32 for expression 32 and
- * higher.) The OpCodes then compare its own change mask against the expression change mask to
- * determine if the OpCodes should execute.
+ * 기본 아이디어는 `i18nExp` OpCodes가 표현식 변경사항을 캡처하고 변경 마스크 비트를 업데이트하는 것입니다. (비트 1은 표현식 1, 비트 2는 표현식 2 등..., 비트 32는 표현식 32 및 그 이상입니다.) OpCodes는 자체 변경 마스크를 표현식 변경 마스크와 비교하여 OpCodes를 실행할지 결정합니다.
  *
- * NOTE: 32nd bit is special as it says 32nd or higher. This way if we have more than 32 bindings
- * the code still works, but with lower efficiency. (it is unlikely that a translation would have
- * more than 32 bindings.)
+ * NOTE: 32번째 비트는 특수하며 32번째 또는 그 이상의 것을 나타냅니다. 이렇게 하면 32개 이상의 바인딩이 있어도 코드가 여전히 작동하지만 효율성은 감소합니다. (번역이 32개 이상의 바인딩을 가질 가능성은 적습니다.)
  *
- * These OpCodes can be used by both the i18n block as well as ICU sub-block.
+ * 이러한 OpCodes는 i18n 블록과 ICU 하위 블록 모두에서 사용할 수 있습니다.
  *
- * ## Example
+ * ## 예시
  *
- * Assume
+ * 다음과 같다고 가정합니다.
  * ```ts
  *   if (rf & RenderFlags.Update) {
- *    i18nExp(ctx.exp1); // If changed set mask bit 1
- *    i18nExp(ctx.exp2); // If changed set mask bit 2
- *    i18nExp(ctx.exp3); // If changed set mask bit 3
- *    i18nExp(ctx.exp4); // If changed set mask bit 4
- *    i18nApply(0);            // Apply all changes by executing the OpCodes.
+ *    i18nExp(ctx.exp1); // 변경된 경우 마스크 비트 1 설정
+ *    i18nExp(ctx.exp2); // 변경된 경우 마스크 비트 2 설정
+ *    i18nExp(ctx.exp3); // 변경된 경우 마스크 비트 3 설정
+ *    i18nExp(ctx.exp4); // 변경된 경우 마스크 비트 4 설정
+ *    i18nApply(0);            // OpCodes를 실행하여 모든 변경사항 적용.
  *  }
  * ```
- * We can assume that each call to `i18nExp` sets an internal `changeMask` bit depending on the
- * index of `i18nExp`.
+ * 각 `i18nExp` 호출이 인덱스에 따라 내부 `changeMask` 비트를 설정한다고 가정할 수 있습니다.
  *
  * ### OpCodes
  * ```ts
  * <I18nUpdateOpCodes>[
- *   // The following OpCodes represent: `<div i18n-title="pre{{exp1}}in{{exp2}}post">`
- *   // If `changeMask & 0b11`
- *   //        has changed then execute update OpCodes.
- *   //        has NOT changed then skip `8` values and start processing next OpCodes.
+ *   // 다음 OpCodes는: `<div i18n-title="pre{{exp1}}in{{exp2}}post">`
+ *   // 만약 `changeMask & 0b11`
+ *   //        변경되었다면 업데이트 OpCodes를 실행합니다.
+ *   //        변경되지 않았다면 `8` 값 건너뛰고 다음 OpCodes 처리 시작.
  *   0b11, 8,
- *   // Concatenate `newValue = 'pre'+lView[bindIndex-4]+'in'+lView[bindIndex-3]+'post';`.
+ *   // `newValue = 'pre'+lView[bindIndex-4]+'in'+lView[bindIndex-3]+'post';`로 연결합니다.
  *   'pre', -4, 'in', -3, 'post',
- *   // Update attribute: `elementAttribute(1, 'title', sanitizerFn(newValue));`
+ *   // 속성 업데이트: `elementAttribute(1, 'title', sanitizerFn(newValue));`
  *   1 << SHIFT_REF | Attr, 'title', sanitizerFn,
  *
- *   // The following OpCodes represent: `<div i18n>Hello {{exp3}}!">`
- *   // If `changeMask & 0b100`
- *   //        has changed then execute update OpCodes.
- *   //        has NOT changed then skip `4` values and start processing next OpCodes.
+ *   // 다음 OpCodes는: `<div i18n>Hello {{exp3}}!">`
+ *   // 만약 `changeMask & 0b100`
+ *   //        변경되었다면 업데이트 OpCodes를 실행합니다.
+ *   //        변경되지 않았다면 `4` 값 건너뛰고 다음 OpCodes 처리 시작.
  *   0b100, 4,
- *   // Concatenate `newValue = 'Hello ' + lView[bindIndex -2] + '!';`.
+ *   // `newValue = 'Hello ' + lView[bindIndex -2] + '!';`로 연결합니다.
  *   'Hello ', -2, '!',
- *   // Update text: `lView[1].textContent = newValue;`
+ *   // 텍스트 업데이트: `lView[1].textContent = newValue;`
  *   1 << SHIFT_REF | Text,
  *
- *   // The following OpCodes represent: `<div i18n>{exp4, plural, ... }">`
- *   // If `changeMask & 0b1000`
- *   //        has changed then execute update OpCodes.
- *   //        has NOT changed then skip `2` values and start processing next OpCodes.
+ *   // 다음 OpCodes는: `<div i18n>{exp4, plural, ... }">`
+ *   // 만약 `changeMask & 0b1000`
+ *   //        변경되었다면 업데이트 OpCodes를 실행합니다.
+ *   //        변경되지 않았다면 `2` 값 건너뛰고 다음 OpCodes 처리 시작.
  *   0b1000, 2,
- *   // Concatenate `newValue = lView[bindIndex -1];`.
+ *   // `newValue = lView[bindIndex -1];`로 연결합니다.
  *   -1,
- *   // Switch ICU: `icuSwitchCase(lView[1], 0, newValue);`
+ *   // ICU 전환: `icuSwitchCase(lView[1], 0, newValue);`
  *   0 << SHIFT_ICU | 1 << SHIFT_REF | IcuSwitch,
  *
- *   // Note `changeMask & -1` is always true, so the IcuUpdate will always execute.
+ *   // 주의: `changeMask & -1`은 항상 참이므로 IcuUpdate는 항상 실행됩니다.
  *   -1, 1,
- *   // Update ICU: `icuUpdateCase(lView[1], 0);`
+ *   // ICU 업데이트: `icuUpdateCase(lView[1], 0);`
  *   0 << SHIFT_ICU | 1 << SHIFT_REF | IcuUpdate,
  *
  * ];
@@ -324,36 +311,35 @@ export interface I18nUpdateOpCodes extends Array<string | number | SanitizerFn |
 }
 
 /**
- * Store information for the i18n translation block.
+ * i18n 번역 블록에 대한 정보를 저장합니다.
  */
 export interface TI18n {
   /**
-   * A set of OpCodes which will create the Text Nodes and ICU anchors for the translation blocks.
+   * 번역 블록의 텍스트 노드와 ICU 앵커를 생성하는 OpCode 집합입니다.
    *
-   * NOTE: The ICU anchors are filled in with ICU Update OpCode.
+   * NOTE: ICU 앵커는 ICU 업데이트 OpCode로 채워집니다.
    */
   create: I18nCreateOpCodes;
 
   /**
-   * A set of OpCodes which will be executed on each change detection to determine if any changes to
-   * DOM are required.
+   * DOM 변경이 필요한지 판단하기 위해 각 변경 감지에서 실행되는 OpCode 집합입니다.
    */
   update: I18nUpdateOpCodes;
 
   /**
-   * An AST representing the translated message. This is used for hydration (and serialization),
-   * while the Update and Create OpCodes are used at runtime.
+   * 변환된 메시지를 나타내는 AST입니다. 이는 수화(hydration, 직렬화)와 함께 사용되며,
+   * 업데이트 및 생성 OpCodes는 런타임에서 사용됩니다.
    */
   ast: Array<I18nNode>;
 
   /**
-   * Index of a parent TNode, which represents a host node for this i18n block.
+   * 이 i18n 블록의 호스트 노드를 나타내는 부모 TNode의 인덱스입니다.
    */
   parentTNodeIndex: number;
 }
 
 /**
- * Defines the ICU type of `select` or `plural`
+ * `select` 또는 `plural`의 ICU 유형을 정의합니다.
  */
 export const enum IcuType {
   select = 0,
@@ -362,54 +348,52 @@ export const enum IcuType {
 
 export interface TIcu {
   /**
-   * Defines the ICU type of `select` or `plural`
+   * `select` 또는 `plural`의 ICU 유형을 정의합니다.
    */
   type: IcuType;
 
   /**
-   * Index in `LView` where the anchor node is stored. `<!-- ICU 0:0 -->`
+   * 앵커 노드가 저장되는 `LView`의 인덱스. `<!-- ICU 0:0 -->`
    */
   anchorIdx: number;
 
   /**
-   * Currently selected ICU case pointer.
+   * 현재 선택된 ICU 케이스 포인터입니다.
    *
-   * `lView[currentCaseLViewIndex]` stores the currently selected case. This is needed to know how
-   * to clean up the current case when transitioning no the new case.
+   * `lView[currentCaseLViewIndex]`는 현재 선택된 케이스를 저장합니다. 이는 새로운 케이스로 전환할 때 현재 케이스를 정리하는 방법을 아는 데 필요합니다.
    *
-   * If the value stored is:
-   * `null`: No current case selected.
-   *   `<0`: A flag which means that the ICU just switched and that `icuUpdate` must be executed
-   *         regardless of the `mask`. (After the execution the flag is cleared)
-   *   `>=0` A currently selected case index.
+   * 저장된 값이:
+   * `null`: 현재 선택된 케이스가 없습니다.
+   *   `<0`: ICU가 방금 전환되었음을 의미하는 플래그로, `mask`와 관계없이 `icuUpdate`를 실행해야 함을 나타냅니다. (실행 후 플래그는 초기화됩니다)
+   *   `>=0` 현재 선택된 케이스 인덱스입니다.
    */
   currentCaseLViewIndex: number;
 
   /**
-   * A list of case values which the current ICU will try to match.
+   * 현재 ICU가 일치시키려는 케이스 값 목록입니다.
    *
-   * The last value is `other`
+   * 마지막 값은 `other`입니다.
    */
   cases: any[];
 
   /**
-   * A set of OpCodes to apply in order to build up the DOM render tree for the ICU
+   * ICU의 DOM 렌더 트리를 구축하기 위해 적용해야 하는 OpCode 집합입니다.
    */
   create: IcuCreateOpCodes[];
 
   /**
-   * A set of OpCodes to apply in order to destroy the DOM render tree for the ICU.
+   * ICU의 DOM 렌더 트리를 제거하기 위해 적용해야 하는 OpCode 집합입니다.
    */
   remove: I18nRemoveOpCodes[];
 
   /**
-   * A set of OpCodes to apply in order to update the DOM render tree for the ICU bindings.
+   * ICU 바인딩의 DOM 렌더 트리를 업데이트하기 위해 적용해야 하는 OpCode 집합입니다.
    */
   update: I18nUpdateOpCodes[];
 }
 
 /**
- * Parsed ICU expression
+ * 구문 분석된 ICU 표현식입니다.
  */
 export interface IcuExpression {
   type: IcuType;
@@ -418,67 +402,66 @@ export interface IcuExpression {
   values: (string | IcuExpression)[][];
 }
 
-// A parsed I18n AST Node
+// 구문 분석된 I18n AST 노드
 export type I18nNode = I18nTextNode | I18nElementNode | I18nICUNode | I18nPlaceholderNode;
 
 /**
- * Represents a block of text in a translation, such as `Hello, {{ name }}!`.
+ * 번역에서 텍스트 블록을 나타냅니다. 예: `Hello, {{ name }}!`.
  */
 export interface I18nTextNode {
-  /** The AST node kind */
+  /** AST 노드 종류 */
   kind: I18nNodeKind.TEXT;
 
-  /** The LView index */
+  /** LView 인덱스 */
   index: number;
 }
 
 /**
- * Represents a simple DOM element in a translation, such as `<div>...</div>`
+ * 번역에서 간단한 DOM 요소를 나타냅니다. 예: `<div>...</div>`
  */
 export interface I18nElementNode {
-  /** The AST node kind */
+  /** AST 노드 종류 */
   kind: I18nNodeKind.ELEMENT;
 
-  /** The LView index */
+  /** LView 인덱스 */
   index: number;
 
-  /** The child nodes */
+  /** 자식 노드 */
   children: Array<I18nNode>;
 }
 
 /**
- * Represents an ICU in a translation.
+ * 번역의 ICU를 나타냅니다.
  */
 export interface I18nICUNode {
-  /** The AST node kind */
+  /** AST 노드 종류 */
   kind: I18nNodeKind.ICU;
 
-  /** The LView index */
+  /** LView 인덱스 */
   index: number;
 
-  /** The branching cases */
+  /** 가지 치기 케이스 */
   cases: Array<Array<I18nNode>>;
 
-  /** The LView index that stores the active case */
+  /** 활성 케이스를 저장하는 LView 인덱스 */
   currentCaseLViewIndex: number;
 }
 
 /**
- * Represents special content that is embedded into the translation. This can
- * either be a special built-in element, such as <ng-container> and <ng-content>,
- * or it can be a sub-template, for example, from a structural directive.
+ * 번역에 포함된 특별한 콘텐츠를 나타냅니다. 이는 <ng-container> 및 <ng-content>와 같은 내장 요소일 수도 있고,
+ * 구조 지시문에서 가져온 서브 템플릿일 수도 있습니다.
  */
 export interface I18nPlaceholderNode {
-  /** The AST node kind */
+  /** AST 노드 종류 */
   kind: I18nNodeKind.PLACEHOLDER;
 
-  /** The LView index */
+  /** LView 인덱스 */
   index: number;
 
-  /** The child nodes */
+  /** 자식 노드 */
   children: Array<I18nNode>;
 
-  /** The placeholder type */
+  /** 플레이스홀더 타입 */
   type: I18nPlaceholderType;
 }
 

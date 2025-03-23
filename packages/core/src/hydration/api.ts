@@ -58,43 +58,42 @@ import {gatherDeferBlocksCommentNodes} from './node_lookup_utils';
 import {processAndInitTriggers} from '../defer/triggering';
 
 /**
- * Indicates whether the hydration-related code was added,
- * prevents adding it multiple times.
+ * 하이드레이션 관련 코드가 추가되었는지 여부를 나타냅니다,
+ * 여러 번 추가하는 것을 방지합니다.
  */
 let isHydrationSupportEnabled = false;
 
 /**
- * Indicates whether the i18n-related code was added,
- * prevents adding it multiple times.
+ * i18n 관련 코드가 추가되었는지 여부를 나타냅니다,
+ * 여러 번 추가하는 것을 방지합니다.
  *
- * Note: This merely controls whether the code is loaded,
- * while `setIsI18nHydrationSupportEnabled` determines
- * whether i18n blocks are serialized or hydrated.
+ * 참고: 이것은 단지 코드가 로드되는지 제어하는 것일 뿐,
+ * `setIsI18nHydrationSupportEnabled`은 i18n 블록이
+ * 직렬화되거나 하이드레이션되는지 결정합니다.
  */
 let isI18nHydrationRuntimeSupportEnabled = false;
 
 /**
- * Indicates whether the incremental hydration code was added,
- * prevents adding it multiple times.
+ * 증분 하이드레이션 코드가 추가되었는지 여부를 나타냅니다,
+ * 여러 번 추가하는 것을 방지합니다.
  */
 let isIncrementalHydrationRuntimeSupportEnabled = false;
 
 /**
- * Defines a period of time that Angular waits for the `ApplicationRef.isStable` to emit `true`.
- * If there was no event with the `true` value during this time, Angular reports a warning.
+ * Angular가 `ApplicationRef.isStable`이 `true`를 내보낼 때까지 기다리는 시간을 정의합니다.
+ * 이 시간 동안 `true` 값의 이벤트가 없으면, Angular는 경고를 보고합니다.
  */
 const APPLICATION_IS_STABLE_TIMEOUT = 10_000;
 
 /**
- * Brings the necessary hydration code in tree-shakable manner.
- * The code is only present when the `provideClientHydration` is
- * invoked. Otherwise, this code is tree-shaken away during the
- * build optimization step.
+ * 필요한 하이드레이션 코드를 트리 셰이킹 가능한 방식으로 가져옵니다.
+ * 이 코드는 `provideClientHydration`이 호출될 때만 존재합니다.
+ * 그렇지 않으면, 이 코드는 빌드 최적화 단계에서 트리 셰이킹됩니다.
  *
- * This technique allows us to swap implementations of methods so
- * tree shaking works appropriately when hydration is disabled or
- * enabled. It brings in the appropriate version of the method that
- * supports hydration only when enabled.
+ * 이 기법은 하이드레이션이 비활성화되거나 활성화되었을 때
+ * 트리 셰이킹이 적절하게 작동하도록 메서드의 구현을 교체할 수 있게 합니다.
+ * 이는 하이드레이션이 활성화된 경우에만 하이드레이션을 지원하는
+ * 적절한 버전의 메서드를 제공합니다.
  */
 function enableHydrationRuntimeSupport() {
   if (!isHydrationSupportEnabled) {
@@ -111,9 +110,9 @@ function enableHydrationRuntimeSupport() {
 }
 
 /**
- * Brings the necessary i18n hydration code in tree-shakable manner.
- * Similar to `enableHydrationRuntimeSupport`, the code is only
- * present when `withI18nSupport` is invoked.
+ * 필요한 i18n 하이드레이션 코드를 트리 셰이킹 가능한 방식으로 가져옵니다.
+ * `enableHydrationRuntimeSupport`와 유사하게, 이 코드는
+ * `withI18nSupport`가 호출될 때만 존재합니다.
  */
 function enableI18nHydrationRuntimeSupport() {
   if (!isI18nHydrationRuntimeSupportEnabled) {
@@ -125,9 +124,9 @@ function enableI18nHydrationRuntimeSupport() {
 }
 
 /**
- * Brings the necessary incremental hydration code in tree-shakable manner.
- * Similar to `enableHydrationRuntimeSupport`, the code is only
- * present when `enableIncrementalHydrationRuntimeSupport` is invoked.
+ * 필요한 증분 하이드레이션 코드를 트리 셰이킹 가능한 방식으로 가져옵니다.
+ * `enableHydrationRuntimeSupport`와 유사하게, 이 코드는
+ * `enableIncrementalHydrationRuntimeSupport`가 호출될 때만 존재합니다.
  */
 function enableIncrementalHydrationRuntimeSupport() {
   if (!isIncrementalHydrationRuntimeSupportEnabled) {
@@ -137,7 +136,7 @@ function enableIncrementalHydrationRuntimeSupport() {
 }
 
 /**
- * Outputs a message with hydration stats into a console.
+ * 콘솔에 하이드레이션 통계 메시지를 출력합니다.
  */
 function printHydrationStats(injector: Injector) {
   const console = injector.get(Console);
@@ -154,7 +153,7 @@ function printHydrationStats(injector: Injector) {
 }
 
 /**
- * Returns a Promise that is resolved when an application becomes stable.
+ * 애플리케이션이 안정 상태가 되면 해결되는 Promise를 반환합니다.
  */
 function whenStableWithTimeout(appRef: ApplicationRef): Promise<void> {
   const whenStablePromise = appRef.whenStable();
@@ -163,9 +162,9 @@ function whenStableWithTimeout(appRef: ApplicationRef): Promise<void> {
     const console = appRef.injector.get(Console);
     const ngZone = appRef.injector.get(NgZone);
 
-    // The following call should not and does not prevent the app to become stable
-    // We cannot use RxJS timer here because the app would remain unstable.
-    // This also avoids an extra change detection cycle.
+    // 다음 호출은 앱이 안정 상태가 되는 것을 방지하지 않으며, 방지해서도 안 됩니다.
+    // 여기서는 앱이 불안정한 상태로 유지되므로 RxJS 타이머를 사용할 수 없습니다.
+    // 이는 추가적인 변경 감지 사이클도 방지합니다.
     const timeoutId = ngZone.runOutsideAngular(() => {
       return setTimeout(() => logWarningOnStableTimedout(timeoutTime, console), timeoutTime);
     });
@@ -177,14 +176,14 @@ function whenStableWithTimeout(appRef: ApplicationRef): Promise<void> {
 }
 
 /**
- * Defines a name of an attribute that is added to the <body> tag
- * in the `index.html` file in case a given route was configured
- * with `RenderMode.Client`. 'cm' is an abbreviation for "Client Mode".
+ * `RenderMode.Client`로 구성된 라우트의 경우,
+ * `index.html` 파일의 <body> 태그에 추가되는 속성의 이름을 정의합니다.
+ * 'cm'은 "Client Mode"의 약자입니다.
  */
 export const CLIENT_RENDER_MODE_FLAG = 'ngcm';
 
 /**
- * Checks whether the `RenderMode.Client` was defined for the current route.
+ * 현재 라우트에 대해 `RenderMode.Client`가 정의되었는지 확인합니다.
  */
 function isClientRenderModeEnabled(): boolean {
   const doc = getDocument();
@@ -195,14 +194,13 @@ function isClientRenderModeEnabled(): boolean {
 }
 
 /**
- * Returns a set of providers required to setup hydration support
- * for an application that is server side rendered. This function is
- * included into the `provideClientHydration` public API function from
- * the `platform-browser` package.
+ * 서버 사이드 렌더링된 애플리케이션에 대한 하이드레이션 지원을 설정하는 데
+ * 필요한 프로바이더 세트를 반환합니다. 이 함수는
+ * `platform-browser` 패키지의 `provideClientHydration` 공개 API 함수에
+ * 포함되어 있습니다.
  *
- * The function sets up an internal flag that would be recognized during
- * the server side rendering time as well, so there is no need to
- * configure or change anything in NgUniversal to enable the feature.
+ * 이 함수는 서버 사이드 렌더링 시간 동안에도 인식되는 내부 플래그를 설정하므로,
+ * 기능을 활성화하기 위해 NgUniversal에서 아무것도 구성하거나 변경할 필요가 없습니다.
  */
 export function withDomHydration(): EnvironmentProviders {
   const providers: Provider[] = [
@@ -313,8 +311,8 @@ export function withDomHydration(): EnvironmentProviders {
 }
 
 /**
- * Returns a set of providers required to setup support for i18n hydration.
- * Requires hydration to be enabled separately.
+ * i18n 하이드레이션 지원을 설정하는 데 필요한 프로바이더 세트를 반환합니다.
+ * 하이드레이션을 별도로 활성화해야 합니다.
  */
 export function withI18nSupport(): Provider[] {
   return [
@@ -337,9 +335,9 @@ export function withI18nSupport(): Provider[] {
 }
 
 /**
- * Returns a set of providers required to setup support for incremental hydration.
- * Requires hydration to be enabled separately.
- * Enabling incremental hydration also enables event replay for the entire app.
+ * 증분 하이드레이션 지원을 설정하는 데 필요한 프로바이더 세트를 반환합니다.
+ * 하이드레이션을 별도로 활성화해야 합니다.
+ * 증분 하이드레이션을 활성화하면 전체 앱에 대한 이벤트 재생도 활성화됩니다.
  *
  * @developerPreview
  */
@@ -387,7 +385,7 @@ export function withIncrementalHydration(): Provider[] {
 
 /**
  *
- * @param time The time in ms until the stable timedout warning message is logged
+ * @param time 안정 타임아웃 경고 메시지가 기록될 때까지의 시간(ms)
  */
 function logWarningOnStableTimedout(time: number, console: Console): void {
   const message =

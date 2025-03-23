@@ -13,11 +13,11 @@ import {NgModuleFactory} from './ng_module_factory';
 import {getRegisteredNgModuleType} from './ng_module_registration';
 
 /**
- * Returns the NgModuleFactory with the given id (specified using [@NgModule.id
- * field](api/core/NgModule#id)), if it exists and has been loaded. Factories for NgModules that do
- * not specify an `id` cannot be retrieved. Throws if an NgModule cannot be found.
+ * 주어진 ID( [@NgModule.id 필드](api/core/NgModule#id) 사용)로 NgModuleFactory를 반환합니다.
+ * 존재하고 로드된 경우에만 반환됩니다. `id`를 지정하지 않은 NgModule의 팩토리는
+ * 검색할 수 없습니다. NgModule을 찾을 수 없는 경우 예외가 발생합니다.
  * @publicApi
- * @deprecated Use `getNgModuleById` instead.
+ * @deprecated `getNgModuleById`를 대신 사용하세요.
  */
 export function getModuleFactory(id: string): NgModuleFactory<any> {
   const type = getRegisteredNgModuleType(id);
@@ -26,9 +26,9 @@ export function getModuleFactory(id: string): NgModuleFactory<any> {
 }
 
 /**
- * Returns the NgModule class with the given id (specified using [@NgModule.id
- * field](api/core/NgModule#id)), if it exists and has been loaded. Classes for NgModules that do
- * not specify an `id` cannot be retrieved. Throws if an NgModule cannot be found.
+ * 주어진 ID( [@NgModule.id 필드](api/core/NgModule#id) 사용)로 NgModule 클래스를 반환합니다.
+ * 존재하고 로드된 경우에만 반환됩니다. `id`를 지정하지 않은 NgModule의 클래스는
+ * 검색할 수 없습니다. NgModule을 찾을 수 없는 경우 예외가 발생합니다.
  * @publicApi
  */
 export function getNgModuleById<T>(id: string): Type<T> {
@@ -38,5 +38,5 @@ export function getNgModuleById<T>(id: string): Type<T> {
 }
 
 function noModuleError(id: string): Error {
-  return new Error(`No module with ID ${id} loaded`);
+  return new Error(`ID ${id}를 가진 모듈이 로드되지 않았습니다.`);
 }

@@ -23,8 +23,8 @@ import {
 } from './manager';
 
 /**
- * An argument list containing the first non-never type in the given type array, or an empty
- * argument list if there are no non-never types in the type array.
+ * 주어진 타입 배열에서 첫 번째 비-결코 타입을 포함하는 인수 목록,
+ * 타입 배열에 비-결코 타입이 없으면 빈 인수 목록입니다.
  */
 export type ɵFirstAvailable<T extends unknown[]> = T extends [infer H, ...infer R]
   ? [H] extends [never]
@@ -33,99 +33,96 @@ export type ɵFirstAvailable<T extends unknown[]> = T extends [infer H, ...infer
   : [];
 
 /**
- * Options passed to `afterRender` and `afterNextRender`.
+ * `afterRender` 및 `afterNextRender`에 전달되는 옵션입니다.
  *
  * @developerPreview
  */
 export interface AfterRenderOptions {
   /**
-   * The `Injector` to use during creation.
+   * 생성 중에 사용할 `Injector`입니다.
    *
-   * If this is not provided, the current injection context will be used instead (via `inject`).
+   * 제공되지 않으면 현재 주입 컨텍스트가 대신 사용됩니다( `inject`를 통해).
    */
   injector?: Injector;
 
   /**
-   * Whether the hook should require manual cleanup.
+   * 훅이 수동 정리가 필요한지 여부입니다.
    *
-   * If this is `false` (the default) the hook will automatically register itself to be cleaned up
-   * with the current `DestroyRef`.
+   * 이것이 `false`인 경우(기본값) 훅은 현재 `DestroyRef`와 함께 자동으로 정리되도록 등록됩니다.
    */
   manualCleanup?: boolean;
 
   /**
-   * The phase the callback should be invoked in.
+   * 콜백을 호출해야 하는 단계입니다.
    *
    * <div class="docs-alert docs-alert-critical">
    *
-   * Defaults to `AfterRenderPhase.MixedReadWrite`. You should choose a more specific
-   * phase instead. See `AfterRenderPhase` for more information.
+   * 기본값은 `AfterRenderPhase.MixedReadWrite`입니다. 대신 더 구체적인
+   * 단계를 선택해야 합니다. 더 많은 정보는 `AfterRenderPhase`를 참조하세요.
    *
    * </div>
    *
-   * @deprecated Specify the phase for your callback to run in by passing a spec-object as the first
-   *   parameter to `afterRender` or `afterNextRender` instead of a function.
+   * @deprecated 콜백이 실행될 단계를 명시적으로 지정하려면 함수를 대신하여
+   *   `afterRender` 또는 `afterNextRender`의 첫 번째 매개변수로 사양 객체를 전달하세요.
    */
   phase?: AfterRenderPhase;
 }
 
 /**
- * Register callbacks to be invoked each time the application finishes rendering, during the
- * specified phases. The available phases are:
+ * 응용 프로그램이 렌더링을 완료할 때마다 지정된 단계에서 호출되도록 콜백을 등록합니다. 사용 가능한 단계는 다음과 같습니다:
  * - `earlyRead`
- *   Use this phase to **read** from the DOM before a subsequent `write` callback, for example to
- *   perform custom layout that the browser doesn't natively support. Prefer the `read` phase if
- *   reading can wait until after the write phase. **Never** write to the DOM in this phase.
+ *   후속 `write` 콜백 전에 DOM에서 **읽기** 위해 이 단계를 사용하세요. 예를 들어 브라우저가
+ *   본래 지원하지 않는 사용자 정의 레이아웃을 수행하기 위해 사용합니다. 쓰기 단계 후에 읽기가
+ *   기다릴 수 있다면 `read` 단계를 선호하세요. 이 단계에서 DOM에 **결코** 쓰지 마세요.
  * - `write`
- *    Use this phase to **write** to the DOM. **Never** read from the DOM in this phase.
+ *   DOM에 **쓰기** 위해 이 단계를 사용하세요. 이 단계에서 DOM에서 **결코** 읽지 마세요.
  * - `mixedReadWrite`
- *    Use this phase to read from and write to the DOM simultaneously. **Never** use this phase if
- *    it is possible to divide the work among the other phases instead.
+ *   DOM에서 동시에 읽고 쓰기 위해 이 단계를 사용하세요. 다른 단계에서 작업을 나눌 수
+ *   있는 경우 이 단계를 **결코** 사용하지 마세요.
  * - `read`
- *    Use this phase to **read** from the DOM. **Never** write to the DOM in this phase.
+ *   DOM에서 **읽기** 위해 이 단계를 사용하세요. 이 단계에서 DOM에 **결코** 쓰지 마세요.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer using the `read` and `write` phases over the `earlyRead` and `mixedReadWrite`
- * phases when possible, to avoid performance degradation.
+ * 성능 저하를 피하기 위해 가능한 경우 `earlyRead` 및 `mixedReadWrite` 단계보다
+ * `read` 및 `write` 단계를 사용하는 것이 좋습니다.
  *
  * </div>
  *
- * Note that:
- * - Callbacks run in the following phase order *after each render*:
+ * 다음 사항에 유의하세요:
+ * - 콜백은 *각 렌더링 후* 다음 단계 순서로 실행됩니다:
  *   1. `earlyRead`
  *   2. `write`
  *   3. `mixedReadWrite`
  *   4. `read`
- * - Callbacks in the same phase run in the order they are registered.
- * - Callbacks run on browser platforms only, they will not run on the server.
+ * - 동일한 단계의 콜백은 등록된 순서로 실행됩니다.
+ * - 콜백은 브라우저 플랫폼에서만 실행되며 서버에서는 실행되지 않습니다.
  *
- * The first phase callback to run as part of this spec will receive no parameters. Each
- * subsequent phase callback in this spec will receive the return value of the previously run
- * phase callback as a parameter. This can be used to coordinate work across multiple phases.
+ * 이 사양의 첫 번째 단계 콜백은 매개변수를 받지 않습니다. 이 사양의 각
+ * 후속 콜백은 이전에 실행된 단계 콜백의 반환 값을 매개변수로 받습니다. 이를 사용하여
+ * 여러 단계 간 작업을 조정할 수 있습니다.
  *
- * Angular is unable to verify or enforce that phases are used correctly, and instead
- * relies on each developer to follow the guidelines documented for each value and
- * carefully choose the appropriate one, refactoring their code if necessary. By doing
- * so, Angular is better able to minimize the performance degradation associated with
- * manual DOM access, ensuring the best experience for the end users of your application
- * or library.
+ * Angular는 단계가 올바르게 사용되는지 확인하거나 강제할 수 없으며,
+ * 대신 각 개발자가 문서화된 가이드를 따라 각 값을 신중하게 선택하고
+ * 필요시 코드 리펙토링을 수행할 것을 의존합니다. 그렇게 함으로써 Angular는
+ * 수동 DOM 접근과 관련된 성능 저하를 최소화할 수 있으며, 응용프로그램이나
+ * 라이브러리의 최종 사용자에게 최상의 경험을 보장합니다.
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [수화](guide/hydration)된다고 보장되지 않습니다.
+ * DOM 및 레이아웃을 직접 읽거나 쓸 때 주의해야 합니다.
  *
  * </div>
  *
- * @param spec The callback functions to register
- * @param options Options to control the behavior of the callback
+ * @param spec 등록할 콜백 함수
+ * @param options 콜백의 동작을 제어하는 옵션
  *
  * @usageNotes
  *
- * Use `afterRender` to read or write the DOM after each render.
+ * 각 렌더링 후 DOM을 읽거나 쓰기 위해 `afterRender`를 사용하세요.
  *
- * ### Example
+ * ### 예
  * ```angular-ts
  * @Component({
  *   selector: 'my-cmp',
@@ -157,37 +154,35 @@ export function afterRender<E = never, W = never, M = never>(
 ): AfterRenderRef;
 
 /**
- * Register a callback to be invoked each time the application finishes rendering, during the
- * `mixedReadWrite` phase.
+ * 응용 프로그램이 렌더링을 완료할 때마다 `mixedReadWrite` 단계에서 호출될 콜백을 등록합니다.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer specifying an explicit phase for the callback instead, or you risk significant
- * performance degradation.
+ * 대신 콜백에 대해 명시적인 단계를 지정하는 것이 좋으며, 그렇지 않으면 성능 저하의 위험이 있습니다.
  *
  * </div>
  *
- * Note that the callback will run
- * - in the order it was registered
- * - once per render
- * - on browser platforms only
- * - during the `mixedReadWrite` phase
+ * 콜백은 다음에서 실행됩니다:
+ * - 등록된 순서대로
+ * - 각 렌더링마다 한 번
+ * - 브라우저 플랫폼에서만
+ * - `mixedReadWrite` 단계에서
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [수화](guide/hydration)된다고 보장되지 않습니다.
+ * DOM 및 레이아웃을 직접 읽거나 쓸 때 주의해야 합니다.
  *
  * </div>
  *
- * @param callback A callback function to register
- * @param options Options to control the behavior of the callback
+ * @param callback 등록할 콜백 함수
+ * @param options 콜백의 동작을 제어하는 옵션
  *
  * @usageNotes
  *
- * Use `afterRender` to read or write the DOM after each render.
+ * 각 렌더링 후 DOM을 읽거나 쓰기 위해 `afterRender`를 사용하세요.
  *
- * ### Example
+ * ### 예
  * ```angular-ts
  * @Component({
  *   selector: 'my-cmp',
@@ -224,8 +219,8 @@ export function afterRender(
   ngDevMode &&
     assertNotInReactiveContext(
       afterRender,
-      'Call `afterRender` outside of a reactive context. For example, schedule the render ' +
-        'callback inside the component constructor`.',
+      '리액티브 컨텍스트를 벗어나 `afterRender`를 호출하세요. 예: ' +
+        '컴포넌트 생성자 안에 렌더링 콜백을 예약합니다.`',
     );
 
   !options?.injector && assertInInjectionContext(afterRender);
@@ -241,63 +236,61 @@ export function afterRender(
 }
 
 /**
- * Register callbacks to be invoked the next time the application finishes rendering, during the
- * specified phases. The available phases are:
+ * 지정된 단계에서 응용 프로그램이 렌더링을 완료할 때마다 호출되도록 콜백을 등록합니다. 사용 가능한 단계는 다음과 같습니다:
  * - `earlyRead`
- *   Use this phase to **read** from the DOM before a subsequent `write` callback, for example to
- *   perform custom layout that the browser doesn't natively support. Prefer the `read` phase if
- *   reading can wait until after the write phase. **Never** write to the DOM in this phase.
+ *   후속 `write` 콜백 전에 DOM에서 **읽기** 위해 이 단계를 사용하세요. 예를 들어 브라우저가
+ *   본래 지원하지 않는 사용자 정의 레이아웃을 수행하기 위해 사용합니다. 쓰기 단계 후에 읽기가
+ *   기다릴 수 있다면 `read` 단계를 선호하세요. 이 단계에서 DOM에 **결코** 쓰지 마세요.
  * - `write`
- *    Use this phase to **write** to the DOM. **Never** read from the DOM in this phase.
+ *   DOM에 **쓰기** 위해 이 단계를 사용하세요. 이 단계에서 DOM에서 **결코** 읽지 마세요.
  * - `mixedReadWrite`
- *    Use this phase to read from and write to the DOM simultaneously. **Never** use this phase if
- *    it is possible to divide the work among the other phases instead.
+ *   DOM에서 동시에 읽고 쓰기 위해 이 단계를 사용하세요. 다른 단계에서 작업을 나눌 수
+ *   있는 경우 이 단계를 **결코** 사용하지 마세요.
  * - `read`
- *    Use this phase to **read** from the DOM. **Never** write to the DOM in this phase.
+ *   DOM에서 **읽기** 위해 이 단계를 사용하세요. 이 단계에서 DOM에 **결코** 쓰지 마세요.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer using the `read` and `write` phases over the `earlyRead` and `mixedReadWrite`
- * phases when possible, to avoid performance degradation.
+ * 성능 저하를 피하기 위해 가능한 경우 `earlyRead` 및 `mixedReadWrite` 단계보다
+ * `read` 및 `write` 단계를 사용하는 것이 좋습니다.
  *
  * </div>
  *
- * Note that:
- * - Callbacks run in the following phase order *once, after the next render*:
+ * 다음 사항에 유의하세요:
+ * - 콜백은 *다음 렌더링 후 한 번* 다음 단계 순서로 실행됩니다:
  *   1. `earlyRead`
  *   2. `write`
  *   3. `mixedReadWrite`
  *   4. `read`
- * - Callbacks in the same phase run in the order they are registered.
- * - Callbacks run on browser platforms only, they will not run on the server.
+ * - 동일한 단계의 콜백은 등록된 순서로 실행됩니다.
+ * - 콜백은 브라우저 플랫폼에서만 실행되며 서버에서는 실행되지 않습니다.
  *
- * The first phase callback to run as part of this spec will receive no parameters. Each
- * subsequent phase callback in this spec will receive the return value of the previously run
- * phase callback as a parameter. This can be used to coordinate work across multiple phases.
+ * 이 사양의 첫 번째 단계 콜백은 매개변수를 받지 않습니다. 이 사양의 각
+ * 후속 콜백은 이전에 실행된 단계 콜백의 반환 값을 매개변수로 받습니다. 이를 사용하여
+ * 여러 단계 간 작업을 조정할 수 있습니다.
  *
- * Angular is unable to verify or enforce that phases are used correctly, and instead
- * relies on each developer to follow the guidelines documented for each value and
- * carefully choose the appropriate one, refactoring their code if necessary. By doing
- * so, Angular is better able to minimize the performance degradation associated with
- * manual DOM access, ensuring the best experience for the end users of your application
- * or library.
+ * Angular는 단계가 올바르게 사용되는지 확인하거나 강제할 수 없으며,
+ * 대신 각 개발자가 문서화된 가이드를 따라 각 값을 신중하게 선택하고
+ * 필요시 코드 리펙토링을 수행할 것을 의존합니다. 그렇게 함으로써 Angular는
+ * 수동 DOM 접근과 관련된 성능 저하를 최소화할 수 있으며, 응용 프로그램이나
+ * 라이브러리의 최종 사용자에게 최상의 경험을 보장합니다.
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [수화](guide/hydration)된다고 보장되지 않습니다.
+ * DOM 및 레이아웃을 직접 읽거나 쓸 때 주의해야 합니다.
  *
  * </div>
  *
- * @param spec The callback functions to register
- * @param options Options to control the behavior of the callback
+ * @param spec 등록할 콜백 함수
+ * @param options 콜백의 동작을 제어하는 옵션
  *
  * @usageNotes
  *
- * Use `afterNextRender` to read or write the DOM once,
- * for example to initialize a non-Angular library.
+ * `afterNextRender`를 사용하여 DOM을 한 번 읽거나 씁니다.
+ * 예를 들어 비-Angular 라이브러리를 초기화하는 데 사용할 수 있습니다.
  *
- * ### Example
+ * ### 예
  * ```angular-ts
  * @Component({
  *   selector: 'my-chart-cmp',
@@ -330,37 +323,35 @@ export function afterNextRender<E = never, W = never, M = never>(
 ): AfterRenderRef;
 
 /**
- * Register a callback to be invoked the next time the application finishes rendering, during the
- * `mixedReadWrite` phase.
+ * 다음 렌더링이 완료될 때, `mixedReadWrite` 단계에서 호출될 콜백을 등록합니다.
  *
  * <div class="docs-alert docs-alert-critical">
  *
- * You should prefer specifying an explicit phase for the callback instead, or you risk significant
- * performance degradation.
+ * 대신 콜백에 대해 명시적인 단계를 지정하는 것이 좋으며, 그렇지 않으면 성능 저하의 위험이 있습니다.
  *
  * </div>
  *
- * Note that the callback will run
- * - in the order it was registered
- * - on browser platforms only
- * - during the `mixedReadWrite` phase
+ * 콜백은 다음에서 실행됩니다:
+ * - 등록된 순서대로
+ * - 브라우저 플랫폼에서만
+ * - `mixedReadWrite` 단계에서
  *
  * <div class="docs-alert docs-alert-important">
  *
- * Components are not guaranteed to be [hydrated](guide/hydration) before the callback runs.
- * You must use caution when directly reading or writing the DOM and layout.
+ * 콜백이 실행되기 전에 구성 요소가 [수화](guide/hydration)된다고 보장되지 않습니다.
+ * DOM 및 레이아웃을 직접 읽거나 쓸 때 주의해야 합니다.
  *
  * </div>
  *
- * @param callback A callback function to register
- * @param options Options to control the behavior of the callback
+ * @param callback 등록할 콜백 함수
+ * @param options 콜백의 동작을 제어하는 옵션
  *
  * @usageNotes
  *
- * Use `afterNextRender` to read or write the DOM once,
- * for example to initialize a non-Angular library.
+ * `afterNextRender`를 사용하여 DOM을 한 번 읽거나 씁니다.
+ * 예를 들어 비-Angular 라이브러리를 초기화하는 데 사용할 수 있습니다.
  *
- * ### Example
+ * ### 예
  * ```angular-ts
  * @Component({
  *   selector: 'my-chart-cmp',
@@ -436,7 +427,7 @@ function getHooks(
 }
 
 /**
- * Shared implementation for `afterRender` and `afterNextRender`.
+ * `afterRender` 및 `afterNextRender`의 공유 구현.
  */
 function afterRenderImpl(
   callbackOrSpec:
@@ -452,8 +443,8 @@ function afterRenderImpl(
   once: boolean,
 ): AfterRenderRef {
   const manager = injector.get(AfterRenderManager);
-  // Lazily initialize the handler implementation, if necessary. This is so that it can be
-  // tree-shaken if `afterRender` and `afterNextRender` aren't used.
+  // 필요에 따라 핸들러 구현을 지연 초기화합니다. 이를 통해
+  // `afterRender` 및 `afterNextRender`가 사용되지 않는 경우 트리 쉐이킹이 가능합니다.
   manager.impl ??= injector.get(AfterRenderImpl);
 
   const tracing = injector.get(TracingService, null, {optional: true});
@@ -473,7 +464,7 @@ function afterRenderImpl(
   return sequence;
 }
 
-/** `AfterRenderRef` that does nothing. */
+/** 아무것도 하지 않는 `AfterRenderRef`. */
 export const NOOP_AFTER_RENDER_REF: AfterRenderRef = {
   destroy() {},
 };

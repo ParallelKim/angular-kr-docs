@@ -22,15 +22,11 @@ import {profiler} from '../render3/profiler';
 import {ProfilerEvent} from '../render3/profiler_types';
 
 /**
- * Internal create application API that implements the core application creation logic and optional
- * bootstrap logic.
+ * 내부 애플리케이션 생성 API로, 핵심 애플리케이션 생성 논리와 선택적 부트스트랩 논리를 구현합니다.
  *
- * Platforms (such as `platform-browser`) may require different set of application and platform
- * providers for an application to function correctly. As a result, platforms may use this function
- * internally and supply the necessary providers during the bootstrap, while exposing
- * platform-specific APIs as a part of their public API.
+ * 플랫폼(예: `platform-browser`)은 애플리케이션이 올바르게 작동하기 위해 다른 애플리케이션 및 플랫폼 제공자 집합이 필요할 수 있습니다. 결과적으로, 플랫폼은 이 함수를 내부에서 사용할 수 있으며 부트스트랩 중에 필요한 제공자를 공급하고, 플랫폼별 API를 공용 API의 일부로 노출할 수 있습니다.
  *
- * @returns A promise that returns an `ApplicationRef` instance once resolved.
+ * @returns 해결되면 `ApplicationRef` 인스턴스를 반환하는 약속입니다.
  */
 
 export function internalCreateApplication(config: {
@@ -48,8 +44,7 @@ export function internalCreateApplication(config: {
 
     const platformInjector = createOrReusePlatformInjector(platformProviders as StaticProvider[]);
 
-    // Create root application injector based on a set of providers configured at the platform
-    // bootstrap level as well as providers passed to the bootstrap call by a user.
+    // 플랫폼 부트스트랩 수준에서 구성된 제공자 집합 및 사용자가 부트스트랩 호출에 전달한 제공자를 기반으로 루트 애플리케이션 인젝터를 생성합니다.
     const allAppProviders = [
       internalProvideZoneChangeDetection({}),
       {provide: ChangeDetectionScheduler, useExisting: ChangeDetectionSchedulerImpl},
@@ -58,9 +53,8 @@ export function internalCreateApplication(config: {
     const adapter = new EnvironmentNgModuleRefAdapter({
       providers: allAppProviders,
       parent: platformInjector as EnvironmentInjector,
-      debugName: typeof ngDevMode === 'undefined' || ngDevMode ? 'Environment Injector' : '',
-      // We skip environment initializers because we need to run them inside the NgZone, which
-      // happens after we get the NgZone instance from the Injector.
+      debugName: typeof ngDevMode === 'undefined' || ngDevMode ? '환경 인젝터' : '',
+      // 우리는 NgZone 내부에서 실행해야 하므로 환경 초기화기를 건너뛰며, 이는 Injector로부터 NgZone 인스턴스를 얻은 후 발생합니다.
       runEnvironmentInitializers: false,
     });
 

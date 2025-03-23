@@ -10,39 +10,37 @@ import {KeyValueArray} from '../../util/array_utils';
 import {assertNumber, assertNumberInRange} from '../../util/assert';
 
 /**
- * Value stored in the `TData` which is needed to re-concatenate the styling.
+ * 스타일을 다시 연결하는 데 필요한 `TData`에 저장된 값입니다.
  *
- * See: `TStylingKeyPrimitive` and `TStylingStatic`
+ * 참고: `TStylingKeyPrimitive` 및 `TStylingStatic`
  */
 export type TStylingKey = TStylingKeyPrimitive | TStylingStatic;
 
 /**
- * The primitive portion (`TStylingStatic` removed) of the value stored in the `TData` which is
- * needed to re-concatenate the styling.
+ * 스타일을 다시 연결하는 데 필요한 `TData`에 저장된 값의 원시 부분(`TStylingStatic`이 제거됨).
  *
- * - `string`: Stores the property name. Used with `ɵɵstyleProp`/`ɵɵclassProp` instruction.
- * - `null`: Represents map, so there is no name. Used with `ɵɵstyleMap`/`ɵɵclassMap`.
- * - `false`: Represents an ignore case. This happens when `ɵɵstyleProp`/`ɵɵclassProp` instruction
- *   is combined with directive which shadows its input `@Input('class')`. That way the binding
- *   should not participate in the styling resolution.
+ * - `string`: 속성 이름을 저장합니다. `ɵɵstyleProp`/`ɵɵclassProp` 지시어와 함께 사용됩니다.
+ * - `null`: 맵을 나타내므로 이름이 없습니다. `ɵɵstyleMap`/`ɵɵclassMap`과 함께 사용됩니다.
+ * - `false`: 무시 케이스를 나타냅니다. 이는 `ɵɵstyleProp`/`ɵɵclassProp` 지시어가
+ *   입력 `@Input('class')`를 그림자 처리하는 지시어와 결합될 때 발생합니다. 이 경우 바인딩은
+ *   스타일링 해석에 참여해서는 안 됩니다.
  */
 export type TStylingKeyPrimitive = string | null | false;
 
 /**
- * Store the static values for the styling binding.
+ * 스타일 바인딩에 대한 정적 값을 저장합니다.
  *
- * The `TStylingStatic` is just `KeyValueArray` where key `""` (stored at location 0) contains the
- * `TStylingKey` (stored at location 1). In other words this wraps the `TStylingKey` such that the
- * `""` contains the wrapped value.
+ * `TStylingStatic`은 키가 `""`(위치 0에 저장됨)이고 `TStylingKey`가
+ * (위치 1에 저장됨) 포함된 `KeyValueArray`에 불과합니다. 즉, 이것은 `TStylingKey`를 포장하여
+ * `""`가 포장된 값을 포함합니다.
  *
- * When instructions are resolving styling they may need to look forward or backwards in the linked
- * list to resolve the value. For this reason we have to make sure that he linked list also contains
- * the static values. However the list only has space for one item per styling instruction. For this
- * reason we store the static values here as part of the `TStylingKey`. This means that the
- * resolution function when looking for a value needs to first look at the binding value, and than
- * at `TStylingKey` (if it exists).
+ * 지시어가 스타일을 해결할 때 값 해석을 위해 연결 목록을 앞으로하거나 뒤로 봐야 할 수 있습니다.
+ * 이 때문에 연결 목록에도 정적 값이 포함되어야 합니다. 그러나 목록은 각 스타일링 지시어에 대해
+ * 하나의 항목만 저장할 수 있습니다. 그렇기 때문에 우리는 이곳에 정적 값을 `TStylingKey`의 일부로 저장합니다.
+ * 이는 값 해석 함수가 값을 찾을 때 바인딩 값을 먼저 살펴보고 나서 `TStylingKey`를 확인해야 함을 의미합니다
+ * (존재하는 경우).
  *
- * Imagine we have:
+ * 다음과 같은 경우를 상상해 보십시오:
  *
  * ```angular-ts
  * <div class="TEMPLATE" my-dir>
@@ -55,103 +53,101 @@ export type TStylingKeyPrimitive = string | null | false;
  * })
  * ```
  *
- * In the above case the linked list will contain one item:
+ * 위의 경우 연결 목록은 하나의 항목을 포함합니다:
  *
  * ```ts
- *   // assume binding location: 10 for `ɵɵclassProp('dynamic', ctx.exp);`
+ *   // 바인딩 위치: 10으로 가정하여 `ɵɵclassProp('dynamic', ctx.exp);`
  *   tData[10] = <TStylingStatic>[
- *     '': 'dynamic', // This is the wrapped value of `TStylingKey`
- *     'DIR': true,   // This is the default static value of directive binding.
+ *     '': 'dynamic', // 이것은 `TStylingKey`의 포장된 값입니다.
+ *     'DIR': true,   // 이것은 지시어 바인딩의 기본 정적 값입니다.
  *   ];
- *   tData[10 + 1] = 0; // We don't have prev/next.
+ *   tData[10 + 1] = 0; // 이전/다음이 없습니다.
  *
- *   lView[10] = undefined;     // assume `ctx.exp` is `undefined`
- *   lView[10 + 1] = undefined; // Just normalized `lView[10]`
+ *   lView[10] = undefined;     // `ctx.exp`가 `undefined`라고 가정합니다.
+ *   lView[10 + 1] = undefined; // 단순히 `lView[10]`을 정규화했습니다.
  * ```
  *
- * So when the function is resolving styling value, it first needs to look into the linked list
- * (there is none) and than into the static `TStylingStatic` too see if there is a default value for
- * `dynamic` (there is not). Therefore it is safe to remove it.
+ * 따라서 함수가 스타일링 값을 해석할 때, 먼저 연결 목록을 살펴봐야하고
+ * (없는 경우) 정적 `TStylingStatic`도 확인해야 하며, `dynamic`에 대한 기본 값이 있는지 확인합니다
+ * (없는 경우). 따라서 제거해도 안전합니다.
  *
- * If setting `true` case:
+ * `true`를 설정하는 경우:
  * ```ts
- *   lView[10] = true;     // assume `ctx.exp` is `true`
- *   lView[10 + 1] = true; // Just normalized `lView[10]`
+ *   lView[10] = true;     // `ctx.exp`가 `true`라고 가정합니다.
+ *   lView[10 + 1] = true; // 단순히 `lView[10]`을 정규화했습니다.
  * ```
- * So when the function is resolving styling value, it first needs to look into the linked list
- * (there is none) and than into `TNode.residualClass` (TNode.residualStyle) which contains
+ * 따라서 함수가 스타일링 값을 해석할 때, 먼저 연결 목록을 살펴봐야 하고
+ * (없는 경우) `TNode.residualClass` (TNode.residualStyle)로 이동하고,
  * ```ts
  *   tNode.residualClass = [
  *     'TEMPLATE': true,
  *   ];
  * ```
  *
- * This means that it is safe to add class.
+ * 이는 클래스를 추가해도 안전하다는 것을 의미합니다.
  */
 export interface TStylingStatic extends KeyValueArray<any> {}
 
 /**
- * This is a branded number which contains previous and next index.
+ * 이것은 이전 및 다음 인덱스를 포함하는 브랜드 숫자입니다.
  *
- * When we come across styling instructions we need to store the `TStylingKey` in the correct
- * order so that we can re-concatenate the styling value in the desired priority.
+ * 스타일 지시어를 만나면, 올바른 순서로 `TStylingKey`를 저장하여
+ * 원하는 우선 순위로 스타일 값이 다시 연결되도록 합니다.
  *
- * The insertion can happen either at the:
- * - end of template as in the case of coming across additional styling instruction in the template
- * - in front of the template in the case of coming across additional instruction in the
- *   `hostBindings`.
+ * 삽입은 다음에서 발생할 수 있습니다:
+ * - 추가 스타일 지시어를 만나 템플릿 끝에서
+ * - `hostBindings`의 추가 지시어를 만나 템플릿 앞에서
  *
- * We use `TStylingRange` to store the previous and next index into the `TData` where the template
- * bindings can be found.
+ * 우리는 `TStylingRange`를 사용하여 템플릿 바인딩을 찾을 수 있는 `TData`에
+ * 이전 및 다음 인덱스를 저장합니다.
  *
- * - bit 0 is used to mark that the previous index has a duplicate for current value.
- * - bit 1 is used to mark that the next index has a duplicate for the current value.
- * - bits 2-16 are used to encode the next/tail of the template.
- * - bits 17-32 are used to encode the previous/head of template.
+ * - 비트 0은 현재 값에 대한 이전 인덱스에 중복이 있음을 표시하는 데 사용됩니다.
+ * - 비트 1은 현재 값에 대한 다음 인덱스에 중복이 있음을 표시하는 데 사용됩니다.
+ * - 비트 2-16은 템플릿의 다음/끝을 인코딩하는 데 사용됩니다.
+ * - 비트 17-32는 템플릿의 이전/시작을 인코딩하는 데 사용됩니다.
  *
- * NODE: *duplicate* false implies that it is statically known that this binding will not collide
- * with other bindings and therefore there is no need to check other bindings. For example the
- * bindings in `<div [style.color]="exp" [style.width]="exp">` will never collide and will have
- * their bits set accordingly. Previous duplicate means that we may need to check previous if the
- * current binding is `null`. Next duplicate means that we may need to check next bindings if the
- * current binding is not `null`.
+ * NODE: *중복* false는 이 바인딩이 다른 바인딩과 충돌하지 않을 것이라는
+ * 정적으로 알려진 것을 의미하므로 다른 바인딩을 확인할 필요가 없습니다.
+ * 예를 들어 `<div [style.color]="exp" [style.width]="exp">`의 바인딩은 결코 충돌하지 않으며
+ * 해당 비트는 적절하게 설정됩니다. 이전 중복은 현재 바인딩이 `null`일 때 이전을 확인해야 할 수 있음을
+ * 의미합니다. 다음 중복은 현재 바인딩이 `null`이 아닐 때 다음 바인딩을 확인해야 할 수 있음을 의미합니다.
  *
- * NOTE: `0` has special significance and represents `null` as in no additional pointer.
+ * NOTE: `0`은 특수한 의미를 가지며 `null`을 나타내며 추가 포인터가 없음을 의미합니다.
  */
 export type TStylingRange = number & {
   __brand__: 'TStylingRange';
 };
 
 /**
- * Shift and masks constants for encoding two numbers into and duplicate info into a single number.
+ * 두 숫자와 중복 정보를 하나의 숫자로 인코딩하기 위한 상수 시프트 및 마스크입니다.
  */
 export const enum StylingRange {
-  /// Number of bits to shift for the previous pointer
+  /// 이전 포인터에 대한 비트 시프트 수
   PREV_SHIFT = 17,
-  /// Previous pointer mask.
+  /// 이전 포인터 마스크.
   PREV_MASK = 0xfffe0000,
 
-  /// Number of bits to shift for the next pointer
+  /// 다음 포인터에 대한 비트 시프트 수
   NEXT_SHIFT = 2,
-  /// Next pointer mask.
+  /// 다음 포인터 마스크.
   NEXT_MASK = 0x001fffc,
 
-  // Mask to remove negative bit. (interpret number as positive)
+  // 음수 비트를 제거하기 위한 마스크. (숫자를 양수로 해석)
   UNSIGNED_MASK = 0x7fff,
 
   /**
-   * This bit is set if the previous bindings contains a binding which could possibly cause a
-   * duplicate. For example: `<div [style]="map" [style.width]="width">`, the `width` binding will
-   * have previous duplicate set. The implication is that if `width` binding becomes `null`, it is
-   * necessary to defer the value to `map.width`. (Because `width` overwrites `map.width`.)
+   * 이 비트는 이전 바인딩이 중복을 유발할 수 있는 바인딩을 포함하고 있음을 나타냅니다.
+   * 예를 들어: `<div [style]="map" [style.width]="width">`, `width` 바인딩은
+   * 이전 중복으로 설정됩니다. 이 경우 `width` 바인딩이 `null`이 되면, `map.width`에 값을
+   * 지연시키는 것이 필요합니다. (왜냐하면 `width`가 `map.width`를 덮어쓰니까요.)
    */
   PREV_DUPLICATE = 0x02,
 
   /**
-   * This bit is set to if the next binding contains a binding which could possibly cause a
-   * duplicate. For example: `<div [style]="map" [style.width]="width">`, the `map` binding will
-   * have next duplicate set. The implication is that if `map.width` binding becomes not `null`, it
-   * is necessary to defer the value to `width`. (Because `width` overwrites `map.width`.)
+   * 이 비트는 다음 바인딩이 중복을 유발할 수 있는 바인딩을 포함하고 있음을 나타냅니다.
+   * 예를 들어: `<div [style]="map" [style.width]="width">`, `map` 바인딩은
+   * 다음 중복으로 설정됩니다. 이 경우 `map.width` 바인딩이 `null`이 아니게 되면, `width`에
+   * 값을 지연시키는 것이 필요합니다. (왜냐하면 `width`가 `map.width`를 덮어쓰니까요.)
    */
   NEXT_DUPLICATE = 0x01,
 }

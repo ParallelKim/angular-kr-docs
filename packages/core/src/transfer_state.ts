@@ -12,9 +12,9 @@ import {ɵɵdefineInjectable} from './di/interface/defs';
 import {getDocument} from './render3/interfaces/document';
 
 /**
- * A type-safe key to use with `TransferState`.
+ * `TransferState`와 함께 사용할 수 있는 타입 안전한 키입니다.
  *
- * Example:
+ * 예제:
  *
  * ```ts
  * const COUNTER_KEY = makeStateKey<number>('counter');
@@ -31,9 +31,9 @@ export type StateKey<T> = string & {
 };
 
 /**
- * Create a `StateKey<T>` that can be used to store value of type T with `TransferState`.
+ * `TransferState`와 함께 타입 T의 값을 저장하는 데 사용할 수 있는 `StateKey<T>`를 생성합니다.
  *
- * Example:
+ * 예제:
  *
  * ```ts
  * const COUNTER_KEY = makeStateKey<number>('counter');
@@ -58,17 +58,15 @@ function initTransferState(): TransferState {
 }
 
 /**
- * A key value store that is transferred from the application on the server side to the application
- * on the client side.
+ * 서버 측에서 클라이언트 측 애플리케이션으로 전송되는 키-값 저장소입니다.
  *
- * The `TransferState` is available as an injectable token.
- * On the client, just inject this token using DI and use it, it will be lazily initialized.
- * On the server it's already included if `renderApplication` function is used. Otherwise, import
- * the `ServerTransferStateModule` module to make the `TransferState` available.
+ * `TransferState`는 주입 가능한 토큰으로 사용 가능합니다.
+ * 클라이언트에서는 DI를 사용하여 이 토큰을 주입하고 사용하면, 지연 초기화됩니다.
+ * 서버에서는 `renderApplication` 함수를 사용하면 이미 포함되어 있습니다. 그렇지 않으면
+ * `ServerTransferStateModule` 모듈을 가져와서 `TransferState`를 사용할 수 있도록 합니다.
  *
- * The values in the store are serialized/deserialized using JSON.stringify/JSON.parse. So only
- * boolean, number, string, null and non-class objects will be serialized and deserialized in a
- * non-lossy manner.
+ * 저장소의 값은 JSON.stringify/JSON.parse를 사용하여 직렬화/역직렬화됩니다. 따라서
+ * 불리언, 숫자, 문자열, null 및 비클래스 객체만 손실 없이 직렬화 및 역직렬화됩니다.
  *
  * @publicApi
  */
@@ -86,64 +84,64 @@ export class TransferState {
   private onSerializeCallbacks: {[k: string]: () => unknown | undefined} = {};
 
   /**
-   * Get the value corresponding to a key. Return `defaultValue` if key is not found.
+   * 키에 해당하는 값을 가져옵니다. 키를 찾을 수 없으면 `defaultValue`를 반환합니다.
    */
   get<T>(key: StateKey<T>, defaultValue: T): T {
     return this.store[key] !== undefined ? (this.store[key] as T) : defaultValue;
   }
 
   /**
-   * Set the value corresponding to a key.
+   * 키에 해당하는 값을 설정합니다.
    */
   set<T>(key: StateKey<T>, value: T): void {
     this.store[key] = value;
   }
 
   /**
-   * Remove a key from the store.
+   * 저장소에서 키를 제거합니다.
    */
   remove<T>(key: StateKey<T>): void {
     delete this.store[key];
   }
 
   /**
-   * Test whether a key exists in the store.
+   * 저장소에 키가 존재하는지 여부를 테스트합니다.
    */
   hasKey<T>(key: StateKey<T>): boolean {
     return this.store.hasOwnProperty(key);
   }
 
   /**
-   * Indicates whether the state is empty.
+   * 상태가 비어 있는지 여부를 나타냅니다.
    */
   get isEmpty(): boolean {
     return Object.keys(this.store).length === 0;
   }
 
   /**
-   * Register a callback to provide the value for a key when `toJson` is called.
+   * `toJson`이 호출될 때 키에 대한 값을 제공하는 콜백을 등록합니다.
    */
   onSerialize<T>(key: StateKey<T>, callback: () => T): void {
     this.onSerializeCallbacks[key] = callback;
   }
 
   /**
-   * Serialize the current state of the store to JSON.
+   * 저장소의 현재 상태를 JSON으로 직렬화합니다.
    */
   toJson(): string {
-    // Call the onSerialize callbacks and put those values into the store.
+    // onSerialize 콜백을 호출하고 그 값을 저장소에 넣습니다.
     for (const key in this.onSerializeCallbacks) {
       if (this.onSerializeCallbacks.hasOwnProperty(key)) {
         try {
           this.store[key] = this.onSerializeCallbacks[key]();
         } catch (e) {
-          console.warn('Exception in onSerialize callback: ', e);
+          console.warn('onSerialize 콜백 중 예외: ', e);
         }
       }
     }
 
-    // Escape script tag to avoid break out of <script> tag in serialized output.
-    // Encoding of `<` is the same behaviour as G3 script_builders.
+    // 직렬화된 출력에서 <script> 태그 밖으로 벗어나지 않도록 스크립트 태그를 이스케이프합니다.
+    // `<`의 인코딩은 G3 스크립트 빌더와 동일한 동작입니다.
     return JSON.stringify(this.store).replace(/</g, '\\u003C');
   }
 }
@@ -152,14 +150,14 @@ function retrieveTransferredState(
   doc: Document,
   appId: string,
 ): Record<string, unknown | undefined> {
-  // Locate the script tag with the JSON data transferred from the server.
-  // The id of the script tag is set to the Angular appId + 'state'.
+  // 서버에서 전송된 JSON 데이터가 있는 스크립트 태그를 찾습니다.
+  // 스크립트 태그의 ID는 Angular appId + 'state'로 설정됩니다.
   const script = doc.getElementById(appId + '-state');
   if (script?.textContent) {
     try {
-      // Avoid using any here as it triggers lint errors in google3 (any is not allowed).
-      // Decoding of `<` is done of the box by browsers and node.js, same behaviour as G3
-      // script_builders.
+      // google3에서 lint 오류를 유발하지 않기 위해 여기서 any를 사용하지 마세요 (any는 허용되지 않음).
+      // `<`의 디코딩은 브라우저와 node.js가 기본적으로 처리합니다. G3
+      // 스크립트 빌더와 동일한 동작입니다.
       return JSON.parse(script.textContent) as {};
     } catch (e) {
       console.warn('Exception while restoring TransferState for app ' + appId, e);

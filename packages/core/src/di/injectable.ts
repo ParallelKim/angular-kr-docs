@@ -22,7 +22,7 @@ import {compileInjectable} from './jit/injectable';
 export {compileInjectable};
 
 /**
- * Injectable providers used in `@Injectable` decorator.
+ * `@Injectable` 데코레이터에서 사용되는 Injectable 프로바이더입니다.
  *
  * @publicApi
  */
@@ -35,26 +35,25 @@ export type InjectableProvider =
   | ClassSansProvider;
 
 /**
- * Type of the Injectable decorator / constructor function.
+ * Injectable 데코레이터 / 생성자 함수의 타입입니다.
  *
  * @publicApi
  */
 export interface InjectableDecorator {
   /**
-   * Decorator that marks a class as available to be
-   * provided and injected as a dependency.
+   * 클래스를 제공될 수 있도록 표시하며,
+   * 의존성으로 주입받을 수 있도록 만드는 데코레이터입니다.
    *
-   * @see [Introduction to Services and DI](guide/di)
-   * @see [Dependency Injection Guide](guide/di/dependency-injection
+   * @see [서비스 및 DI 소개](guide/di)
+   * @see [의존성 주입 가이드](guide/di/dependency-injection)
    *
    * @usageNotes
    *
-   * Marking a class with `@Injectable` ensures that the compiler
-   * will generate the necessary metadata to create the class's
-   * dependencies when the class is injected.
+   * `@Injectable`로 클래스를 표시하면 컴파일러가 클래스를 주입할 때
+   * 클래스의 의존성을 생성하는 데 필요한 메타데이터를 생성합니다.
    *
-   * The following example shows how a service class is properly
-   *  marked so that a supporting service can be injected upon creation.
+   * 다음 예시는 서비스 클래스가 적절히 표시되어 지원 서비스가
+   * 생성 시 주입될 수 있도록 하는 방법을 보여줍니다.
    *
    * {@example core/di/ts/metadata_spec.ts region='Injectable'}
    *
@@ -70,34 +69,33 @@ export interface InjectableDecorator {
 }
 
 /**
- * Type of the Injectable metadata.
+ * Injectable 메타데이터의 타입입니다.
  *
  * @publicApi
  */
 export interface Injectable {
   /**
-   * Determines which injectors will provide the injectable.
+   * 어떤 인젝터가 injectable을 제공할지 결정합니다.
    *
-   * - `Type<any>` - associates the injectable with an `@NgModule` or other `InjectorType`. This
-   * option is DEPRECATED.
-   * - 'null' : Equivalent to `undefined`. The injectable is not provided in any scope automatically
-   * and must be added to a `providers` array of an [@NgModule](api/core/NgModule#providers),
-   * [@Component](api/core/Directive#providers) or [@Directive](api/core/Directive#providers).
+   * - `Type<any>` - injectable을 `@NgModule` 또는 다른 `InjectorType`과 연관시킵니다. 이
+   * 옵션은 더 이상 사용되지 않습니다.
+   * - 'null' : `undefined`와 동등합니다. injectable이 자동으로 어떤 스코프에서도 제공되지 않으며
+   * [@NgModule](api/core/NgModule#providers),
+   * [@Component](api/core/Directive#providers) 또는 [@Directive](api/core/Directive#providers)의
+   * `providers` 배열에 추가해야 합니다.
    *
-   * The following options specify that this injectable should be provided in one of the following
-   * injectors:
-   * - 'root' : The application-level injector in most apps.
-   * - 'platform' : A special singleton platform injector shared by all
-   * applications on the page.
-   * - 'any' : Provides a unique instance in each lazy loaded module while all eagerly loaded
-   * modules share one instance. This option is DEPRECATED.
+   * 다음 옵션들은 이 injectable이 다음 인젝터 중 하나에서 제공되어야 함을 지정합니다:
+   * - 'root' : 대부분의 앱의 애플리케이션 레벨 인젝터.
+   * - 'platform' : 페이지의 모든 애플리케이션이 공유하는 특별한 싱글톤 플랫폼 인젝터.
+   * - 'any' : 모든 지연 로드 모듈에서 고유한 인스턴스를 제공하는 반면, 모든 즉시 로드된
+   * 모듈은 하나의 인스턴스를 공유합니다. 이 옵션은 더 이상 사용되지 않습니다.
    *
    */
   providedIn?: Type<any> | 'root' | 'platform' | 'any' | null;
 }
 
 /**
- * Injectable decorator and metadata.
+ * Injectable 데코레이터 및 메타데이터입니다.
  *
  * @Annotation
  * @publicApi

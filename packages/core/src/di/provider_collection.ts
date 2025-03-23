@@ -38,8 +38,8 @@ import {
 import {INJECTOR_DEF_TYPES} from './internal_tokens';
 
 /**
- * Wrap an array of `Provider`s into `EnvironmentProviders`, preventing them from being accidentally
- * referenced in `@Component` in a component injector.
+ * `Provider`의 배열을 `EnvironmentProviders`로 감싸서 컴포넌트 주입기에서
+ * 우발적으로 참조되는 것을 방지합니다.
  */
 export function makeEnvironmentProviders(
   providers: (Provider | EnvironmentProviders)[],
@@ -51,23 +51,22 @@ export function makeEnvironmentProviders(
 
 /**
  * @description
- * This function is used to provide initialization functions that will be executed upon construction
- * of an environment injector.
+ * 이 함수는 환경 주입기 구축 시 실행될 초기화 함수를 제공합니다.
  *
- * Note that the provided initializer is run in the injection context.
+ * 제공된 초기화 함수는 주입 컨텍스트에서 실행됩니다.
  *
- * Previously, this was achieved using the `ENVIRONMENT_INITIALIZER` token which is now deprecated.
+ * 이전에는 이 작업이 이제 더 이상 사용되지 않는 `ENVIRONMENT_INITIALIZER` 토큰을 사용하여 수행되었습니다.
  *
  * @see {@link ENVIRONMENT_INITIALIZER}
  *
  * @usageNotes
- * The following example illustrates how to configure an initialization function using
- * `provideEnvironmentInitializer()`
+ * 다음 예는 `provideEnvironmentInitializer()`를 사용하여
+ * 초기화 함수를 구성하는 방법을 설명합니다.
  * ```ts
  * createEnvironmentInjector(
  *   [
  *     provideEnvironmentInitializer(() => {
- *       console.log('environment initialized');
+ *       console.log('환경 초기화됨');
  *     }),
  *   ],
  *   parentInjector
@@ -87,7 +86,7 @@ export function provideEnvironmentInitializer(initializerFn: () => void): Enviro
 }
 
 /**
- * A source of providers for the `importProvidersFrom` function.
+ * `importProvidersFrom` 함수의 제공자 출처.
  *
  * @publicApi
  */
@@ -102,18 +101,17 @@ type WalkProviderTreeVisitor = (
 ) => void;
 
 /**
- * Collects providers from all NgModules and standalone components, including transitively imported
- * ones.
+ * 모든 NgModule 및 독립형 컴포넌트에서 제공자를 수집하며,
+ * 전이적으로 가져온 것들도 포함합니다.
  *
- * Providers extracted via `importProvidersFrom` are only usable in an application injector or
- * another environment injector (such as a route injector). They should not be used in component
- * providers.
+ * `importProvidersFrom`을 통해 추출된 제공자는
+ * 응용 프로그램 주입기 또는 다른 환경 주입기(예: 라우트 주입기)에서만 사용 가능하며
+ * 컴포넌트 제공자에서는 사용해서는 안 됩니다.
  *
- * More information about standalone components can be found in [this
- * guide](guide/components/importing).
+ * 독립형 컴포넌트에 대한 자세한 정보는 [이 가이드](guide/components/importing)에서 확인할 수 있습니다.
  *
  * @usageNotes
- * The results of the `importProvidersFrom` call can be used in the `bootstrapApplication` call:
+ * `importProvidersFrom` 호출의 결과는 `bootstrapApplication` 호출에서 사용할 수 있습니다:
  *
  * ```ts
  * await bootstrapApplication(RootComponent, {
@@ -123,8 +121,8 @@ type WalkProviderTreeVisitor = (
  * });
  * ```
  *
- * You can also use the `importProvidersFrom` results in the `providers` field of a route, when a
- * standalone component is used:
+ * 독립형 컴포넌트를 사용할 때 라우트의 `providers` 필드에서도
+ * `importProvidersFrom` 결과를 사용할 수 있습니다:
  *
  * ```ts
  * export const ROUTES: Route[] = [
@@ -138,7 +136,7 @@ type WalkProviderTreeVisitor = (
  * ];
  * ```
  *
- * @returns Collected providers from the specified list of types.
+ * @returns 지정된 타입 목록에서 수집된 제공자.
  * @publicApi
  */
 export function importProvidersFrom(...sources: ImportProvidersSource[]): EnvironmentProviders {
@@ -153,7 +151,7 @@ export function internalImportProvidersFrom(
   ...sources: ImportProvidersSource[]
 ): Provider[] {
   const providersOut: SingleProvider[] = [];
-  const dedup = new Set<Type<unknown>>(); // already seen types
+  const dedup = new Set<Type<unknown>>(); // 이미 본 타입들
   let injectorTypesWithProviders: InjectorTypeWithProviders<unknown>[] | undefined;
 
   const collectProviders: WalkProviderTreeVisitor = (provider) => {
@@ -166,21 +164,21 @@ export function internalImportProvidersFrom(
       if (cmpDef?.standalone) {
         throw new RuntimeError(
           RuntimeErrorCode.IMPORT_PROVIDERS_FROM_STANDALONE,
-          `Importing providers supports NgModule or ModuleWithProviders but got a standalone component "${stringifyForError(
+          `프로바이더 가져오기는 NgModule 또는 ModuleWithProviders를 지원하지만 독립형 컴포넌트 "${stringifyForError(
             source,
-          )}"`,
+          )}"를 얻었습니다.`,
         );
       }
     }
 
-    // Narrow `source` to access the internal type analogue for `ModuleWithProviders`.
+    // `ModuleWithProviders`의 내부 타입 유사체에 접근하기 위해 `source`를 좁힙니다.
     const internalSource = source as Type<unknown> | InjectorTypeWithProviders<unknown>;
     if (walkProviderTree(internalSource, collectProviders, [], dedup)) {
       injectorTypesWithProviders ||= [];
       injectorTypesWithProviders.push(internalSource);
     }
   });
-  // Collect all providers from `ModuleWithProviders` types.
+  // `ModuleWithProviders` 타입에서 모든 제공자를 수집합니다.
   if (injectorTypesWithProviders !== undefined) {
     processInjectorTypesWithProviders(injectorTypesWithProviders, collectProviders);
   }
@@ -189,8 +187,7 @@ export function internalImportProvidersFrom(
 }
 
 /**
- * Collects all providers from the list of `ModuleWithProviders` and appends them to the provided
- * array.
+ * `ModuleWithProviders` 목록에서 모든 제공자를 수집하고 제공된 배열에 추가합니다.
  */
 function processInjectorTypesWithProviders(
   typesWithProviders: InjectorTypeWithProviders<unknown>[],
@@ -209,7 +206,7 @@ function processInjectorTypesWithProviders(
 }
 
 /**
- * Internal type for a single provider in a deep provider array.
+ * 깊은 제공자 배열의 단일 제공자에 대한 내부 타입입니다.
  */
 export type SingleProvider =
   | TypeProvider
@@ -221,13 +218,13 @@ export type SingleProvider =
   | StaticClassProvider;
 
 /**
- * The logic visits an `InjectorType`, an `InjectorTypeWithProviders`, or a standalone
- * `ComponentType`, and all of its transitive providers and collects providers.
+ * 이 로직은 `InjectorType`, `InjectorTypeWithProviders` 또는 독립형
+ * `ComponentType`를 방문하고 모든 전이적 제공자를 수집합니다.
  *
- * If an `InjectorTypeWithProviders` that declares providers besides the type is specified,
- * the function will return "true" to indicate that the providers of the type definition need
- * to be processed. This allows us to process providers of injector types after all imports of
- * an injector definition are processed. (following View Engine semantics: see FW-1349)
+ * 제공자 외에 제공자를 선언하는 `InjectorTypeWithProviders`가 지정되면,
+ * 이 함수는 제공자 형식 정의를 처리해야 함을 나타내기 위해 "true"를 반환합니다.
+ * 이로 인해 주입기 정의의 모든 가져오기가 처리된 후 주입기 형식의 제공자를 처리할 수 있습니다.
+ * (View Engine 의미론에 따름: FW-1349 참조)
  */
 export function walkProviderTree(
   container: Type<unknown> | InjectorTypeWithProviders<unknown>,
@@ -238,25 +235,24 @@ export function walkProviderTree(
   container = resolveForwardRef(container);
   if (!container) return false;
 
-  // The actual type which had the definition. Usually `container`, but may be an unwrapped type
-  // from `InjectorTypeWithProviders`.
+  // 정의를 가진 실제 타입. 일반적으로 `container`이지만,
+  // `InjectorTypeWithProviders`의 언랩된 타입일 수 있습니다.
   let defType: Type<unknown> | null = null;
 
   let injDef = getInjectorDef(container);
   const cmpDef = !injDef && getComponentDef(container);
   if (!injDef && !cmpDef) {
-    // `container` is not an injector type or a component type. It might be:
-    //  * An `InjectorTypeWithProviders` that wraps an injector type.
-    //  * A standalone directive or pipe that got pulled in from a standalone component's
-    //    dependencies.
-    // Try to unwrap it as an `InjectorTypeWithProviders` first.
+    // `container`는 주입기 유형이나 컴포넌트 유형이 아닙니다. 다음일 수 있습니다:
+    //  * 주입기 유형을 감싸는 `InjectorTypeWithProviders`.
+    //  * 독립형 컴포넌트의 종속성에서 끌어온 독립형 지시자 또는 파이프.
+    // 먼저 `InjectorTypeWithProviders`로 언랩하려고 시도합니다.
     const ngModule: Type<unknown> | undefined = (container as InjectorTypeWithProviders<any>)
       .ngModule as Type<unknown> | undefined;
     injDef = getInjectorDef(ngModule);
     if (injDef) {
       defType = ngModule!;
     } else {
-      // Not a component or injector type, so ignore it.
+      // 컴포넌트나 주입기 타입이 아니므로 무시합니다.
       return false;
     }
   } else if (cmpDef && !cmpDef.standalone) {
@@ -265,19 +261,19 @@ export function walkProviderTree(
     defType = container as Type<unknown>;
   }
 
-  // Check for circular dependencies.
+  // 순환 종속성을 확인합니다.
   if (ngDevMode && parents.indexOf(defType) !== -1) {
     const defName = stringify(defType);
     const path = parents.map(stringify);
     throwCyclicDependencyError(defName, path);
   }
 
-  // Check for multiple imports of the same module
+  // 동일한 모듈의 여러 가져오기를 확인합니다.
   const isDuplicate = dedup.has(defType);
 
   if (cmpDef) {
     if (isDuplicate) {
-      // This component definition has already been processed.
+      // 이 컴포넌트 정의는 이미 처리되었습니다.
       return false;
     }
     dedup.add(defType);
@@ -290,12 +286,12 @@ export function walkProviderTree(
       }
     }
   } else if (injDef) {
-    // First, include providers from any imports.
+    // 먼저, 모든 가져오기에서 제공자를 포함합니다.
     if (injDef.imports != null && !isDuplicate) {
-      // Before processing defType's imports, add it to the set of parents. This way, if it ends
-      // up deeply importing itself, this can be detected.
+      // defType의 가져오기를 처리하기 전에 부모 목록에 추가합니다.
+      // 이렇게 하면 깊게 자기 자신을 가져오는 경우 감지할 수 있습니다.
       ngDevMode && parents.push(defType);
-      // Add it to the set of dedups. This way we can detect multiple imports of the same module
+      // 동일한 모듈의 여러 가져오기를 감지할 수 있도록 dedup에 추가합니다.
       dedup.add(defType);
 
       let importTypesWithProviders: InjectorTypeWithProviders<any>[] | undefined;
@@ -303,47 +299,49 @@ export function walkProviderTree(
         deepForEach(injDef.imports, (imported) => {
           if (walkProviderTree(imported, visitor, parents, dedup)) {
             importTypesWithProviders ||= [];
-            // If the processed import is an injector type with providers, we store it in the
-            // list of import types with providers, so that we can process those afterwards.
+            // 처리된 가져오리가 제공자를 가진 주입기 유형이라면
+            // 제공자 목록에 저장하여 이후에 처리할 수 있도록 합니다.
             importTypesWithProviders.push(imported);
           }
         });
       } finally {
-        // Remove it from the parents set when finished.
+        // 작업이 끝나면 부모 목록에서 제거합니다.
         ngDevMode && parents.pop();
       }
 
-      // Imports which are declared with providers (TypeWithProviders) need to be processed
-      // after all imported modules are processed. This is similar to how View Engine
-      // processes/merges module imports in the metadata resolver. See: FW-1349.
+      // 제공자를 가진(형 타이프)으로 선언된 가져오는 것은
+      // 모든 가져온 모듈이 처리된 후 처리되어야 합니다.
+      // 이는 View Engine이 메타데이터 리졸버에서 모듈 가져오기를
+      // 처리/병합하는 방법과 유사합니다. FW-1349 참조.
       if (importTypesWithProviders !== undefined) {
         processInjectorTypesWithProviders(importTypesWithProviders, visitor);
       }
     }
 
     if (!isDuplicate) {
-      // Track the InjectorType and add a provider for it.
-      // It's important that this is done after the def's imports.
+      // InjectorType을 추적하고 그에 대한 제공자를 추가합니다.
+      // def의 가져오기 후에 이것이 중요합니다.
       const factory = getFactoryDef(defType) || (() => new defType!());
 
-      // Append extra providers to make more info available for consumers (to retrieve an injector
-      // type), as well as internally (to calculate an injection scope correctly and eagerly
-      // instantiate a `defType` when an injector is created).
+      // 소비자(주입기 유형 검색)뿐만 아니라 내부적으로
+      // 주입 범위를 올바르게 계산하고 `defType`을 조기에 인스턴스화하기 위해
+      // 추가 제공자를 추가합니다.
 
-      // Provider to create `defType` using its factory.
+      // 팩토리를 사용하여 `defType`을 생성하는 제공자.
       visitor({provide: defType, useFactory: factory, deps: EMPTY_ARRAY}, defType);
 
-      // Make this `defType` available to an internal logic that calculates injector scope.
+      // 주입기 범위를 계산하는 내부 로직에
+      // 이 `defType`을 사용 가능하게 합니다.
       visitor({provide: INJECTOR_DEF_TYPES, useValue: defType, multi: true}, defType);
 
-      // Provider to eagerly instantiate `defType` via `INJECTOR_INITIALIZER`.
+      // `INJECTOR_INITIALIZER`를 통해 `defType`을 조기에 인스턴스화하는 제공자.
       visitor(
         {provide: ENVIRONMENT_INITIALIZER, useValue: () => inject(defType!), multi: true},
         defType,
       );
     }
 
-    // Next, include providers listed on the definition itself.
+    // 다음으로, 정의 자체에 나열된 제공자를 포함합니다.
     const defProviders = injDef.providers as Array<SingleProvider | InternalEnvironmentProviders>;
     if (defProviders != null && !isDuplicate) {
       const injectorType = container as InjectorType<any>;
@@ -353,7 +351,7 @@ export function walkProviderTree(
       });
     }
   } else {
-    // Should not happen, but just in case.
+    // 발생해서는 안되지만 만일에 대비하여.
     return false;
   }
 
@@ -376,7 +374,7 @@ function validateProvider(
     return;
   }
 
-  // Here we expect the provider to be a `useClass` provider (by elimination).
+  // 여기서는 제공자가 `useClass` 제공자여야 한다고 기대합니다(제외).
   const classRef = resolveForwardRef(
     provider && ((provider as StaticClassProvider | ClassProvider).useClass || provider.provide),
   );

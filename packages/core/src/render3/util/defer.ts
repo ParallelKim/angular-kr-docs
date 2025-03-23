@@ -27,48 +27,48 @@ import {CONTAINER_HEADER_OFFSET} from '../interfaces/container';
 import {INJECTOR, LView, TVIEW} from '../interfaces/view';
 import {getNativeByTNode} from './view_utils';
 
-/** Retrieved information about a `@defer` block. */
+/** `@defer` 블록에 대한 정보입니다. */
 interface DeferBlockData {
-  /** Current state of the block. */
+  /** 블록의 현재 상태. */
   state: 'placeholder' | 'loading' | 'complete' | 'error' | 'initial';
 
-  /** Hydration state of the block. */
+  /** 블록의 수분 상태. */
   incrementalHydrationState: 'not-configured' | 'hydrated' | 'dehydrated';
 
-  /** Wherther the block has a connected `@error` block. */
+  /** 블록에 연결된 `@error` 블록이 있는지 여부. */
   hasErrorBlock: boolean;
 
-  /** Information about the connected `@loading` block. */
+  /** 연결된 `@loading` 블록에 대한 정보. */
   loadingBlock: {
-    /** Whether the block is defined. */
+    /** 블록이 정의되어 있는지 여부. */
     exists: boolean;
 
-    /** Minimum amount of milliseconds that the block should be shown. */
+    /** 블록을 보여줘야하는 최소 밀리초 수. */
     minimumTime: number | null;
 
-    /** Amount of time after which the block should be shown. */
+    /** 블록을 보여줘야하는 시간. */
     afterTime: number | null;
   };
 
-  /** Information about the connected `@placeholder` block. */
+  /** 연결된 `@placeholder` 블록에 대한 정보. */
   placeholderBlock: {
-    /** Whether the block is defined. */
+    /** 블록이 정의되어 있는지 여부. */
     exists: boolean;
 
-    /** Minimum amount of time that block should be shown. */
+    /** 블록을 보여줘야하는 최소 시간. */
     minimumTime: number | null;
   };
 
-  /** Stringified version of the block's triggers. */
+  /** 블록의 트리거에 대한 문자열화된 버전. */
   triggers: string[];
 
-  /** Element root nodes that are currently being shown in the block. */
+  /** 현재 블록에서 보여지고 있는 루트 노드. */
   rootNodes: Node[];
 }
 
 /**
- * Gets all of the `@defer` blocks that are present inside the specified DOM node.
- * @param node Node in which to look for `@defer` blocks.
+ * 지정된 DOM 노드 안에 존재하는 모든 `@defer` 블록을 가져옵니다.
+ * @param node `@defer` 블록을 찾을 노드.
  *
  * @publicApi
  */
@@ -84,10 +84,10 @@ export function getDeferBlocks(node: Node): DeferBlockData[] {
 }
 
 /**
- * Finds all the `@defer` blocks inside a specific node and view.
- * @param node Node in which to search for blocks.
- * @param lView View within the node in which to search for blocks.
- * @param results Array to which to add blocks once they're found.
+ * 특정 노드와 뷰 안에 있는 모든 `@defer` 블록을 찾습니다.
+ * @param node 블록을 검색할 노드.
+ * @param lView 블록을 검색할 노드 내 뷰.
+ * @param results 블록이 발견되면 추가할 배열.
  */
 function findDeferBlocks(node: Node, lView: LView, results: DeferBlockData[]) {
   const registry = lView[INJECTOR].get(DEHYDRATED_BLOCK_REGISTRY, null, {optional: true});
@@ -98,8 +98,8 @@ function findDeferBlocks(node: Node, lView: LView, results: DeferBlockData[]) {
     const native = getNativeByTNode(details.tNode, details.lView);
     const lDetails = getLDeferBlockDetails(details.lView, details.tNode);
 
-    // The LView from `getLContext` might be the view the element is placed in.
-    // Filter out defer blocks that aren't inside the specified root node.
+    // `getLContext`에서 가져온 LView는 요소가 위치한 뷰일 수 있습니다.
+    // 지정된 루트 노드 안에 있지 않은 지연 블록은 필터링합니다.
     if (!node.contains(native as Node)) {
       continue;
     }
@@ -136,7 +136,7 @@ function findDeferBlocks(node: Node, lView: LView, results: DeferBlockData[]) {
 
     results.push(data);
 
-    // `getDeferBlocks` does not resolve nested defer blocks so we have to recurse manually.
+    // `getDeferBlocks`는 중첩된 지연 블록을 해결하지 않으므로 수동으로 재귀해야합니다.
     if (renderedLView !== null) {
       findDeferBlocks(node, renderedLView, results);
     }
@@ -144,9 +144,9 @@ function findDeferBlocks(node: Node, lView: LView, results: DeferBlockData[]) {
 }
 
 /**
- * Turns the `DeferBlockState` into a string which is more readable than the enum form.
+ * `DeferBlockState`를 문자열로 변환하여 열거형 형태보다 더 읽기 쉽게 만듭니다.
  *
- * @param lDetails Information about the
+ * @param lDetails 정보
  * @returns
  */
 function stringifyState(state: DeferBlockState | DeferBlockInternalState): DeferBlockData['state'] {
@@ -162,15 +162,15 @@ function stringifyState(state: DeferBlockState | DeferBlockInternalState): Defer
     case DeferBlockInternalState.Initial:
       return 'initial';
     default:
-      throw new Error(`Unrecognized state ${state}`);
+      throw new Error(`인식되지 않는 상태 ${state}`);
   }
 }
 
 /**
- * Infers the hydration state of a specific defer block.
- * @param tDetails Static defer block information.
- * @param lDetails Instance defer block information.
- * @param registry Registry coordinating the hydration of defer blocks.
+ * 특정 지연 블록의 수분 상태를 추론합니다.
+ * @param tDetails 정적 지연 블록 정보.
+ * @param lDetails 인스턴스 지연 블록 정보.
+ * @param registry 지연 블록의 수분을 조정하는 레지스트리.
  */
 function inferHydrationState(
   tDetails: TDeferBlockDetails,
@@ -189,12 +189,12 @@ function inferHydrationState(
 }
 
 /**
- * Gets the current LView that is rendered out in a defer block.
- * @param details Instance information about the block.
+ * 지연 블록에서 렌더링되는 현재 LView를 가져옵니다.
+ * @param details 블록에 대한 인스턴스 정보.
  */
 function getRendererLView(details: DeferBlockDetails): LView | null {
-  // Defer block containers can only ever contain one view.
-  // If they're empty, it means that nothing is rendered.
+  // 지연 블록 컨테이너는 한 뷰만 포함할 수 있습니다.
+  // 비어 있으면 아무 것도 렌더링되지 않았음을 의미합니다.
   if (details.lContainer.length <= CONTAINER_HEADER_OFFSET) {
     return null;
   }
