@@ -1,54 +1,45 @@
-The `@for` block repeatedly renders content of a block for each item in a collection.
+`@for` 블록은 컬렉션의 각 항목에 대해 블록의 내용을 반복적으로 렌더링합니다.
 
-## Syntax
+## 구문
 
 ```angular-html
 @for (item of items; track item.name) {
 <li>{{ item.name }}</li>
 } @empty {
-<li>There are no items.</li>
+<li>항목이 없습니다.</li>
 }
 ```
 
-## Description
+## 설명
 
-The `@for` block renders its content in response to changes in a collection. Collections can be any
-JavaScript [iterable](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols),
-but there are performance advantages of using a regular `Array`.
+`@for` 블록은 컬렉션의 변화에 반응하여 그 내용을 렌더링합니다. 컬렉션은 어떤 JavaScript [이터러블](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols) 일 수 있지만, 일반 `Array`를 사용하는 것이 성능상 이점이 있습니다.
 
-You can optionally include an `@empty` section immediately after the `@for` block content. The
-content of the `@empty` block displays when there are no items.
+선택적으로 `@for` 블록 내용 바로 뒤에 `@empty` 섹션을 포함할 수 있습니다. `@empty` 블록의 내용은 항목이 없을 때 표시됩니다.
 
-Angular's `@for` block does not support flow-modifying statements like JavaScript's `continue` or `break`.
+Angular의 `@for` 블록은 JavaScript의 `continue`나 `break`와 같은 흐름 수정문을 지원하지 않습니다.
 
-### `track` and objects identity
+### `track` 및 객체 식별성
 
-The value of the `track` expression determines a key used to associate array items with the views in
-the DOM. Having clear indication of the item identity allows Angular to execute a minimal set of DOM
-operations as items are added, removed or moved in a collection.
+`track` 표현식의 값은 배열 항목과 DOM 내의 뷰를 연관시키는 데 사용되는 키를 결정합니다. 항목의 식별성을 명확하게 나타내면 Angular가 컬렉션에서 항목이 추가, 제거 또는 이동될 때 최소한의 DOM 작업을 실행할 수 있습니다.
 
-To optimize performance, especially in loops over immutable data, ensure the track expression is effectively used to
-identify each item uniquely. Because of the potential for poor performance, the `track` expression
-is required for the `@for` loops.
+성능을 최적화하기 위해, 특히 변경 불가능한 데이터에 대한 루프에서, `track` 표현식이 각 항목을 고유하게 식별하는 데 효과적으로 사용되도록 합니다. 성능 저하의 가능성 때문에 `@for` 루프에서는 `track` 표현식이 필수입니다.
 
-For collections that remain static , `track $index` provides a straightforward tracking mechanism. For dynamic
-collections experiencing additions, deletions, or reordering, opt for a
-unique property of each item as the tracking key.
+정적 컬렉션의 경우, `track $index`는 직관적인 추적 메커니즘을 제공합니다. 추가, 삭제 또는 재정렬을 경험하는 동적 컬렉션의 경우, 각 항목의 고유한 속성을 추적 키로 선택하십시오.
 
-### `$index` and other contextual variables
+### `$index` 및 기타 문맥 변수
 
-Inside `@for` contents, several implicit variables are always available:
+`@for` 내용 안에는 항상 몇 가지 암시적 변수가 사용 가능합니다:
 
-| Variable | Meaning                                       |
+| 변수     | 의미                                         |
 |----------|-----------------------------------------------|
-| `$count` | Number of items in a collection iterated over |
-| `$index` | Index of the current row                      |
-| `$first` | Whether the current row is the first row      |
-| `$last`  | Whether the current row is the last row       |
-| `$even`  | Whether the current row index is even         |
-| `$odd`   | Whether the current row index is odd          |
+| `$count` | 반복된 컬렉션의 항목 수                     |
+| `$index` | 현재 행의 인덱스                           |
+| `$first` | 현재 행이 첫 번째 행인지 여부               |
+| `$last`  | 현재 행이 마지막 행인지 여부                |
+| `$even`  | 현재 행 인덱스가 짝수인지 여부              |
+| `$odd`   | 현재 행 인덱스가 홀수인지 여부              |
 
-These variables are always available with these names, but can be aliased via a `let` segment:
+이 변수들은 항상 이 이름들로 사용 가능하지만, `let` 세그먼트를 통해 별칭을 지정할 수 있습니다:
 
 ```angular-html
 @for (item of items; track item.id; let idx = $index, e = $even) {
@@ -56,5 +47,4 @@ Item #{{ idx }}: {{ item.name }}
 }
 ```
 
-The aliasing is especially useful in case of using nested `@for` blocks where contextual variable
-names could collide.
+별칭 지정은 문맥 변수 이름이 충돌할 수 있는 중첩된 `@for` 블록을 사용할 경우 특히 유용합니다.

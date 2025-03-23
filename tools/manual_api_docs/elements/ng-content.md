@@ -1,12 +1,11 @@
-The `<ng-content>` element specifies where to project content inside a component template.
+`<ng-content>` 요소는 구성 요소 템플릿 내에서 내용을 투사할 위치를 지정합니다.
 
-## Attributes 
+## Attributes
 
-| Attribute     | Description                                                             |
-|---------------|-------------------------------------------------------------------------|
-| `select`      | CSS selector. Matching elements are projected into this `<ng-content>`. |
+| 속성          | 설명                                                                  |
+|---------------|-----------------------------------------------------------------------|
+| `select`      | CSS 선택자. 일치하는 요소가 이 `<ng-content>`로 투사됩니다.         |
 
-Only select elements from the projected content that match the given CSS `selector`.
+주어진 CSS `선택자`와 일치하는 투사된 콘텐츠의 요소만 선택합니다.
 
-Angular supports [selectors](https://developer.mozilla.org/docs/Web/CSS/CSS_Selectors) for any
-combination of tag name, attribute, CSS class, and the `:not` pseudo-class.
+Angular는 태그 이름, 속성, CSS 클래스 및 `:not` 의사 클래스의 조합에 대한 [선택자](https://developer.mozilla.org/docs/Web/CSS/CSS_Selectors)를 지원합니다.

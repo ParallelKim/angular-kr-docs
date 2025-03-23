@@ -1,15 +1,10 @@
-Angular's `<ng-template>` element defines a template that is not rendered by default.
+Angular의 `<ng-template>` 요소는 기본적으로 렌더링되지 않는 템플릿을 정의합니다.
 
-With `<ng-template>`, you can define template content that is only being rendered by Angular when
-you, whether directly or indirectly, specifically instruct it to do so, allowing you to have full
-control over how and when the content is displayed.
+`<ng-template>`을 사용하면 Angular에게 직접적으로 또는 간접적으로 특정한 지시를 하지 않는 한 렌더링되지 않는 템플릿 콘텐츠를 정의할 수 있습니다. 이를 통해 콘텐츠가 표시되는 방법과 시점을 완전히 제어할 수 있습니다.
 
 <div class="alter is-helpful">
 
-Note that if you wrap content inside an `<ng-template>` without instructing Angular to render it,
-such content will not appear on a page. For example, see the following HTML code, when handling it
-Angular won't render the middle "Hip!" in the phrase "Hip! Hip! Hooray!" because of the
-surrounding `<ng-template>`.
+내용을 `<ng-template>` 내부에 감싸지만 Angular에게 렌더링하도록 지시하지 않으면 해당 콘텐츠는 페이지에 나타나지 않음을 유의하세요. 예를 들어, 다음 HTML 코드를 보시면 Angular는 "Hip! Hip! Hooray!"라는 문구에서 중간의 "Hip!"을 렌더링하지 않을 것입니다. 이는 주변의 `<ng-template>` 때문입니다.
 
 ```html
   <p>Hip!</p>
@@ -21,45 +16,32 @@ surrounding `<ng-template>`.
 
 </div>
 
-## Usage notes
+## 사용 노트
 
-### Structural Directives
+### 구조 지시자
 
-One of the main uses for `<ng-template>` is to hold template content that will be used
-by [Structural directives](guide/directives/structural-directives). Those directives can add and remove copies
-of the template content based on their own logic.
+`<ng-template>`의 주요 용도 중 하나는 [구조 지시자](guide/directives/structural-directives)에서 사용할 템플릿 콘텐츠를 보관하는 것입니다. 이러한 지시자는 고유의 논리에 따라 템플릿 콘텐츠의 복사본을 추가하거나 제거할 수 있습니다.
 
-When using
-the [structural directive shorthand](guide/directives/structural-directives#structural-directive-shorthand),
-Angular creates an `<ng-template>` element behind the scenes.
+[구조 지시자 단축형](guide/directives/structural-directives#structural-directive-shorthand)을 사용할 때 Angular는 백그라운드에서 `<ng-template>` 요소를 생성합니다.
 
 ### TemplateRef
 
-`<ng-template>` elements are represented as instances of the `TemplateRef` class.
+`<ng-template>` 요소는 `TemplateRef` 클래스의 인스턴스로 표현됩니다.
 
-To add copies of the template to the DOM, pass this object to the `ViewContainerRef`
-method `createEmbeddedView()`.
+템플릿을 DOM에 복사하려면 이 객체를 `ViewContainerRef` 메소드 `createEmbeddedView()`에 전달하십시오.
 
-### Template Variables
+### 템플릿 변수
 
-`<ng-template>` elements can be referenced in templates
-using [standard template variables](guide/templates/variables#template-reference-variables#how-angular-assigns-values-to-template-variables).
+`<ng-template>` 요소는 [표준 템플릿 변수](guide/templates/variables#template-reference-variables#how-angular-assigns-values-to-template-variables)를 사용하여 템플릿에서 참조할 수 있습니다.
 
-_This is how `<ng-template>` elements are used as `ngIf` else clauses._
+_이것이 `<ng-template>` 요소를 `ngIf` else 절로 사용하는 방법입니다._
 
-Such template variables can be used in conjunction with `ngTemplateOutlet` directives to render the
-content defined inside `<ng-template>` tags.
+이러한 템플릿 변수는 `ngTemplateOutlet` 지시자와 함께 사용하여 `<ng-template>` 태그 내부에 정의된 콘텐츠를 렌더링하는 데 사용할 수 있습니다.
 
-### Querying
+### 쿼리
 
-A [Query](api/core/Query) \(such as `ViewChild`\) can find the `TemplateRef` associated to
-an `<ng-template>` element so that it can be used programmatically; for instance, to pass it to
-the `ViewContainerRef` method `createEmbeddedView()`.
+[쿼리](api/core/Query) (예: `ViewChild`)는 `<ng-template>` 요소와 연결된 `TemplateRef`를 찾아 프로그래밍 방식으로 사용할 수 있습니다. 예를 들어, 이를 `ViewContainerRef` 메소드 `createEmbeddedView()`에 전달하는 경우입니다.
 
-### Context
+### 컨텍스트
 
-Inside the `<ng-template>` tags you can reference variables present in the surrounding outer
-template.
-Additionally, a context object can be associated with `<ng-template>` elements.
-Such an object contains variables that can be accessed from within the template contents via
-template \(`let` and `as`\) declarations.
+`<ng-template>` 태그 내부에서는 주변 외부 템플릿에 존재하는 변수를 참조할 수 있습니다. 또한 `<ng-template>` 요소와 연결된 컨텍스트 객체를 설정할 수 있습니다. 이러한 객체는 템플릿 콘텐츠 내에서 템플릿 선언(`let` 및 `as`)을 통해 접근할 수 있는 변수를 포함합니다.
