@@ -37,7 +37,7 @@ jobs:
         run: yarn -s check-tooling-setup
 
   test:
-    runs-on: ubuntu-latest-4core
+    runs-on: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@78bd12c8526c396fc85e5ac3d72c039dc7e0a51a
@@ -54,7 +54,7 @@ jobs:
 
   adev:
     runs-on:
-      labels: ubuntu-latest-4core
+      labels: ubuntu-latest
     steps:
       - name: Initialize environment
         uses: angular/dev-infra/github-actions/npm/checkout-and-setup-node@78bd12c8526c396fc85e5ac3d72c039dc7e0a51a
