@@ -13,7 +13,7 @@ import {WINDOW} from '@angular/docs';
 import {CURRENT_MAJOR_VERSION} from '../providers/current-version';
 
 describe('VersionManager', () => {
-  const fakeWindow = {location: {hostname: 'angular.dev'}};
+  const fakeWindow = {location: {hostname: 'angular-kr-docs.web.app'}};
   const fakeCurrentMajorVersion = 19;
 
   let service: VersionManager;

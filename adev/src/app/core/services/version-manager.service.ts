@@ -27,19 +27,7 @@ export const MODE_PLACEHOLDER = '{{prefix}}';
   providedIn: 'root',
 })
 export class VersionManager {
-  private readonly currentMajorVersion = inject(CURRENT_MAJOR_VERSION);
-  private readonly window = inject(WINDOW);
-
-  // Note: We can assume that if the URL starts with v{{version}}, it is documentation for previous versions of Angular.
-  // Based on URL we can indicate as well if it's rc or next Docs version.
-  private get currentVersionMode(): VersionMode {
-    const hostname = this.window.location.hostname;
-    if (hostname.startsWith('v')) return 'deprecated';
-    if (hostname.startsWith('rc')) return 'rc';
-    if (hostname.startsWith('next')) return 'next';
-
-    return 'stable';
-  }
+  private readonly currentMajorVersion = 19;
 
   versions = signal<Version[]>([
     ...this.getRecentVersions(),
@@ -48,9 +36,8 @@ export class VersionManager {
   ]);
 
   currentDocsVersion = computed(() => {
-    return this.versions().find(
-      (version) => version.version.toString() === this.currentVersionMode,
-    );
+    // 현재 메이저 버전과 정확히 일치하는 버전 찾기
+    return this.versions().find((version) => version.version === this.currentMajorVersion);
   });
 
   // List of Angular Docs versions which includes current version, next and rc.
@@ -68,9 +55,9 @@ export class VersionManager {
       //   version: 'rc',
       // },
       {
-        url: 'https:/angular-kr-docs.web.app/',
-        displayName: this.getVersion(this.currentMajorVersion),
-        version: this.currentVersionMode,
+        url: '/',
+        displayName: 'v19',
+        version: 19,
       },
     ];
   }
@@ -84,9 +71,10 @@ export class VersionManager {
       version--
     ) {
       adevVersions.push({
-        url: this.getAdevDocsUrl(version),
+        // 원본 앵귤러 문서 사이트로 링크 (v{version}.angular.dev)
+        url: `https://v${version}.angular.dev`,
         displayName: this.getVersion(version),
-        version: 'deprecated',
+        version: version,
       });
     }
     return adevVersions;
@@ -94,16 +82,15 @@ export class VersionManager {
 
   // List of Angular Docs versions hosted on angular.io domain.
   private getAioVersions(): Version[] {
-    return VERSIONS_CONFIG.aioVersions.map((item) =>
-      this.mapToVersion(item as Pick<Version, 'url' | 'version'>),
-    );
-  }
-
-  private mapToVersion(value: Pick<Version, 'url' | 'version'>): Version {
-    return {
-      ...value,
-      displayName: this.getVersion(value.version),
-    };
+    return VERSIONS_CONFIG.aioVersions.map((item) => {
+      // 버전에서 'v' 접두사 제거 후 숫자로 변환
+      const versionNum = parseInt(item.version.toString().replace(/^v/, ''));
+      return {
+        url: item.url,
+        displayName: this.getVersion(versionNum),
+        version: versionNum,
+      };
+    });
   }
 
   private getVersion(versionMode: VersionMode): string {
