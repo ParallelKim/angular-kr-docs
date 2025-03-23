@@ -2,12 +2,12 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드는 https://angular.dev/license의 LICENSE 파일에
+ * 있는 MIT 스타일 라이센스에 의해 관리됩니다.
  */
 
 /**
- * Set of all animatable CSS properties
+ * 애니메이션 가능한 모든 CSS 속성의 집합
  *
  * @see https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_animated_properties
  */

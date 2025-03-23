@@ -9,7 +9,7 @@
 /**
  * @module
  * @description
- * Entry point for all animation APIs of the animation package.
+ * 애니메이션 패키지의 모든 애니메이션 API의 진입점입니다.
  */
 export {AnimationBuilder, AnimationFactory} from './animation_builder';
 export {AnimationEvent} from './animation_event';

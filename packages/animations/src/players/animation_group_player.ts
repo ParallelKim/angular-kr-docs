@@ -2,15 +2,14 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드는 https://angular.dev/license의 LICENSE 파일에 명시된 MIT 스타일의 라이선스에 의해 관리됩니다.
  */
 
 import {AnimationPlayer} from './animation_player';
 
 /**
- * A programmatic controller for a group of reusable animations.
- * Used internally to control animations.
+ * 재사용 가능한 애니메이션 그룹의 프로그래밍 컨트롤러.
+ * 내부에서 애니메이션을 제어하는 데 사용됩니다.
  *
  * @see {@link AnimationPlayer}
  * @see {@link animations/group group}

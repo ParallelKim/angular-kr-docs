@@ -2,23 +2,22 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드는 https://angular.dev/license 의 LICENSE 파일에서 찾을 수 있는
+ * MIT 스타일 라이센스에 의해 규정됩니다.
  */
 import {ɵStyleDataMap} from '@angular/animations';
 
 import {eraseStyles, setStyles} from '../util';
 
 /**
- * Returns an instance of `SpecialCasedStyles` if and when any special (non animateable) styles are
- * detected.
+ * 특별한(애니메이션 가능하지 않은) 스타일이 감지되면 `SpecialCasedStyles`의 인스턴스를 반환합니다.
  *
- * In CSS there exist properties that cannot be animated within a keyframe animation
- * (whether it be via CSS keyframes or web-animations) and the animation implementation
- * will ignore them. This function is designed to detect those special cased styles and
- * return a container that will be executed at the start and end of the animation.
+ * CSS에는 키프레임 애니메이션 내에서 애니메이션할 수 없는 속성이 존재합니다
+ * (CSS 키프레임을 통해서든 웹 애니메이션을 통해서든) 그리고 애니메이션 구현은
+ * 이를 무시합니다. 이 함수는 이러한 특별한 스타일을 감지하고
+ * 애니메이션의 시작과 끝에서 실행될 컨테이너를 반환하도록 설계되었습니다.
  *
- * @returns an instance of `SpecialCasedStyles` if any special styles are detected otherwise `null`
+ * @returns 특별한 스타일이 감지되면 `SpecialCasedStyles`의 인스턴스를, 그렇지 않으면 `null`
  */
 export function packageNonAnimatableStyles(
   element: any,
@@ -39,12 +38,12 @@ export function packageNonAnimatableStyles(
 }
 
 /**
- * Designed to be executed during a keyframe-based animation to apply any special-cased styles.
+ * 키프레임 기반 애니메이션 동안 실행되도록 설계된 특별한 스타일을 적용합니다.
  *
- * When started (when the `start()` method is run) then the provided `startStyles`
- * will be applied. When finished (when the `finish()` method is called) the
- * `endStyles` will be applied as well any any starting styles. Finally when
- * `destroy()` is called then all styles will be removed.
+ * 시작될 때(`start()` 메서드가 실행될 때) 제공된 `startStyles`
+ * 가 적용됩니다. 완료되면(`finish()` 메서드가 호출될 때)
+ * `endStyles`와 시작 스타일이 적용됩니다. 마지막으로
+ * `destroy()`가 호출되면 모든 스타일이 제거됩니다.
  */
 export class SpecialCasedStyles {
   static initialStylesByElement = /* @__PURE__ */ new WeakMap<any, ɵStyleDataMap>();
@@ -104,14 +103,14 @@ export class SpecialCasedStyles {
 }
 
 /**
- * An enum of states reflective of what the status of `SpecialCasedStyles` is.
+ * `SpecialCasedStyles`의 상태를 반영하는 상태 열거형입니다.
  *
- * Depending on how `SpecialCasedStyles` is interacted with, the start and end
- * styles may not be applied in the same way. This enum ensures that if and when
- * the ending styles are applied then the starting styles are applied. It is
- * also used to reflect what the current status of the special cased styles are
- * which helps prevent the starting/ending styles not be applied twice. It is
- * also used to cleanup the styles once `SpecialCasedStyles` is destroyed.
+ * `SpecialCasedStyles`와 상호작용하는 방식에 따라 시작 및 종료
+ * 스타일이 동일한 방식으로 적용되지 않을 수 있습니다. 이 열거형은
+ * 종료 스타일이 적용될 때 시작 스타일이 적용되도록 보장합니다.
+ * 또한 특별한 스타일의 현재 상태를 반영하는 데 사용되어
+ * 시작/종료 스타일이 중복 적용되지 않도록 도와줍니다.
+ * 또한 `SpecialCasedStyles`가 파괴될 때 스타일을 정리하는 데 사용됩니다.
  */
 const enum SpecialCasedStylesState {
   Pending = 0,

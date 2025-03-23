@@ -52,10 +52,10 @@ const LEAVE_TOKEN = ':leave';
 const LEAVE_TOKEN_REGEX = /* @__PURE__ */ new RegExp(LEAVE_TOKEN, 'g');
 
 /*
- * The code within this file aims to generate web-animations-compatible keyframes from Angular's
- * animation DSL code.
+ * 이 파일의 코드는 Angular의
+ * animation DSL 코드에서 web-animations 호환 키프레임을 생성하는 것을 목표로 합니다.
  *
- * The code below will be converted from:
+ * 아래 코드는 다음과 같이 변환됩니다:
  *
  * ```ts
  * sequence([
@@ -64,7 +64,7 @@ const LEAVE_TOKEN_REGEX = /* @__PURE__ */ new RegExp(LEAVE_TOKEN, 'g');
  * ])
  * ```
  *
- * To:
+ * 다음으로:
  * ```ts
  * keyframes = [{ opacity: 0, offset: 0 }, { opacity: 1, offset: 1 }]
  * duration = 1000
@@ -72,37 +72,37 @@ const LEAVE_TOKEN_REGEX = /* @__PURE__ */ new RegExp(LEAVE_TOKEN, 'g');
  * easing = ''
  * ```
  *
- * For this operation to cover the combination of animation verbs (style, animate, group, etc...) a
- * combination of AST traversal and merge-sort-like algorithms are used.
+ * 이 작업이 animation 동사의 조합(style, animate, group 등...)을 재미있게 세트할 수 있도록,
+ * AST 순회와 merge-sort와 유사한 알고리즘의 조합이 사용됩니다.
  *
  * [AST Traversal]
- * Each of the animation verbs, when executed, will return an string-map object representing what
- * type of action it is (style, animate, group, etc...) and the data associated with it. This means
- * that when functional composition mix of these functions is evaluated (like in the example above)
- * then it will end up producing a tree of objects representing the animation itself.
+ * 각 애니메이션 동사는 실행될 때마다
+ * 어떤 유형의 작업(스타일, 애니메이트, 그룹 등...)인지와 관련된 데이터로 구성된 문자열 맵 객체를 반환합니다.
+ * 이는 이러한 함수들의 기능적 조합이 평가 될 때 (위 예와 같이)
+ * 애니메이션 자체를 나타내는 객체의 트리를 생성하게 됨을 의미합니다.
  *
- * When this animation object tree is processed by the visitor code below it will visit each of the
- * verb statements within the visitor. And during each visit it will build the context of the
- * animation keyframes by interacting with the `TimelineBuilder`.
+ * 이 애니메이션 객체 트리가 아래 방문자 코드에 의해 처리될 때,
+ * 방문자 내의 각 동사 문장을 방문하게 됩니다.
+ * 그리고 각 방문 동안, `TimelineBuilder`와 상호 작용하여
+ * 애니메이션 키프레임의 컨텍스트를 구축하게 됩니다.
  *
  * [TimelineBuilder]
- * This class is responsible for tracking the styles and building a series of keyframe objects for a
- * timeline between a start and end time. The builder starts off with an initial timeline and each
- * time the AST comes across a `group()`, `keyframes()` or a combination of the two within a
- * `sequence()` then it will generate a sub timeline for each step as well as a new one after
- * they are complete.
+ * 이 클래스는 스타일을 추적하고 시작 및 종료 시간 사이의 키프레임 객체 시리즈를 구축하는 책임이 있습니다.
+ * 빌더는 초기 타임라인으로 시작하며, AST가 `group()`, `keyframes()` 또는
+ * 두 가지 조합을 `sequence()` 내에서 발견할 때마다
+ * 각 단계에 대한 하위 타임라인과 후속 타임라인을 생성합니다.
  *
- * As the AST is traversed, the timing state on each of the timelines will be incremented. If a sub
- * timeline was created (based on one of the cases above) then the parent timeline will attempt to
- * merge the styles used within the sub timelines into itself (only with group() this will happen).
- * This happens with a merge operation (much like how the merge works in mergeSort) and it will only
- * copy the most recently used styles from the sub timelines into the parent timeline. This ensures
- * that if the styles are used later on in another phase of the animation then they will be the most
- * up-to-date values.
+ * AST가 순회되는 동안, 각 타임라인의 타이밍 상태가 증가됩니다.
+ * 만약 하위 타임라인이 생성되었다면 (위의 경우 중 하나를 기반으로) 상위 타임라인는
+ * 하위 타임라인 내에서 사용된 스타일을 자신에 합병하려고 합니다 (이것은 group() 유형일 때 발생합니다).
+ * 이는 mergeSort의 merge처럼 합병 작업을 통해 이루어지며,
+ * 하위 타임라인에서 가장 최근에 사용된 스타일만 상위 타임라인에 복사합니다.
+ * 이는 스타일이 애니메이션의 다른 단계에서 나중에 사용될 경우
+ * 가장 최신 값이 되도록 보장합니다.
  *
  * [How Missing Styles Are Updated]
- * Each timeline has a `backFill` property which is responsible for filling in new styles into
- * already processed keyframes if a new style shows up later within the animation sequence.
+ * 각 타임라인은
+ * 이미 처리된 키프레임에 새로운 스타일을 채우는 책임이 있는 `backFill` 속성을 가집니다.
  *
  * ```ts
  * sequence([
@@ -110,24 +110,24 @@ const LEAVE_TOKEN_REGEX = /* @__PURE__ */ new RegExp(LEAVE_TOKEN, 'g');
  *   animate(1000, style({ width: 100 })),
  *   animate(1000, style({ width: 200 })),
  *   animate(1000, style({ width: 300 }))
- *   animate(1000, style({ width: 400, height: 400 })) // notice how `height` doesn't exist anywhere
+ *   animate(1000, style({ width: 400, height: 400 })) // `height`는 어디에도 존재하지 않음을 유의하십시오
  * else
  * ])
  * ```
  *
- * What is happening here is that the `height` value is added later in the sequence, but is missing
- * from all previous animation steps. Therefore when a keyframe is created it would also be missing
- * from all previous keyframes up until where it is first used. For the timeline keyframe generation
- * to properly fill in the style it will place the previous value (the value from the parent
- * timeline) or a default value of `*` into the backFill map.
+ * 여기서 발생하는 것은 `height` 값이 나중에 시퀀스에 추가되지만
+ * 모든 이전 애니메이션 단계에서는 누락됩니다. 따라서 키프레임이 생성될 때
+ * 이는 처음 사용될 때까지 모든 이전 키프레임에서 누락됩니다.
+ * 타임라인 키프레임 생성을 위해 스타일이 적절히 채워질 수 있도록
+ * 이전 값(상위 타임라인의 값)이나 기본값 `*`이 backFill 맵에 배치됩니다.
  *
- * When a sub-timeline is created it will have its own backFill property. This is done so that
- * styles present within the sub-timeline do not accidentally seep into the previous/future timeline
- * keyframes
+ * 하위 타임라인이 생성될 때마다
+ * 고유한 backFill 속성을 갖습니다.
+ * 이는 하위 타임라인 내의 스타일이 실수로 이전/미래 타임라인 키프레임으로 누출되지 않도록 하기 위해 수행됩니다.
  *
  * [Validation]
- * The code in this file is not responsible for validation. That functionality happens with within
- * the `AnimationValidatorVisitor` code.
+ * 이 파일의 코드는 유효성 검사에 대한 책임이 없습니다.
+ * 해당 기능은 `AnimationValidatorVisitor` 코드 내에서 처리됩니다.
  */
 export function buildAnimationTimelines(
   driver: AnimationDriver,
@@ -185,13 +185,11 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
 
     visitDslNode(this, ast, context);
 
-    // this checks to see if an actual animation happened
+    // 실제 애니메이션이 발생했는지 확인합니다.
     const timelines = context.timelines.filter((timeline) => timeline.containsAnimation());
 
-    // note: we just want to apply the final styles for the rootElement, so we do not
-    //       just apply the styles to the last timeline but the last timeline which
-    //       element is the root one (basically `*`-styles are replaced with the actual
-    //       state style values only for the root element)
+    // 주의: 우리는 단지 rootElement에 대한 최종 스타일만 적용하고 싶습니다.
+    //        따라서 마지막 타임라인이 아닌 마지막 타임라인이 root one인 경우에만 적용합니다.
     if (timelines.length && finalStyles.size) {
       let lastRootTimeline: TimelineBuilder | undefined;
       for (let i = timelines.length - 1; i >= 0; i--) {
@@ -211,15 +209,15 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
   }
 
   visitTrigger(ast: TriggerAst, context: AnimationTimelineContext): any {
-    // these values are not visited in this AST
+    // 이 AST에서는 이러한 값이 방문되지 않습니다.
   }
 
   visitState(ast: StateAst, context: AnimationTimelineContext): any {
-    // these values are not visited in this AST
+    // 이 AST에서는 이러한 값이 방문되지 않습니다.
   }
 
   visitTransition(ast: TransitionAst, context: AnimationTimelineContext): any {
-    // these values are not visited in this AST
+    // 이 AST에서는 이러한 값이 방문되지 않습니다.
   }
 
   visitAnimateChild(ast: AnimateChildAst, context: AnimationTimelineContext): any {
@@ -233,8 +231,8 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
         innerContext.options as AnimateChildOptions,
       );
       if (startTime != endTime) {
-        // we do this on the upper context because we created a sub context for
-        // the sub child animations
+        // 이는 상위 컨텍스트에서 수행되며,
+        // 하위 자식 애니메이션을 위한 하위 컨텍스트를 생성했기 때문입니다.
         context.transformIntoNewTimeline(endTime);
       }
     }
@@ -281,8 +279,7 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
     const startTime = context.currentTimeline.currentTime;
     let furthestTime = startTime;
 
-    // this is a special-case for when a user wants to skip a sub
-    // animation from being fired entirely.
+    // 이는 사용자가 하위 애니메이션을 완전히 건너뛰고 싶어할 때의 특별한 경우입니다.
     const duration = options.duration != null ? resolveTimingValue(options.duration) : null;
     const delay = options.delay != null ? resolveTimingValue(options.delay) : null;
     if (duration !== 0) {
@@ -331,12 +328,11 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
     if (ast.steps.length) {
       ast.steps.forEach((s) => visitDslNode(this, s, ctx));
 
-      // this is here just in case the inner steps only contain or end with a style() call
+      // 이는 내부 단계가 style() 호출만 포함하거나 그것으로 끝날 경우에 대비하여 존재합니다.
       ctx.currentTimeline.applyStylesToKeyframe();
 
-      // this means that some animation function within the sequence
-      // ended up creating a sub timeline (which means the current
-      // timeline cannot overlap with the contents of the sequence)
+      // 이는 시퀀스 내의 일부 애니메이션 함수가 하위 타임라인을 생성한 것을 의미합니다.
+      // (이는 현재 타임라인이 시퀀스의 내용과 겹칠 수 없음을 의미합니다.)
       if (ctx.subContextCount > subContextCount) {
         ctx.transformIntoNewTimeline();
       }
@@ -361,9 +357,9 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
       innerTimelines.push(innerContext.currentTimeline);
     });
 
-    // this operation is run after the AST loop because otherwise
-    // if the parent timeline's collected styles were updated then
-    // it would pass in invalid data into the new-to-be forked items
+    // 이 작업은 AST 루프 후에 실행됩니다.
+    // 그렇지 않으면 상위 타임라인의 수집된 스타일이 업데이트되어
+    // 새로 포크된 항목에 잘못된 데이터를 전달하게 됩니다.
     innerTimelines.forEach((timeline) =>
       context.currentTimeline.mergeTimelineCollectedStyles(timeline),
     );
@@ -408,8 +404,8 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
     const timeline = context.currentTimeline;
     const timings = context.currentAnimateTimings!;
 
-    // this is a special case for when a style() call
-    // directly follows  an animate() call (but not inside of an animate() call)
+    // 이는 style() 호출이 animate() 호출 바로 뒤에 오는 특별한 경우입니다
+    // (그러나 animate() 호출 내부는 아님).
     if (!timings && timeline.hasCurrentStyleProperties()) {
       timeline.forwardFrame();
     }
@@ -439,19 +435,19 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
       innerTimeline.applyStylesToKeyframe();
     });
 
-    // this will ensure that the parent timeline gets all the styles from
-    // the child even if the new timeline below is not used
+    // 이는 상위 타임라인이 하위에서 모든 스타일을 받게 보장합니다.
+    // 아래 새 타임라인이 사용되지 않더라도요.
     context.currentTimeline.mergeTimelineCollectedStyles(innerTimeline);
 
-    // we do this because the window between this timeline and the sub timeline
-    // should ensure that the styles within are exactly the same as they were before
+    // 이들 사이의 빈틈을 유지해야 합니다. 타임라인과 하위 타임라인은
+    // 내부의 스타일이 이전과 정확히 동일해야 하기 때문입니다.
     context.transformIntoNewTimeline(startTime + duration);
     context.previousNode = ast;
   }
 
   visitQuery(ast: QueryAst, context: AnimationTimelineContext) {
-    // in the event that the first step before this is a style step we need
-    // to ensure the styles are applied before the children are animated
+    // 이 이전 단계가 style 단계인 경우 자식 애니메이션 전에
+    // 스타일이 적용되도록 해야 합니다.
     const startTime = context.currentTimeline.currentTime;
     const options = (ast.options || {}) as AnimationQueryOptions;
     const delay = options.delay ? resolveTimingValue(options.delay) : 0;
@@ -490,9 +486,7 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
 
       visitDslNode(this, ast.animation, innerContext);
 
-      // this is here just incase the inner steps only contain or end
-      // with a style() call (which is here to signal that this is a preparatory
-      // call to style an element before it is animated again)
+      // 이는 내부 단계가 style() 호출만 포함하거나 그것으로 끝날 경우에 대비하여 존재합니다.
       innerContext.currentTimeline.applyStylesToKeyframe();
 
       const endTime = innerContext.currentTimeline.currentTime;
@@ -539,9 +533,9 @@ export class AnimationTimelineBuilderVisitor implements AstVisitor {
     context.previousNode = ast;
 
     // time = duration + delay
-    // the reason why this computation is so complex is because
-    // the inner timeline may either have a delay value or a stretched
-    // keyframe depending on if a subtimeline is not used or is used.
+    // 이 계산이 복잡한 이유는
+    // 내부 타임라인이 지연 값이나 늘어난
+    // 키프레임을 가질 수 있기 때문입니다.
     parentContext.currentStaggerTime =
       tl.currentTime - startingTime + (tl.startTime - parentContext.currentTimeline.startTime);
   }
@@ -588,7 +582,7 @@ export class AnimationTimelineContext {
     const newOptions = options as any;
     let optionsToUpdate = this.options;
 
-    // NOTE: this will get patched up when other animation methods support duration overrides
+    // NOTE: 이는 다른 애니메이션 메서드가 기간 오버라이드를 지원할 때 수정될 것입니다.
     if (newOptions.duration != null) {
       (optionsToUpdate as any).duration = resolveTimingValue(newOptions.duration);
     }
@@ -690,7 +684,7 @@ export class AnimationTimelineContext {
   }
 
   delayNextStep(delay: number) {
-    // negative delays are not yet supported
+    // 음수 지연은 아직 지원되지 않습니다.
     if (delay > 0) {
       this.currentTimeline.delayNextStep(delay);
     }
@@ -709,7 +703,7 @@ export class AnimationTimelineContext {
       results.push(this.element);
     }
     if (selector.length > 0) {
-      // only if :self is used then the selector can be empty
+      // :self가 사용될 경우에만 선택자가 비어 있을 수 있습니다.
       selector = selector.replace(ENTER_TOKEN_REGEX, '.' + this._enterClassName);
       selector = selector.replace(LEAVE_TOKEN_REGEX, '.' + this._leaveClassName);
       const multi = limit != 1;
@@ -781,10 +775,9 @@ export class TimelineBuilder {
   }
 
   delayNextStep(delay: number) {
-    // in the event that a style() step is placed right before a stagger()
-    // and that style() step is the very first style() value in the animation
-    // then we need to make a copy of the keyframe [0, copy, 1] so that the delay
-    // properly applies the style() values to work with the stagger...
+    // style() 단계가 stagger() 보다 직전에 배치될 경우에는
+    // style() 단계가 애니메이션 내의 첫 번째 style() 값이라면
+    // 지연 적용을 위해 keyframe [0, 복사, 1]을 만듭니다.
     const hasPreStyleStep = this._keyframes.size === 1 && this._pendingStyles.size;
 
     if (this.duration || hasPreStyleStep) {
@@ -844,12 +837,12 @@ export class TimelineBuilder {
       this._previousKeyframe.set('easing', easing);
     }
 
-    // special case for animate(duration):
-    // all missing styles are filled with a `*` value then
-    // if any destination styles are filled in later on the same
-    // keyframe then they will override the overridden styles
-    // We use `_globalTimelineStyles` here because there may be
-    // styles in previous keyframes that are not present in this timeline
+    // animate(duration)에 대한 특별한 경우입니다:
+    // 모든 누락된 스타일들은 `*` 값으로 채워진 다음
+    // 동일한 키프레임에서 목적지 스타일이 나중에 채워지면
+    // 이전 스타일을 오버라이드합니다.
+    // 우리는 여기에서 `_globalTimelineStyles`를 사용합니다.
+    // 이전 키프레임에서 이 타임라인에 없는 스타일이 존재할 수 있기 때문입니다.
     for (let [prop, value] of this._globalTimelineStyles) {
       this._backFill.set(prop, value || AUTO_STYLE);
       this._currentKeyframe.set(prop, AUTO_STYLE);
@@ -946,7 +939,7 @@ export class TimelineBuilder {
     const preProps: string[] = [...preStyleProps.values()];
     const postProps: string[] = [...postStyleProps.values()];
 
-    // special case for a 0-second animation (which is designed just to place styles onscreen)
+    // 스타일을 화면에 표시하기 위한 0초 애니메이션에 대한 특별한 경우입니다.
     if (isEmpty) {
       const kf0 = finalKeyframes[0];
       const kf1 = new Map(kf0);
@@ -996,7 +989,7 @@ class SubTimelineBuilder extends TimelineBuilder {
       const totalTime = duration + delay;
       const startingGap = delay / totalTime;
 
-      // the original starting keyframe now starts once the delay is done
+      // 원래 시작 키프레임이 이제 지연이 끝난 후 시작됩니다.
       const newFirstKeyframe = new Map(keyframes[0]);
       newFirstKeyframe.set('offset', 0);
       newKeyframes.push(newFirstKeyframe);
@@ -1006,21 +999,21 @@ class SubTimelineBuilder extends TimelineBuilder {
       newKeyframes.push(oldFirstKeyframe);
 
       /*
-        When the keyframe is stretched then it means that the delay before the animation
-        starts is gone. Instead the first keyframe is placed at the start of the animation
-        and it is then copied to where it starts when the original delay is over. This basically
-        means nothing animates during that delay, but the styles are still rendered. For this
-        to work the original offset values that exist in the original keyframes must be "warped"
-        so that they can take the new keyframe + delay into account.
+        키프레임이 늘어나면 애니메이션 시작 전에 지연이 없어진 것입니다.
+        대신 첫 번째 키프레임은 애니메이션 시작 시점에 놓이게 되고
+        원래의 지연이 끝나면 그곳에 복사됩니다. 이는 기본적으로
+        지연 동안 애니메이션이 발생하지 않고 스타일만 렌더링되도록 합니다.
+        이를 위해 원래 키프레임의 기존 오프셋 값들은 
+        키프레임 늘리기를 고려하여 "왜곡"되어야 합니다.
 
         delay=1000, duration=1000, keyframes = 0 .5 1
 
-        turns into
+        은
 
         delay=0, duration=2000, keyframes = 0 .33 .66 1
        */
 
-      // offsets between 1 ... n -1 are all warped by the keyframe stretch
+      // 1 ... n -1 간의 오프셋은 모두 키프레임 스트레치로 왜곡됩니다.
       const limit = keyframes.length - 1;
       for (let i = 1; i <= limit; i++) {
         let kf = new Map(keyframes[i]);
@@ -1030,7 +1023,7 @@ class SubTimelineBuilder extends TimelineBuilder {
         newKeyframes.push(kf);
       }
 
-      // the new starting keyframe should be added at the start
+      // 새로운 시작 키프레임이 시작 시점에 추가되어야 합니다.
       duration = totalTime;
       delay = 0;
       easing = '';

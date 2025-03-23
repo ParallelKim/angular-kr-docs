@@ -2,14 +2,13 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드의 사용은 https://angular.dev/license 에 있는 LICENSE 파일에서 찾을 수 있는 MIT 스타일 라이센스에 의해 규정됩니다.
  */
 
 /**
  * @module
  * @description
- * Entry point for all public APIs of the animation package.
+ * 애니메이션 패키지의 모든 공용 API에 대한 진입점입니다.
  */
 import {Version} from '@angular/core';
 

@@ -2,8 +2,7 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드 사용은 https://angular.dev/license 주소의 LICENSE 파일에 있는 MIT 스타일 라이선스에 의해 규정됩니다.
  */
 import {AnimationPlayer, NoopAnimationPlayer} from '@angular/animations';
 import {Injectable} from '@angular/core';
@@ -13,12 +12,12 @@ import {containsElement, getParentElement, invokeQuery, validateStyleProperty} f
 /**
  * @publicApi
  *
- * `AnimationDriver` implentation for Noop animations
+ * `AnimationDriver`  Noop 애니메이션을 위한 구현체
  */
 @Injectable()
 export class NoopAnimationDriver implements AnimationDriver {
   /**
-   * @returns Whether `prop` is a valid CSS property
+   * @returns `prop`가 유효한 CSS 속성인지 여부
    */
   validateStyleProperty(prop: string): boolean {
     return validateStyleProperty(prop);
@@ -26,36 +25,35 @@ export class NoopAnimationDriver implements AnimationDriver {
 
   /**
    *
-   * @returns Whether elm1 contains elm2.
+   * @returns elm1이 elm2를 포함하는지 여부.
    */
   containsElement(elm1: any, elm2: any): boolean {
     return containsElement(elm1, elm2);
   }
 
   /**
-   * @returns Rhe parent of the given element or `null` if the element is the `document`
+   * @returns 주어진 요소의 부모를 반환하거나 요소가 `document`인 경우 `null`을 반환합니다.
    */
   getParentElement(element: unknown): unknown {
     return getParentElement(element);
   }
 
   /**
-   * @returns The result of the query selector on the element. The array will contain up to 1 item
-   *     if `multi` is  `false`.
+   * @returns 요소에 대한 쿼리 선택기의 결과. 배열은 `multi`가 `false`인 경우 최대 1개의 항목을 포함합니다.
    */
   query(element: any, selector: string, multi: boolean): any[] {
     return invokeQuery(element, selector, multi);
   }
 
   /**
-   * @returns The `defaultValue` or empty string
+   * @returns `defaultValue` 또는 빈 문자열
    */
   computeStyle(element: any, prop: string, defaultValue?: string): string {
     return defaultValue || '';
   }
 
   /**
-   * @returns An `NoopAnimationPlayer`
+   * @returns `NoopAnimationPlayer`
    */
   animate(
     element: any,
@@ -75,7 +73,7 @@ export class NoopAnimationDriver implements AnimationDriver {
  */
 export abstract class AnimationDriver {
   /**
-   * @deprecated Use the NoopAnimationDriver class.
+   * @deprecated NoopAnimationDriver 클래스를 사용하십시오.
    */
   static NOOP: AnimationDriver = /* @__PURE__ */ new NoopAnimationDriver();
 
@@ -86,7 +84,7 @@ export abstract class AnimationDriver {
   abstract containsElement(elm1: any, elm2: any): boolean;
 
   /**
-   * Obtains the parent element, if any. `null` is returned if the element does not have a parent.
+   * 부모 요소를 얻습니다. 요소에 부모가 없는 경우 `null`이 반환됩니다.
    */
   abstract getParentElement(element: unknown): unknown;
 

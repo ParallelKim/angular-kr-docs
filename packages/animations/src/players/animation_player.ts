@@ -2,16 +2,15 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드의 사용은 https://angular.dev/license 에 있는 MIT 스타일 라이센스에 의해 규제됩니다.
  */
 
 /**
- * Provides programmatic control of a reusable animation sequence,
- * built using the <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code>
- * method which returns an `AnimationFactory`, whose
- * <code>[create](api/animations/AnimationFactory#create)()</code> method instantiates and
- * initializes this interface.
+ * 재사용 가능한 애니메이션 시퀀스의 프로그래밍적 제어를 제공합니다,
+ * <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code>
+ * 메서드를 사용하여 구축되며, 이는 `AnimationFactory`를 반환하고,
+ * <code>[create](api/animations/AnimationFactory#create)()</code> 메서드는 이 인터페이스를 인스턴스화하고
+ * 초기화합니다.
  *
  * @see {@link AnimationBuilder}
  * @see {@link AnimationFactory}
@@ -21,96 +20,96 @@
  */
 export interface AnimationPlayer {
   /**
-   * Provides a callback to invoke when the animation finishes.
-   * @param fn The callback function.
+   * 애니메이션이 완료될 때 호출할 콜백을 제공합니다.
+   * @param fn 콜백 함수.
    * @see {@link #finish}
    */
   onDone(fn: () => void): void;
   /**
-   * Provides a callback to invoke when the animation starts.
-   * @param fn The callback function.
+   * 애니메이션이 시작될 때 호출할 콜백을 제공합니다.
+   * @param fn 콜백 함수.
    * @see {@link #play}
    */
   onStart(fn: () => void): void;
   /**
-   * Provides a callback to invoke after the animation is destroyed.
-   * @param fn The callback function.
+   * 애니메이션이 파괴된 후 호출할 콜백을 제공합니다.
+   * @param fn 콜백 함수.
    * @see {@link #destroy}
    * @see {@link #beforeDestroy}
    */
   onDestroy(fn: () => void): void;
   /**
-   * Initializes the animation.
+   * 애니메이션을 초기화합니다.
    */
   init(): void;
   /**
-   * Reports whether the animation has started.
-   * @returns True if the animation has started, false otherwise.
+   * 애니메이션이 시작되었는지 여부를 보고합니다.
+   * @returns 애니메이션이 시작되었으면 true, 아니면 false.
    */
   hasStarted(): boolean;
   /**
-   * Runs the animation, invoking the `onStart()` callback.
+   * 애니메이션을 실행하고, `onStart()` 콜백을 호출합니다.
    */
   play(): void;
   /**
-   * Pauses the animation.
+   * 애니메이션을 일시 중지합니다.
    */
   pause(): void;
   /**
-   * Restarts the paused animation.
+   * 일시 중지된 애니메이션을 재시작합니다.
    */
   restart(): void;
   /**
-   * Ends the animation, invoking the `onDone()` callback.
+   * 애니메이션을 종료하고, `onDone()` 콜백을 호출합니다.
    */
   finish(): void;
   /**
-   * Destroys the animation, after invoking the `beforeDestroy()` callback.
-   * Calls the `onDestroy()` callback when destruction is completed.
+   * 애니메이션을 파괴하고, `beforeDestroy()` 콜백을 호출한 후.
+   * 파괴가 완료되면 `onDestroy()` 콜백을 호출합니다.
    */
   destroy(): void;
   /**
-   * Resets the animation to its initial state.
+   * 애니메이션을 초기 상태로 재설정합니다.
    */
   reset(): void;
   /**
-   * Sets the position of the animation.
-   * @param position A fractional value, representing the progress through the animation.
+   * 애니메이션의 위치를 설정합니다.
+   * @param position 진행 상황을 나타내는 분수 값.
    */
   setPosition(position: number): void;
   /**
-   * Reports the current position of the animation.
-   * @returns A fractional value, representing the progress through the animation.
+   * 애니메이션의 현재 위치를 보고합니다.
+   * @returns 애니메이션을 통한 진행 상황을 나타내는 분수 값.
    */
   getPosition(): number;
   /**
-   * The parent of this player, if any.
+   * 이 플레이어의 부모, 있다면.
    */
   parentPlayer: AnimationPlayer | null;
   /**
-   * The total run time of the animation, in milliseconds.
+   * 애니메이션의 전체 실행 시간, 밀리초 단위.
    */
   readonly totalTime: number;
   /**
-   * Provides a callback to invoke before the animation is destroyed.
+   * 애니메이션이 파괴되기 전에 호출할 콜백을 제공합니다.
    */
   beforeDestroy?: () => any;
   /**
    * @internal
-   * Internal
+   * 내부
    */
   triggerCallback?: (phaseName: string) => void;
   /**
    * @internal
-   * Internal
+   * 내부
    */
   disabled?: boolean;
 }
 
 /**
- * An empty programmatic controller for reusable animations.
- * Used internally when animations are disabled, to avoid
- * checking for the null case when an animation player is expected.
+ * 재사용 가능한 애니메이션을 위한 빈 프로그래밍 컨트롤러.
+ * 애니메이션이 비활성화되어 있을 때 내부적으로 사용하여
+ * 애니메이션 플레이어가 예상될 때 null 케이스를 확인하는 것을 피합니다.
  *
  * @see {@link animate}
  * @see {@link AnimationPlayer}

@@ -24,42 +24,40 @@ import {RuntimeErrorCode} from './errors';
 import {AnimationPlayer} from './players/animation_player';
 
 /**
- * An injectable service that produces an animation sequence programmatically within an
- * Angular component or directive.
- * Provided by the `BrowserAnimationsModule` or `NoopAnimationsModule`.
+ * Angular 컴포넌트 또는 지시문 내에서 프로그래밍 방식으로 애니메이션 시퀀스를 생성하는 주입 가능한 서비스입니다.
+ * `BrowserAnimationsModule` 또는 `NoopAnimationsModule`에서 제공됩니다.
  *
  * @usageNotes
  *
- * To use this service, add it to your component or directive as a dependency.
- * The service is instantiated along with your component.
+ * 이 서비스를 사용하려면 컴포넌트나 지시문에 종속성으로 추가하십시오.
+ * 서비스는 컴포넌트와 함께 인스턴스화됩니다.
  *
- * Apps do not typically need to create their own animation players, but if you
- * do need to, follow these steps:
+ * 앱은 일반적으로 자체 애니메이션 플레이어를 생성할 필요는 없지만,
+ * 필요한 경우 다음 단계를 따르세요:
  *
- * 1. Use the <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code> method
- * to create a programmatic animation. The method returns an `AnimationFactory` instance.
+ * 1. <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code> 메서드를 사용하여 프로그래밍 방식의 애니메이션을 생성합니다. 해당 메서드는 `AnimationFactory` 인스턴스를 반환합니다.
  *
- * 2. Use the factory object to create an `AnimationPlayer` and attach it to a DOM element.
+ * 2. 팩토리 객체를 사용하여 `AnimationPlayer`를 생성하고 DOM 요소에 연결합니다.
  *
- * 3. Use the player object to control the animation programmatically.
+ * 3. 플레이어 객체를 사용하여 애니메이션을 프로그래밍 방식으로 제어합니다.
  *
- * For example:
+ * 예를 들어:
  *
  * ```ts
- * // import the service from BrowserAnimationsModule
+ * // BrowserAnimationsModule에서 서비스를 가져옵니다.
  * import {AnimationBuilder} from '@angular/animations';
- * // require the service as a dependency
+ * // 서비스를 종속성으로 요구합니다.
  * class MyCmp {
  *   constructor(private _builder: AnimationBuilder) {}
  *
  *   makeAnimation(element: any) {
- *     // first define a reusable animation
+ *     // 먼저 재사용 가능한 애니메이션을 정의합니다.
  *     const myAnimation = this._builder.build([
  *       style({ width: 0 }),
  *       animate(1000, style({ width: '100px' }))
  *     ]);
  *
- *     // use the returned factory object to create a player
+ *     // 반환된 팩토리 객체를 사용하여 플레이어를 생성합니다.
  *     const player = myAnimation.create(element);
  *
  *     player.play();
@@ -72,30 +70,28 @@ import {AnimationPlayer} from './players/animation_player';
 @Injectable({providedIn: 'root', useFactory: () => inject(BrowserAnimationBuilder)})
 export abstract class AnimationBuilder {
   /**
-   * Builds a factory for producing a defined animation.
-   * @param animation A reusable animation definition.
-   * @returns A factory object that can create a player for the defined animation.
+   * 정의된 애니메이션을 생성하기 위한 팩토리를 빌드합니다.
+   * @param animation 재사용 가능한 애니메이션 정의입니다.
+   * @returns 정의된 애니메이션을 위한 플레이어를 생성할 수 있는 팩토리 객체입니다.
    * @see {@link animate}
    */
   abstract build(animation: AnimationMetadata | AnimationMetadata[]): AnimationFactory;
 }
 
 /**
- * A factory object returned from the
  * <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code>
- * method.
+ * 메서드에서 반환된 팩토리 객체입니다.
  *
  * @publicApi
  */
 export abstract class AnimationFactory {
   /**
-   * Creates an `AnimationPlayer` instance for the reusable animation defined by
-   * the <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code>
-   * method that created this factory and attaches the new player a DOM element.
+   * 이 팩토리를 생성한 <code>[AnimationBuilder.build](api/animations/AnimationBuilder#build)()</code>
+   * 메서드에서 정의한 재사용 가능한 애니메이션에 대한 `AnimationPlayer` 인스턴스를 생성하고
+   * 새로운 플레이어를 DOM 요소에 연결합니다.
    *
-   * @param element The DOM element to which to attach the player.
-   * @param options A set of options that can include a time delay and
-   * additional developer-defined parameters.
+   * @param element 플레이어를 연결할 DOM 요소입니다.
+   * @param options 시간 지연 및 추가 개발자 정의 매개변수를 포함할 수 있는 옵션 세트입니다.
    */
   abstract create(element: any, options?: AnimationOptions): AnimationPlayer;
 }
@@ -117,13 +113,13 @@ export class BrowserAnimationBuilder extends AnimationBuilder {
     this._renderer = rootRenderer.createRenderer(doc.body, typeData);
 
     if (this.animationModuleType === null && !isAnimationRenderer(this._renderer)) {
-      // We only support AnimationRenderer & DynamicDelegationRenderer for this AnimationBuilder
+      // 이 AnimationBuilder의 경우 AnimationRenderer 및 DynamicDelegationRenderer만 지원합니다.
 
       throw new RuntimeError(
         RuntimeErrorCode.BROWSER_ANIMATION_BUILDER_INJECTED_WITHOUT_ANIMATIONS,
         (typeof ngDevMode === 'undefined' || ngDevMode) &&
-          'Angular detected that the `AnimationBuilder` was injected, but animation support was not enabled. ' +
-            'Please make sure that you enable animations in your application by calling `provideAnimations()` or `provideAnimationsAsync()` function.',
+          'Angular는 `AnimationBuilder`가 주입되었으나 애니메이션 지원이 활성화되지 않았다는 것을 감지했습니다. ' +
+            '애플리케이션에서 `provideAnimations()` 또는 `provideAnimationsAsync()` 함수를 호출하여 애니메이션을 활성화했는지 확인하세요.',
       );
     }
   }
@@ -239,8 +235,8 @@ function issueAnimationCommand(
 }
 
 /**
- * The following 2 methods cannot reference their correct types (AnimationRenderer &
- * DynamicDelegationRenderer) since this would introduce a import cycle.
+ * 다음 2개의 메서드는 올바른 유형(애니메이션 렌더러 &
+ * 동적 위임 렌더러)을 참조할 수 없으므로 가져오기 사이클을 생성합니다.
  */
 
 function unwrapAnimationRenderer(

@@ -2,13 +2,11 @@
  * @license
  * Copyright Google LLC All Rights Reserved.
  *
- * Use of this source code is governed by an MIT-style license that can be
- * found in the LICENSE file at https://angular.dev/license
+ * 이 소스 코드는 https://angular.dev/license 에 있는 LICENSE 파일에서 확인할 수 있는 MIT 스타일의 라이센스에 의해 관리됩니다.
  */
 
 /**
- * An instance of this class is returned as an event parameter when an animation
- * callback is captured for an animation either during the start or done phase.
+ * 이 클래스의 인스턴스는 애니메이션의 시작 또는 완료 단계에서 애니메이션 콜백이 캡처될 때 이벤트 매개변수로 반환됩니다.
  *
  * ```ts
  * @Component({
@@ -26,11 +24,11 @@
  * class MyComponent {
  *   someExpression: any = false;
  *   captureStartEvent(event: AnimationEvent) {
- *     // the toState, fromState and totalTime data is accessible from the event variable
+ *     // toState, fromState 및 totalTime 데이터는 이벤트 변수에서 접근할 수 있습니다.
  *   }
  *
  *   captureDoneEvent(event: AnimationEvent) {
- *     // the toState, fromState and totalTime data is accessible from the event variable
+ *     // toState, fromState 및 totalTime 데이터는 이벤트 변수에서 접근할 수 있습니다.
  *   }
  * }
  * ```
@@ -39,32 +37,31 @@
  */
 export interface AnimationEvent {
   /**
-   * The name of the state from which the animation is triggered.
+   * 애니메이션이 시작되는 상태의 이름.
    */
   fromState: string;
   /**
-   * The name of the state in which the animation completes.
+   * 애니메이션이 완료되는 상태의 이름.
    */
   toState: string;
   /**
-   * The time it takes the animation to complete, in milliseconds.
+   * 애니메이션이 완료되는 데 걸리는 시간(밀리초).
    */
   totalTime: number;
   /**
-   * The animation phase in which the callback was invoked, one of
-   * "start" or "done".
+   * 콜백이 호출된 애니메이션 단계로, "start" 또는 "done" 중 하나입니다.
    */
   phaseName: string;
   /**
-   * The element to which the animation is attached.
+   * 애니메이션이 연결된 요소.
    */
   element: any;
   /**
-   * Internal.
+   * 내부.
    */
   triggerName: string;
   /**
-   * Internal.
+   * 내부.
    */
   disabled: boolean;
 }
