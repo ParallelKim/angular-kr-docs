@@ -17,3 +17,5 @@ jobs:
           firebaseServiceAccount: '${{ secrets.FIREBASE_SERVICE_ACCOUNT_ANGULAR_KR_DOCS }}'
           channelId: live
           projectId: angular-kr-docs
+        env:
+          FIREBASE_CLI_EXPERIMENTS: webframeworks
