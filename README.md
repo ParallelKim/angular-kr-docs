@@ -15,6 +15,18 @@
 </p>
 
 <p align="center">
+    ⚠️ <em>이 저장소는 Angular의 공식 저장소가 아닙니다! 
+    <br> Angular 공식 문서: 
+    <a href="https://angular.dev/"><strong>angular.dev</strong></a>
+    <br> Angular 공식 저장소: 
+    <a href="https://github.com/angular/angular"><strong>angular/angular</strong></a>
+  </em>
+  <br>
+</p>
+
+
+
+<p align="center">
   <a href="CONTRIBUTING.md">기여 가이드</a>
   ·
   <a href="https://github.com/angular/angular/issues">이슈 제출</a>
@@ -43,7 +55,7 @@
 
 현재 이 저장소의 문서들은 대부분 AI를 이용한 초벌 번역만 진행된 상태입니다. 정확하고 자연스러운 번역을 위해 커뮤니티 구성원들의 검토와 수정이 필요합니다. 함께 양질의 한글 Angular 문서를 만들어 나가요!
 
-- 최근 업데이트: 2025-03-21
+- 최근 업데이트: 2025-03-23
 
 ### 사용 도구
 
