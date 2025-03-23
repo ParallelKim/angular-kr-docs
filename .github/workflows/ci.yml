@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - '[0-9]+.[0-9]+.x'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -183,7 +182,5 @@ jobs:
       - name: Deploy to firebase
         uses: ./.github/actions/deploy-docs-site
         with:
-          serviceKey: ${{ secrets.ANGULAR_DEV_SITE_DEPLOY }}
-          githubReleaseTrainReadToken: ${{ secrets.DOCS_DEPLOY_GITHUB_RELEASE_TRAIN_TOKEN }}
-          configPath: 'adev/firebase.json'
+          configPath: 'firebase.json'
           distDir: 'dist/bin/adev/build/browser'
